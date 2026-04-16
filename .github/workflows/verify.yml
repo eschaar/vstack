@@ -64,6 +64,9 @@ jobs:
         # Avoid cross-run collisions on shared/self-hosted runners.
         run: echo "TARGET_DIR=${RUNNER_TEMP}/vstack-pr-target-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"
 
+      - name: Create temp target directory
+        run: mkdir -p "${TARGET_DIR}"
+
       - name: Install artifacts into temp target
         run: poetry run vstack install --target "${TARGET_DIR}"
 
