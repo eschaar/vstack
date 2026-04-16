@@ -7,6 +7,7 @@ VENV ?= .venv
 VENV_PYTHON ?= $(VENV)/bin/python
 TARGET ?= .
 PIP ?= $(VENV_PYTHON) -m pip
+TOX_PYTHON ?= $(if $(wildcard $(VENV_PYTHON)),$(VENV_PYTHON),$(if $(shell command -v $(POETRY) 2>/dev/null),$(POETRY) run python,$(PYTHON)))
 PYTHON_CHECK_PATHS ?= src tests
 
 DEV_PACKAGES := pip setuptools wheel pytest pytest-cov ruff mypy pre-commit tox
@@ -125,17 +126,17 @@ test-local:
 	$(VENV_PYTHON) -m pytest -q
 
 test:
-	python -m tox -e py311,py312,py313,py314
+	$(TOX_PYTHON) -m tox -e py311,py312,py313,py314
 
 check: format-check markdown-lint lint typecheck test
 
 ci: check vstack-validate
 
 tox:
-	python -m tox -e py311,py312,py313,py314
+	$(TOX_PYTHON) -m tox -e py311,py312,py313,py314
 
 tox-all:
-	python -m tox
+	$(TOX_PYTHON) -m tox
 
 vstack-validate:
 	$(VENV_PYTHON) -m vstack validate
