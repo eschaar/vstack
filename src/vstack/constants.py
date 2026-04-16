@@ -22,11 +22,36 @@ def _version_tuple(tag: str) -> tuple[int, int, int]:
     return int(major), int(minor), int(patch)
 
 
+def _vstack_repo_root() -> Path | None:
+    """Return the root of the vstack source checkout, or None if not in one.
+
+    Walks up from the package directory looking for a .git directory.
+    Returns None when invoked outside the vstack source tree, preventing
+    accidental version reads from the user's working directory.
+    """
+    candidate = Path(str(_PACKAGE_ROOT)).resolve()
+    for parent in [candidate, *candidate.parents]:
+        if (parent / ".git").exists():
+            # Confirm this is the vstack repo, not an arbitrary repo that
+            # happens to contain the installed package somewhere inside it.
+            if (parent / "src" / "vstack").exists():
+                return parent
+            break
+    return None
+
+
 def _head_semver_tag() -> str | None:
-    """Return the highest plain semver tag pointing at HEAD, if available."""
+    """Return the highest plain semver tag pointing at HEAD, if available.
+
+    Only runs git inside the vstack source checkout to prevent picking up
+    tags from whatever repository the user is working in.
+    """
+    repo_root = _vstack_repo_root()
+    if repo_root is None:
+        return None
     try:
         out = subprocess.check_output(
-            ["git", "tag", "--points-at", "HEAD"],
+            ["git", "-C", str(repo_root), "tag", "--points-at", "HEAD"],
             stderr=subprocess.DEVNULL,
             text=True,
         )
