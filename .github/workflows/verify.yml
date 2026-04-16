@@ -10,6 +10,7 @@ name: Verify
 env:
   # Shared interpreter version for reproducible CI behavior.
   PYTHON_VERSION: "3.11"
+  POETRY_VIRTUALENVS_IN_PROJECT: "true"
 
 jobs:
   unit-tests:
