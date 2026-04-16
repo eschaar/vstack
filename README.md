@@ -15,7 +15,7 @@ ______________________________________________________________________
 
 ## install
 
-Requires **Python 3.11+**.
+Requires **Python 3.11-3.14**.
 
 ```bash
 pip install vstack
@@ -128,7 +128,7 @@ ______________________________________________________________________
 
 ## development
 
-Requires **Poetry** and **Python 3.11+**.
+Requires **Poetry** and **Python 3.11-3.14**.
 
 ```bash
 git clone https://github.com/your-org/vstack
@@ -153,7 +153,33 @@ make ci
 poetry run vstack validate      # validate templates without writing files
 poetry run vstack install       # install all artifacts -> .github/
 poetry run vstack verify        # full validation suite
-poetry run pytest               # run test suite
+make test-local                 # run pytest on current interpreter
+make test                       # run tests on py311-py314 via tox
+make tox                        # run tests on py311-py314 (when installed)
+```
+
+### local multi-python testing (pyenv + tox)
+
+This repository keeps its local interpreter order in `.python-version` so `tox`
+can resolve the supported runtimes consistently.
+
+Install and activate the supported Python runtimes with `pyenv`:
+
+```bash
+pyenv install 3.11.14
+pyenv install 3.12.12
+pyenv install 3.13.12
+pyenv install 3.14.3
+pyenv local 3.14.3 3.13.12 3.12.12 3.11.14
+```
+
+That command writes the repo-local `.python-version` file.
+
+Run cross-version tests locally:
+
+```bash
+make tox      # pytest on py311, py312, py313, py314
+make tox-all  # all tox envs: tests + lint + type
 ```
 
 **Editing skills:** source of truth is `src/vstack/_templates/skills/<name>/{config.yaml,template.md}`. Never edit generated files.

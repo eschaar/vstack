@@ -1,5 +1,5 @@
 name: debug
-version: 1.0.0
+version: 1.0.1
 description: |
   Systematic root-cause debugging for backend services, APIs, and libraries.
   No fixes without investigation. Follows the scientific method: observe →

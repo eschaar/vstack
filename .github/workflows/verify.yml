@@ -10,6 +10,7 @@ name: Verify
 env:
   # Shared interpreter version for reproducible CI behavior.
   PYTHON_VERSION: "3.11"
+  POETRY_VIRTUALENVS_IN_PROJECT: "true"
 
 jobs:
   unit-tests:
@@ -19,17 +20,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Install Poetry
+        run: pipx install poetry
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: poetry
           cache-dependency-path: poetry.lock
-
-      - name: Install Poetry
-        run: pipx install poetry
 
       - name: Install dependencies
         run: poetry install --no-interaction --no-ansi
@@ -44,17 +45,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Install Poetry
+        run: pipx install poetry
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: poetry
           cache-dependency-path: poetry.lock
-
-      - name: Install Poetry
-        run: pipx install poetry
 
       - name: Install dependencies
         run: poetry install --no-interaction --no-ansi
@@ -62,6 +63,9 @@ jobs:
       - name: Set unique temp target directory
         # Avoid cross-run collisions on shared/self-hosted runners.
         run: echo "TARGET_DIR=${RUNNER_TEMP}/vstack-pr-target-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"
+
+      - name: Create temp target directory
+        run: mkdir -p "${TARGET_DIR}"
 
       - name: Install artifacts into temp target
         run: poetry run vstack install --target "${TARGET_DIR}"

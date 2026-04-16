@@ -1,5 +1,5 @@
 name: explore
-version: 1.0.0
+version: 1.0.1
 description: |
   Repository and system discovery. Maps the architecture, understands the
   codebase, identifies technical debt, and produces a structured onboarding

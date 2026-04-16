@@ -64,7 +64,7 @@ Each skill is a directory containing two files:
 
 ```yaml
 name: architecture
-version: 1.0.0
+version: 1.0.1
 description: |
    Engineering-lead plan review. Lock in the execution plan — service boundaries,
    data models, API contracts, error handling, test strategy, ...

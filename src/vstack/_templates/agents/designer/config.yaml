@@ -1,5 +1,5 @@
 name: designer
-version: 1.0.0
+version: 1.0.1
 description: >
   Senior interaction designer. Translates architecture blueprint into
   developer-ready specifications: API contracts, event schemas, data flows,

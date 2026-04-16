@@ -1,5 +1,5 @@
 name: release
-version: 1.0.0
+version: 1.0.1
 description: >
   Senior platform and release engineer. Acts as release gatekeeper: verifies
   baseline artifacts are complete (docs/product, docs/architecture,
