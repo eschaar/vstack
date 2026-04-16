@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vstack"
-dynamic = ["version"]
+version = "1.0.0"
 description = "VS Code-native AI engineering workflow system for microservices, libraries, and backend systems."
 authors = []
 license = "MIT"
