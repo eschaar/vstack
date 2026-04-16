@@ -1,5 +1,5 @@
 name: tester
-version: 1.0.0
+version: 1.0.1
 description: >
   Senior QA, security, and reliability engineer. Runs functional, security,
   and performance tests. Produces docs/test-report.md, docs/security-report.md,

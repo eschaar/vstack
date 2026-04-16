@@ -1,5 +1,5 @@
 name: engineer
-version: 1.0.0
+version: 1.0.1
 description: >
   Senior software engineer. Implements features, bug fixes, and unit tests
   based on docs/design/design.md, docs/architecture/architecture.md, and ADRs.

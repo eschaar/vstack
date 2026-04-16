@@ -10,7 +10,7 @@ Format::
       "vstack_version": "…",
       "installed_at":   "…",
       "artifacts": {
-        "skills": [{"name": "vision", "version": "1.0.0", "file": "skills/vision/SKILL.md"}],
+        "skills": [{"name": "vision", "version": "1.0.1", "file": "skills/vision/SKILL.md"}],
         "agents": [{"name": "engineer", "file": "agents/engineer.agent.md"}]
       }
     }

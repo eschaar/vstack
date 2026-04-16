@@ -217,7 +217,7 @@ ______________________________________________________________________
 
 ```yaml
 name: architect
-version: 1.0.0
+version: 1.0.1
 description: "Senior software architect. Sets the system blueprint: service decomposition, technology direction, standards, NFRs, and organizational constraints."
 argument-hint: "[design architecture | write ADR | review architecture | check implementation alignment]"
 tools:

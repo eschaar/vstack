@@ -97,7 +97,7 @@ The generator reads `config.yaml` and emits recognised fields as frontmatter in 
 
 ```yaml
 name: architecture
-version: 1.0.0
+version: 1.0.1
 description: |
   Engineering-lead plan review. Lock in the execution plan — service boundaries,
   data models, API contracts, error handling, test strategy, ...

@@ -1,5 +1,5 @@
 name: docs
-version: 1.0.0
+version: 1.0.1
 description: |
   Post-release documentation alignment. Updates README, API docs, migration
   guides, and related docs to match shipped behavior. Does not own release-note

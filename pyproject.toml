@@ -1,20 +1,25 @@
-[tool.poetry]
+[project]
 name = "vstack"
-version = "1.0.0"
+version = "0.0.0"
 description = "VS Code-native AI engineering workflow system for microservices, libraries, and backend systems."
-authors = []
 license = "MIT"
 readme = "README.md"
+requires-python = ">=3.11,<3.15"
+dependencies = []
+
+[project.scripts]
+vstack = "vstack:main"
+
+# ---------------------------------------------------------------------------
+# Poetry-specific packaging config (package layout, file inclusion, dev deps).
+# [project] above covers PEP 621 metadata; Poetry reads both.
+# ---------------------------------------------------------------------------
+
+[tool.poetry]
 packages = [{include = "vstack", from = "src"}]
 include = [
     { path = "src/vstack/_templates", format = ["sdist", "wheel"] },
 ]
-
-[tool.poetry.scripts]
-vstack = "vstack:main"
-
-[tool.poetry.dependencies]
-python = ">=3.11,<3.15"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=9.0"
@@ -93,7 +98,7 @@ fallback-version = "0.0.0"
 # ---------------------------------------------------------------------------
 # pyright is used for type checking in VS Code, by Pylance.
 # The "extraPaths" setting is used to find the "scripts" directory,
-# which contains the main code for vstack, but is not a project dependency. 
+# which contains the main code for vstack, but is not a project dependency.
 # ---------------------------------------------------------------------------
 
 [tool.pyright]
