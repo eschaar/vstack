@@ -21,15 +21,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Poetry
+        run: pipx install poetry
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: poetry
           cache-dependency-path: poetry.lock
-
-      - name: Install Poetry
-        run: pipx install poetry
 
       - name: Install dependencies
         run: poetry install --no-interaction --no-ansi
@@ -55,15 +55,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Poetry
+        run: pipx install poetry
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: poetry
           cache-dependency-path: poetry.lock
-
-      - name: Install Poetry
-        run: pipx install poetry
 
       - name: Install dependencies
         run: poetry install --no-interaction --no-ansi
