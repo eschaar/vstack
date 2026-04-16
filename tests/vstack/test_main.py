@@ -65,6 +65,12 @@ class _CLI:
 class TestMain:
     """Test cases for Main."""
 
+    def test_resolve_only_for_scope_returns_requested_only_for_non_global(self) -> None:
+        """Test that non-global commands keep the explicit type filter."""
+        args = _Args("install", only=["skill"], use_global=False)
+
+        assert main_module._resolve_only_for_scope(args) == ["skill"]
+
     def test_main_dispatch_validate(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test that main dispatch validate."""
         cli = _CLI()
@@ -148,6 +154,12 @@ class TestMain:
             },
         )
 
+    def test_resolve_only_for_scope_returns_requested_only_for_global_allowed_types(self) -> None:
+        """Test that allowed global type filters are passed through unchanged."""
+        args = _Args("install", only=["agent", "prompt"], use_global=True)
+
+        assert main_module._resolve_only_for_scope(args) == ["agent", "prompt"]
+
     def test_main_global_install_rejects_unknown_type(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path
     ) -> None:
@@ -198,3 +210,22 @@ class TestMain:
                 "only": ["agent", "instruction", "prompt", "skill"],
             },
         )
+
+    def test_main_dispatch_uninstall(self, monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
+        """Test that uninstall resolves the target directory and dispatches correctly."""
+        cli = _CLI()
+        args = _Args("uninstall")
+        parser = type("P", (), {"parse_args": lambda self: args})()
+
+        monkeypatch.setattr(main_module, "build_parser", lambda: parser)
+        monkeypatch.setattr(main_module, "resolve_targets", lambda _args: tmp_path)
+        monkeypatch.setattr(main_module, "CommandLineInterface", lambda templates_root: cli)
+        monkeypatch.setattr(
+            main_module.sys, "exit", lambda code: (_ for _ in ()).throw(SystemExit(code))
+        )
+
+        with pytest.raises(SystemExit) as exc:
+            main_module.main()
+
+        assert exc.value.code == 10
+        assert cli.called == ("uninstall", (tmp_path,), {})

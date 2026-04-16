@@ -39,15 +39,21 @@ def _head_semver_tag() -> str | None:
     return max(tags, key=_version_tuple)
 
 
-# Prefer an exact semver tag on HEAD for source checkouts.
-VERSION = _head_semver_tag() or ""
+def _resolve_version() -> str:
+    """Resolve the package version from git tags, package metadata, or fallback."""
+    version = _head_semver_tag() or ""
+    if version:
+        return version
 
-if not VERSION:
     try:
         # Reads from installed package metadata, populated by build-time versioning.
-        VERSION = _pkg_version("vstack")
+        return _pkg_version("vstack")
     except PackageNotFoundError:
         # Fallback: uninstalled source tree or shallow clone without any git tag.
-        VERSION = "0.0.0"
+        return "0.0.0"
+
+
+# Prefer an exact semver tag on HEAD for source checkouts.
+VERSION = _resolve_version()
 
 MANIFEST_FILENAME = "vstack.json"

@@ -1,5 +1,6 @@
 # Quality gate for branch pushes (excluding main).
-# Purpose: keep fast feedback for formatting, linting, and type checking.
+# Purpose: keep fast feedback for formatting/lint/type checks and run tests across
+# supported Python versions.
 name: QA
 
 on:
@@ -8,12 +9,11 @@ on:
     branches-ignore: [main]
 
 env:
-  # Single Python version used across all QA checks.
   PYTHON_VERSION: "3.11"
 
 jobs:
-  qa:
-    # One consolidated job for style and static-analysis checks.
+  quality:
+    # Fast quality checks run once on the baseline Python version.
     name: Format Lint Typecheck
     runs-on: ubuntu-latest
 
@@ -24,7 +24,6 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          # Cache Poetry downloads based on lockfile changes.
           python-version: ${{ env.PYTHON_VERSION }}
           cache: poetry
           cache-dependency-path: poetry.lock
@@ -43,3 +42,31 @@ jobs:
 
       - name: Typecheck
         run: make typecheck
+
+  test-matrix:
+    name: Tests (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: poetry
+          cache-dependency-path: poetry.lock
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Test
+        run: make test

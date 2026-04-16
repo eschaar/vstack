@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import importlib
 import importlib.metadata as importlib_metadata
 import subprocess
 from pathlib import Path
@@ -27,25 +26,57 @@ class TestConstants:
         """Test that manifest filename."""
         assert MANIFEST_FILENAME == "vstack.json"
 
+    def test_head_semver_tag_returns_none_when_head_has_no_semver_tags(self, monkeypatch) -> None:
+        """Test that non-semver tags on HEAD are ignored."""
+        monkeypatch.setattr(subprocess, "check_output", lambda *_args, **_kwargs: "main\nv1.0.0\n")
+
+        assert constants_module._head_semver_tag() is None
+
+    def test_head_semver_tag_returns_none_when_git_lookup_fails(self, monkeypatch) -> None:
+        """Test that git lookup failures fall back cleanly."""
+
+        def _raise_called_process_error(*_args, **_kwargs) -> str:
+            """Internal helper to simulate git lookup failure."""
+            raise subprocess.CalledProcessError(returncode=1, cmd=["git", "tag"])
+
+        monkeypatch.setattr(subprocess, "check_output", _raise_called_process_error)
+
+        assert constants_module._head_semver_tag() is None
+
+    def test_head_semver_tag_returns_highest_plain_semver(self, monkeypatch) -> None:
+        """Test that the highest semver tag on HEAD is selected."""
+        monkeypatch.setattr(
+            subprocess,
+            "check_output",
+            lambda *_args, **_kwargs: "1.0.0\n1.0.2\n1.0.1\nrelease-candidate\n",
+        )
+
+        assert constants_module._head_semver_tag() == "1.0.2"
+
+    def test_version_uses_installed_package_metadata_when_git_tag_missing(
+        self, monkeypatch
+    ) -> None:
+        """Test that installed metadata is used when no semver tag points at HEAD."""
+        monkeypatch.setattr(constants_module, "_head_semver_tag", lambda: None)
+        monkeypatch.setattr(constants_module, "_pkg_version", lambda _name: "1.0.1")
+
+        assert constants_module._resolve_version() == "1.0.1"
+
+    def test_version_prefers_head_semver_tag(self, monkeypatch) -> None:
+        """Test that a semver tag on HEAD wins over package metadata."""
+        monkeypatch.setattr(constants_module, "_head_semver_tag", lambda: "1.0.1")
+        monkeypatch.setattr(constants_module, "_pkg_version", lambda _name: "9.9.9")
+
+        assert constants_module._resolve_version() == "1.0.1"
+
     def test_version_fallback_when_package_metadata_missing(self, monkeypatch) -> None:
         """Test that version fallback when git and package metadata are unavailable."""
-        original_version = importlib_metadata.version
-        original_check_output = subprocess.check_output
-
-        def _no_git(*_args, **_kwargs) -> str:
-            """Internal helper to simulate missing git binary/context."""
-            raise FileNotFoundError
 
         def _raise_not_found(_: str) -> str:
             """Internal helper to raise not found."""
             raise importlib_metadata.PackageNotFoundError
 
-        monkeypatch.setattr(subprocess, "check_output", _no_git)
-        monkeypatch.setattr(importlib_metadata, "version", _raise_not_found)
-        fallback_loaded = importlib.reload(constants_module)
-        assert fallback_loaded.VERSION == "0.0.0"
+        monkeypatch.setattr(constants_module, "_head_semver_tag", lambda: None)
+        monkeypatch.setattr(constants_module, "_pkg_version", _raise_not_found)
 
-        monkeypatch.setattr(subprocess, "check_output", original_check_output)
-        monkeypatch.setattr(importlib_metadata, "version", original_version)
-        restored = importlib.reload(constants_module)
-        assert restored.VERSION
+        assert constants_module._resolve_version() == "0.0.0"

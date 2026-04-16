@@ -9,11 +9,11 @@ TARGET ?= .
 PIP ?= $(VENV_PYTHON) -m pip
 PYTHON_CHECK_PATHS ?= src tests
 
-DEV_PACKAGES := pip setuptools wheel pytest pytest-cov ruff mypy pre-commit
+DEV_PACKAGES := pip setuptools wheel pytest pytest-cov ruff mypy pre-commit tox
 
 .PHONY: help help-all preflight bootstrap venv install build clean clean-deep format format-check lint lint-fix \
 	deps pre-commit-install setup all markdown-format markdown-format-check markdown-lint \
-	typecheck test check ci vstack-validate vstack-install vstack-install-global vstack-verify
+	typecheck test test-local check ci tox tox-all vstack-validate vstack-install vstack-install-global vstack-verify
 
 preflight:
 	@command -v $(POETRY) >/dev/null 2>&1 || { echo "Poetry not found. Install from https://python-poetry.org/docs/"; exit 1; }
@@ -29,9 +29,11 @@ help:
 	@echo "  make setup        - create .venv, install dev tools, install pre-commit hook"
 	@echo "  make format       - format Python and Markdown"
 	@echo "  make lint         - lint Python"
-	@echo "  make test         - run pytest"
+	@echo "  make test         - run tests on Python 3.11-3.14 via tox"
+	@echo "  make test-local   - run pytest on current interpreter only"
 	@echo "  make check        - full local quality gate"
 	@echo "  make ci           - check + vstack template validation"
+	@echo "  make tox          - run pytest across Python 3.11-3.14 (if interpreters are available)"
 	@echo "  make clean        - remove build/cache artifacts"
 	@echo "  make vstack-install - install generated artifacts into target"
 	@echo ""
@@ -56,9 +58,12 @@ help-all:
 	@echo "  make markdown-format-check - run markdown formatting check hook (may rewrite files)"
 	@echo "  make markdown-lint       - lint Markdown via pre-commit markdownlint hook"
 	@echo "  make typecheck           - run mypy on src/ and tests/"
-	@echo "  make test                - run pytest"
+	@echo "  make test                - run pytest matrix via tox (py311, py312, py313, py314)"
+	@echo "  make test-local          - run pytest on current interpreter only"
 	@echo "  make check               - run format-check + markdown checks + lint + typecheck + test"
 	@echo "  make ci                  - run check + vstack-validate"
+	@echo "  make tox                 - run tox pytest matrix (py311, py312, py313, py314)"
+	@echo "  make tox-all             - run all tox envs (tests + lint + type)"
 	@echo "  make vstack-validate     - run vstack validate"
 	@echo "  make vstack-install      - run vstack install --target <path> (default .)"
 	@echo "  make vstack-install-global - run vstack install --global"
@@ -116,12 +121,21 @@ markdown-lint:
 typecheck:
 	$(VENV_PYTHON) -m mypy $(PYTHON_CHECK_PATHS)
 
-test:
+test-local:
 	$(VENV_PYTHON) -m pytest -q
+
+test:
+	$(VENV_PYTHON) -m tox -e py311,py312,py313,py314
 
 check: format-check markdown-lint lint typecheck test
 
 ci: check vstack-validate
+
+tox:
+	$(VENV_PYTHON) -m tox -e py311,py312,py313,py314
+
+tox-all:
+	$(VENV_PYTHON) -m tox
 
 vstack-validate:
 	$(VENV_PYTHON) -m vstack validate
