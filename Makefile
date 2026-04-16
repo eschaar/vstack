@@ -125,17 +125,17 @@ test-local:
 	$(VENV_PYTHON) -m pytest -q
 
 test:
-	$(VENV_PYTHON) -m tox -e py311,py312,py313,py314
+	python -m tox -e py311,py312,py313,py314
 
 check: format-check markdown-lint lint typecheck test
 
 ci: check vstack-validate
 
 tox:
-	$(VENV_PYTHON) -m tox -e py311,py312,py313,py314
+	python -m tox -e py311,py312,py313,py314
 
 tox-all:
-	$(VENV_PYTHON) -m tox
+	python -m tox
 
 vstack-validate:
 	$(VENV_PYTHON) -m vstack validate
