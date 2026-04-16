@@ -12,10 +12,12 @@ Tooling and release hygiene update focused on making local and CI verification m
 
 - Repo-local `.python-version` for consistent pyenv interpreter resolution.
 - Tox-based multi-version test execution across Python 3.11, 3.12, 3.13, and 3.14.
+- Pre-commit hooks expanded: `trailing-whitespace`, `end-of-file-fixer`, `check-toml`, `check-yaml`, `ruff`, `ruff-format`.
 
 ### Changed in 1.0.1
 
-- Python support metadata is now explicitly bounded to 3.11-3.14.
+- `pyproject.toml` migrated from `[tool.poetry]` to PEP 621 `[project]` form; `version = "0.0.0"` is a build-time placeholder overwritten by `poetry-dynamic-versioning`.
+- Python support metadata is now explicitly bounded to 3.11–3.14.
 - QA workflow now runs a Python test matrix across all supported runtimes.
 - Local developer workflow now documents pyenv as the standard multi-version setup.
 
