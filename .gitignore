@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+wheels/
+sdist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Testing
+.pytest_cache/
+.hypothesis/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+coverage*.xml
+htmlcov/
+junit*.xml
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytype/
+
+# Linting / formatting caches
+.ruff_cache/
+
+# Tox
+.tox/
+
+# General caches
+.cache/
+**/.cache/
+
+# Node / JS
+node_modules/
+.npm/
+.pnpm-store/
+.yarn/
+
+# Notebook
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Packaging
+MANIFEST

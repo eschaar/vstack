@@ -1,0 +1,45 @@
+# Quality gate for branch pushes (excluding main).
+# Purpose: keep fast feedback for formatting, linting, and type checking.
+name: QA
+
+on:
+  # Run on every non-main branch push.
+  push:
+    branches-ignore: [main]
+
+env:
+  # Single Python version used across all QA checks.
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  qa:
+    # One consolidated job for style and static-analysis checks.
+    name: Format Lint Typecheck
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          # Cache Poetry downloads based on lockfile changes.
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: poetry
+          cache-dependency-path: poetry.lock
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Format check
+        run: make format-check
+
+      - name: Lint
+        run: make lint
+
+      - name: Typecheck
+        run: make typecheck

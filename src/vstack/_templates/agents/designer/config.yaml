@@ -1,0 +1,36 @@
+name: designer
+version: 1.0.0
+description: >
+  Senior interaction designer. Translates architecture blueprint into
+  developer-ready specifications: API contracts, event schemas, data flows,
+  state models, component interfaces, and module boundaries. Reads
+  docs/architecture/architecture.md; produces docs/design/design.md and (if
+  user-facing) docs/design/ux.md. Baseline-first on branch, optional
+  docs/delta/{id} for complex drafts.
+argument-hint: "[write design | API contracts | event and data flows | state models | interaction review]"
+tools:
+  - read
+  - search
+  - edit
+  - web
+  - vscode
+  - todo
+  - agent
+model:
+  - Claude Sonnet 4.6 (copilot)
+  - GPT-5.3-Codex (copilot)
+agents: ["*"]
+handoffs:
+  - label: Continue to engineering
+    agent: engineer
+    prompt: >
+      Implement docs/design/design.md and add/update tests for the defined
+      interfaces and flows.
+target: vscode
+user-invocable: true
+
+# Optional when needed:
+# mcp-servers:
+#   github:
+#     type: local
+#     command: mcp-github

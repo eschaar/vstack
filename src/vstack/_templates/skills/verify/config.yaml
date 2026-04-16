@@ -1,0 +1,17 @@
+name: verify
+version: 1.0.0
+description: |
+  Verification fix-loop skill. Routes by mode (quick/standard/exhaustive), runs
+  targeted checks, fixes findings by severity, and re-verifies impacted paths.
+  Routes report-only requests to inspect and escalates deep security/performance
+  concerns to specialized skills. Use when asked to "verify", "fix failing checks",
+  "run QA with fixes", or "re-verify before shipping".
+argument-hint: '[component or feature to verify]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

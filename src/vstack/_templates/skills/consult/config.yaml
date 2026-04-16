@@ -1,0 +1,18 @@
+name: consult
+version: 1.0.0
+description: |
+  DX triage and focused review. First classifies whether the request is API DX,
+  CLI/tool DX, or developer workflow DX, then runs exactly one review path with
+  0-10 scoring and ROI-ranked improvements. Routes non-DX requests to the right
+  specialized skill (analyse/debug/security/performance/design/verify/code-review).
+  Use when asked to "review DX", "review API usability", "review CLI experience",
+  or "review developer workflow friction".
+argument-hint: '[API, tool, or workflow to consult]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

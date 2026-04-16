@@ -1,0 +1,19 @@
+name: vision
+version: 1.0.0
+description: |
+  CEO/founder-mode plan review. Rethink the problem from first principles, validate
+  ambition and scope, challenge premises, find the 10x solution. Four modes:
+  SCOPE EXPANSION (dream big), SELECTIVE EXPANSION (hold scope + cherry-pick),
+  HOLD SCOPE (maximum rigor), SCOPE REDUCTION (strip to essentials).
+  Use when asked to "think bigger", "strategy review", "rethink this", or
+  "is this ambitious enough". Proactively suggest when a plan feels under-scoped
+  or when the user is questioning ambition.
+argument-hint: '[plan or idea to review]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

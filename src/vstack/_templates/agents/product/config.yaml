@@ -1,0 +1,37 @@
+name: product
+version: 1.0.0
+description: >
+  Senior product manager. Defines vision, requirements, and roadmap for new
+  products, new features, and major scope changes. Baseline-first on branch:
+  update docs/product directly and orchestrate role-owned baseline updates in
+  docs/architecture and docs/design. Optional docs/delta/{intake-id} is for
+  complex temporary drafts only.
+argument-hint: "[vision | requirements | scope review | acceptance review | release readiness check]"
+tools:
+  - read
+  - search
+  - edit
+  - web
+  - vscode
+  - todo
+  - agent
+model:
+  - Claude Sonnet 4.6 (copilot)
+  - Claude Opus 4.6 (copilot)
+  - GPT-5.3-Codex (copilot)
+agents: ["*"]
+handoffs:
+  - label: Continue to architecture
+    agent: architect
+    prompt: >
+      Use docs/product/vision.md and docs/product/requirements.md to
+      produce/update docs/architecture/architecture.md and
+      docs/architecture/adr/*.md.
+target: vscode
+user-invocable: true
+
+# Optional when needed:
+# mcp-servers:
+#   github:
+#     type: local
+#     command: mcp-github

@@ -1,0 +1,16 @@
+default: true
+
+MD003: false   # heading-style — disabled (atx style intentional throughout; setext false-positives without frontMatter support)
+MD004: false   # ul-style — disabled (mixed bullets are allowed)
+MD007: false   # ul-indent — disabled (indent style varies across templates)
+MD010: false   # no-hard-tabs — disabled (tab-indented JSON snippets are intentional)
+MD013: false   # line-length — disabled (long lines allowed)
+MD022: false   # blanks-around-headings — disabled (frontmatter/template structure differs)
+MD026: false   # no-trailing-punctuation — disabled (headings like "Step 1:" are intentional)
+MD032: false   # blanks-around-lists — disabled (tight template layout is intentional)
+MD033: false   # no-inline-html — disabled (HTML in MD allowed)
+MD031: false   # blanks-around-fences — disabled (template/codeblock layout varies)
+MD035: false   # horizontal-rule-style — disabled (formatter may emit non-`---` rules)
+MD040: false   # fenced-code-language — disabled (some generic fences are intentional)
+MD041: false   # first-line-heading — disabled (files start with front matter, not a heading)
+MD060: false   # table-column-style — disabled (separator rows like |---|---| are fine)

@@ -1,0 +1,16 @@
+name: guardrails
+version: 1.0.0
+description: |
+  Activate safety guardrails for the current session. Before any destructive
+  command (rm -rf, DROP TABLE, git push --force, git reset --hard, kubectl delete,
+  production config changes, database migrations) a confirmation is required.
+  Use when asked to "be careful", "enable guardrails", or "careful mode".
+disable-model-invocation: true
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+argument-hint: '[task]'
+user-invocable: true

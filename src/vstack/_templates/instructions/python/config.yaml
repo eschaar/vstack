@@ -1,0 +1,4 @@
+name: python
+description: Python coding conventions for this repository. Use when writing or reviewing Python modules, tests, CLI code, and package internals.
+applyTo: "**/*.py"
+version: 0.1.0

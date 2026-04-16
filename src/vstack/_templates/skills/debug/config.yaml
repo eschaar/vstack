@@ -1,0 +1,16 @@
+name: debug
+version: 1.0.0
+description: |
+  Systematic root-cause debugging for backend services, APIs, and libraries.
+  No fixes without investigation. Follows the scientific method: observe →
+  hypothesize → test → conclude → fix → prevent. Use when asked to "debug",
+  "investigate", "find the root cause", or "why is this broken?".
+argument-hint: '[issue or error to debug]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

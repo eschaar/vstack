@@ -1,0 +1,19 @@
+repos:
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.22
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm
+        files: \.(md)$
+        exclude: ^\.github/
+
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.18.1
+    hooks:
+      - id: markdownlint-cli2
+        args:
+          - --config
+          - .markdownlint-cli2.yaml
+        files: \.(md)$
+        exclude: ^\.github/

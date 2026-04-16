@@ -1,0 +1,38 @@
+name: architect
+version: 1.0.0
+description: >
+  Senior software architect. Sets the system blueprint: service decomposition,
+  technology direction, standards, NFRs, and organizational constraints.
+  Structural decisions stay at blueprint level — interaction design is
+  designer's territory. Reads docs/product/vision.md and
+  docs/product/requirements.md; produces docs/architecture/architecture.md and
+  docs/architecture/adr/*.md. Baseline-first on branch, optional
+  docs/delta/{id} for complex drafts.
+argument-hint: "[design architecture | write ADR | review architecture | check implementation alignment]"
+tools:
+  - read
+  - search
+  - edit
+  - web
+  - vscode
+  - todo
+  - agent
+model:
+  - Claude Opus 4.6 (copilot)
+  - Claude Sonnet 4.6 (copilot)
+  - GPT-5.3-Codex (copilot)
+agents: ["*"]
+handoffs:
+  - label: Continue to design
+    agent: designer
+    prompt: >
+      Translate docs/architecture/architecture.md into docs/design/design.md
+      with concrete interfaces and contracts.
+target: vscode
+user-invocable: true
+
+# Optional when needed:
+# mcp-servers:
+#   github:
+#     type: local
+#     command: mcp-github

@@ -1,0 +1,16 @@
+name: analyse
+version: 1.0.0
+description: |
+  Cross-cutting technical analysis. Investigates impact, tradeoffs, root causes,
+  or feasibility without implementing changes. Use when asked to "analyse this",
+  "investigate the impact", "what are the tradeoffs", "root cause analysis",
+  "is this feasible?", or "compare these approaches". Produces an analysis report.
+argument-hint: '[topic, change, or question to analyse]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

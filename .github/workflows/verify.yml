@@ -1,0 +1,70 @@
+# Pull request verification workflow.
+# Purpose: validate both source tests and generated/installable artifacts.
+name: Verify
+
+"on":
+  # Run on PRs targeting main so merge decisions are based on full verification.
+  pull_request:
+    branches: [main]
+
+env:
+  # Shared interpreter version for reproducible CI behavior.
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  unit-tests:
+    # Fast correctness check for repository source code.
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: poetry
+          cache-dependency-path: poetry.lock
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Run unit tests
+        run: make test
+
+  vstack-verify:
+    # Ensures generated artifacts can be installed and validated in an isolated target.
+    name: Artifact Install Verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: poetry
+          cache-dependency-path: poetry.lock
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Set unique temp target directory
+        # Avoid cross-run collisions on shared/self-hosted runners.
+        run: echo "TARGET_DIR=${RUNNER_TEMP}/vstack-pr-target-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"
+
+      - name: Install artifacts into temp target
+        run: poetry run vstack install --target "${TARGET_DIR}"
+
+      - name: Verify source and installed output
+        run: poetry run vstack verify --target "${TARGET_DIR}"

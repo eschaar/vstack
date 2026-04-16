@@ -1,0 +1,154 @@
+{
+  "vstack_version": "0.1.0",
+  "installed_at": "2026-04-16T22:29:03.096690+00:00",
+  "artifacts": {
+    "skills": [
+      {
+        "name": "adr",
+        "file": "skills/adr/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "analyse",
+        "file": "skills/analyse/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "architecture",
+        "file": "skills/architecture/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "cicd",
+        "file": "skills/cicd/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "code-review",
+        "file": "skills/code-review/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "consult",
+        "file": "skills/consult/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "container",
+        "file": "skills/container/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "debug",
+        "file": "skills/debug/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "design",
+        "file": "skills/design/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "docs",
+        "file": "skills/docs/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "explore",
+        "file": "skills/explore/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "guardrails",
+        "file": "skills/guardrails/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "inspect",
+        "file": "skills/inspect/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "performance",
+        "file": "skills/performance/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "pr",
+        "file": "skills/pr/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "release-notes",
+        "file": "skills/release-notes/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "requirements",
+        "file": "skills/requirements/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "security",
+        "file": "skills/security/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "verify",
+        "file": "skills/verify/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "vision",
+        "file": "skills/vision/SKILL.md",
+        "version": "1.0.0"
+      }
+    ],
+    "agents": [
+      {
+        "name": "architect",
+        "file": "agents/architect.agent.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "designer",
+        "file": "agents/designer.agent.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "engineer",
+        "file": "agents/engineer.agent.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "product",
+        "file": "agents/product.agent.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "release",
+        "file": "agents/release.agent.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "tester",
+        "file": "agents/tester.agent.md",
+        "version": "1.0.0"
+      }
+    ],
+    "instructions": [
+      {
+        "name": "python",
+        "file": "instructions/python.instructions.md",
+        "version": "0.1.0"
+      }
+    ],
+    "prompts": [
+      {
+        "name": "code-review",
+        "file": "prompts/code-review.prompt.md",
+        "version": "0.1.0"
+      }
+    ]
+  }
+}

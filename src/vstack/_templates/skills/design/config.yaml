@@ -1,0 +1,16 @@
+name: design
+version: 1.0.0
+description: |
+  Build a complete API design or service design from scratch. Produces OpenAPI
+  specs, error conventions, naming standards, pagination patterns, and versioning
+  policies. Use when asked to "design the API", "create a design system for this
+  service", "define the API standards", or "design this service interface".
+argument-hint: '[API or service to design]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

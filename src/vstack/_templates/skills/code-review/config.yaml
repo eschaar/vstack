@@ -1,0 +1,16 @@
+name: code-review
+version: 1.0.0
+description: |
+  Pre-landing code review. Finds bugs that pass CI but break in production —
+  race conditions, missing error handling, API contract violations, observability
+  gaps, security issues, and performance landmines. Use when asked to "review",
+  "code review", "review this PR", or before merging.
+argument-hint: '[files, PR, or change to review]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

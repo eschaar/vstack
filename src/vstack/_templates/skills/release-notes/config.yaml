@@ -1,0 +1,16 @@
+name: release-notes
+version: 1.0.0
+description: |
+  Prepare release artifacts: verify all docs are present, write release notes,
+  own CHANGELOG.md updates, and produce docs/releases/{date}.md.
+  Use when asked to "write release notes", "update the changelog", or
+  "prepare release artifacts".
+argument-hint: '[version or changes to release]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

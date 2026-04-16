@@ -1,0 +1,8 @@
+# markdownlint-cli2 configuration
+# https://github.com/DavidAnson/markdownlint-cli2#configuration
+
+# frontMatter is a tool-level option, not a rule — it cannot live in .markdownlint.yaml.
+# This tells the CLI to skip YAML front matter (--- ... --- blocks) at the top of files.
+frontMatter: "^---$"
+
+# Rule configuration is in .markdownlint.yaml

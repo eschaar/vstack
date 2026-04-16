@@ -1,0 +1,17 @@
+name: requirements
+version: 1.0.0
+description: |
+  Collaborative requirements gathering and documentation. Clarifies what must be
+  built, defines success criteria, constraints, and non-functional requirements.
+  Produces a requirements.md document. Use when asked to "gather requirements",
+  "write the requirements", "define the spec", or "what are we building?".
+  Runs before architecture and design work begins.
+argument-hint: '[feature or system to document]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

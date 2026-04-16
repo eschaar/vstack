@@ -1,0 +1,17 @@
+name: adr
+version: 1.0.0
+description: |
+  Architecture Decision Record writing. Documents a significant architectural
+  decision with context, alternatives considered, rationale, and impact.
+  Use when asked to "write an ADR", "document this decision", "record why we
+  chose X", or when a significant technical decision needs a permanent record.
+  Runs after a decision is made or while evaluating options.
+argument-hint: '[decision to record]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

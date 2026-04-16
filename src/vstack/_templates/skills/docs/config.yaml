@@ -1,0 +1,17 @@
+name: docs
+version: 1.0.0
+description: |
+  Post-release documentation alignment. Updates README, API docs, migration
+  guides, and related docs to match shipped behavior. Does not own release-note
+  generation or CHANGELOG updates.
+  Use after release or deploy, or when asked to "update docs", "align
+  documentation", or "refresh README/API docs".
+argument-hint: '[release or change to document]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

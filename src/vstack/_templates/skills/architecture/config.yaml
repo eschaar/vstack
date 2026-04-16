@@ -1,0 +1,18 @@
+name: architecture
+version: 1.0.0
+description: |
+  Engineering-lead plan review. Lock in the execution plan —
+  service boundaries, data models, API contracts, error handling, test strategy,
+  distributed systems correctness, migrations, and observability. Walks through
+  issues with opinionated recommendations. Use when asked to "review the architecture",
+  "engineering review", or "lock in the plan". Proactively suggest when the user
+  has a plan and is about to start coding — catch architecture issues before implementation.
+argument-hint: '[plan or system to review]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

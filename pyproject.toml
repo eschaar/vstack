@@ -1,0 +1,100 @@
+[tool.poetry]
+name = "vstack"
+dynamic = ["version"]
+description = "VS Code-native AI engineering workflow system for microservices, libraries, and backend systems."
+authors = []
+license = "MIT"
+readme = "README.md"
+packages = [{include = "vstack", from = "src"}]
+include = [
+    { path = "src/vstack/_templates", format = ["sdist", "wheel"] },
+]
+
+[tool.poetry.scripts]
+vstack = "vstack:main"
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=9.0"
+pytest-cov = ">=6.0"
+ruff = ">=0.9"
+mypy = ">=1.0"
+pre-commit = ">=3.8"
+
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+pythonpath = ["src"]
+addopts = [
+    "--import-mode=importlib",
+    "--cov=src/vstack",
+    "--cov-report=term-missing",
+    "--cov-fail-under=95",
+]
+
+# ---------------------------------------------------------------------------
+# ruff
+# ---------------------------------------------------------------------------
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+ignore = [
+    "E501",  # line too long — handled by formatter
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# ---------------------------------------------------------------------------
+# mypy
+# ---------------------------------------------------------------------------
+
+[tool.mypy]
+python_version = "3.11"
+strict = false
+warn_unused_ignores = true
+warn_return_any = false
+ignore_missing_imports = true
+
+# ---------------------------------------------------------------------------
+# build system
+# ---------------------------------------------------------------------------
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+# ---------------------------------------------------------------------------
+# poetry-dynamic-versioning — reads version from git tags at build time.
+# Fallback is used when no git tag is reachable (e.g. shallow clone, fresh repo).
+# ---------------------------------------------------------------------------
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "pep440"
+fallback-version = "0.0.0"
+
+# ---------------------------------------------------------------------------
+# pyright is used for type checking in VS Code, by Pylance.
+# The "extraPaths" setting is used to find the "scripts" directory,
+# which contains the main code for vstack, but is not a project dependency. 
+# ---------------------------------------------------------------------------
+
+[tool.pyright]
+pythonVersion = "3.11"
+extraPaths = ["scripts"]

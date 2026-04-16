@@ -1,0 +1,50 @@
+# PR-focused security checks.
+# Purpose: catch dependency vulnerabilities and leaked secrets before merge.
+name: Security
+
+on:
+  # Security checks are required for all PRs into main.
+  pull_request:
+    branches: [main]
+
+env:
+  # Keep scanner runtime consistent across runs.
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  security:
+    # Single job that combines package audit and secret scanning.
+    name: Dependency and Secret Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: poetry
+          cache-dependency-path: poetry.lock
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - name: Install pip-audit
+        run: pipx install pip-audit
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Python dependency audit
+        # Audit the exact dependency graph exported from Poetry.
+        run: pip-audit --requirement <(poetry export --without-hashes -f requirements.txt)
+
+      - name: Secret scan
+        # Scan only PR diff range to reduce noise and speed up checks.
+        uses: trufflesecurity/trufflehog@v3.88.2
+        with:
+          path: ./
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.event.pull_request.head.sha }}

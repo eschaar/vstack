@@ -1,0 +1,15 @@
+name: performance
+version: 1.0.0
+description: |
+  Performance profiling and regression detection. Establishes baselines, detects
+  regressions, profiles bottlenecks, and recommends optimizations. Use when asked
+  to "profile", "benchmark", "performance test", or "is this faster?".
+argument-hint: '[endpoint or function to profile]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

@@ -1,0 +1,36 @@
+name: engineer
+version: 1.0.0
+description: >
+  Senior software engineer. Implements features, bug fixes, and unit tests
+  based on docs/design/design.md, docs/architecture/architecture.md, and ADRs.
+  Reviews code for correctness and architectural alignment. Debugs issues
+  root-cause first. Baseline-first on branch, optional docs/delta/{id} for
+  complex context only.
+argument-hint: "[implement feature | fix bug | refactor area | review code | debug issue | update tests]"
+tools:
+  - read
+  - search
+  - edit
+  - execute
+  - web
+  - vscode
+  - todo
+  - agent
+model:
+  - GPT-5.3-Codex (copilot)
+  - Claude Sonnet 4.6 (copilot)
+agents: ["*"]
+handoffs:
+  - label: Run verification
+    agent: tester
+    prompt: >
+      Run verification and produce/update test, security, and performance
+      reports.
+target: vscode
+user-invocable: true
+
+# Optional when needed:
+# mcp-servers:
+#   github:
+#     type: local
+#     command: mcp-github

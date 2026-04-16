@@ -1,0 +1,17 @@
+name: explore
+version: 1.0.0
+description: |
+  Repository and system discovery. Maps the architecture, understands the
+  codebase, identifies technical debt, and produces a structured onboarding
+  summary. Use at the start of any engagement with an unfamiliar codebase,
+  when asked to "understand this codebase", "map the architecture", "explore
+  the repo", or "what does this service do?".
+argument-hint: '[repository or system to explore]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

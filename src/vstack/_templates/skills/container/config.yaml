@@ -1,0 +1,17 @@
+name: container
+version: 1.0.0
+description: |
+  Write and review Dockerfile, docker-compose, and container configuration.
+  Covers multi-stage builds, image hardening, non-root users, minimal base images,
+  layer optimisation, and local development compose setup.
+  Use when asked to "containerise", "write a Dockerfile", "add docker-compose",
+  or "harden the container image".
+argument-hint: '[service to containerise]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

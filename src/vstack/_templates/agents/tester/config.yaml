@@ -1,0 +1,41 @@
+name: tester
+version: 1.0.0
+description: >
+  Senior QA, security, and reliability engineer. Runs functional, security,
+  and performance tests. Produces docs/test-report.md, docs/security-report.md,
+  and docs/performance-baseline.md based on docs/architecture/architecture.md
+  and requirements. Baseline-first on branch, optional docs/delta/{id} notes
+  for complex efforts only.
+argument-hint: "[verify changes | write tests | security review | performance review | smoke test service]"
+tools:
+  - read
+  - search
+  - edit
+  - execute
+  - web
+  - vscode
+  - todo
+  - agent
+model:
+  - Claude Sonnet 4.6 (copilot)
+  - GPT-5.3-Codex (copilot)
+agents: ["*"]
+handoffs:
+  - label: Send fixes to engineer
+    agent: engineer
+    prompt: >
+      Resolve blocking findings from tester reports and update tests where
+      needed.
+  - label: Continue to release
+    agent: release
+    prompt: >
+      If findings are resolved, run release readiness checks and prepare
+      release artifacts.
+target: vscode
+user-invocable: true
+
+# Optional when needed:
+# mcp-servers:
+#   github:
+#     type: local
+#     command: mcp-github

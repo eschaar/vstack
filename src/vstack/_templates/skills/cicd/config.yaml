@@ -1,0 +1,16 @@
+name: cicd
+version: 1.0.0
+description: |
+  Write GitHub Actions CI/CD workflow configuration. Covers build, test, lint,
+  security scan, container publish, and deployment trigger workflows.
+  Use when asked to "write a CI pipeline", "set up GitHub Actions",
+  "add a workflow", or "configure CD".
+argument-hint: '[service or workflow to configure]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false
