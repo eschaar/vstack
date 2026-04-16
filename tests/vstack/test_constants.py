@@ -49,7 +49,12 @@ class TestConstants:
         """Test that git is not consulted when not inside the vstack source tree."""
         monkeypatch.setattr(constants_module, "_vstack_repo_root", lambda: None)
         called = []
-        monkeypatch.setattr(subprocess, "check_output", lambda *_a, **_kw: called.append(1) or "")
+
+        def _record_call(*_args, **_kwargs) -> str:
+            called.append(1)
+            return ""
+
+        monkeypatch.setattr(subprocess, "check_output", _record_call)
 
         assert constants_module._head_semver_tag() is None
         assert not called, "git must not be invoked outside the vstack repo"
@@ -60,7 +65,7 @@ class TestConstants:
         """Test that a .git dir without src/vstack does not match as vstack repo."""
         fake_git = tmp_path / ".git"
         fake_git.mkdir()
-        monkeypatch.setattr(constants_module, "_PACKAGE_ROOT", tmp_path)  # type: ignore[attr-defined]
+        monkeypatch.setattr(constants_module, "_PACKAGE_ROOT", tmp_path)
 
         assert constants_module._vstack_repo_root() is None
 
