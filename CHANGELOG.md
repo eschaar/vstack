@@ -26,6 +26,8 @@ Skill expansion and documentation alignment update.
 - `README.md` role–skill table updated to reflect new primary skills per role.
 - `README.md` project structure diagram updated to include `instructions/` and `prompts/` template directories and the correct `docs/` subdirectory layout.
 - `.github/copilot-instructions.md` updated: system structure diagram now includes all four template artifact types (`skills`, `agents`, `instructions`, `prompts`); hand-authored `.github/` exceptions listed explicitly; install table extended with `instructions` and `prompts` rows.
+- GitHub Actions workflows now declare explicit `permissions` with least-privilege defaults; release write access is scoped to the release job only.
+- `verify.yml` normalized to use `on:` (unquoted) for style consistency with other workflows.
 
 ## 1.0.3 — 2026-04-19
 

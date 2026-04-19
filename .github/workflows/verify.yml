@@ -2,7 +2,7 @@
 # Purpose: validate both source tests and generated/installable artifacts.
 name: Verify
 
-"on":
+on:
   # Run on PRs targeting main so merge decisions are based on full verification.
   pull_request:
     branches: [main]
