@@ -14,6 +14,11 @@ Skill expansion and documentation alignment update.
   - `dependency` — full dependency health audit: vulnerability scanning, outdated packages, licence compliance, transitive risk, pinning policy, supply chain hygiene.
   - `incident` — incident analysis and blameless post-mortem writing: timeline reconstruction, 5-Whys root cause, contributing factors matrix, action items → `docs/postmortems/YYYY-MM-DD-*.md`.
 
+### Fixed in 1.0.4
+
+- `refactor` skill: removed outer ```` ```bash ```` fences wrapping `{{RUN_TESTS}}` partial (which already includes its own fence).
+- `onboard` skill: fixed nested fence issues in step 5 CONTRIBUTING.md example and step 6 README snippet.
+
 ### Changed in 1.0.4
 
 - `engineer`, `designer`, `tester`, `product` agent templates updated with skill references for all new skills.
