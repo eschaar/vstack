@@ -52,10 +52,7 @@ ______________________________________________________________________
 
 **Never start refactoring without a green test baseline.**
 
-```bash
-# Run the test suite and confirm it is green
 {{RUN_TESTS}}
-```
 
 If tests are red before you start:
 
@@ -150,10 +147,7 @@ For each planned step:
 1. Run tests immediately
 1. Confirm green before moving to the next step
 
-```bash
-# After each step:
 {{RUN_TESTS}}
-```
 
 ### Common refactoring patterns
 
@@ -246,9 +240,7 @@ ______________________________________________________________________
 
 After all steps are complete, run the full verification suite:
 
-```bash
 {{RUN_TESTS}}
-```
 
 Check:
 

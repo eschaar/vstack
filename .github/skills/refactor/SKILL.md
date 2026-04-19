@@ -84,8 +84,6 @@ ______________________________________________________________________
 **Never start refactoring without a green test baseline.**
 
 ```bash
-# Run the test suite and confirm it is green
-```bash
 # Detect test runner and run tests
 if [ -f package.json ]; then
   if grep -q '"vitest"' package.json 2>/dev/null; then
@@ -106,7 +104,6 @@ elif [ -f Cargo.toml ]; then
 else
   echo "No recognized test framework detected."
 fi
-```
 ```
 
 If tests are red before you start:
@@ -144,18 +141,18 @@ grep -r -n "TODO\|FIXME\|HACK\|XXX" \
   . 2>/dev/null | head -20
 ```
 
-| Smell | Description | Refactoring |
-|---|---|---|
-| Long function | > 30 lines, multiple responsibilities | Extract function |
-| Long file | > 300 lines | Extract module |
-| Duplicate code | Same logic in 2+ places | Extract shared function |
-| Magic numbers/strings | Unnamed literals | Named constant |
-| Deep nesting | > 3 levels | Early return / guard clause |
-| Long parameter list | > 4 parameters | Parameter object |
-| Inappropriate naming | Misleading or vague names | Rename |
-| Dead code | Unused functions/variables | Remove |
-| Comment explaining code | Code needs a comment to be understood | Rewrite the code |
-| Mutable global state | Module-level mutable variables | Encapsulate |
+| Smell                   | Description                           | Refactoring                 |
+| ----------------------- | ------------------------------------- | --------------------------- |
+| Long function           | > 30 lines, multiple responsibilities | Extract function            |
+| Long file               | > 300 lines                           | Extract module              |
+| Duplicate code          | Same logic in 2+ places               | Extract shared function     |
+| Magic numbers/strings   | Unnamed literals                      | Named constant              |
+| Deep nesting            | > 3 levels                            | Early return / guard clause |
+| Long parameter list     | > 4 parameters                        | Parameter object            |
+| Inappropriate naming    | Misleading or vague names             | Rename                      |
+| Dead code               | Unused functions/variables            | Remove                      |
+| Comment explaining code | Code needs a comment to be understood | Rewrite the code            |
+| Mutable global state    | Module-level mutable variables        | Encapsulate                 |
 
 Produce a prioritized smell list:
 
@@ -173,8 +170,8 @@ ______________________________________________________________________
 Break the refactoring into small, independent steps. Each step must:
 
 1. Change exactly one thing
-2. Leave tests green
-3. Be reviewable in isolation
+1. Leave tests green
+1. Be reviewable in isolation
 
 ```text
 Refactoring plan:
@@ -199,11 +196,9 @@ ______________________________________________________________________
 For each planned step:
 
 1. Make the change
-2. Run tests immediately
-3. Confirm green before moving to the next step
+1. Run tests immediately
+1. Confirm green before moving to the next step
 
-```bash
-# After each step:
 ```bash
 # Detect test runner and run tests
 if [ -f package.json ]; then
@@ -225,7 +220,6 @@ elif [ -f Cargo.toml ]; then
 else
   echo "No recognized test framework detected."
 fi
-```
 ```
 
 ### Common refactoring patterns
@@ -320,7 +314,6 @@ ______________________________________________________________________
 After all steps are complete, run the full verification suite:
 
 ```bash
-```bash
 # Detect test runner and run tests
 if [ -f package.json ]; then
   if grep -q '"vitest"' package.json 2>/dev/null; then
@@ -341,7 +334,6 @@ elif [ -f Cargo.toml ]; then
 else
   echo "No recognized test framework detected."
 fi
-```
 ```
 
 Check:
