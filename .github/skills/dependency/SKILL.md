@@ -24,15 +24,6 @@ When you need clarification, use this exact format — never invent or guess:
 
 Never ask more than one question at a time without waiting for the answer.
 
-```bash
-# Detect base branch (main / master / develop / trunk)
-BASE=$(gh pr view --json baseRefName -q .baseRefName 2>/dev/null) \
-  || BASE=$(git remote show origin 2>/dev/null | grep 'HEAD branch' | awk '{print $NF}') \
-  || BASE=$(git branch -r 2>/dev/null | grep -E '/(main|master|develop|trunk)' | head -1 | sed 's|.*origin/||') \
-  || BASE="main"
-echo "Base branch: $BASE"
-```
-
 # dependency — Dependency Health Audit
 
 Audit the health, security, and compliance of project dependencies. Covers
@@ -143,13 +134,14 @@ cargo outdated 2>/dev/null | head -30
 
 Classify each outdated package:
 
-| Package | Current | Latest | Type | Action |
-|---|---|---|---|---|
-| `foo` | 1.2.0 | 1.2.5 | patch | update now |
-| `bar` | 2.1.0 | 3.0.0 | major | evaluate breaking changes |
-| `baz` | 0.9.0 | 0.9.8 | patch | update now |
+| Package | Current | Latest | Type  | Action                    |
+| ------- | ------- | ------ | ----- | ------------------------- |
+| `foo`   | 1.2.0   | 1.2.5  | patch | update now                |
+| `bar`   | 2.1.0   | 3.0.0  | major | evaluate breaking changes |
+| `baz`   | 0.9.0   | 0.9.8  | patch | update now                |
 
 **Update priority:**
+
 - Patch updates: update immediately (no breaking changes expected)
 - Minor updates: update soon (check changelog for deprecations)
 - Major updates: plan upgrade (read migration guide, test thoroughly)
@@ -176,12 +168,12 @@ go-licenses report ./... 2>/dev/null | head -40 \
 
 Classify licences by risk:
 
-| Risk | Licences | Requirement |
-|---|---|---|
-| Low | MIT, BSD-2, BSD-3, Apache-2.0, ISC | Can use freely, attribution in docs |
-| Medium | LGPL-2.1, LGPL-3.0 | Dynamic linking OK; static linking requires review |
-| High | GPL-2.0, GPL-3.0, AGPL-3.0 | May require open-sourcing your code |
-| Review | Commercial, proprietary, unknown | Requires legal review before use |
+| Risk   | Licences                           | Requirement                                        |
+| ------ | ---------------------------------- | -------------------------------------------------- |
+| Low    | MIT, BSD-2, BSD-3, Apache-2.0, ISC | Can use freely, attribution in docs                |
+| Medium | LGPL-2.1, LGPL-3.0                 | Dynamic linking OK; static linking requires review |
+| High   | GPL-2.0, GPL-3.0, AGPL-3.0         | May require open-sourcing your code                |
+| Review | Commercial, proprietary, unknown   | Requires legal review before use                   |
 
 Flag any High or Review licences:
 
@@ -211,13 +203,13 @@ cat pyproject.toml 2>/dev/null | grep -E '^\s+[a-z]' | grep -v '^#' | head -30
 # Flag overly loose constraints (e.g. "*", ">=1.0" with no upper bound in prod deps)
 ```
 
-| Pattern | Risk | Recommendation |
-|---|---|---|
-| `package = "*"` | High | Pin to a compatible range |
-| `package = ">=1.0"` | Medium | Add upper bound: `>=1.0,<3.0` |
-| `package = "^1.0"` (Poetry) | Low | Acceptable for non-critical deps |
-| `package = "1.2.3"` (exact) | Low | Fine for direct deps; brittle for transitive |
-| No lock file | High | Add lock file and commit it |
+| Pattern                     | Risk   | Recommendation                               |
+| --------------------------- | ------ | -------------------------------------------- |
+| `package = "*"`             | High   | Pin to a compatible range                    |
+| `package = ">=1.0"`         | Medium | Add upper bound: `>=1.0,<3.0`                |
+| `package = "^1.0"` (Poetry) | Low    | Acceptable for non-critical deps             |
+| `package = "1.2.3"` (exact) | Low    | Fine for direct deps; brittle for transitive |
+| No lock file                | High   | Add lock file and commit it                  |
 
 ______________________________________________________________________
 

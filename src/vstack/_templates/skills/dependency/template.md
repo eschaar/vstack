@@ -1,7 +1,5 @@
 {{SKILL_CONTEXT}}
 
-{{BASE_BRANCH}}
-
 # dependency — Dependency Health Audit
 
 Audit the health, security, and compliance of project dependencies. Covers

@@ -37,6 +37,9 @@ find . -type f \( -name '*.sql' -o -name '*migration*' -o -name '*migrate*' \) \
   --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=build \
   2>/dev/null | sort | tail -20
 
+# Show migration files changed in this branch
+git diff <base> --stat -- '*.sql' '**migration**' '**migrate**' 2>/dev/null | head -20
+
 # Check migration framework in use
 [ -f alembic.ini ] && echo "alembic" || true
 [ -f flyway.conf ] && echo "flyway" || true

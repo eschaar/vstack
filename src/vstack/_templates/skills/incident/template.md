@@ -191,6 +191,7 @@ Detection (catch it faster next time):
 
 Response (resolve it faster next time):
   [ ] [specific action] — owner: [name/team] — due: [date/sprint]
+  [ ] Write or update runbook for this failure class — owner: [name/team] — due: [date/sprint]
 
 Process (improve how we handle incidents):
   [ ] [specific action] — owner: [name/team] — due: [date/sprint]

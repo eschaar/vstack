@@ -32,7 +32,7 @@ ______________________________________________________________________
 ```bash
 # Understand the current state
 git log --oneline -10
-git diff origin/main --stat 2>/dev/null | head -20
+git diff <base> --stat 2>/dev/null | head -20
 
 # Find the files to refactor
 # Read the area before touching anything

@@ -273,7 +273,7 @@ ______________________________________________________________________
 
 If README lacks a dev setup section, add a minimal one linking to CONTRIBUTING.md:
 
-`````markdown
+````markdown
 ## development
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, and contribution guidelines.
@@ -285,7 +285,7 @@ Quick start:
 [one-liner test command]
 ```
 
-`````
+````
 
 ______________________________________________________________________
 
@@ -310,6 +310,6 @@ Coverage:
 
 Gaps remaining (if any):
   [anything that could not be determined automatically]
-````
+```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->

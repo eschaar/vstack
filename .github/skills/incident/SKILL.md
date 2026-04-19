@@ -83,6 +83,7 @@ ______________________________________________________________________
 ## Step 1: Reconstruct the Timeline
 
 Build a precise, chronological timeline of events. Include:
+
 - System events (deploys, config changes, traffic spikes)
 - Detection events (alerts fired, pages sent)
 - Response actions (who did what, when)
@@ -132,15 +133,15 @@ Why did [systemic gap] exist?
 
 Categorize contributing factors:
 
-| Category | Factor |
-|---|---|
-| Code / logic | [e.g. missing error handling, race condition] |
-| Configuration | [e.g. incorrect timeout, missing feature flag] |
-| Deployment | [e.g. no canary, missing rollback plan] |
-| Monitoring | [e.g. alert threshold too high, missing metric] |
-| Process | [e.g. no review for config changes, unclear runbook] |
-| External | [e.g. upstream dependency failure, cloud provider issue] |
-| Knowledge | [e.g. undocumented behaviour, tribal knowledge gap] |
+| Category      | Factor                                                   |
+| ------------- | -------------------------------------------------------- |
+| Code / logic  | [e.g. missing error handling, race condition]            |
+| Configuration | [e.g. incorrect timeout, missing feature flag]           |
+| Deployment    | [e.g. no canary, missing rollback plan]                  |
+| Monitoring    | [e.g. alert threshold too high, missing metric]          |
+| Process       | [e.g. no review for config changes, unclear runbook]     |
+| External      | [e.g. upstream dependency failure, cloud provider issue] |
+| Knowledge     | [e.g. undocumented behaviour, tribal knowledge gap]      |
 
 ______________________________________________________________________
 
@@ -150,6 +151,7 @@ The root cause is the deepest systemic condition that, if addressed, would
 prevent this class of incident from recurring.
 
 **Root cause is NOT:**
+
 - "Human error" (humans make mistakes — the system must be resilient to them)
 - "We forgot to test X" (why was it possible to ship without testing X?)
 - The deployment that triggered it (that is the trigger, not the cause)
@@ -196,6 +198,7 @@ ______________________________________________________________________
 ## Step 5: Write Action Items
 
 Action items must be:
+
 - **Specific** — not "improve monitoring" but "add alert on p99 > 500ms for /checkout"
 - **Owned** — assigned to a person or team
 - **Time-bound** — target date or sprint
@@ -212,6 +215,7 @@ Detection (catch it faster next time):
 
 Response (resolve it faster next time):
   [ ] [specific action] — owner: [name/team] — due: [date/sprint]
+  [ ] Write or update runbook for this failure class — owner: [name/team] — due: [date/sprint]
 
 Process (improve how we handle incidents):
   [ ] [specific action] — owner: [name/team] — due: [date/sprint]

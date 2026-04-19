@@ -68,6 +68,9 @@ find . -type f \( -name '*.sql' -o -name '*migration*' -o -name '*migrate*' \) \
   --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=build \
   2>/dev/null | sort | tail -20
 
+# Show migration files changed in this branch
+git diff <base> --stat -- '*.sql' '**migration**' '**migrate**' 2>/dev/null | head -20
+
 # Check migration framework in use
 [ -f alembic.ini ] && echo "alembic" || true
 [ -f flyway.conf ] && echo "flyway" || true
@@ -90,20 +93,20 @@ ______________________________________________________________________
 
 Classify every DDL operation by risk level:
 
-| Operation | Risk | Notes |
-|---|---|---|
-| `CREATE TABLE` | Low | Safe at any time |
-| `ADD COLUMN` nullable, no default | Low | Safe in rolling deploy |
-| `ADD COLUMN` with default (non-volatile) | Medium | May lock on large tables |
-| `ADD COLUMN NOT NULL` without default | **High** | Breaks old app version |
-| `DROP COLUMN` | **High** | Must remove all references first |
-| `RENAME COLUMN` | **High** | Breaks old app version immediately |
-| `ALTER COLUMN` type change | **High** | May require data rewrite |
-| `CREATE INDEX CONCURRENTLY` | Low | Safe, non-blocking |
-| `CREATE INDEX` (without CONCURRENTLY) | **High** | Full table lock |
-| `DROP INDEX` | Low | Safe |
-| `ADD CONSTRAINT` | **High** | Validates all existing rows |
-| `TRUNCATE` / `DROP TABLE` | **Destructive** | Requires explicit confirmation |
+| Operation                                | Risk            | Notes                              |
+| ---------------------------------------- | --------------- | ---------------------------------- |
+| `CREATE TABLE`                           | Low             | Safe at any time                   |
+| `ADD COLUMN` nullable, no default        | Low             | Safe in rolling deploy             |
+| `ADD COLUMN` with default (non-volatile) | Medium          | May lock on large tables           |
+| `ADD COLUMN NOT NULL` without default    | **High**        | Breaks old app version             |
+| `DROP COLUMN`                            | **High**        | Must remove all references first   |
+| `RENAME COLUMN`                          | **High**        | Breaks old app version immediately |
+| `ALTER COLUMN` type change               | **High**        | May require data rewrite           |
+| `CREATE INDEX CONCURRENTLY`              | Low             | Safe, non-blocking                 |
+| `CREATE INDEX` (without CONCURRENTLY)    | **High**        | Full table lock                    |
+| `DROP INDEX`                             | Low             | Safe                               |
+| `ADD CONSTRAINT`                         | **High**        | Validates all existing rows        |
+| `TRUNCATE` / `DROP TABLE`                | **Destructive** | Requires explicit confirmation     |
 
 Assign risk to each operation in the migration:
 

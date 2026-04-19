@@ -50,7 +50,7 @@ ______________________________________________________________________
 > B) Review and improve an existing spec
 > C) Add endpoints to an existing spec
 > D) Validate spec for correctness and completeness
->   **Default:** B — review existing spec
+> **Default:** B — review existing spec
 
 ```bash
 # Locate existing spec files
@@ -114,22 +114,22 @@ ______________________________________________________________________
 
 ### Naming conventions
 
-| Correct | Incorrect | Rule |
-|---|---|---|
-| `/users` | `/getUsers`, `/user` | Plural nouns, no verbs |
-| `/users/{userId}` | `/users/{id}` | Descriptive path parameters |
-| `/users/{userId}/orders` | `/userOrders` | Nested for ownership |
-| `/orders/{orderId}/cancel` | `/cancelOrder/{id}` | Sub-resource for actions |
+| Correct                    | Incorrect            | Rule                        |
+| -------------------------- | -------------------- | --------------------------- |
+| `/users`                   | `/getUsers`, `/user` | Plural nouns, no verbs      |
+| `/users/{userId}`          | `/users/{id}`        | Descriptive path parameters |
+| `/users/{userId}/orders`   | `/userOrders`        | Nested for ownership        |
+| `/orders/{orderId}/cancel` | `/cancelOrder/{id}`  | Sub-resource for actions    |
 
 ### HTTP method semantics
 
-| Method | Semantics | Idempotent | Body |
-|---|---|---|---|
-| `GET` | Read, no side effects | Yes | No |
-| `POST` | Create or non-idempotent action | No | Yes |
-| `PUT` | Full replace | Yes | Yes |
-| `PATCH` | Partial update | No | Yes |
-| `DELETE` | Remove | Yes | No |
+| Method   | Semantics                       | Idempotent | Body |
+| -------- | ------------------------------- | ---------- | ---- |
+| `GET`    | Read, no side effects           | Yes        | No   |
+| `POST`   | Create or non-idempotent action | No         | Yes  |
+| `PUT`    | Full replace                    | Yes        | Yes  |
+| `PATCH`  | Partial update                  | No         | Yes  |
+| `DELETE` | Remove                          | Yes        | No   |
 
 Check each path:
 
@@ -138,6 +138,8 @@ Check each path:
 - [ ] HTTP method matches semantics above
 - [ ] `GET` operations have no request body
 - [ ] `DELETE` operations return `204 No Content` or `200` with body, never `201`
+- [ ] Every operation has a unique `operationId` (camelCase, e.g. `listUsers`, `createOrder`)
+- [ ] Every operation has a `summary` (short title, ≤ 80 chars) and `tags`
 
 ______________________________________________________________________
 
@@ -145,20 +147,20 @@ ______________________________________________________________________
 
 Use exactly these status codes — no others unless justified:
 
-| Code | Meaning | When to use |
-|---|---|---|
-| `200 OK` | Success with body | `GET`, `PUT`, `PATCH` success |
-| `201 Created` | Resource created | `POST` creating a resource |
-| `202 Accepted` | Accepted for async processing | Background jobs |
-| `204 No Content` | Success, no body | `DELETE`, `POST` with no return |
-| `400 Bad Request` | Validation error | Invalid input |
-| `401 Unauthorized` | Not authenticated | Missing/invalid token |
-| `403 Forbidden` | Not authorized | Valid token, insufficient permissions |
-| `404 Not Found` | Resource missing | ID doesn't exist |
-| `409 Conflict` | State conflict | Duplicate create, optimistic lock |
-| `422 Unprocessable Entity` | Semantic validation | Business rule violation |
-| `429 Too Many Requests` | Rate limited | Include `Retry-After` header |
-| `500 Internal Server Error` | Unexpected error | Never expose internals |
+| Code                        | Meaning                       | When to use                           |
+| --------------------------- | ----------------------------- | ------------------------------------- |
+| `200 OK`                    | Success with body             | `GET`, `PUT`, `PATCH` success         |
+| `201 Created`               | Resource created              | `POST` creating a resource            |
+| `202 Accepted`              | Accepted for async processing | Background jobs                       |
+| `204 No Content`            | Success, no body              | `DELETE`, `POST` with no return       |
+| `400 Bad Request`           | Validation error              | Invalid input                         |
+| `401 Unauthorized`          | Not authenticated             | Missing/invalid token                 |
+| `403 Forbidden`             | Not authorized                | Valid token, insufficient permissions |
+| `404 Not Found`             | Resource missing              | ID doesn't exist                      |
+| `409 Conflict`              | State conflict                | Duplicate create, optimistic lock     |
+| `422 Unprocessable Entity`  | Semantic validation           | Business rule violation               |
+| `429 Too Many Requests`     | Rate limited                  | Include `Retry-After` header          |
+| `500 Internal Server Error` | Unexpected error              | Never expose internals                |
 
 Check:
 

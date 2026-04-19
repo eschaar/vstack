@@ -114,6 +114,8 @@ Check each path:
 - [ ] HTTP method matches semantics above
 - [ ] `GET` operations have no request body
 - [ ] `DELETE` operations return `204 No Content` or `200` with body, never `201`
+- [ ] Every operation has a unique `operationId` (camelCase, e.g. `listUsers`, `createOrder`)
+- [ ] Every operation has a `summary` (short title, ≤ 80 chars) and `tags`
 
 ______________________________________________________________________
 
