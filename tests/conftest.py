@@ -13,35 +13,6 @@ ROOT = Path(__file__).resolve().parent.parent
 VSTACK_ENV = {**os.environ, "PYTHONPATH": str(ROOT / "src")}
 SKILLS_TEMPLATES_DIR = ROOT / "src" / "vstack" / "_templates" / "skills"
 
-EXPECTED_CANONICAL_NAMES = [
-    "vision",
-    "architecture",
-    "requirements",
-    "adr",
-    "design",
-    "consult",
-    "code-review",
-    "release-notes",
-    "pr",
-    "verify",
-    "inspect",
-    "security",
-    "debug",
-    "performance",
-    "analyse",
-    "explore",
-    "docs",
-    "guardrails",
-    "container",
-    "cicd",
-    "migrate",
-    "openapi",
-    "refactor",
-    "onboard",
-    "dependency",
-    "incident",
-]
-
 
 def run_vstack(args: list[str], timeout: int = 30) -> subprocess.CompletedProcess[str]:
     """Run vstack."""

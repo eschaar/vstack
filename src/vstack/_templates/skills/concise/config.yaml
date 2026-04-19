@@ -1,0 +1,16 @@
+name: concise
+version: 1.0.0
+description: |
+  Runtime response-style controller for concise communication. Switches between
+  normal, compact, and ultra output density without regenerating agents. Use
+  when asked for shorter responses, token efficiency, or to check active style
+  mode.
+argument-hint: '[normal|compact|ultra|status|on|off]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with session memory and repository context.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

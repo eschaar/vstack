@@ -69,14 +69,14 @@ You can also ask a role to use a specific skill:
 
 ### 4. Available roles and their primary skills
 
-| Role      | Invocation   | Primary skills                                          |
-| --------- | ------------ | ------------------------------------------------------- |
-| product   | `@product`   | vision, requirements, onboard, docs                     |
-| architect | `@architect` | architecture, adr                                       |
-| designer  | `@designer`  | design, openapi, consult, docs                          |
-| engineer  | `@engineer`  | code-review, debug, refactor, migrate, dependency, docs |
-| tester    | `@tester`    | verify, inspect, security, incident, dependency, docs   |
-| release   | `@release`   | release-notes, pr, docs                                 |
+| Role      | Invocation   | Primary skills                                          | Default concise mode |
+| --------- | ------------ | ------------------------------------------------------- | -------------------- |
+| product   | `@product`   | vision, requirements, onboard, docs                     | compact              |
+| architect | `@architect` | architecture, adr                                       | normal               |
+| designer  | `@designer`  | design, openapi, consult, docs                          | compact              |
+| engineer  | `@engineer`  | code-review, debug, refactor, migrate, dependency, docs | compact              |
+| tester    | `@tester`    | verify, inspect, security, incident, dependency, docs   | ultra                |
+| release   | `@release`   | release-notes, pr, docs                                 | compact              |
 
 Full skill index: [docs/design/skills.md](docs/design/skills.md)
 
@@ -113,6 +113,22 @@ ______________________________________________________________________
 /code-review Review changes in src/api/ only
 /security Audit the authentication module in src/auth/
 ```
+
+**Controlling response verbosity:**
+
+Every role agent supports the `concise` skill. Switch response density without regenerating any artifacts:
+
+```text
+concise normal    — full explanations (architect default)
+concise compact   — shorter prose, same technical accuracy (most role default)
+concise ultra     — maximum brevity, facts and commands only (tester default)
+concise status    — show active mode, session override, and agent default
+concise on        — alias for compact
+concise off       — alias for normal
+```
+
+The mode is session-scoped — no reinstall needed. Security warnings and destructive
+action prompts always use `normal` regardless of active mode.
 
 **Typical workflow for a new feature:**
 

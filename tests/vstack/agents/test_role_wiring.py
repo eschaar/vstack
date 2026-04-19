@@ -39,6 +39,14 @@ def test_engineer_template_references_explore_and_analyse() -> None:
     assert "@#analyse" in content
 
 
+def test_all_role_templates_reference_concise() -> None:
+    """Every role should expose concise runtime style controls."""
+    roles = ["product", "architect", "designer", "engineer", "tester", "release"]
+    for role in roles:
+        content = _read(f"{role}/template.md")
+        assert "@#concise" in content
+
+
 def test_all_role_configs_define_handoffs_block() -> None:
     """Each role config should include at least one handoff entry."""
     roles = ["product", "architect", "designer", "engineer", "tester", "release"]

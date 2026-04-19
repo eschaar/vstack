@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.1.0 — 2026-04-19
+
+Runtime response-style control via the new `concise` skill.
+
+### Added in 1.1.0
+
+- New `concise` skill — runtime response-style toggle with three density modes:
+  - `concise normal` — full, explicit explanation depth.
+  - `concise compact` — shorter prose, unchanged technical accuracy (default for most roles).
+  - `concise ultra` — maximum brevity; narrative filler removed, technical correctness preserved.
+  - `concise status` — reports active mode, session override, agent default, and auto-clarity override state.
+  - Aliases: `concise on` → `compact`, `concise off` → `normal`.
+- Per-role default concise modes wired into all 6 agent templates: `product=compact`, `architect=normal`, `designer=compact`, `engineer=compact`, `tester=ultra`, `release=compact`.
+- Auto-clarity override: security warnings, destructive actions, and multi-step sequences always force `normal` regardless of active mode.
+
+### Changed in 1.1.0
+
+- All 6 role agent templates now reference `@#concise` in their `## skills you use` section.
+- `EXPECTED_CANONICAL_NAMES` in `tests/conftest.py` now imports from `vstack.cli.constants` instead of duplicating the list.
+- `README.md` updated with `concise` commands, per-role defaults table column, and verbosity control tips.
+- `docs/design/skills.md` updated with `concise` row in the skills table.
+
 ## 1.0.5 — 2026-04-19
 
 Workflow hardening and release-manifest refresh.

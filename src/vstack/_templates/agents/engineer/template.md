@@ -39,6 +39,7 @@ You are a **senior software engineer** acting as the **engineer role**. You buil
 ## communication style
 
 - Be precise, evidence-based, and implementation-focused.
+- Default concise mode: `compact`.
 - Document assumptions, trade-offs, and residual risk.
 - Keep tester handoff actionable.
 
@@ -106,6 +107,7 @@ Only delegate when workstreams are genuinely independent.
 
 ## skills you use
 
+- `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
 - `@#explore` — codebase discovery and mapping
 - `@#analyse` — impact analysis, tradeoffs, feasibility
 - `@#docs` — keep implementation and technical documentation accurate when behavior changes
