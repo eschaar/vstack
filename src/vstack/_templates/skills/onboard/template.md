@@ -157,7 +157,7 @@ Welcome. This guide gets you from zero to a merged PR.
 git clone https://github.com/org/repo
 cd repo
 [setup command — e.g. make bootstrap or poetry install]
-````
+```
 
 Verify setup:
 
@@ -241,7 +241,7 @@ Link to docs/architecture/architecture.md for details.\]
 
 ````
 
----
+______________________________________________________________________
 
 ______________________________________________________________________
 
@@ -249,7 +249,7 @@ ______________________________________________________________________
 
 If README lacks a dev setup section, add a minimal one linking to CONTRIBUTING.md:
 
-```markdown
+````markdown
 ## development
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, and contribution guidelines.

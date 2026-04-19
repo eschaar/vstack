@@ -160,9 +160,9 @@ ______________________________________________________________________
 
 Produce or update `CONTRIBUTING.md` with the following sections:
 
----
+______________________________________________________________________
 
-```markdown
+````markdown
 # Contributing to [Project Name]
 
 Welcome. This guide gets you from zero to a merged PR.
@@ -205,10 +205,10 @@ Expected output: `[N tests passed]`
    - `feat/` — new feature
    - `fix/` — bug fix
    - `chore/` — maintenance
-2. Make your change
-3. Run checks: `[check command]`
-4. Commit: `git commit -m "[type]: [description]"`
-5. Push and open a PR
+1. Make your change
+1. Run checks: `[check command]`
+1. Commit: `git commit -m "[type]: [description]"`
+1. Push and open a PR
 
 ### Before every commit
 
@@ -241,27 +241,29 @@ Copy `.env.example` to `.env` and fill in values:
 cp .env.example .env
 ```
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `VAR_NAME` | Yes | [description] |
+| Variable   | Required | Description   |
+| ---------- | -------- | ------------- |
+| `VAR_NAME` | Yes      | [description] |
 
 ## Architecture Overview
 
-[2–4 sentences describing the main components and how they interact.
-Link to docs/architecture/architecture.md for details.]
+\[2–4 sentences describing the main components and how they interact.
+Link to docs/architecture/architecture.md for details.\]
 
 ## Good First Issues
 
-[List 3–5 concrete starting points:
+\[List 3–5 concrete starting points:
+
 - A TODO in the code
 - A missing test
 - A documentation gap
-- A small enhancement]
+- A small enhancement\]
 
 ## Getting Help
 
 [Slack channel / GitHub Discussions / email — whatever is appropriate]
-```
+
+````
 
 ---
 
@@ -282,7 +284,8 @@ Quick start:
 [one-liner setup command]
 [one-liner test command]
 ```
-```
+
+````
 
 ______________________________________________________________________
 
@@ -307,6 +310,6 @@ Coverage:
 
 Gaps remaining (if any):
   [anything that could not be determined automatically]
-```
+````
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
