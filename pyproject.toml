@@ -22,7 +22,7 @@ include = [
 ]
 
 [tool.poetry.group.dev.dependencies]
-pytest = ">=9.0"
+pytest = ">=9.0.3"
 pytest-cov = ">=6.0"
 ruff = ">=0.9"
 mypy = ">=1.0"
