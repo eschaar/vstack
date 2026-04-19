@@ -81,12 +81,17 @@ jobs:
           git tag -a "${{ steps.semver.outputs.version }}" -m "release ${{ steps.semver.outputs.version }}"
           git push origin "${{ steps.semver.outputs.version }}"
 
+      - name: Compute release date
+        if: steps.semver.outputs.changed == 'true'
+        id: release_date
+        run: echo "date=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub release
         if: steps.semver.outputs.changed == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.semver.outputs.version }}
-          name: ${{ steps.semver.outputs.version }}
+          name: Release v${{ steps.semver.outputs.version }} (${{ steps.release_date.outputs.date }})
           generate_release_notes: true
 
   build-artifacts:
