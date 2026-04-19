@@ -45,6 +45,13 @@ optimizations. Measure first; never optimize without evidence.
 - Architecture design (use `architecture`)
 - Non-performance bug fixing (use `debug`)
 
+## Deliverable and artifact policy
+
+- Primary deliverable: `docs/performance-baseline.md`
+- Baseline-first default: write benchmark outcomes and regression verdicts directly to `docs/performance-baseline.md` on the feature branch.
+- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/PERFORMANCE_DELTA.md`
+- Before merge: consolidate thresholds, measurements, and recommendations into the baseline performance report.
+
 ______________________________________________________________________
 
 ## Setup

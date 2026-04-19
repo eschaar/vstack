@@ -47,6 +47,15 @@ Use `verify` when a fix loop is required.
 - Full security audit (use `security`)
 - Performance profiling (use `performance`)
 
+## Deliverable and artifact policy
+
+- Primary deliverable: `docs/test-report.md`
+- Baseline-first default: write final findings directly to `docs/test-report.md` on the feature branch.
+- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/TESTING_DELTA.md`
+- Before merge: consolidate any blocking findings and final verdict into baseline reports.
+
+______________________________________________________________________
+
 ## Step 0: Scope
 
 ```text
@@ -108,6 +117,15 @@ ______________________________________________________________________
 [ -f pyproject.toml ] && pip-audit 2>/dev/null || true
 [ -f go.mod ] && govulncheck ./... 2>/dev/null || true
 ```
+
+### 2.1 Observability & Reliability Checks
+
+Confirm for changed paths:
+
+- Structured logs exist for key state transitions and failures.
+- Metrics cover latency, error rate, and saturation for impacted services.
+- Trace propagation exists across service boundaries where applicable.
+- Alerts/runbooks exist for high-severity failure modes.
 
 ______________________________________________________________________
 

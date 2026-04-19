@@ -6,8 +6,9 @@ import json
 from pathlib import Path
 from typing import Any, cast
 
-from tests.conftest import EXPECTED_CANONICAL_NAMES, run_vstack
+from tests.conftest import run_vstack
 from vstack.cli.commands import CommandLineInterface, _version_gt
+from vstack.cli.constants import EXPECTED_CANONICAL_NAMES
 from vstack.constants import TEMPLATES_ROOT
 from vstack.models import CheckMessage, ValidationResult
 

@@ -1,5 +1,43 @@
 # Changelog
 
+## 1.1.0 — 2026-04-20
+
+Runtime response-style control via the new `concise` skill.
+
+### Added in 1.1.0
+
+- New `concise` skill — runtime response-style toggle with three density modes:
+  - `concise normal` — full, explicit explanation depth.
+  - `concise compact` — shorter prose, unchanged technical accuracy (default for most roles).
+  - `concise ultra` — maximum brevity; narrative filler removed, technical correctness preserved.
+  - `concise status` — reports active mode, session override, agent default, and auto-clarity override state.
+  - Aliases: `concise on` → `compact`, `concise off` → `normal`.
+- Per-role default concise modes wired into all 6 agent templates: `product=compact`, `architect=normal`, `designer=compact`, `engineer=compact`, `tester=ultra`, `release=compact`.
+- Auto-clarity override: security warnings, destructive actions, and multi-step sequences always force `normal` regardless of active mode.
+
+### Changed in 1.1.0
+
+- All 6 role agent templates now reference `@#concise` in their `## skills you use` section.
+- `EXPECTED_CANONICAL_NAMES` in `tests/conftest.py` now imports from `vstack.cli.constants` instead of duplicating the list.
+- `README.md` updated with `concise` commands, per-role defaults table column, and verbosity control tips.
+- `docs/design/skills.md` updated with `concise` row in the skills table.
+- All six role agents (`product`, `architect`, `designer`, `engineer`, `tester`, `release`) now follow a shared structure:
+  - `responsibilities and scope`
+  - `principles`
+  - `communication style`
+  - `gate moments and handoffs`
+  - `how you work`
+  - `deliverables and success criteria`
+  - `failure and escalation rules`
+  - `skills you use`
+- Added shared agent-skill boundary partial and wired it across all agents.
+- Moved procedural detail out of agents into skills to keep agents outcome-focused and reduce template size.
+- Release flow clarified: `release-notes` now explicitly owns both `docs/releases/{date}.md` and `CHANGELOG.md`; `pr` remains responsible for push/PR creation.
+- Release and tester gating now treat performance baseline and observability evidence as required-for-scope artifacts rather than unconditional requirements.
+- Added explicit `Deliverable and artifact policy` sections where needed across architecture/design/verification/release-related skills.
+- Added explicit observability checks in verification flows (`inspect` and `verify`) for logs, metrics, traces, and alert/runbook evidence.
+- Regenerated `.github` installed artifacts to match updated templates and policies.
+
 ## 1.0.5 — 2026-04-19
 
 Workflow hardening and release-manifest refresh.

@@ -9,6 +9,7 @@ EXPECTED_CANONICAL_NAMES = [
     "adr",
     "design",
     "consult",
+    "concise",
     "code-review",
     "release-notes",
     "pr",

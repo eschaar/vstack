@@ -35,6 +35,13 @@ before CI/CD takes over.
 - Writing release notes (use `release-notes`)
 - Merging or deploying — CI/CD handles that after merge
 
+## Deliverable and artifact policy
+
+- Primary deliverable: release pull request targeting main
+- Baseline-first default: use existing branch artifacts directly; do not create parallel release records outside baseline docs.
+- PR body source: `docs/releases/{date}.md` when present
+- Before merge: ensure release artifact references in the PR body reflect final baseline files.
+
 ______________________________________________________________________
 
 ## Step 1: Pre-flight

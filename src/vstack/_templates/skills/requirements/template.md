@@ -13,6 +13,13 @@ work from.
 - Roadmap and milestone planning (product role artifact)
 - Implementation (engineering role)
 
+## Deliverable and artifact policy
+
+- Primary deliverable: `docs/product/requirements.md`
+- Baseline-first default: write final requirements directly to `docs/product/requirements.md` on the feature branch.
+- Optional WIP area for complex/uncertain intake: `docs/delta/{intake-id}/REQUIREMENTS_DELTA.md`
+- Before merge: consolidate any required content from optional delta notes back into `docs/product/requirements.md`, then remove stale WIP notes.
+
 ______________________________________________________________________
 
 ## Step 0: Context

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from tests.conftest import EXPECTED_CANONICAL_NAMES
+from vstack.cli.constants import EXPECTED_CANONICAL_NAMES
 from vstack.cli.manifest import ArtifactEntry, Manifest, ManifestFile
 
 

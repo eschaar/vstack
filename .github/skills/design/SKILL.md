@@ -38,6 +38,16 @@ becomes the source of truth for implementation.
 
 ______________________________________________________________________
 
+## Deliverable and artifact policy
+
+- Primary deliverable: `docs/design/design.md`
+- Additional deliverable when user-facing scope: `docs/design/ux.md`
+- Baseline-first default: write final design decisions directly to `docs/design/*.md` on the feature branch.
+- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/DESIGN_DELTA.md`
+- Before merge: consolidate any delta draft into baseline design docs.
+
+______________________________________________________________________
+
 ## Step 0: Understand the Domain
 
 > **Question:** What are we designing?
@@ -109,7 +119,6 @@ Define the standard envelope:
   "data": { ... },
   "meta": { "request_id": "...", "version": "v1" }
 }
-
 # Success response (collection)
 {
   "data": [ ... ],
