@@ -53,22 +53,26 @@ Run the appropriate scanner for each detected stack:
 
 ```bash
 # Python — pip-audit (preferred) or safety
-[ -f pyproject.toml ] || [ -f requirements.txt ] && {
+if [ -f pyproject.toml ] || [ -f requirements.txt ]; then
   pip-audit 2>/dev/null \
   || safety check --full-report 2>/dev/null \
   || echo "No Python vuln scanner found — install pip-audit: pip install pip-audit"
-}
+fi
 
 # Node
 [ -f package.json ] && npm audit --json 2>/dev/null | head -100
 
 # Go
-[ -f go.mod ] && govulncheck ./... 2>/dev/null \
-  || echo "govulncheck not found — install: go install golang.org/x/vuln/cmd/govulncheck@latest"
+if [ -f go.mod ]; then
+  govulncheck ./... 2>/dev/null \
+    || echo "govulncheck not found — install: go install golang.org/x/vuln/cmd/govulncheck@latest"
+fi
 
 # Rust
-[ -f Cargo.toml ] && cargo audit 2>/dev/null \
-  || echo "cargo-audit not found — install: cargo install cargo-audit"
+if [ -f Cargo.toml ]; then
+  cargo audit 2>/dev/null \
+    || echo "cargo-audit not found — install: cargo install cargo-audit"
+fi
 
 # Java (Maven)
 [ -f pom.xml ] && mvn dependency-check:check -q 2>/dev/null || true
@@ -130,16 +134,23 @@ Check licence obligations for all direct and transitive dependencies:
 
 ```bash
 # Python
-pip-licenses --format=markdown --with-urls 2>/dev/null | head -60 \
-  || python3 -m pip_licenses 2>/dev/null | head -60 \
-  || echo "Install pip-licenses: pip install pip-licenses"
+if pip-licenses --version >/dev/null 2>&1; then
+  pip-licenses --format=markdown --with-urls 2>/dev/null | head -60
+elif python3 -m pip_licenses --help >/dev/null 2>&1; then
+  python3 -m pip_licenses 2>/dev/null | head -60
+else
+  echo "Install pip-licenses: pip install pip-licenses"
+fi
 
 # Node
 npx license-checker --summary 2>/dev/null | head -40
 
 # Go
-go-licenses report ./... 2>/dev/null | head -40 \
-  || echo "Install go-licenses: go install github.com/google/go-licenses@latest"
+if go-licenses --help >/dev/null 2>&1; then
+  go-licenses report ./... 2>/dev/null | head -40
+else
+  echo "Install go-licenses: go install github.com/google/go-licenses@latest"
+fi
 ```
 
 Classify licences by risk:
@@ -195,8 +206,11 @@ Identify high-risk transitive (indirect) dependencies:
 
 ```bash
 # Python — show full dependency tree
-poetry show --tree 2>/dev/null | head -60 \
-  || pip install pipdeptree 2>/dev/null && pipdeptree 2>/dev/null | head -60
+if poetry --version >/dev/null 2>&1; then
+  poetry show --tree 2>/dev/null | head -60
+else
+  pip install pipdeptree 2>/dev/null && pipdeptree 2>/dev/null | head -60
+fi
 
 # Node
 npm list --depth=2 2>/dev/null | head -60
