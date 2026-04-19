@@ -21,6 +21,14 @@ Use `inspect` for read-only auditing.
 - Performance benchmarking/profiling (use `performance`)
 - New feature implementation outside verification fixes (engineering role)
 
+## Deliverable and artifact policy
+
+- Primary deliverable: `docs/test-report.md`
+- Additional deliverables when applicable: `docs/security-report.md`, `docs/performance-baseline.md`
+- Baseline-first default: write final verification outcomes directly to baseline reports on the feature branch.
+- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/VERIFY_DELTA.md`
+- Before merge: consolidate final findings, severity, and ship-readiness verdict into baseline reports.
+
 ______________________________________________________________________
 
 ## Step 0: Route Mode
@@ -103,6 +111,13 @@ Run these when present:
 [ -n "$(find . -name '*.proto' 2>/dev/null | head -1)" ] && buf lint 2>/dev/null || true
 ```
 
+Also verify observability on impacted paths:
+
+- Structured logs for critical transitions and errors
+- Metrics for latency/error/saturation
+- Trace propagation across service boundaries
+- Alerts or runbooks for critical failure modes
+
 ### exhaustive
 
 Run standard checks plus:
@@ -116,6 +131,8 @@ find . -name '*.smoke.*' -o -name '*smoke-test*' -o -name 'smoke.sh' 2>/dev/null
 [ -f pyproject.toml ] && pip-audit 2>/dev/null || true
 [ -f go.mod ] && govulncheck ./... 2>/dev/null || true
 ```
+
+For exhaustive mode, require observability evidence (logs/metrics/traces/alerts) in the final report.
 
 If deep security/performance concerns appear, stop and route to `security` or `performance`.
 

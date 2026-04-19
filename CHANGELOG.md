@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.0 — 2026-04-19
+## 1.1.0 — 2026-04-20
 
 Runtime response-style control via the new `concise` skill.
 
@@ -21,6 +21,22 @@ Runtime response-style control via the new `concise` skill.
 - `EXPECTED_CANONICAL_NAMES` in `tests/conftest.py` now imports from `vstack.cli.constants` instead of duplicating the list.
 - `README.md` updated with `concise` commands, per-role defaults table column, and verbosity control tips.
 - `docs/design/skills.md` updated with `concise` row in the skills table.
+- All six role agents (`product`, `architect`, `designer`, `engineer`, `tester`, `release`) now follow a shared structure:
+  - `responsibilities and scope`
+  - `principles`
+  - `communication style`
+  - `gate moments and handoffs`
+  - `how you work`
+  - `deliverables and success criteria`
+  - `failure and escalation rules`
+  - `skills you use`
+- Added shared agent-skill boundary partial and wired it across all agents.
+- Moved procedural detail out of agents into skills to keep agents outcome-focused and reduce template size.
+- Release flow clarified: `release-notes` now explicitly owns both `docs/releases/{date}.md` and `CHANGELOG.md`; `pr` remains responsible for push/PR creation.
+- Release and tester gating now treat performance baseline and observability evidence as required-for-scope artifacts rather than unconditional requirements.
+- Added explicit `Deliverable and artifact policy` sections where needed across architecture/design/verification/release-related skills.
+- Added explicit observability checks in verification flows (`inspect` and `verify`) for logs, metrics, traces, and alert/runbook evidence.
+- Regenerated `.github` installed artifacts to match updated templates and policies.
 
 ## 1.0.5 — 2026-04-19
 

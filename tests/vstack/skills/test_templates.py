@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tests.conftest import EXPECTED_CANONICAL_NAMES, SKILLS_TEMPLATES_DIR
+from tests.conftest import SKILLS_TEMPLATES_DIR
+from vstack.cli.constants import EXPECTED_CANONICAL_NAMES
 from vstack.frontmatter import FrontmatterParser
 
 

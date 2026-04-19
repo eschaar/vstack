@@ -39,7 +39,73 @@ are available under the VS Code user profile skills directory.
 
 ______________________________________________________________________
 
-## using vstack in Copilot Agent Mode
+## agent and skill usage
+
+### Agents vs. skills: what is the difference?
+
+- **Agents** (like `@product`, `@tester`) are the main interface. Use them for all primary flows. Agents automatically select the right skills for their role and context.
+- **Skills** (like `/verify`, `/security`) can be invoked directly if you want to force a specific check. This is optional and usually not needed.
+
+#### Invocation examples
+
+| Goal                  | Agent invocation | Optionally: direct skill invocation |
+| --------------------- | ---------------- | ----------------------------------- |
+| Gather requirements   | `@product`       |                                     |
+| Architecture review   | `@architect`     |                                     |
+| API design            | `@designer`      |                                     |
+| Code review           | `@engineer`      | `/code-review`                      |
+| Verification/QA       | `@tester`        | `/verify`                           |
+| Security check        | `@tester`        | `/security`                         |
+| Performance benchmark | `@tester`        | `/performance`                      |
+| Prepare release       | `@release`       |                                     |
+
+> **Note:** You can also force a skill via an agent, e.g. `@tester /security` for a security check by the tester agent.
+
+#### Subagent pattern
+
+The product agent can invoke other agents as subagents to orchestrate a complete flow:
+
+```text
+@product Deliver a requirements-to-release plan for a new payments service
+```
+
+This automatically triggers:
+
+- @product → requirements
+- @architect → architecture
+- @designer → API contract
+- @engineer → implementation
+- @tester → verification
+- @release → release gating
+
+#### Use case 1: New API from idea to release
+
+1. `@product` — (agent, requirements and acceptance)
+1. `@architect` — (agent, architecture review)
+1. `@designer` — (agent, OpenAPI spec)
+1. `@engineer` — (agent, implementation)
+1. `@tester` — (agent, full QA)
+1. `@tester /security` — (agent with explicit skill invocation, security check)
+1. `@release` — (agent, release gating)
+
+#### Use case 2: Security regression in authentication
+
+1. `@tester /security` — (agent with explicit skill invocation)
+1. `@engineer` — (agent, bugfix)
+1. `@tester` — (agent, re-verification)
+1. `@release` — (agent, release)
+
+#### Use case 3: Refactor and performance improvement
+
+1. `@engineer` — (agent, refactor)
+1. `@tester /performance` — (agent with explicit skill invocation)
+1. `@engineer` — (agent, optimization)
+1. `@tester` — (agent, confirm performance gain)
+1. `@release` — (agent, release)
+
+______________________________________________________________________
+
+## vstack gebruiken in Copilot Agent Mode
 
 ### 1. Open Copilot Chat
 
@@ -119,12 +185,12 @@ ______________________________________________________________________
 Every role agent supports the `concise` skill. Switch response density without regenerating any artifacts:
 
 ```text
-concise normal    — full explanations (architect default)
-concise compact   — shorter prose, same technical accuracy (most role default)
-concise ultra     — maximum brevity, facts and commands only (tester default)
-concise status    — show active mode, session override, and agent default
-concise on        — alias for compact
-concise off       — alias for normal
+/concise normal    — full explanations (architect default)
+/concise compact   — shorter prose, same technical accuracy (most role default)
+/concise ultra     — maximum brevity, facts and commands only (tester default)
+/concise status    — show active mode, session override, and agent default
+/concise on        — alias for compact
+/concise off       — alias for normal
 ```
 
 The mode is session-scoped — no reinstall needed. Security warnings and destructive

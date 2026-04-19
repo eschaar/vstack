@@ -14,6 +14,13 @@ change source code.
 - Generating release notes (use `release-notes`)
 - Updating `CHANGELOG.md` (owned by `release-notes`)
 
+## Deliverable and artifact policy
+
+- Primary deliverables: updated baseline documentation artifacts (for example `README.md`, API docs, migration guides)
+- Baseline-first default: write final documentation updates directly to baseline docs on the feature branch.
+- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/DOCS_DELTA.md`
+- Before merge: consolidate any documentation delta notes into baseline docs.
+
 ______________________________________________________________________
 
 ## Step 0: Scope the Release

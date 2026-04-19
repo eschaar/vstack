@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
+
 VSTACK_ENV = {**os.environ, "PYTHONPATH": str(ROOT / "src")}
 SKILLS_TEMPLATES_DIR = ROOT / "src" / "vstack" / "_templates" / "skills"
 

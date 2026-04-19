@@ -4,13 +4,20 @@
 
 Verify all artifacts are complete, write release notes, and update the changelog.
 
-This skill is the owner of `CHANGELOG.md` updates.
+This skill owns both `docs/releases/{date}.md` and `CHANGELOG.md` updates.
 
 ## Out of scope
 
 - Running tests or audits (use `verify`, `security`, `performance`)
 - Creating the PR (use `pr`)
 - Deployment — CI/CD takes over after merge
+
+## Deliverable and artifact policy
+
+- Primary deliverables: `docs/releases/{date}.md`, `CHANGELOG.md`
+- Baseline-first default: write final release artifacts directly to baseline docs on the feature branch.
+- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/RELEASE_DELTA.md`
+- Before merge: consolidate final release summary and changelog entries into baseline artifacts.
 
 ______________________________________________________________________
 
@@ -23,9 +30,14 @@ for f in docs/product/requirements.md docs/architecture/architecture.md docs/des
           docs/test-report.md docs/security-report.md CHANGELOG.md; do
   [ -f "$f" ] && echo "✓ $f" || echo "✗ MISSING: $f"
 done
+
+# Scope-conditional artifacts
+[ -f docs/performance-baseline.md ] && echo "✓ docs/performance-baseline.md" || echo "i docs/performance-baseline.md (optional unless performance validation is in scope)"
+[ -f docs/observability-baseline.md ] && echo "✓ docs/observability-baseline.md" || echo "i docs/observability-baseline.md (optional; observability evidence may be in docs/test-report.md)"
 ```
 
 If any required artifact is missing: **STOP and report**. Do not proceed.
+If performance validation is in scope and `docs/performance-baseline.md` is missing: **STOP and report**.
 
 ______________________________________________________________________
 

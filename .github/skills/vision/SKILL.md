@@ -45,6 +45,13 @@ during this review — that comes after the plan is approved.
 - Requirements gathering (use `requirements`)
 - Writing ADRs (use `adr`)
 
+## Deliverable and artifact policy
+
+- Primary deliverable: `docs/product/vision.md`
+- Baseline-first default: write approved vision decisions directly to `docs/product/vision.md` on the feature branch.
+- Optional WIP area for complex/uncertain scope exploration: `docs/delta/{intake-id}/VISION_DELTA.md`
+- Before merge: consolidate any required content from optional delta notes back into `docs/product/vision.md`, then remove stale WIP notes.
+
 ## Review posture Envision the platform, not just the feature. Push scope UP. Ask "what would make this 10x better for 2x the effort?" Present each scope-expanding idea as a question. The user opts in or out.
 
 - **SELECTIVE EXPANSION:** Hold the current scope as your baseline — make it bulletproof. Surface every expansion opportunity you see and present each one individually so the user can cherry-pick.

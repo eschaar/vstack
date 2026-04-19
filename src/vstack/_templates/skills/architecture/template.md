@@ -13,6 +13,14 @@ recommendations, and produce a final verdict.
 - Gathering requirements (use `requirements`)
 - Writing the design document (use `design` for API/service design)
 
+## Deliverable and artifact policy
+
+- Primary deliverable: `docs/architecture/architecture.md`
+- Additional deliverables when needed: `docs/architecture/adr/NNN-*.md` for significant structural decisions.
+- Baseline-first default: write final architecture decisions directly to `docs/architecture/architecture.md` on the feature branch.
+- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/ARCHITECTURE_DELTA.md`
+- Before merge: consolidate any required content from optional delta notes back into baseline architecture docs and keep ADRs in `docs/architecture/adr/`.
+
 ## Review philosophy
 
 Review the plan thoroughly before any code changes. For every issue, explain the
@@ -198,5 +206,13 @@ For each issue found: concrete recommendation with rationale. Classify as:
 - **DEFERRED:** Document in TODOS.md with rationale for deferral.
 
 Final verdict: **READY TO IMPLEMENT** / **NEEDS REVISION** / **RETHINK REQUIRED**
+
+## Step 11: Record Architectural Decisions
+
+For each significant structural decision made during this review (technology choices, service boundaries, resilience strategy, data ownership, security posture):
+
+- Write an ADR via `@#adr`.
+- Cross-reference related ADRs.
+- Update `docs/architecture/architecture.md` to reflect the final decisions.
 
 ______________________________________________________________________

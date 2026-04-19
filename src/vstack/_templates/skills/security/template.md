@@ -14,6 +14,13 @@ with severity, evidence, and specific remediation.
 - Architecture design (use `architecture`)
 - Writing new features (engineering role)
 
+## Deliverable and artifact policy
+
+- Primary deliverable: `docs/security-report.md`
+- Baseline-first default: write final findings directly to `docs/security-report.md` on the feature branch.
+- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/SECURITY_DELTA.md`
+- Before merge: consolidate severity-ranked findings and mitigations into baseline security reports.
+
 ## Audit Scope
 
 Parse the user's request for scope:
