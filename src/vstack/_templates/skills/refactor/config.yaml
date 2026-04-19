@@ -1,0 +1,18 @@
+name: refactor
+version: 1.0.0
+description: |
+  Structured refactoring for backend services, APIs, and libraries. Identifies
+  code smells, plans incremental changes, executes without altering observable
+  behavior, and verifies correctness. Use when asked to "refactor this",
+  "clean up this module", "reduce duplication", or "improve structure without
+  changing behavior". Never changes behavior — if behavior must change, stop
+  and use the engineering role.
+argument-hint: '[module, file, or area to refactor]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

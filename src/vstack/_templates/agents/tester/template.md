@@ -144,3 +144,6 @@ Browser/E2E tests: only if the product scope includes a frontend UI.
 - `@#explore` — codebase discovery and mapping
 - `@#analyse` — impact analysis, tradeoffs, feasibility
 - `@#code-review` — pre-merge review before release
+- `@#migrate` — database migration safety review
+- `@#dependency` — dependency vulnerability and health audit
+- `@#incident` — incident analysis and post-mortem writing

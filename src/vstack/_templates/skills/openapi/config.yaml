@@ -1,0 +1,17 @@
+name: openapi
+version: 1.0.0
+description: |
+  Write and review OpenAPI 3.1 specifications. Covers resource naming, HTTP
+  method semantics, status codes, error conventions, pagination, versioning,
+  security schemes, and schema validation. Use when asked to "write an OpenAPI
+  spec", "review this API spec", "add an endpoint to the spec", or "validate
+  this OpenAPI file".
+argument-hint: '[API or spec file to write or review]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

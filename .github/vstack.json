@@ -1,6 +1,6 @@
 {
-  "vstack_version": "0.0.0",
-  "installed_at": "2026-04-16T23:34:10.546914+00:00",
+  "vstack_version": "0.0.0.post3.dev0+df3fe6e",
+  "installed_at": "2026-04-19T19:01:15.255260+00:00",
   "artifacts": {
     "skills": [
       {
@@ -44,6 +44,11 @@
         "version": "1.0.1"
       },
       {
+        "name": "dependency",
+        "file": "skills/dependency/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
         "name": "design",
         "file": "skills/design/SKILL.md",
         "version": "1.0.1"
@@ -64,9 +69,29 @@
         "version": "1.0.1"
       },
       {
+        "name": "incident",
+        "file": "skills/incident/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
         "name": "inspect",
         "file": "skills/inspect/SKILL.md",
         "version": "1.0.1"
+      },
+      {
+        "name": "migrate",
+        "file": "skills/migrate/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "onboard",
+        "file": "skills/onboard/SKILL.md",
+        "version": "1.0.0"
+      },
+      {
+        "name": "openapi",
+        "file": "skills/openapi/SKILL.md",
+        "version": "1.0.0"
       },
       {
         "name": "performance",
@@ -77,6 +102,11 @@
         "name": "pr",
         "file": "skills/pr/SKILL.md",
         "version": "1.0.1"
+      },
+      {
+        "name": "refactor",
+        "file": "skills/refactor/SKILL.md",
+        "version": "1.0.0"
       },
       {
         "name": "release-notes",

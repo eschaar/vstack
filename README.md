@@ -69,14 +69,14 @@ You can also ask a role to use a specific skill:
 
 ### 4. Available roles and their primary skills
 
-| Role      | Invocation   | Primary skills                        |
-| --------- | ------------ | ------------------------------------- |
-| product   | `@product`   | vision, requirements, docs            |
-| architect | `@architect` | architecture, adr                     |
-| designer  | `@designer`  | design, consult, docs                 |
-| engineer  | `@engineer`  | code-review, debug, performance, docs |
-| tester    | `@tester`    | verify, inspect, security, docs       |
-| release   | `@release`   | release-notes, pr, docs               |
+| Role      | Invocation   | Primary skills                                          |
+| --------- | ------------ | ------------------------------------------------------- |
+| product   | `@product`   | vision, requirements, onboard, docs                     |
+| architect | `@architect` | architecture, adr                                       |
+| designer  | `@designer`  | design, openapi, consult, docs                          |
+| engineer  | `@engineer`  | code-review, debug, refactor, migrate, dependency, docs |
+| tester    | `@tester`    | verify, inspect, security, incident, dependency, docs   |
+| release   | `@release`   | release-notes, pr, docs                                 |
 
 Full skill index: [docs/design/skills.md](docs/design/skills.md)
 
@@ -182,11 +182,12 @@ make tox      # pytest on py311, py312, py313, py314
 make tox-all  # all tox envs: tests + lint + type
 ```
 
-**Editing skills:** source of truth is `src/vstack/_templates/skills/<name>/{config.yaml,template.md}`. Never edit generated files.
+**Editing templates:** source of truth is always `src/vstack/_templates/<type>/<name>/{config.yaml,template.md}`. Never edit generated files in `.github/`.
 
 ```bash
-vim src/vstack/_templates/skills/verify/config.yaml
 vim src/vstack/_templates/skills/verify/template.md
+vim src/vstack/_templates/agents/engineer/template.md
+vim src/vstack/_templates/instructions/python/template.md
 poetry run vstack validate
 poetry run pytest
 ```
@@ -206,18 +207,27 @@ vstack/
 │   ├── prompts/             ← prompt artifact config + generator
 │   ├── cli/                 ← commands, parser, constants
 │   └── _templates/
-│       ├── skills/<name>/config.yaml   ← skill frontmatter fields
-│       ├── skills/<name>/template.md   ← skill instructions body
-│       ├── skills/_partials/           ← shared partials
-│       └── agents/<name>/
-│           ├── template.md             ← agent instructions body
-│           └── config.yaml             ← agent frontmatter fields
+│       ├── skills/<name>/config.yaml        ← skill frontmatter fields
+│       ├── skills/<name>/template.md        ← skill instructions body
+│       ├── skills/_partials/               ← shared partials
+│       ├── agents/<name>/config.yaml       ← agent frontmatter fields
+│       ├── agents/<name>/template.md       ← agent instructions body
+│       ├── instructions/<name>/config.yaml ← instruction frontmatter
+│       ├── instructions/<name>/template.md ← instruction body
+│       ├── prompts/<name>/config.yaml      ← prompt frontmatter
+│       └── prompts/<name>/template.md      ← prompt body
 ├── docs/
-│   ├── architecture.md      ← system structure
-│   ├── roadmap.md           ← milestones
-│   ├── skills.md            ← full skill index
-│   ├── workflow.md          ← execution model
-│   └── adr/                 ← architecture decision records
+│   ├── architecture/
+│   │   ├── architecture.md  ← system structure
+│   │   └── adr/             ← architecture decision records
+│   ├── design/
+│   │   ├── design.md        ← generator and builder internals
+│   │   ├── skills.md        ← full skill index
+│   │   └── workflow.md      ← execution model
+│   └── product/
+│       ├── requirements.md
+│       ├── roadmap.md       ← milestones
+│       └── vision.md
 ├── tests/
 │   └── vstack/
 └── Makefile                ← generic local dev tasks

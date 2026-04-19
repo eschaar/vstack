@@ -17,16 +17,30 @@ vstack provides structured skills for backend/microservice development, executab
 ```
 src/vstack/      ← Python package (source of truth)
 src/vstack/_templates/
-├── skills/<name>/template.md   ← skill source templates (edit these)
+├── skills/<name>/
+│   ├── template.md             ← skill body (edit these)
+│   └── config.yaml
 ├── skills/_partials/           ← shared partial snippets
-└── agents/<name>/
-    ├── template.md             ← agent instructions body
-    └── config.yaml             ← agent frontmatter fields
+├── agents/<name>/
+│   ├── template.md             ← agent instructions body
+│   └── config.yaml             ← agent frontmatter fields
+├── instructions/<name>/
+│   ├── template.md             ← instruction file body
+│   └── config.yaml
+└── prompts/<name>/
+    ├── template.md             ← prompt file body
+    └── config.yaml
 docs/            ← architecture.md, design.md, skills.md, workflow.md, roadmap.md, adr/
-.github/         ← generated output (never edit directly)
+.github/         ← generated output (never edit directly*)
 ├── skills/<name>/SKILL.md
-└── agents/<name>.agent.md
+├── agents/<name>.agent.md
+├── instructions/<name>.instructions.md
+├── prompts/<name>.prompt.md
+└── vstack.json                 ← install manifest (generated)
 ```
+
+*Hand-authored exceptions in `.github/`: `copilot-instructions.md`, `CODEOWNERS`,
+`pull_request_template.md`, `ISSUE_TEMPLATE/`, `workflows/`.
 
 Generated files are written to `.github/` at install time:
 
@@ -44,14 +58,16 @@ When vstack is installed inside its own repo (`.github/agents/` and `.github/ski
 |---|---|
 | `src/vstack/_templates/agents/<name>/config.yaml` or `template.md` | `python3 -m vstack install` |
 | `src/vstack/_templates/skills/<name>/template.md` or `_partials/*.md` | `python3 -m vstack install` |
+| `src/vstack/_templates/instructions/<name>/template.md` | `python3 -m vstack install` |
+| `src/vstack/_templates/prompts/<name>/template.md` | `python3 -m vstack install` |
 
-A single command handles both:
+A single command handles all artifact types:
 
 ```bash
 python3 -m vstack install
 ```
 
-Never edit `.github/agents/` or `.github/skills/` directly — changes will be overwritten.
+Never edit `.github/agents/`, `.github/skills/`, `.github/instructions/`, or `.github/prompts/` directly — changes will be overwritten.
 
 ## Execution Model
 

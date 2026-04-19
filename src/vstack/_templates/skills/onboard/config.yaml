@@ -1,0 +1,18 @@
+name: onboard
+version: 1.0.0
+description: |
+  Generate a contributor onboarding guide for a repository. Covers project
+  purpose, architecture overview, local dev setup, test commands, contribution
+  workflow, and first-task suggestions. Use when asked to "write an onboarding
+  guide", "create a contributor guide", "help new devs get started", or
+  "document how to contribute". Produces or updates CONTRIBUTING.md and
+  supplements README with a dev setup section.
+argument-hint: '[repository or service to document]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

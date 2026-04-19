@@ -144,5 +144,10 @@ Only delegate when workstreams are genuinely independent.
 - `@#performance` — performance investigation
 - `@#container` — Dockerfile and docker-compose authoring
 - `@#cicd` — GitHub Actions CI/CD workflow configuration
+- `@#migrate` — database migration review and authoring
+- `@#refactor` — structured refactoring without behavior change
+- `@#openapi` — OpenAPI 3.1 spec writing and review
+- `@#dependency` — dependency health audit
+- `@#incident` — incident analysis and post-mortem writing
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->

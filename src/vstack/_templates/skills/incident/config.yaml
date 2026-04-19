@@ -1,0 +1,17 @@
+name: incident
+version: 1.0.0
+description: |
+  Incident analysis and post-mortem writing. Guides a structured investigation
+  from timeline reconstruction through root cause identification to a blameless
+  post-mortem document with action items. Use when asked to "write a post-mortem",
+  "incident review", "root cause analysis for this outage", "what went wrong?",
+  or "blameless post-mortem". Produces a docs/postmortems/{date}-{slug}.md.
+argument-hint: '[incident or outage to analyse and document]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false
