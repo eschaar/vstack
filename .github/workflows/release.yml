@@ -9,8 +9,8 @@ on:
     branches: [main]
 
 permissions:
-  # Needed for creating tags and GitHub releases.
-  contents: write
+  # Default to read-only; release job elevates to write for tagging/releases.
+  contents: read
 
 env:
   # Shared interpreter version for build and metadata steps.
@@ -23,6 +23,9 @@ jobs:
     # Computes semantic version, creates git tag, and publishes GitHub release.
     name: Compute Version and Tag
     runs-on: ubuntu-latest
+    permissions:
+      # Needed for creating tags and GitHub releases.
+      contents: write
     # Guard: run only for merged PRs.
     if: github.event.pull_request.merged == true
     outputs:
