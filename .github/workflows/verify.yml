@@ -2,10 +2,14 @@
 # Purpose: validate both source tests and generated/installable artifacts.
 name: Verify
 
-"on":
+on:
   # Run on PRs targeting main so merge decisions are based on full verification.
   pull_request:
     branches: [main]
+
+permissions:
+  # Verify jobs only read repository contents.
+  contents: read
 
 env:
   # Shared interpreter version for reproducible CI behavior.

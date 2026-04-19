@@ -1,6 +1,21 @@
 # Changelog
 
-## [Unreleased] — 1.0.4
+## 1.0.5 — 2026-04-19
+
+Workflow hardening and release-manifest refresh.
+
+### Fixed in 1.0.5
+
+- GitHub Actions workflows now declare explicit `permissions` to satisfy policy checks and follow least-privilege defaults.
+
+### Changed in 1.0.5
+
+- `release.yml` now defaults to read-only workflow permissions and scopes `contents: write` to the `version-and-release` job only.
+- `qa.yml`, `security.yml`, and `verify.yml` now declare explicit workflow-level `permissions`.
+- `verify.yml` normalized to use `on:` (unquoted) for style consistency with other workflows.
+- `.github/vstack.json` refreshed via install to record the latest generated artifact manifest metadata.
+
+## 1.0.4 — 2026-04-19
 
 Skill expansion and documentation alignment update.
 
