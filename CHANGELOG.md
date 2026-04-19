@@ -1,8 +1,58 @@
 # Changelog
 
-## [Unreleased]
+## [Unreleased] — 1.0.4
 
-- No unreleased changes yet.
+Skill expansion and documentation alignment update.
+
+### Added in 1.0.4
+
+- Six new skills: `migrate`, `openapi`, `refactor`, `onboard`, `dependency`, `incident`.
+  - `migrate` — database migration review: zero-downtime analysis, expand/contract, rollback plans, index safety, batched backfills.
+  - `openapi` — OpenAPI 3.1 spec writing and review: resource naming, HTTP semantics, status codes, error conventions, pagination, security schemes, versioning.
+  - `refactor` — structured refactoring without behavior change: smell identification, incremental plan, step-by-step execution with test verification at each step.
+  - `onboard` — contributor onboarding guide generation: prerequisites, setup, test commands, env vars, architecture overview, good first issues → `CONTRIBUTING.md`.
+  - `dependency` — full dependency health audit: vulnerability scanning, outdated packages, licence compliance, transitive risk, pinning policy, supply chain hygiene.
+  - `incident` — incident analysis and blameless post-mortem writing: timeline reconstruction, 5-Whys root cause, contributing factors matrix, action items → `docs/postmortems/YYYY-MM-DD-*.md`.
+
+### Fixed in 1.0.4
+
+- `refactor` skill: removed outer ```` ```bash ```` fences wrapping `{{RUN_TESTS}}` partial (which already includes its own fence).
+- `onboard` skill: fixed nested fence issues in step 5 CONTRIBUTING.md example and step 6 README snippet.
+
+### Changed in 1.0.4
+
+- `engineer`, `designer`, `tester`, `product` agent templates updated with skill references for all new skills.
+- `docs/design/skills.md` updated with full skill table including all new skills and their primary roles.
+- `README.md` role–skill table updated to reflect new primary skills per role.
+- `README.md` project structure diagram updated to include `instructions/` and `prompts/` template directories and the correct `docs/` subdirectory layout.
+- `.github/copilot-instructions.md` updated: system structure diagram now includes all four template artifact types (`skills`, `agents`, `instructions`, `prompts`); hand-authored `.github/` exceptions listed explicitly; install table extended with `instructions` and `prompts` rows.
+
+## 1.0.3 — 2026-04-19
+
+Community health and release workflow update.
+
+### Added in 1.0.3
+
+- `CODEOWNERS` file.
+- GitHub issue templates: `bug_report.yml`, `feature_request.yml`, `config.yml`.
+- Pull request template (`.github/pull_request_template.md`).
+- `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `SECURITY.md` community health files.
+
+### Changed in 1.0.3
+
+- Release workflow title format updated to `Release vX.Y.Z (YYYY-MM-DD)`.
+
+______________________________________________________________________
+
+## 1.0.2 — 2026-04-17
+
+Release workflow fix.
+
+### Fixed in 1.0.2
+
+- Release workflow: corrected Poetry setup order and opted in to Node 24 to resolve runner deprecation warnings.
+
+______________________________________________________________________
 
 ## 1.0.1 — 2026-04-17
 

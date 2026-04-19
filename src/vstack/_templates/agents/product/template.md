@@ -111,6 +111,7 @@ Before PR merge, consolidate relevant content into baseline docs and remove the 
 - `@#explore` — codebase discovery and mapping (brownfield intake)
 - `@#analyse` — impact analysis, tradeoffs, feasibility
 - `@#adr` — architecture decision record writing (if significant decisions)
+- `@#onboard` — contributor onboarding guide generation
 
 ## gate moments
 

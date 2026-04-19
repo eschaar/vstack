@@ -1,0 +1,17 @@
+name: migrate
+version: 1.0.0
+description: |
+  Database migration review and authoring. Covers forwards/backwards compatibility,
+  zero-downtime strategies, rollback plans, data integrity, and index safety.
+  Use when asked to "write a migration", "review this migration", "is this
+  migration safe?", or "zero-downtime schema change". Proactively suggest before
+  any DDL change ships to production.
+argument-hint: '[migration file or schema change to review]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

@@ -152,5 +152,6 @@ Apply all relevant disciplines — a fullstack integration system needs API cont
 - `@#docs` — keep design artifacts and related docs aligned with delivered changes
 - `@#explore` — codebase discovery and mapping
 - `@#analyse` — impact analysis, tradeoffs, feasibility
+- `@#openapi` — OpenAPI 3.1 spec writing and review
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->

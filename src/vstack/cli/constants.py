@@ -23,4 +23,10 @@ EXPECTED_CANONICAL_NAMES = [
     "guardrails",
     "container",
     "cicd",
+    "migrate",
+    "openapi",
+    "refactor",
+    "onboard",
+    "dependency",
+    "incident",
 ]
