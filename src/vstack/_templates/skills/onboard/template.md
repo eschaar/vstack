@@ -259,7 +259,7 @@ Quick start:
 ```bash
 [one-liner setup command]
 [one-liner test command]
-````
+```
 
 ````
 
@@ -286,4 +286,4 @@ Coverage:
 
 Gaps remaining (if any):
   [anything that could not be determined automatically]
-````
+```

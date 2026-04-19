@@ -265,7 +265,7 @@ Link to docs/architecture/architecture.md for details.\]
 
 ````
 
----
+______________________________________________________________________
 
 ______________________________________________________________________
 
@@ -273,7 +273,7 @@ ______________________________________________________________________
 
 If README lacks a dev setup section, add a minimal one linking to CONTRIBUTING.md:
 
-```markdown
+`````markdown
 ## development
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, and contribution guidelines.
@@ -285,7 +285,7 @@ Quick start:
 [one-liner test command]
 ```
 
-````
+`````
 
 ______________________________________________________________________
 
