@@ -6,4 +6,3 @@ from vstack.frontmatter.schema import FieldSpec as FieldSpec
 from vstack.frontmatter.schema import FieldType as FieldType
 from vstack.frontmatter.schema import FrontmatterSchema as FrontmatterSchema
 from vstack.frontmatter.serializer import FrontmatterSerializer as FrontmatterSerializer
-from vstack.frontmatter.serializer import build_output as build_output

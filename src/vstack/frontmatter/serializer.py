@@ -5,7 +5,7 @@ frontmatter block, filtered and ordered by a :class:`~vstack.frontmatter.Frontma
 Fields absent from the schema are silently dropped so generator-internal
 metadata (``version``, etc.) never leaks into output files.
 
-:func:`build_output` is a backward-compatible wrapper for :meth:`FrontmatterSerializer.serialize`.
+Main entry point: :meth:`FrontmatterSerializer.serialize`.
 """
 
 from __future__ import annotations
@@ -200,12 +200,3 @@ class FrontmatterSerializer:
         lines.append("---")
         lines.append("")
         return "\n".join(lines)
-
-
-def build_output(meta: dict, schema: FrontmatterSchema, preserve_multiline: bool = False) -> str:
-    """Backward-compatible wrapper; use :meth:`FrontmatterSerializer.serialize` instead."""
-    return FrontmatterSerializer.serialize(
-        meta,
-        schema,
-        preserve_multiline=preserve_multiline,
-    )

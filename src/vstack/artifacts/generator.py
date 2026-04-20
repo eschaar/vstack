@@ -20,7 +20,7 @@ from vstack.artifacts.config import ArtifactTypeConfig
 from vstack.artifacts.constants import AUTO_GEN_FOOTER
 from vstack.artifacts.models import ArtifactResult, RenderedArtifact
 from vstack.constants import VERSION
-from vstack.frontmatter import FrontmatterParser, build_output
+from vstack.frontmatter import FrontmatterParser, FrontmatterSerializer
 from vstack.models import CheckMessage, ValidationResult
 
 _PLACEHOLDER_RE = re.compile(r"\{\{([A-Z_]+)\}\}")
@@ -178,7 +178,7 @@ class GenericArtifactGenerator:
                 raise ValueError(
                     f"{self.config.type_name}: frontmatter_schema must be set when add_frontmatter=True"
                 )
-            fm_str = build_output(
+            fm_str = FrontmatterSerializer.serialize(
                 meta,
                 schema,
                 preserve_multiline=self.config.preserve_multiline_frontmatter,
@@ -193,7 +193,7 @@ class GenericArtifactGenerator:
                 raise ValueError(
                     f"{self.config.type_name}: frontmatter_schema must be set when add_frontmatter=True"
                 )
-            fm_str = build_output(
+            fm_str = FrontmatterSerializer.serialize(
                 meta,
                 schema,
                 preserve_multiline=self.config.preserve_multiline_frontmatter,
