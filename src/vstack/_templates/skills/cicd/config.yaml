@@ -1,5 +1,5 @@
 name: cicd
-version: 1.0.1
+version: 1.0.2
 description: |
   Write GitHub Actions CI/CD workflow configuration. Covers build, test, lint,
   security scan, container publish, and deployment trigger workflows.

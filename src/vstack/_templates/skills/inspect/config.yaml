@@ -1,5 +1,5 @@
 name: inspect
-version: 1.0.1
+version: 1.0.2
 description: |
   Read-only verification audit. Runs baseline plus optional extended checks,
   produces severity-ranked findings, and makes no code or commit changes.

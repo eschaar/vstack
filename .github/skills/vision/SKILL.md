@@ -24,6 +24,14 @@ When you need clarification, use this exact format — never invent or guess:
 
 Never ask more than one question at a time without waiting for the answer.
 
+### Diagram Convention
+
+When producing hand-authored Markdown outputs, prefer Mermaid for flow,
+interaction, lifecycle, state, topology, dependency, and decision diagrams when
+the format is supported and improves clarity. Use ASCII as a fallback when
+Mermaid is unsupported or would be less readable. Keep ASCII/text trees for
+directory structures and other scan-friendly hierarchies.
+
 ```bash
 # Detect base branch (main / master / develop / trunk)
 BASE=$(gh pr view --json baseRefName -q .baseRefName 2>/dev/null) \
@@ -72,7 +80,7 @@ Review the plan with maximum rigor and the appropriate level of ambition.
 1. **Retry/backoff/circuit breaker coverage.** Every external call: what happens on retry? Exponential backoff with jitter? Circuit breaker state machine? Dead letter queue?
 1. **Observability is scope, not afterthought.** New codepaths need: structured logs with correlation IDs, metrics (request rate, error rate, latency p50/p95/p99), distributed traces, dashboards, and alerts.
 1. **API contracts are immutable once published.** Breaking changes require version bumps. Plan the migration strategy before coding.
-1. **Diagrams are mandatory.** ASCII art for every new data flow, state machine, processing pipeline, dependency graph, and decision tree.
+1. **Diagrams are mandatory.** Prefer Mermaid for every new data flow, interaction flow, state machine, processing pipeline, dependency graph, and decision tree. Use ASCII only as a fallback when Mermaid is unsupported or less clear.
 1. **Everything deferred must be written down.** TODOS.md or it doesn't exist.
 1. **Design for the 3am pager.** Systems over heroes. Every runbook, alert, and recovery procedure documented before go-live.
 1. **Security is first-class scope.** Authentication, authorization, input validation, rate limiting, secret management — addressed in the plan, not "later."
@@ -200,4 +208,4 @@ Present as: "Overall assessment: [READY/NEEDS REVISION/SCOPE CHANGE] because [1-
 ______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"vision","artifact_type":"skill","artifact_version":"1.0.1","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"vision","artifact_type":"skill","artifact_version":"1.0.2","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

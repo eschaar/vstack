@@ -1,5 +1,5 @@
 name: onboard
-version: 1.0.0
+version: 1.0.1
 description: |
   Generate a contributor onboarding guide for a repository. Covers project
   purpose, architecture overview, local dev setup, test commands, contribution

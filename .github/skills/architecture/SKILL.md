@@ -24,6 +24,14 @@ When you need clarification, use this exact format — never invent or guess:
 
 Never ask more than one question at a time without waiting for the answer.
 
+### Diagram Convention
+
+When producing hand-authored Markdown outputs, prefer Mermaid for flow,
+interaction, lifecycle, state, topology, dependency, and decision diagrams when
+the format is supported and improves clarity. Use ASCII as a fallback when
+Mermaid is unsupported or would be less readable. Keep ASCII/text trees for
+directory structures and other scan-friendly hierarchies.
+
 # architecture — Engineering Plan Review
 
 Review the plan before any code is written. Identify issues, give opinionated
@@ -66,7 +74,7 @@ If running low on context or asked to compress: Step 0 > Service/contract diagra
 - Observability is not optional — new codepaths need logs, metrics, or traces.
 - Security is not optional — new codepaths need threat modeling.
 - Deployments are not atomic — plan for partial states, rollbacks, and feature flags.
-- ASCII diagrams for all data flows, state machines, service dependencies.
+- Diagrams for all data flows, state machines, and service dependencies.
 
 ## Cognitive Patterns — How Great Engineering Leads Think
 
@@ -115,18 +123,13 @@ Before reviewing anything, answer:
 
 ## Step 1: Service Boundary & Data Model Review
 
-Produce an ASCII diagram of the service topology:
+Produce a service topology diagram. Prefer Mermaid when possible; use ASCII only
+as a fallback when Mermaid would be less clear or unsupported.
 
-```text
-┌───────────────┐       HTTP/gRPC       ┌───────────────┐
-│  Service A    │ ─────────────────────▶│  Service B    │
-│  (this plan)  │                       │  (existing)   │
-└───────┬───────┘                       └───────────────┘
-        │ publishes
-        ▼
-┌───────────────┐
-│  Event Bus    │
-└───────────────┘
+```mermaid
+flowchart LR
+        A[Service A<br>this plan] -->|HTTP or gRPC| B[Service B<br>existing]
+        A -->|publishes| C[Event Bus]
 ```
 
 Review:
@@ -277,4 +280,4 @@ For each significant structural decision made during this review (technology cho
 ______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"architecture","artifact_type":"skill","artifact_version":"1.0.1","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"architecture","artifact_type":"skill","artifact_version":"1.0.2","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

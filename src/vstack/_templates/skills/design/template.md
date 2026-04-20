@@ -53,15 +53,22 @@ For each resource/entity in the domain:
 1. **Lifecycle:** What states can it be in?
 1. **Relationships:** What resources does it reference?
 
-Produce an entity diagram:
+Produce an entity diagram. Prefer Mermaid when possible; use ASCII as a fallback
+only when Mermaid support is unavailable or would reduce clarity.
 
-```text
-┌──────────┐     1:N     ┌──────────────┐
-│   User   │ ──────────▶ │    Order     │
-│ id       │             │ id           │
-│ email    │             │ user_id (fk) │
-│ name     │             │ status       │
-└──────────┘             └──────────────┘
+```mermaid
+erDiagram
+  USER ||--o{ ORDER : places
+  USER {
+    string id
+    string email
+    string name
+  }
+  ORDER {
+    string id
+    string user_id
+    string status
+  }
 ```
 
 ______________________________________________________________________

@@ -41,7 +41,7 @@ Review the plan with maximum rigor and the appropriate level of ambition.
 1. **Retry/backoff/circuit breaker coverage.** Every external call: what happens on retry? Exponential backoff with jitter? Circuit breaker state machine? Dead letter queue?
 1. **Observability is scope, not afterthought.** New codepaths need: structured logs with correlation IDs, metrics (request rate, error rate, latency p50/p95/p99), distributed traces, dashboards, and alerts.
 1. **API contracts are immutable once published.** Breaking changes require version bumps. Plan the migration strategy before coding.
-1. **Diagrams are mandatory.** ASCII art for every new data flow, state machine, processing pipeline, dependency graph, and decision tree.
+1. **Diagrams are mandatory.** Prefer Mermaid for every new data flow, interaction flow, state machine, processing pipeline, dependency graph, and decision tree. Use ASCII only as a fallback when Mermaid is unsupported or less clear.
 1. **Everything deferred must be written down.** TODOS.md or it doesn't exist.
 1. **Design for the 3am pager.** Systems over heroes. Every runbook, alert, and recovery procedure documented before go-live.
 1. **Security is first-class scope.** Authentication, authorization, input validation, rate limiting, secret management — addressed in the plan, not "later."

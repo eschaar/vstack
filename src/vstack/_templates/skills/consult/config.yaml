@@ -1,5 +1,5 @@
 name: consult
-version: 1.0.1
+version: 1.0.2
 description: |
   DX triage and focused review. First classifies whether the request is API DX,
   CLI/tool DX, or developer workflow DX, then runs exactly one review path with
