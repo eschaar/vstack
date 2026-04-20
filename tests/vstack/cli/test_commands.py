@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any, cast
 
@@ -106,6 +107,43 @@ class TestCommandLineInterface:
         assert rc == 0
         md_files = list((tmp_path / ".github" / "skills").glob("*/SKILL.md"))
         assert len(md_files) == len(EXPECTED_CANONICAL_NAMES)
+
+    def test_install_only_preserves_manifest_entries_for_other_types(self, tmp_path: Path) -> None:
+        """Test that --only install does not drop manifest entries from other artifact types."""
+        install_dir = tmp_path / ".github"
+        install_dir.mkdir(parents=True)
+        manifest: dict[str, Any] = {
+            "vstack_version": "0.1.0",
+            "installed_at": "2026-01-01T00:00:00Z",
+            "artifacts": {
+                "agents": [
+                    {
+                        "name": "engineer",
+                        "file": "agents/engineer.agent.md",
+                        "version": "0.1.0",
+                    }
+                ],
+                "skills": [
+                    {
+                        "name": "verify",
+                        "file": "skills/verify/SKILL.md",
+                        "version": "0.1.0",
+                    }
+                ],
+            },
+        }
+        (install_dir / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+        rc = cli.install(install_dir, only=["instruction"])
+        assert rc == 0
+
+        updated: dict[str, Any] = json.loads(
+            (install_dir / "vstack.json").read_text(encoding="utf-8")
+        )
+        assert "instructions" in updated["artifacts"]
+        assert updated["artifacts"]["agents"] == manifest["artifacts"]["agents"]
+        assert updated["artifacts"]["skills"] == manifest["artifacts"]["skills"]
 
     def test_install_update_skips_when_version_not_newer(self, tmp_path: Path) -> None:
         """Test that install update skips when version not newer."""
@@ -460,6 +498,79 @@ class TestCommandLineInterface:
         new_content = (install_dir / "skills" / "vision" / "SKILL.md").read_text(encoding="utf-8")
         assert new_content != "old"
         assert "AUTO-GENERATED" in new_content
+
+    def test_verify_fails_on_vstack_meta_version_mismatch(self, tmp_path: Path) -> None:
+        """Test that verify fails when VSTACK-META footer differs from manifest values."""
+        install_dir = tmp_path / ".github"
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+        rc_install = cli.install(install_dir, only=["instruction"])
+        assert rc_install == 0
+
+        instruction_file = install_dir / "instructions" / "python.instructions.md"
+        content = instruction_file.read_text(encoding="utf-8")
+        tampered = re.sub(
+            r'"vstack_version":"[^"]+"',
+            '"vstack_version":"tampered-version"',
+            content,
+            count=1,
+        )
+        instruction_file.write_text(tampered, encoding="utf-8")
+
+        rc_verify = cli.verify(
+            install_dir=install_dir,
+            source=False,
+            output=True,
+            only=["instruction"],
+        )
+        assert rc_verify == 1
+
+    def test_verify_accepts_legacy_artifact_without_vstack_meta(self, tmp_path: Path) -> None:
+        """Test that verify accepts old artifacts that do not include VSTACK-META."""
+        install_dir = tmp_path / ".github"
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+        rc_install = cli.install(install_dir, only=["instruction"])
+        assert rc_install == 0
+
+        instruction_file = install_dir / "instructions" / "python.instructions.md"
+        content = instruction_file.read_text(encoding="utf-8")
+        legacy_content = re.sub(r"\n<!-- VSTACK-META: \{.*?\} -->\n", "\n", content, count=1)
+        instruction_file.write_text(legacy_content, encoding="utf-8")
+
+        rc_verify = cli.verify(
+            install_dir=install_dir,
+            source=False,
+            output=True,
+            only=["instruction"],
+        )
+        assert rc_verify == 0
+
+    def test_verify_rejects_legacy_artifact_without_vstack_meta_and_autogen(
+        self, tmp_path: Path
+    ) -> None:
+        """Test that verify rejects legacy fallback when AUTO-GENERATED marker is missing."""
+        install_dir = tmp_path / ".github"
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+        rc_install = cli.install(install_dir, only=["instruction"])
+        assert rc_install == 0
+
+        instruction_file = install_dir / "instructions" / "python.instructions.md"
+        content = instruction_file.read_text(encoding="utf-8")
+        no_meta = re.sub(r"\n<!-- VSTACK-META: \{.*?\} -->\n", "\n", content, count=1)
+        no_autogen = re.sub(
+            r"\n<!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->\n",
+            "\n",
+            no_meta,
+            count=1,
+        )
+        instruction_file.write_text(no_autogen, encoding="utf-8")
+
+        rc_verify = cli.verify(
+            install_dir=install_dir,
+            source=False,
+            output=True,
+            only=["instruction"],
+        )
+        assert rc_verify == 1
 
     def test_verify_source_with_messages_path(self, tmp_path: Path) -> None:
         """Test that verify source with messages path."""

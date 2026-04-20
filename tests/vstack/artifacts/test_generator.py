@@ -76,7 +76,34 @@ class TestGenericArtifactGenerator:
         artifact = self._make_skill_gen(tmp_path).render(tmpl_dir)
         assert artifact.name == "vision"
         assert "AUTO-GENERATED" in artifact.content
+        assert "VSTACK-META" in artifact.content
         assert artifact.unresolved == []
+
+    def test_render_emits_parseable_vstack_metadata_footer(self, tmp_path: Path) -> None:
+        """Test that render emits machine-readable footer metadata."""
+        (tmp_path / "templates" / "skills" / "_partials").mkdir(parents=True)
+        (tmp_path / "templates" / "skills" / "_partials" / "skill-context.md").write_text(
+            "context", encoding="utf-8"
+        )
+        tmpl_dir = tmp_path / "templates" / "skills" / "verify"
+        tmpl_dir.mkdir(parents=True)
+        (tmpl_dir / "template.md").write_text(
+            "---\nname: verify\nversion: 2.3.4\ndescription: d\n---\n{{SKILL_CONTEXT}}\n",
+            encoding="utf-8",
+        )
+
+        artifact = self._make_skill_gen(tmp_path).render(tmpl_dir)
+        metadata = GenericArtifactGenerator.parse_generation_metadata(artifact.content)
+
+        assert metadata is not None
+        assert metadata["generator"] == "vstack"
+        assert metadata["artifact_type"] == "skill"
+        assert metadata["artifact_name"] == "verify"
+        assert metadata["artifact_version"] == "2.3.4"
+
+    def test_parse_generation_metadata_returns_none_without_footer(self) -> None:
+        """Test that metadata parser returns none when footer is missing."""
+        assert GenericArtifactGenerator.parse_generation_metadata("plain content") is None
 
     def test_generate_writes_files(self, tmp_path: Path) -> None:
         """Test that generate writes files."""
