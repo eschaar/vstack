@@ -1,10 +1,16 @@
-# vstack
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/branding/vstack_dm.png">
+    <img src="assets/branding/vstack.png" alt="vstack" width="400">
+  </picture>
 
 [![Python](https://img.shields.io/badge/python-3.11--3.14-0B8A6F)](pyproject.toml)
 [![Verify](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/verify.yml?branch=main&label=verify&color=1D6FA5)](https://github.com/eschaar/vstack/actions/workflows/verify.yml)
 [![Security](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/security.yml?branch=main&label=security&color=B15E00)](https://github.com/eschaar/vstack/actions/workflows/security.yml)
 [![Runtime](https://img.shields.io/badge/runtime-stdlib%20only-5B6C8F)](pyproject.toml)
 [![License](https://img.shields.io/github/license/eschaar/vstack?color=5F7A1F)](LICENSE)
+
+</div>
 
 vstack is a VS Code-native AI engineering workflow system for backend services,
 libraries, APIs, and adjacent platform work. It installs structured agents,
