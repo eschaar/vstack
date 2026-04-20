@@ -1,5 +1,5 @@
 name: release-notes
-version: 1.0.1
+version: 1.0.2
 description: |
   Prepare release artifacts: verify all docs are present, write release notes,
   own CHANGELOG.md updates, and produce docs/releases/{date}.md.

@@ -24,6 +24,14 @@ When you need clarification, use this exact format — never invent or guess:
 
 Never ask more than one question at a time without waiting for the answer.
 
+### Diagram Convention
+
+When producing hand-authored Markdown outputs, prefer Mermaid for flow,
+interaction, lifecycle, state, topology, dependency, and decision diagrams when
+the format is supported and improves clarity. Use ASCII as a fallback when
+Mermaid is unsupported or would be less readable. Keep ASCII/text trees for
+directory structures and other scan-friendly hierarchies.
+
 # design — API & Service Design
 
 Produce a complete service or API design document from minimal input. The output
@@ -77,15 +85,22 @@ For each resource/entity in the domain:
 1. **Lifecycle:** What states can it be in?
 1. **Relationships:** What resources does it reference?
 
-Produce an entity diagram:
+Produce an entity diagram. Prefer Mermaid when possible; use ASCII as a fallback
+only when Mermaid support is unavailable or would reduce clarity.
 
-```text
-┌──────────┐     1:N     ┌──────────────┐
-│   User   │ ──────────▶ │    Order     │
-│ id       │             │ id           │
-│ email    │             │ user_id (fk) │
-│ name     │             │ status       │
-└──────────┘             └──────────────┘
+```mermaid
+erDiagram
+  USER ||--o{ ORDER : places
+  USER {
+    string id
+    string email
+    string name
+  }
+  ORDER {
+    string id
+    string user_id
+    string status
+  }
 ```
 
 ______________________________________________________________________
@@ -248,3 +263,4 @@ Output a complete design document to `docs/design/design.md` or `openapi.yaml`:
 ______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
+<!-- VSTACK-META: {"artifact_name":"design","artifact_type":"skill","artifact_version":"1.0.2","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

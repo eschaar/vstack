@@ -144,46 +144,45 @@ Type:    [API service / library / CLI / worker / ...]
 Stack:   [language, framework, runtime versions]
 
 ### Architecture
-[ASCII diagram of service topology or module structure]
-
-┌─────────────────┐     HTTP     ┌──────────────┐
-│   [This service] │ ──────────▶ │   [Dep A]    │
-└────────┬────────┘             └──────────────┘
-         │ subscribes
-         ▼
-┌─────────────────┐
-│  [Message Bus]  │
-└─────────────────┘
+[Mermaid diagram of service topology or module structure when possible; ASCII fallback if needed]
 
 ### Data Stores
+
 - [Database]: [what it stores, ORM/driver used]
 - [Cache]: [what is cached, TTL strategy]
 
 ### Key External Dependencies
+
 - [Service A]: [purpose, auth method]
 - [Service B]: [purpose]
 
 ### API Surface
+
 [Summarize endpoints or exported functions]
 
 ### Test Coverage
+
 - Unit tests: [Y/N, count, coverage %]
 - Integration tests: [Y/N]
 - Contract tests: [Y/N]
 
 ### CI/CD
+
 - CI: [GitHub Actions/GitLab CI/etc]
 - Deploy target: [Fly.io/Render/K8s/etc]
 - Release process: [manual/automated]
 
 ### Technical Debt
+
 - [Key items from TODOS.md or code comments]
 
 ### Onboarding Notes
+
 - How to run locally: [command]
 - How to run tests: [command]
 - Key config: [env vars]
 - Gotchas: [anything that surprised me]
+
 ```
 
 ______________________________________________________________________

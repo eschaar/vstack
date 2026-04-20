@@ -1,142 +1,142 @@
 {
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-04-19T22:11:30.480962+00:00",
+  "installed_at": "2026-04-20T22:37:59.699083+00:00",
   "artifacts": {
     "skills": [
       {
         "name": "adr",
         "file": "skills/adr/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "analyse",
         "file": "skills/analyse/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "architecture",
         "file": "skills/architecture/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "cicd",
         "file": "skills/cicd/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "code-review",
         "file": "skills/code-review/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "concise",
         "file": "skills/concise/SKILL.md",
-        "version": "1.0.0"
+        "version": "1.0.1"
       },
       {
         "name": "consult",
         "file": "skills/consult/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "container",
         "file": "skills/container/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "debug",
         "file": "skills/debug/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "dependency",
         "file": "skills/dependency/SKILL.md",
-        "version": "1.0.0"
+        "version": "1.0.1"
       },
       {
         "name": "design",
         "file": "skills/design/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "docs",
         "file": "skills/docs/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "explore",
         "file": "skills/explore/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "guardrails",
         "file": "skills/guardrails/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "incident",
         "file": "skills/incident/SKILL.md",
-        "version": "1.0.0"
+        "version": "1.0.1"
       },
       {
         "name": "inspect",
         "file": "skills/inspect/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "migrate",
         "file": "skills/migrate/SKILL.md",
-        "version": "1.0.0"
+        "version": "1.0.1"
       },
       {
         "name": "onboard",
         "file": "skills/onboard/SKILL.md",
-        "version": "1.0.0"
+        "version": "1.0.1"
       },
       {
         "name": "openapi",
         "file": "skills/openapi/SKILL.md",
-        "version": "1.0.0"
+        "version": "1.0.1"
       },
       {
         "name": "performance",
         "file": "skills/performance/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "pr",
         "file": "skills/pr/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "refactor",
         "file": "skills/refactor/SKILL.md",
-        "version": "1.0.0"
+        "version": "1.0.1"
       },
       {
         "name": "release-notes",
         "file": "skills/release-notes/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "requirements",
         "file": "skills/requirements/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "security",
         "file": "skills/security/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "verify",
         "file": "skills/verify/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       },
       {
         "name": "vision",
         "file": "skills/vision/SKILL.md",
-        "version": "1.0.1"
+        "version": "1.0.2"
       }
     ],
     "agents": [
@@ -173,9 +173,14 @@
     ],
     "instructions": [
       {
+        "name": "git",
+        "file": "instructions/git.instructions.md",
+        "version": "0.1.0"
+      },
+      {
         "name": "python",
         "file": "instructions/python.instructions.md",
-        "version": "0.1.0"
+        "version": "0.1.1"
       }
     ],
     "prompts": [

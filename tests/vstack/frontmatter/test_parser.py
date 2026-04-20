@@ -1,4 +1,4 @@
-"""Utilities and tests for test parser."""
+"""Tests for frontmatter parser behavior."""
 
 from __future__ import annotations
 

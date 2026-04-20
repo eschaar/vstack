@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.2.0 - 2026-04-21
+
+CLI provenance verification and documentation system alignment.
+
+### Added in 1.2.0
+
+- CLI artifact provenance verification against the install manifest.
+
+### Changed in 1.2.0
+
+- Refactored CLI parser flow into a `CommandLineParser` class and simplified install and verify control flow.
+- Refactored frontmatter serialization internals (instance-method serializer, naming cleanup, and reduced nested parse/validation flow).
+- Aligned hand-authored Markdown docs toward Mermaid-first diagram usage, with ASCII as fallback where needed.
+- Updated skill template guidance and regenerated installed skill artifacts to adopt the Mermaid-first diagram convention.
+- README branding/header refreshed with centered logo and badges plus light/dark logo switching.
+- Centralized commit and branch policy in `cchk.toml` and wired local `pre-commit` hooks for commit-message and pre-push branch validation.
+- Removed hard CI scope allowlist enforcement; commit scopes are now guidance-level in documentation rather than a strict gate.
+- Fixed multiple documentation link paths under `docs/design/` so relative Markdown links resolve correctly on GitHub.
+- Updated `CONTRIBUTING.md` commit-policy wording to match the current `cchk.toml` enforcement model.
+- Strengthened generated skill footer tests to assert the `AUTO-GENERATED` and `VSTACK-META` footer structure at end-of-file.
+
 ## 1.1.0 — 2026-04-20
 
 Runtime response-style control via the new `concise` skill.
@@ -95,8 +116,6 @@ Community health and release workflow update.
 
 - Release workflow title format updated to `Release vX.Y.Z (YYYY-MM-DD)`.
 
-______________________________________________________________________
-
 ## 1.0.2 — 2026-04-17
 
 Release workflow fix.
@@ -104,8 +123,6 @@ Release workflow fix.
 ### Fixed in 1.0.2
 
 - Release workflow: corrected Poetry setup order and opted in to Node 24 to resolve runner deprecation warnings.
-
-______________________________________________________________________
 
 ## 1.0.1 — 2026-04-17
 

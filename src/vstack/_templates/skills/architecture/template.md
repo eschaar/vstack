@@ -42,7 +42,7 @@ If running low on context or asked to compress: Step 0 > Service/contract diagra
 - Observability is not optional — new codepaths need logs, metrics, or traces.
 - Security is not optional — new codepaths need threat modeling.
 - Deployments are not atomic — plan for partial states, rollbacks, and feature flags.
-- ASCII diagrams for all data flows, state machines, service dependencies.
+- Diagrams for all data flows, state machines, and service dependencies.
 
 ## Cognitive Patterns — How Great Engineering Leads Think
 
@@ -91,18 +91,13 @@ Before reviewing anything, answer:
 
 ## Step 1: Service Boundary & Data Model Review
 
-Produce an ASCII diagram of the service topology:
+Produce a service topology diagram. Prefer Mermaid when possible; use ASCII only
+as a fallback when Mermaid would be less clear or unsupported.
 
-```text
-┌───────────────┐       HTTP/gRPC       ┌───────────────┐
-│  Service A    │ ─────────────────────▶│  Service B    │
-│  (this plan)  │                       │  (existing)   │
-└───────┬───────┘                       └───────────────┘
-        │ publishes
-        ▼
-┌───────────────┐
-│  Event Bus    │
-└───────────────┘
+```mermaid
+flowchart LR
+        A[Service A<br>this plan] -->|HTTP or gRPC| B[Service B<br>existing]
+        A -->|publishes| C[Event Bus]
 ```
 
 Review:

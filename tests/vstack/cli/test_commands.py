@@ -1,15 +1,17 @@
-"""Utilities and tests for test commands."""
+"""Tests for CLI command handlers."""
 
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any, cast
 
 from tests.conftest import run_vstack
 from vstack.cli.commands import CommandLineInterface, _version_gt
 from vstack.cli.constants import EXPECTED_CANONICAL_NAMES
-from vstack.constants import TEMPLATES_ROOT
+from vstack.cli.manifest import ArtifactEntry, Manifest
+from vstack.constants import TEMPLATES_ROOT, VERSION
 from vstack.models import CheckMessage, ValidationResult
 
 
@@ -107,6 +109,43 @@ class TestCommandLineInterface:
         md_files = list((tmp_path / ".github" / "skills").glob("*/SKILL.md"))
         assert len(md_files) == len(EXPECTED_CANONICAL_NAMES)
 
+    def test_install_only_preserves_manifest_entries_for_other_types(self, tmp_path: Path) -> None:
+        """Test that --only install does not drop manifest entries from other artifact types."""
+        install_dir = tmp_path / ".github"
+        install_dir.mkdir(parents=True)
+        manifest: dict[str, Any] = {
+            "vstack_version": "0.1.0",
+            "installed_at": "2026-01-01T00:00:00Z",
+            "artifacts": {
+                "agents": [
+                    {
+                        "name": "engineer",
+                        "file": "agents/engineer.agent.md",
+                        "version": "0.1.0",
+                    }
+                ],
+                "skills": [
+                    {
+                        "name": "verify",
+                        "file": "skills/verify/SKILL.md",
+                        "version": "0.1.0",
+                    }
+                ],
+            },
+        }
+        (install_dir / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+        rc = cli.install(install_dir, only=["instruction"])
+        assert rc == 0
+
+        updated: dict[str, Any] = json.loads(
+            (install_dir / "vstack.json").read_text(encoding="utf-8")
+        )
+        assert "instructions" in updated["artifacts"]
+        assert updated["artifacts"]["agents"] == manifest["artifacts"]["agents"]
+        assert updated["artifacts"]["skills"] == manifest["artifacts"]["skills"]
+
     def test_install_update_skips_when_version_not_newer(self, tmp_path: Path) -> None:
         """Test that install update skips when version not newer."""
         install_dir = tmp_path / ".github"
@@ -177,7 +216,7 @@ class TestCommandLineInterface:
         """Test that validate returns non zero on unresolved."""
 
         class _FakeArtifact:
-            """Represents FakeArtifact."""
+            """Test double for a rendered artifact."""
 
             def __init__(self) -> None:
                 """Initialize instance state."""
@@ -185,14 +224,14 @@ class TestCommandLineInterface:
                 self.unresolved = ["MISSING"]
 
         class _Cfg:
-            """Represents Cfg."""
+            """Minimal generator config for this test."""
 
             type_name = "skill"
             manifest_key = "skills"
             output_subdir = "skills"
 
         class _FakeGen:
-            """Represents FakeGen."""
+            """Test double for an artifact generator."""
 
             config = _Cfg()
 
@@ -216,7 +255,7 @@ class TestCommandLineInterface:
         """Test that install force and verify input fail path."""
 
         class _FakeArtifact:
-            """Represents FakeArtifact."""
+            """Test double for a rendered artifact."""
 
             def __init__(self) -> None:
                 """Initialize instance state."""
@@ -226,7 +265,7 @@ class TestCommandLineInterface:
                 self.content = "content"
 
         class _Cfg:
-            """Represents Cfg."""
+            """Minimal generator config for this test."""
 
             type_name = "skill"
             manifest_key = "skills"
@@ -234,7 +273,7 @@ class TestCommandLineInterface:
             artifact_is_dir = True
 
         class _FakeGen:
-            """Represents FakeGen."""
+            """Test double for an artifact generator."""
 
             config = _Cfg()
 
@@ -269,13 +308,13 @@ class TestCommandLineInterface:
         """Test that verify source with no messages and all passed."""
 
         class _Cfg:
-            """Represents Cfg."""
+            """Minimal generator config for this test."""
 
             type_name = "skill"
             output_subdir = "skills"
 
         class _FakeGen:
-            """Represents FakeGen."""
+            """Test double for an artifact generator."""
 
             config = _Cfg()
 
@@ -334,7 +373,7 @@ class TestCommandLineInterface:
         """Test that validate returns zero when all clean."""
 
         class _FakeArtifact:
-            """Represents FakeArtifact."""
+            """Test double for a rendered artifact."""
 
             def __init__(self) -> None:
                 """Initialize instance state."""
@@ -342,14 +381,14 @@ class TestCommandLineInterface:
                 self.unresolved: list[str] = []
 
         class _Cfg:
-            """Represents Cfg."""
+            """Minimal generator config for this test."""
 
             type_name = "skill"
             manifest_key = "skills"
             output_subdir = "skills"
 
         class _FakeGen:
-            """Represents FakeGen."""
+            """Test double for an artifact generator."""
 
             config = _Cfg()
 
@@ -373,7 +412,7 @@ class TestCommandLineInterface:
         """Test that validate handles missing generator for type."""
 
         class _FakeArtifact:
-            """Represents FakeArtifact."""
+            """Test double for a rendered artifact."""
 
             def __init__(self) -> None:
                 """Initialize instance state."""
@@ -381,12 +420,12 @@ class TestCommandLineInterface:
                 self.unresolved: list[str] = []
 
         class _Cfg:
-            """Represents Cfg."""
+            """Minimal generator config for this test."""
 
             type_name = "skill"
 
         class _FakeGen:
-            """Represents FakeGen."""
+            """Test double for an artifact generator."""
 
             config = _Cfg()
 
@@ -461,17 +500,147 @@ class TestCommandLineInterface:
         assert new_content != "old"
         assert "AUTO-GENERATED" in new_content
 
+    def test_expected_output_names_falls_back_without_manifest(self) -> None:
+        """Test that expected output names fallback is used when manifest data is absent."""
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+        gen = cli._gen_for("skill")
+        assert gen is not None
+        assert cli._expected_output_names(gen, None) == EXPECTED_CANONICAL_NAMES
+
+    def test_verify_manifest_metadata_skips_missing_artifact_files(self, tmp_path: Path) -> None:
+        """Test that missing manifest-tracked files are ignored during metadata verification."""
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+        gen = cli._gen_for("skill")
+        assert gen is not None
+
+        manifest_data = Manifest(
+            vstack_version=VERSION,
+            installed_at="2026-01-01T00:00:00Z",
+            artifacts={
+                "skills": [
+                    ArtifactEntry(
+                        name="missing-skill",
+                        file="skills/missing-skill/SKILL.md",
+                        version="1.0.0",
+                    )
+                ]
+            },
+        )
+
+        result = cli._verify_manifest_metadata(gen, manifest_data, tmp_path / ".github")
+        assert result is None
+
+    def test_install_rewrites_skipped_artifact_when_footer_version_mismatches(
+        self, tmp_path: Path
+    ) -> None:
+        """Test that install rewrites a skipped artifact when footer vstack_version is stale."""
+        install_dir = tmp_path / ".github"
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+
+        rc_install = cli.install(install_dir, only=["skill"])
+        assert rc_install == 0
+
+        artifact_path = install_dir / "skills" / "vision" / "SKILL.md"
+        original = artifact_path.read_text(encoding="utf-8")
+        tampered = re.sub(
+            r'"vstack_version":"[^"]+"',
+            '"vstack_version":"stale-version"',
+            original,
+            count=1,
+        )
+        artifact_path.write_text(tampered, encoding="utf-8")
+
+        rc_reinstall = cli.install(install_dir, only=["skill"], update=False)
+        assert rc_reinstall == 0
+
+        updated = artifact_path.read_text(encoding="utf-8")
+        assert '"vstack_version":"stale-version"' not in updated
+        assert f'"vstack_version":"{VERSION}"' in updated
+
+    def test_verify_fails_on_vstack_meta_version_mismatch(self, tmp_path: Path) -> None:
+        """Test that verify fails when VSTACK-META footer differs from manifest values."""
+        install_dir = tmp_path / ".github"
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+        rc_install = cli.install(install_dir, only=["instruction"])
+        assert rc_install == 0
+
+        instruction_file = install_dir / "instructions" / "python.instructions.md"
+        content = instruction_file.read_text(encoding="utf-8")
+        tampered = re.sub(
+            r'"vstack_version":"[^"]+"',
+            '"vstack_version":"tampered-version"',
+            content,
+            count=1,
+        )
+        instruction_file.write_text(tampered, encoding="utf-8")
+
+        rc_verify = cli.verify(
+            install_dir=install_dir,
+            source=False,
+            output=True,
+            only=["instruction"],
+        )
+        assert rc_verify == 1
+
+    def test_verify_accepts_legacy_artifact_without_vstack_meta(self, tmp_path: Path) -> None:
+        """Test that verify accepts old artifacts that do not include VSTACK-META."""
+        install_dir = tmp_path / ".github"
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+        rc_install = cli.install(install_dir, only=["instruction"])
+        assert rc_install == 0
+
+        instruction_file = install_dir / "instructions" / "python.instructions.md"
+        content = instruction_file.read_text(encoding="utf-8")
+        legacy_content = re.sub(r"\n<!-- VSTACK-META: \{.*?\} -->\n", "\n", content, count=1)
+        instruction_file.write_text(legacy_content, encoding="utf-8")
+
+        rc_verify = cli.verify(
+            install_dir=install_dir,
+            source=False,
+            output=True,
+            only=["instruction"],
+        )
+        assert rc_verify == 0
+
+    def test_verify_rejects_legacy_artifact_without_vstack_meta_and_autogen(
+        self, tmp_path: Path
+    ) -> None:
+        """Test that verify rejects legacy fallback when AUTO-GENERATED marker is missing."""
+        install_dir = tmp_path / ".github"
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+        rc_install = cli.install(install_dir, only=["instruction"])
+        assert rc_install == 0
+
+        instruction_file = install_dir / "instructions" / "python.instructions.md"
+        content = instruction_file.read_text(encoding="utf-8")
+        no_meta = re.sub(r"\n<!-- VSTACK-META: \{.*?\} -->\n", "\n", content, count=1)
+        no_autogen = re.sub(
+            r"\n<!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->\n",
+            "\n",
+            no_meta,
+            count=1,
+        )
+        instruction_file.write_text(no_autogen, encoding="utf-8")
+
+        rc_verify = cli.verify(
+            install_dir=install_dir,
+            source=False,
+            output=True,
+            only=["instruction"],
+        )
+        assert rc_verify == 1
+
     def test_verify_source_with_messages_path(self, tmp_path: Path) -> None:
         """Test that verify source with messages path."""
 
         class _Cfg:
-            """Represents Cfg."""
+            """Minimal generator config for this test."""
 
             type_name = "skill"
             output_subdir = "skills"
 
         class _FakeGen:
-            """Represents FakeGen."""
+            """Test double for an artifact generator."""
 
             config = _Cfg()
 

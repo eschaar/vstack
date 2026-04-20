@@ -1,4 +1,4 @@
-"""Utilities and tests for test constants."""
+"""Tests for artifact constants."""
 
 from __future__ import annotations
 

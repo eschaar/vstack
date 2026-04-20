@@ -1,4 +1,4 @@
-"""Utilities and tests for constants."""
+"""Constants for instruction template and output locations."""
 
 from vstack.constants import TEMPLATES_ROOT
 

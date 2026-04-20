@@ -1,5 +1,5 @@
 name: migrate
-version: 1.0.0
+version: 1.0.1
 description: |
   Database migration review and authoring. Covers forwards/backwards compatibility,
   zero-downtime strategies, rollback plans, data integrity, and index safety.

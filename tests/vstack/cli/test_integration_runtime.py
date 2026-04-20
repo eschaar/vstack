@@ -1,4 +1,4 @@
-"""Utilities and tests for test integration runtime."""
+"""Tests for CLI runtime integration behavior."""
 
 from __future__ import annotations
 

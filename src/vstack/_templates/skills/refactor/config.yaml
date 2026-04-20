@@ -1,5 +1,5 @@
 name: refactor
-version: 1.0.0
+version: 1.0.1
 description: |
   Structured refactoring for backend services, APIs, and libraries. Identifies
   code smells, plans incremental changes, executes without altering observable

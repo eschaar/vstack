@@ -1,5 +1,5 @@
 name: dependency
-version: 1.0.0
+version: 1.0.1
 description: |
   Dependency health audit. Covers vulnerability scanning, outdated packages,
   licence compliance, transitive risk, pinning policy, and supply chain hygiene.

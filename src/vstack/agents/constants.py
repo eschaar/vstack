@@ -1,4 +1,4 @@
-"""Utilities and tests for constants."""
+"""Constants for agent template discovery and output paths."""
 
 from vstack.constants import TEMPLATES_ROOT
 

@@ -1,5 +1,5 @@
 name: requirements
-version: 1.0.1
+version: 1.0.2
 description: |
   Collaborative requirements gathering and documentation. Clarifies what must be
   built, defines success criteria, constraints, and non-functional requirements.

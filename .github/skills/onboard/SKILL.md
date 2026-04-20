@@ -24,6 +24,14 @@ When you need clarification, use this exact format — never invent or guess:
 
 Never ask more than one question at a time without waiting for the answer.
 
+### Diagram Convention
+
+When producing hand-authored Markdown outputs, prefer Mermaid for flow,
+interaction, lifecycle, state, topology, dependency, and decision diagrams when
+the format is supported and improves clarity. Use ASCII as a fallback when
+Mermaid is unsupported or would be less readable. Keep ASCII/text trees for
+directory structures and other scan-friendly hierarchies.
+
 # onboard — Contributor Onboarding Guide
 
 Generate or update onboarding documentation so a new contributor can go from
@@ -313,3 +321,4 @@ Gaps remaining (if any):
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
+<!-- VSTACK-META: {"artifact_name":"onboard","artifact_type":"skill","artifact_version":"1.0.1","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

@@ -1,5 +1,5 @@
 name: architecture
-version: 1.0.1
+version: 1.0.2
 description: |
   Engineering-lead plan review. Lock in the execution plan —
   service boundaries, data models, API contracts, error handling, test strategy,

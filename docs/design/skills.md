@@ -25,6 +25,14 @@ Unlike custom instructions that primarily define coding preferences and guardrai
 skills package specialized, reusable workflows with optional scripts, examples,
 and references.
 
+Boundary rule:
+
+- Policies belong in instructions.
+- Procedures belong in skills.
+
+See [instructions.md](./instructions.md) and
+[013-instructions-vs-skills-boundary.md](../architecture/adr/013-instructions-vs-skills-boundary.md).
+
 Key benefits:
 
 - Specialize Copilot for domain-specific tasks without repeating context.
@@ -71,13 +79,13 @@ ______________________________________________________________________
 
 ## file locations
 
-| Path                                              | Purpose                                                                    |
-| ------------------------------------------------- | -------------------------------------------------------------------------- |
-| `src/vstack/_templates/skills/<name>/config.yaml` | Source of truth — skill frontmatter fields                                 |
-| `src/vstack/_templates/skills/<name>/template.md` | Source of truth — skill instructions body                                  |
-| `src/vstack/_templates/skills/_partials/*.md`     | Shared partials injected via `{{TOKEN}}`                                   |
-| `.github/skills/<name>/SKILL.md`                  | Generated output — what VS Code loads                                      |
-| `.github/vstack.json`                             | Generated install manifest and artifact index (including installed skills) |
+| Path                                              | Purpose                                                                        |
+| ------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `src/vstack/_templates/skills/<name>/config.yaml` | Source of truth — skill frontmatter fields                                     |
+| `src/vstack/_templates/skills/<name>/template.md` | Source of truth — skill instructions body                                      |
+| `src/vstack/_templates/skills/_partials/*.md`     | Shared partials injected via `{{TOKEN}}`                                       |
+| `.github/skills/<name>/SKILL.md`                  | Generated output — what VS Code loads                                          |
+| `.github/vstack.json`                             | Generated install manifest and artifact index for all installed artifact types |
 
 **Never edit `.github/skills/` directly.** Regenerate after every change:
 
@@ -174,7 +182,7 @@ ______________________________________________________________________
 
 ## minimum skill body contract
 
-We hanteren dit als minimum voor elke skill body:
+Use this as the minimum baseline for every skill body:
 
 1. What it helps accomplish
 1. When to use it
@@ -182,7 +190,7 @@ We hanteren dit als minimum voor elke skill body:
 1. Expected input/output examples
 1. References to scripts/resources
 1. Out-of-scope + escalation/failure rules
-1. Common edge cases (sterk aanbevolen)
+1. Common edge cases (strongly recommended)
 
 Recommended additions for production-grade skills:
 

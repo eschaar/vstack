@@ -14,4 +14,4 @@ from vstack.frontmatter import FieldType as FieldType
 from vstack.frontmatter import FrontmatterContent as FrontmatterContent
 from vstack.frontmatter import FrontmatterParser as FrontmatterParser
 from vstack.frontmatter import FrontmatterSchema as FrontmatterSchema
-from vstack.frontmatter import build_output as build_output
+from vstack.frontmatter import FrontmatterSerializer as FrontmatterSerializer

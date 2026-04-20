@@ -1,4 +1,4 @@
-"""Utilities and tests for test constants."""
+"""Tests for project constants and version helpers."""
 
 from __future__ import annotations
 

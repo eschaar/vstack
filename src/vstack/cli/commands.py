@@ -103,6 +103,215 @@ class CommandLineInterface:
         """Return the generator for *type_name*, or ``None`` when unknown."""
         return next((g for g in self._generators if g.config.type_name == type_name), None)
 
+    def _expected_output_names(
+        self,
+        gen: GenericArtifactGenerator,
+        manifest_data: Manifest | None,
+    ) -> list[str] | None:
+        """Resolve expected output names for verify output checks."""
+        if manifest_data:
+            return manifest_data.names_for(gen.config.manifest_key)
+        return _EXPECTED_INPUT_NAMES.get(gen.config.type_name)
+
+    def _expected_manifest_metadata(
+        self,
+        gen: GenericArtifactGenerator,
+        manifest_data: Manifest,
+        entry: ArtifactEntry,
+    ) -> dict[str, str]:
+        """Build expected metadata values for one manifest-tracked artifact."""
+        expected_meta = {
+            "generator": "vstack",
+            "vstack_version": manifest_data.vstack_version,
+            "artifact_type": gen.config.type_name,
+            "artifact_name": entry.name,
+        }
+        if entry.version is not None:
+            expected_meta["artifact_version"] = entry.version
+        return expected_meta
+
+    def _verify_manifest_metadata_entry(
+        self,
+        gen: GenericArtifactGenerator,
+        manifest_data: Manifest,
+        entry: ArtifactEntry,
+        artifact_path: Path,
+    ) -> ValidationResult:
+        """Verify manifest-linked metadata for a single artifact file."""
+        result = ValidationResult()
+        content = artifact_path.read_text(encoding="utf-8")
+        metadata = GenericArtifactGenerator.parse_generation_metadata(content)
+        rel_path = self._label(artifact_path)
+
+        if metadata is None:
+            if "AUTO-GENERATED" not in content:
+                result.messages.append(
+                    CheckMessage(
+                        "fail",
+                        f"{rel_path}: missing VSTACK-META and missing AUTO-GENERATED footer",
+                    )
+                )
+                return result
+
+            result.messages.append(
+                CheckMessage(
+                    "pass",
+                    f"{rel_path}: missing VSTACK-META footer; "
+                    "treating manifest entry as source of truth",
+                )
+            )
+            result.messages.append(
+                CheckMessage(
+                    "pass",
+                    f"{rel_path}: legacy artifact accepted from manifest tracking",
+                )
+            )
+            return result
+
+        for key, expected_value in self._expected_manifest_metadata(
+            gen, manifest_data, entry
+        ).items():
+            actual_value = metadata.get(key)
+            if actual_value == expected_value:
+                result.messages.append(CheckMessage("pass", f"{rel_path}: {key} matches manifest"))
+            else:
+                result.messages.append(
+                    CheckMessage(
+                        "fail",
+                        f"{rel_path}: {key} mismatch "
+                        f"(expected '{expected_value}', got '{actual_value}')",
+                    )
+                )
+
+        return result
+
+    def _verify_manifest_metadata(
+        self,
+        gen: GenericArtifactGenerator,
+        manifest_data: Manifest,
+        install_dir: Path,
+    ) -> ValidationResult | None:
+        """Verify footer metadata for all manifest-tracked artifacts of one type."""
+        manifest_entries = manifest_data.entries_for(gen.config.manifest_key)
+        if not manifest_entries:
+            return None
+
+        result = ValidationResult()
+        for entry in manifest_entries:
+            artifact_path = install_dir / entry.file
+            if not artifact_path.exists():
+                continue
+            entry_result = self._verify_manifest_metadata_entry(
+                gen,
+                manifest_data,
+                entry,
+                artifact_path,
+            )
+            result.messages.extend(entry_result.messages)
+
+        return result if result.messages else None
+
+    def _existing_versions_for_install(
+        self,
+        gens: list[GenericArtifactGenerator],
+        existing_manifest: Manifest | None,
+    ) -> dict[str, str | None]:
+        """Build existing-version lookup for selected generators."""
+        if existing_manifest is None:
+            return {}
+
+        existing_versions: dict[str, str | None] = {}
+        for gen in gens:
+            for entry in existing_manifest.entries_for(gen.config.manifest_key):
+                key = f"{gen.config.type_name}/{entry.name}"
+                existing_versions[key] = entry.version
+        return existing_versions
+
+    def _preserved_manifest_entries(
+        self,
+        existing_manifest: Manifest | None,
+        selected_manifest_keys: set[str],
+    ) -> dict[str, list[ArtifactEntry]]:
+        """Keep existing manifest entries for artifact families not in this run."""
+        if existing_manifest is None:
+            return {}
+
+        preserved: dict[str, list[ArtifactEntry]] = {}
+        for manifest_key, entries in existing_manifest.artifacts.items():
+            if manifest_key not in selected_manifest_keys:
+                preserved[manifest_key] = list(entries)
+        return preserved
+
+    def _install_action(
+        self,
+        *,
+        force: bool,
+        update: bool,
+        out_file: Path,
+        existing_version: str | None,
+        new_version: str,
+    ) -> str:
+        """Return install action: install, skip, or update."""
+        if force:
+            return "install"
+        if out_file.exists() and existing_version is not None:
+            if update:
+                return "update" if _version_gt(new_version, existing_version) else "skip"
+            return "skip"
+        return "install"
+
+    def _print_install_action(
+        self,
+        *,
+        colors: type[_Colors],
+        prefix: str,
+        rel: str,
+        action: str,
+        existing_version: str | None,
+        new_version: str,
+        out_file: Path,
+        force: bool,
+    ) -> None:
+        """Print install/update/skip line for one artifact."""
+        if action == "skip":
+            print(
+                f"  {colors.YELLOW}↷{colors.RESET}  {rel}"
+                f"  {colors.DIM}skipped — already v{existing_version}{colors.RESET}"
+            )
+            return
+
+        if action == "update":
+            print(
+                f"  {prefix}{colors.CYAN}↑{colors.RESET}  "
+                f"{colors.BOLD}{rel}{colors.RESET}"
+                f"  v{existing_version} → {colors.GREEN}v{new_version}{colors.RESET}"
+            )
+            return
+
+        tag = "(forced) " if force and out_file.exists() else ""
+        print(
+            f"  {prefix}{colors.GREEN}✓{colors.RESET}  "
+            f"{colors.BOLD}{rel}{colors.RESET}"
+            f"  {colors.DIM}{tag}{colors.RESET}{colors.GREEN}v{new_version}{colors.RESET}"
+        )
+
+    def _record_manifest_entry(
+        self,
+        *,
+        new_entries: dict[str, list[ArtifactEntry]],
+        gen: GenericArtifactGenerator,
+        artifact_name: str,
+        version: str,
+    ) -> None:
+        """Append one installed artifact entry to the in-memory manifest payload."""
+        new_entries.setdefault(gen.config.manifest_key, []).append(
+            ArtifactEntry(
+                name=artifact_name,
+                file=gen.install_relative_path(artifact_name),
+                version=version,
+            )
+        )
+
     # ── validate ──────────────────────────────────────────────────────────────
 
     def validate(self, only: list[str] | None = None) -> int:
@@ -167,16 +376,12 @@ class CommandLineInterface:
         # Read existing manifest once — used to look up installed versions.
         mf = self._manifest(install_dir)
         existing_manifest = mf.read()
-        existing_versions: dict[str, str | None] = {}
-        if existing_manifest:
-            for gen in gens:
-                for entry in existing_manifest.entries_for(gen.config.manifest_key):
-                    key = f"{gen.config.type_name}/{entry.name}"
-                    existing_versions[key] = entry.version
+        selected_manifest_keys = {gen.config.manifest_key for gen in gens}
+        existing_versions = self._existing_versions_for_install(gens, existing_manifest)
 
         prefix = f"{_C.DIM}[dry-run]{_C.RESET} " if dry_run else ""
         all_ok = True
-        new_entries: dict[str, list[ArtifactEntry]] = {}
+        new_entries = self._preserved_manifest_entries(existing_manifest, selected_manifest_keys)
 
         for gen in gens:
             out_dir = install_dir / gen.config.output_subdir
@@ -196,48 +401,42 @@ class CommandLineInterface:
                         file=sys.stderr,
                     )
 
-                # Decide action.
-                action: str  # "install" | "skip" | "update"
-                if force:
-                    action = "install"
-                elif out_file.exists() and existing_version is not None:
-                    if update:
-                        action = "update" if _version_gt(new_version, existing_version) else "skip"
-                    else:
-                        action = "skip"
-                else:
-                    action = "install"
+                action = self._install_action(
+                    force=force,
+                    update=update,
+                    out_file=out_file,
+                    existing_version=existing_version,
+                    new_version=new_version,
+                )
 
-                if action == "skip":
-                    print(
-                        f"  {_C.YELLOW}↷{_C.RESET}  {rel}"
-                        f"  {_C.DIM}skipped — already v{existing_version}{_C.RESET}"
+                if action == "skip" and out_file.exists():
+                    existing_meta = GenericArtifactGenerator.parse_generation_metadata(
+                        out_file.read_text(encoding="utf-8")
                     )
-                elif action == "update":
-                    print(
-                        f"  {prefix}{_C.CYAN}↑{_C.RESET}  "
-                        f"{_C.BOLD}{rel}{_C.RESET}"
-                        f"  v{existing_version} → {_C.GREEN}v{new_version}{_C.RESET}"
-                    )
-                else:
-                    tag = "(forced) " if force and out_file.exists() else ""
-                    print(
-                        f"  {prefix}{_C.GREEN}✓{_C.RESET}  "
-                        f"{_C.BOLD}{rel}{_C.RESET}"
-                        f"  {_C.DIM}{tag}{_C.RESET}{_C.GREEN}v{new_version}{_C.RESET}"
-                    )
+                    if existing_meta is not None and existing_meta.get("vstack_version") != VERSION:
+                        action = "install"
+
+                self._print_install_action(
+                    colors=_C,
+                    prefix=prefix,
+                    rel=rel,
+                    action=action,
+                    existing_version=existing_version,
+                    new_version=new_version,
+                    out_file=out_file,
+                    force=force,
+                )
 
                 if not dry_run and action != "skip":
                     out_dir.mkdir(parents=True, exist_ok=True)
                     out_file.parent.mkdir(parents=True, exist_ok=True)
                     out_file.write_text(artifact.content, encoding="utf-8")
 
-                new_entries.setdefault(gen.config.manifest_key, []).append(
-                    ArtifactEntry(
-                        name=artifact.name,
-                        file=gen.install_relative_path(artifact.name),
-                        version=new_version,
-                    )
+                self._record_manifest_entry(
+                    new_entries=new_entries,
+                    gen=gen,
+                    artifact_name=artifact.name,
+                    version=new_version,
                 )
 
             # Verify source for unresolvable issues.
@@ -327,12 +526,15 @@ class CommandLineInterface:
                         )
                     )
                 else:
-                    expected = (
-                        manifest_data.names_for(gen.config.type_name)
-                        if manifest_data
-                        else _EXPECTED_INPUT_NAMES.get(gen.config.type_name)
-                    )
+                    expected = self._expected_output_names(gen, manifest_data)
                     _print_result(gen.verify_output(out_dir, expected))
+
+                    if manifest_data:
+                        metadata_result = self._verify_manifest_metadata(
+                            gen, manifest_data, install_dir
+                        )
+                        if metadata_result:
+                            _print_result(metadata_result)
 
         print()
         total_failures = sum(r.failures for r in results)

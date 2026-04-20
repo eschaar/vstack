@@ -1,4 +1,4 @@
-"""Utilities and tests for test generation."""
+"""Tests for generated agent artifacts."""
 
 from __future__ import annotations
 

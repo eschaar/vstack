@@ -1,4 +1,4 @@
-"""Utilities and tests for test main."""
+"""Tests for the ``python -m vstack`` entrypoint."""
 
 from __future__ import annotations
 

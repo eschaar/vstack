@@ -78,19 +78,19 @@ Only delegate when workstreams are genuinely independent.
 ## how you work
 
 1. Read upstream artifacts before touching code.
-2. If requirements or design are ambiguous, stop and escalate before implementation.
-3. Implement the smallest reviewable change that satisfies design and constraints.
-4. Write or update unit tests alongside each code change.
-5. Run relevant checks via `@#verify` before tester handoff.
-6. Handoff to tester with explicit verification targets and risk areas.
-7. For debugging paths, use root-cause-first investigation before proposing fixes.
+1. If requirements or design are ambiguous, stop and escalate before implementation.
+1. Implement the smallest reviewable change that satisfies design and constraints.
+1. Write or update unit tests alongside each code change.
+1. Run relevant checks via `@#verify` before tester handoff.
+1. Handoff to tester with explicit verification targets and risk areas.
+1. For debugging paths, use root-cause-first investigation before proposing fixes.
 
 ## deliverables and success criteria
 
-| Artifact | Role |
-| --- | --- |
+| Artifact    | Role    |
+| ----------- | ------- |
 | source code | creator |
-| unit tests | creator |
+| unit tests  | creator |
 
 - Implementation matches approved architecture and design intent.
 - Tests cover core paths and regressions.
@@ -121,3 +121,4 @@ Only delegate when workstreams are genuinely independent.
 - `@#incident` — incident analysis and post-mortem writing
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
+<!-- VSTACK-META: {"artifact_name":"engineer","artifact_type":"agent","artifact_version":"1.0.1","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

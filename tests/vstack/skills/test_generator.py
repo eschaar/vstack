@@ -1,4 +1,4 @@
-"""Utilities and tests for test generator."""
+"""Tests for skill generator behavior."""
 
 from __future__ import annotations
 

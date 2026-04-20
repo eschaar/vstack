@@ -1,5 +1,5 @@
 name: concise
-version: 1.0.0
+version: 1.0.1
 description: |
   Runtime response-style controller for concise communication. Switches between
   normal, compact, and ultra output density without regenerating agents. Use

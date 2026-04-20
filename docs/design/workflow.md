@@ -1,27 +1,75 @@
 # vstack — workflow
 
 > Maintained by: **designer** role\
-> Last updated: 2026-04-01
+> Last updated: 2026-04-21
 
 ## overview
 
 This document describes how vstack workflows execute today (single-call execution)
 and a possible future orchestrated role pipeline.
 
+It also documents the repository-level GitHub Actions automation used for quality,
+security, commit policy, and releases.
+
+For authoring boundaries between reusable guidance mechanisms:
+
+- [instructions.md](./instructions.md)
+- [skills.md](./skills.md)
+- [013-instructions-vs-skills-boundary.md](../architecture/adr/013-instructions-vs-skills-boundary.md)
+
+______________________________________________________________________
+
+## repository automation (GitHub Actions)
+
+The repository uses a split workflow model so each automation concern is isolated
+and easy to reason about.
+
+| Workflow                         | Trigger                                                   | Responsibility                                                                        |
+| -------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `.github/workflows/qa.yml`       | Push to non-main branches                                 | Fast feedback for formatting, linting, type checks, and tests across Python versions. |
+| `.github/workflows/commit.yml`   | Push to non-main branches (with explicit branch excludes) | Validate commit message policy before PR merge.                                       |
+| `.github/workflows/verify.yml`   | Pull request to `main`                                    | Validate source behavior and artifact install/verify flow.                            |
+| `.github/workflows/security.yml` | Pull request to `main`                                    | Dependency vulnerability audit and secret scan.                                       |
+| `.github/workflows/release.yml`  | Merged pull request to `main`                             | Compute SemVer, create tag and GitHub release, build distributions.                   |
+
+### commit policy enforcement model
+
+Commit policy is defined in `cchk.toml` and enforced by `commit-check`:
+
+1. `.github/workflows/commit.yml` runs `commit-check/commit-check-action@v2` on branch pushes.
+1. Local hooks in `.pre-commit-config.yaml` run the same checks at `commit-msg` and `pre-push` stages.
+
+Additional commit workflow policy:
+
+- Maximum commit subject length is 100 characters.
+- Branch names are validated against Conventional Branch format (`type/description`).
+- Allowed branch types: `feature`, `bugfix`, `hotfix`, `release`, `chore`, `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `ci`, `build`, `style`, `opt`, `patch`, `dependabot`.
+- Commit scopes are not hard-enforced by CI; scope naming is guidance-level in documentation.
+
+This keeps CI and local checks aligned through one policy source of truth.
+
+### release bump mapping
+
+`release.yml` computes SemVer from commit history using these mappings:
+
+- minor: `feat`, `feature`
+- patch: `fix`, `bugfix`, `hotfix`, `opt`, `patch`, `perf`, `refactor`, `chore`, `revert`
+
+Repository tag policy is strict `X.Y.Z` (no `v` prefix).
+
 ______________________________________________________________________
 
 ## current execution model — single-call
 
-The user invokes a skill from Copilot Agent Mode. Copilot loads the corresponding
-`.agent.md` file and executes the full workflow in a single model call.
+The user invokes a role or skill from Copilot Agent Mode. Copilot loads the
+relevant installed artifact and executes the full workflow in a single model call.
 
-```text
-User types: @<skill-name> <task>
-
-  → VS Code loads .github/agents/<skill>.agent.md
-  → Copilot executes all steps in one context window
-  → Artifacts written to disk (docs/architecture/architecture.md, docs/test-report.md, etc.)
-  → Done
+```mermaid
+flowchart LR
+    U[User request in Agent Mode] --> V[VS Code loads installed agent or skill]
+    V --> C[Copilot executes one context window]
+    C --> W[Artifacts written to disk]
+    W --> D[Done]
 ```
 
 **Characteristics:**
@@ -38,32 +86,17 @@ ______________________________________________________________________
 Each role becomes a separate model call. Output artifacts from one role become
 the input context for the next.
 
-```text
-┌─────────────────────────────────────────────────────────────────┐
-│  PIPELINE                                                       │
-│                                                                 │
-│  product ──→ [vision.md, requirements.md, roadmap.md]          │
-│      ↓                                                          │
-│  architect ──→ [architecture/architecture.md, architecture/adr/*.md] │
-│      ↓                                                          │
-│  designer ──→ [design/design.md]  (skip if backend-only)       │
-│      ↓                                                          │
-│  ┌── USER GATE 1: approve requirements + design ──┐            │
-│  └────────────────────────────────────────────────┘            │
-│      ↓                                                          │
-│  engineer ──→ [code + unit tests]                               │
-│      ↓                                                          │
-│  tester ──→ [test-report.md, security-report.md, performance-baseline.md]  │
-│      ↓                                                          │
-│  ┌── USER GATE 2: pre-prod sign-off ──┐                        │
-│  └─────────────────────────────────────┘                       │
-│      ↓                                                          │
-│  ┌── USER GATE 3: final merge approval ──┐                     │
-│  └────────────────────────────────────────┘                     │
-│      ↓                                                          │
-│  release ──→ [releases/{date}.md, CHANGELOG.md, PR]            │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+  P[product<br>vision.md<br>requirements.md<br>roadmap.md] --> A[architect<br>architecture.md<br>adr/*.md]
+  A --> D[designer<br>design.md]
+  D --> G1{User gate 1<br>requirements and design}
+  D -. backend-only path .-> G1
+  G1 --> E[engineer<br>code and unit tests]
+  E --> T[tester<br>test-report.md<br>security-report.md<br>performance-baseline.md]
+  T --> G2{User gate 2<br>pre-prod sign-off}
+  G2 --> G3{User gate 3<br>final merge approval}
+  G3 --> R[release<br>releases/{date}.md<br>CHANGELOG.md<br>PR]
 ```
 
 **Characteristics:**
@@ -119,16 +152,26 @@ ______________________________________________________________________
 
 Skills are the HOW inside a role call.
 
-```text
-Role call → loads role persona
-          → selects applicable skills
-          → executes skill steps sequentially
-          → writes output artifacts
+```mermaid
+flowchart LR
+  R[Role call] --> P[Load role persona]
+  P --> S[Select applicable skills]
+  S --> E[Execute skill steps]
+  E --> W[Write output artifacts]
 ```
 
 A role may use multiple skills in sequence within one model call. For example,
 the architect role uses the `adr` skill to write decision records and the
 `architecture` skill to produce the architecture document.
+
+## authoring decision rule
+
+Use this rule when deciding where reusable guidance belongs:
+
+1. If it is a baseline rule or standard, put it in instructions.
+1. If it is a task workflow or method, put it in skills.
+
+Instructions are policy. Skills are procedure.
 
 ______________________________________________________________________
 

@@ -1,7 +1,7 @@
 # vstack — architecture
 
 > Maintained by: **agents** role\
-> Last updated: 2026-04-01
+> Last updated: 2026-04-21
 
 ## overview
 
@@ -16,34 +16,26 @@ ______________________________________________________________________
 ```text
 vstack/
 ├── src/vstack/                  ← Python package (source of truth)
-│   ├── frontmatter/             ← parser, builder, schema
+│   ├── frontmatter/             ← parser, serializer, schema
 │   ├── artifacts/               ← GenericArtifactGenerator, ArtifactTypeConfig
 │   ├── skills/                  ← SKILL_SCHEMA, SKILL_TYPE
 │   ├── agents/                  ← AGENT_SCHEMA, AGENT_TYPE
-│   └── cli/                     ← commands, parser, constants
-├── _templates/
-│   ├── skills/
-│   │   ├── <skill-name>/
-│   │   │   ├── config.yaml          ← skill frontmatter fields
-│   │   │   └── template.md          ← skill instructions body
-│   │   └── _partials/
-│   │       └── *.md                 ← shared partial snippets
-│   └── agents/
-│       └── <agent-name>/
-│           ├── template.md          ← agent instructions body
-│           └── config.yaml          ← agent frontmatter fields
-├── test/
-│   └── test_skills.py
+│   ├── instructions/            ← instruction config and wrappers
+│   ├── prompts/                 ← prompt config and wrappers
+│   ├── cli/                     ← commands, parser, constants
+│   └── _templates/              ← source templates for all artifact types
 ├── docs/
-│   ├── architecture.md          ← this file (architect)
-│   ├── design.md                ← component design (designer)
-│   ├── roadmap.md               ← milestones + vision (product)
-│   ├── skills.md                ← skill reference
-│   ├── workflow.md              ← execution flow
-│   └── adr/                     ← architecture decision records
+│   ├── architecture/            ← architecture docs + ADRs
+│   ├── design/                  ← design, workflow, skills, instructions
+│   └── product/                 ← roadmap, requirements, vision
+├── tests/
+│   └── vstack/
 ├── .github/                     ← generated output (never edit directly)
 │   ├── skills/<name>/SKILL.md
-│   └── agents/<name>.agent.md
+│   ├── agents/<name>.agent.md
+│   ├── instructions/<name>.instructions.md
+│   ├── prompts/<name>.prompt.md
+│   └── vstack.json
 └── README.md
 ```
 
@@ -100,7 +92,7 @@ See `docs/architecture/adr/009-role-model.md` for the decision record.
 ### 5. manifest (`vstack.json`)
 
 Generated at install time in the target directory. Tracks every artifact installed
-by `vstack install` (skills and agents) so that `vstack uninstall` can remove
+by `vstack install` (skills, agents, instructions, and prompts) so that `vstack uninstall` can remove
 exactly those files. Not committed to the vstack source repo.
 
 ### 6. VS Code agent files (`.github/agents/<name>.agent.md`)
@@ -135,26 +127,29 @@ ______________________________________________________________________
 
 ### current execution model — single-call
 
-Copilot reads a `SKILL.md` file and executes the workflow in a single context window.
+Copilot executes the selected role or skill in a single context window.
 
-```text
-User → /skill-name → Copilot reads .github/agents/<skill>.agent.md
-                   → Executes steps in one model call
-                   → Writes output to disk
+```mermaid
+flowchart LR
+  U[User request in Agent Mode] --> A[Installed agent or skill artifact]
+  A --> C[Single model call]
+  C --> D[Writes docs, code, or reports to disk]
 ```
 
 ### possible future model — orchestrated role pipeline
 
 Each role makes its own model call. Output artifacts are passed to the next role.
 
-```text
-User → product (intake)
-     → architect (design)
-     → designer (specs)   [conditional: frontend scope]
-     → engineer (build)
-     → tester (validate + audit)
-     → product (sign-off) [gate: user approval]
-     → release (deploy + monitor)
+```mermaid
+flowchart TD
+  U[User request] --> P[product]
+  P --> A[architect]
+  A --> D[designer]
+  D --> E[engineer]
+  E --> T[tester]
+  T --> G{User sign-off}
+  G --> R[release]
+  D -. backend-only path can skip designer .-> E
 ```
 
 See `docs/architecture/adr/004-option-a-to-b-pipeline.md` and `docs/design/workflow.md` for pipeline detail.

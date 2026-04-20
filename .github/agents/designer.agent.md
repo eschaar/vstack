@@ -82,7 +82,7 @@ Apply all relevant disciplines — a fullstack integration system needs API cont
 Signal readiness before implementation proceeds:
 
 1. **Ready for implementation** — contracts, schemas, errors, and required flows are explicit.
-2. **Ready for test planning** — edge cases and expected failure behavior are documented.
+1. **Ready for test planning** — edge cases and expected failure behavior are documented.
 
 Handoffs you own:
 
@@ -92,24 +92,24 @@ Handoffs you own:
 ## how you work
 
 1. Read `docs/architecture/architecture.md`, `docs/architecture/adr/*.md`, `docs/product/vision.md`, `docs/product/requirements.md`.
-2. If `docs/architecture/architecture.md` is missing or too vague to design from, stop and hand off to architect.
-3. Determine which design disciplines apply (see scope detection above).
-4. For each service and component in the architecture:
+1. If `docs/architecture/architecture.md` is missing or too vague to design from, stop and hand off to architect.
+1. Determine which design disciplines apply (see scope detection above).
+1. For each service and component in the architecture:
    - Define the interaction surface: API endpoints, event types, inputs and outputs
    - Define data schemas and validation rules
    - Define state models where applicable (states, transitions, triggers, terminal states)
    - Define error cases and how they are communicated to callers
-5. Map data flows: how data enters, transforms, and exits the system.
-6. If user-facing scope: design UX flows and write `docs/design/ux.md`.
-7. Write or update `docs/design/design.md` (always).
-8. Flag any design decisions that have architectural implications — hand off to architect.
+1. Map data flows: how data enters, transforms, and exits the system.
+1. If user-facing scope: design UX flows and write `docs/design/ux.md`.
+1. Write or update `docs/design/design.md` (always).
+1. Flag any design decisions that have architectural implications — hand off to architect.
 
 ## deliverables and success criteria
 
-| Artifact | Role |
-| --- | --- |
-| `docs/design/design.md` | creator |
-| `docs/design/ux.md` | creator (frontend/fullstack scope only) |
+| Artifact                | Role                                    |
+| ----------------------- | --------------------------------------- |
+| `docs/design/design.md` | creator                                 |
+| `docs/design/ux.md`     | creator (frontend/fullstack scope only) |
 
 - Design docs are actionable without guesswork.
 - API/interface contracts and error cases are explicit.
@@ -131,3 +131,4 @@ Handoffs you own:
 - `@#openapi` — OpenAPI 3.1 spec writing and review
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
+<!-- VSTACK-META: {"artifact_name":"designer","artifact_type":"agent","artifact_version":"1.0.1","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

@@ -101,6 +101,30 @@ Update docs whenever a change affects system structure, skill definitions, execu
 
 Every ADR must include: context, decision, alternatives considered, rationale, and impact on the Option B pipeline.
 
+## Markdown Documentation Style
+
+For hand-authored Markdown in this repository, treat baseline docs as a coherent documentation system rather than isolated files.
+
+- Apply the same documentation style to non-generated, non-template Markdown files such as `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`, `docs/**/*.md`, and ADRs.
+- Do not apply these rules by editing generated artifacts under `.github/` or source templates under `src/vstack/_templates/` unless the task is explicitly about those sources.
+- Use Mermaid for process, flow, interaction, lifecycle, and decision diagrams when the visual structure matters more than exact monospace layout.
+- Keep ASCII/text trees for repository structure, directory layout, and similar scan-friendly file hierarchies where Mermaid would reduce readability.
+- Keep plain code fences for literal examples, terminal transcripts, frontmatter samples, JSON, YAML, and other content that is data rather than a diagram.
+- Prefer consistency across related docs: if `README.md`, architecture docs, and workflow docs describe the same flow, they should use compatible terminology and diagram style.
+- When modernizing older docs, convert diagrams selectively rather than mechanically. Preserve useful content first, then improve presentation.
+
+## Python Docstring Style
+
+For Python modules in this repository, treat code as the source of truth and keep docstrings aligned with shipped behavior.
+
+- Use **PEP 257** as the baseline: complete sentences, correct one-line vs multi-line structure, and a concise summary line first.
+- Keep docstrings **reStructuredText-compatible** per **PEP 287**. Use reST roles such as ``:class:`...``` when helpful and avoid Markdown formatting inside docstrings.
+- Prefer **Google-style sections** when additional structure adds value, especially `Args:`, `Returns:`, and `Raises:` on public APIs with non-trivial behavior.
+- Do not add section headers mechanically. For simple helpers, a precise one-line docstring is preferred over verbose boilerplate.
+- Module docstrings should explain responsibility and key concepts. Class docstrings should describe the abstraction. Function and method docstrings should describe behavior and observable effects rather than implementation trivia.
+- Avoid placeholder docstrings such as "Initialize instance state" or "Build parser". Describe intent and contract instead.
+- When a behavior, public API, or exception contract changes, update the corresponding docstring in the same change.
+
 ## Work Style
 
 - Produce small, reviewable changes.

@@ -1,5 +1,5 @@
 name: guardrails
-version: 1.0.1
+version: 1.0.2
 description: |
   Activate safety guardrails for the current session. Before any destructive
   command (rm -rf, DROP TABLE, git push --force, git reset --hard, kubectl delete,

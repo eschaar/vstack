@@ -1,4 +1,4 @@
-"""Utilities and tests for test main."""
+"""Tests for CLI entrypoint dispatch behavior."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ main_module = importlib.import_module("vstack.main")
 
 
 class _Args:
-    """Represents parsed CLI args for main() dispatch tests."""
+    """Minimal parsed-argument object for main() dispatch tests."""
 
     def __init__(
         self,
@@ -35,7 +35,7 @@ class _Args:
 
 
 class _CLI:
-    """Represents CLI."""
+    """Test double for the CLI command handler."""
 
     def __init__(self) -> None:
         """Initialize instance state."""
@@ -63,7 +63,7 @@ class _CLI:
 
 
 class TestMain:
-    """Test cases for Main."""
+    """Test cases for the CLI entrypoint."""
 
     def test_resolve_only_for_scope_returns_requested_only_for_non_global(self) -> None:
         """Test that non-global commands keep the explicit type filter."""
@@ -76,7 +76,7 @@ class TestMain:
         cli = _CLI()
         parser = type("P", (), {"parse_args": lambda self: _Args("validate")})()
 
-        monkeypatch.setattr(main_module, "build_parser", lambda: parser)
+        monkeypatch.setattr(main_module.CommandLineParser, "build", lambda self: parser)
         monkeypatch.setattr(main_module, "CommandLineInterface", lambda templates_root: cli)
         monkeypatch.setattr(
             main_module.sys, "exit", lambda code: (_ for _ in ()).throw(SystemExit(code))
@@ -101,8 +101,10 @@ class TestMain:
         args = _Args("install", only=["skill"], force=True, update=False, dry_run=True)
         parser = type("P", (), {"parse_args": lambda self: args})()
 
-        monkeypatch.setattr(main_module, "build_parser", lambda: parser)
-        monkeypatch.setattr(main_module, "resolve_targets", lambda _args: tmp_path)
+        monkeypatch.setattr(main_module.CommandLineParser, "build", lambda self: parser)
+        monkeypatch.setattr(
+            main_module.CommandLineParser, "resolve_targets", lambda self, _args: tmp_path
+        )
         monkeypatch.setattr(main_module, "CommandLineInterface", _build_cli)
         monkeypatch.setattr(
             main_module.sys, "exit", lambda code: (_ for _ in ()).throw(SystemExit(code))
@@ -132,8 +134,10 @@ class TestMain:
         args = _Args("install", only=None, use_global=True)
         parser = type("P", (), {"parse_args": lambda self: args})()
 
-        monkeypatch.setattr(main_module, "build_parser", lambda: parser)
-        monkeypatch.setattr(main_module, "resolve_targets", lambda _args: tmp_path)
+        monkeypatch.setattr(main_module.CommandLineParser, "build", lambda self: parser)
+        monkeypatch.setattr(
+            main_module.CommandLineParser, "resolve_targets", lambda self, _args: tmp_path
+        )
         monkeypatch.setattr(main_module, "CommandLineInterface", lambda templates_root: cli)
         monkeypatch.setattr(
             main_module.sys, "exit", lambda code: (_ for _ in ()).throw(SystemExit(code))
@@ -168,8 +172,10 @@ class TestMain:
         args = _Args("install", only=["unknown"], use_global=True)
         parser = type("P", (), {"parse_args": lambda self: args})()
 
-        monkeypatch.setattr(main_module, "build_parser", lambda: parser)
-        monkeypatch.setattr(main_module, "resolve_targets", lambda _args: tmp_path)
+        monkeypatch.setattr(main_module.CommandLineParser, "build", lambda self: parser)
+        monkeypatch.setattr(
+            main_module.CommandLineParser, "resolve_targets", lambda self, _args: tmp_path
+        )
         monkeypatch.setattr(main_module, "CommandLineInterface", lambda templates_root: cli)
         monkeypatch.setattr(
             main_module.sys, "exit", lambda code: (_ for _ in ()).throw(SystemExit(code))
@@ -189,8 +195,10 @@ class TestMain:
         args = _Args("verify", use_global=True, source=False, output=True)
         parser = type("P", (), {"parse_args": lambda self: args})()
 
-        monkeypatch.setattr(main_module, "build_parser", lambda: parser)
-        monkeypatch.setattr(main_module, "resolve_targets", lambda _args: tmp_path)
+        monkeypatch.setattr(main_module.CommandLineParser, "build", lambda self: parser)
+        monkeypatch.setattr(
+            main_module.CommandLineParser, "resolve_targets", lambda self, _args: tmp_path
+        )
         monkeypatch.setattr(main_module, "CommandLineInterface", lambda templates_root: cli)
         monkeypatch.setattr(
             main_module.sys, "exit", lambda code: (_ for _ in ()).throw(SystemExit(code))
@@ -217,8 +225,10 @@ class TestMain:
         args = _Args("uninstall")
         parser = type("P", (), {"parse_args": lambda self: args})()
 
-        monkeypatch.setattr(main_module, "build_parser", lambda: parser)
-        monkeypatch.setattr(main_module, "resolve_targets", lambda _args: tmp_path)
+        monkeypatch.setattr(main_module.CommandLineParser, "build", lambda self: parser)
+        monkeypatch.setattr(
+            main_module.CommandLineParser, "resolve_targets", lambda self, _args: tmp_path
+        )
         monkeypatch.setattr(main_module, "CommandLineInterface", lambda templates_root: cli)
         monkeypatch.setattr(
             main_module.sys, "exit", lambda code: (_ for _ in ()).throw(SystemExit(code))

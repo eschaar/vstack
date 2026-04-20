@@ -1,0 +1,41 @@
+# Commit workflow.
+# Purpose: fail fast on branch pushes when commit messages do not match
+# repository commit conventions.
+name: Commit
+
+on:
+  # Validate commits on branch pushes before PR merge.
+  push:
+    # Mainline and merge-queue refs are validated by PR/release workflows.
+    branches-ignore:
+      - main
+      - master
+      - merge/**
+      - gh-readonly-queue/**
+
+permissions:
+  # Read-only is enough for commit metadata checks.
+  contents: read
+
+jobs:
+  validate-commit-messages:
+    # Single gate that validates message format/types and custom scope policy.
+    name: Validate Commit Messages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          # Full history is required to inspect the full pushed commit range.
+          fetch-depth: 0
+
+      - name: Validate commits with commit-check
+        uses: commit-check/commit-check-action@v2
+        with:
+          # Commit and branch policy is read from cchk.toml in repo root.
+          message: true
+          branch: true
+          author-name: false
+          author-email: false
+          job-summary: true
+          pr-comments: false

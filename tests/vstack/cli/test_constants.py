@@ -1,4 +1,4 @@
-"""Utilities and tests for test constants."""
+"""Tests for canonical CLI names."""
 
 from __future__ import annotations
 

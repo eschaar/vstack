@@ -1,5 +1,5 @@
 name: verify
-version: 1.0.1
+version: 1.0.2
 description: |
   Verification fix-loop skill. Routes by mode (quick/standard/exhaustive), runs
   targeted checks, fixes findings by severity, and re-verifies impacted paths.

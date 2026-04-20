@@ -1,5 +1,5 @@
 name: adr
-version: 1.0.1
+version: 1.0.2
 description: |
   Architecture Decision Record writing. Documents a significant architectural
   decision with context, alternatives considered, rationale, and impact.

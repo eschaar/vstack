@@ -11,6 +11,7 @@ entirely through the config rather than subclass overrides.
 
 from __future__ import annotations
 
+import json
 import re
 import shutil
 from pathlib import Path
@@ -18,10 +19,12 @@ from pathlib import Path
 from vstack.artifacts.config import ArtifactTypeConfig
 from vstack.artifacts.constants import AUTO_GEN_FOOTER
 from vstack.artifacts.models import ArtifactResult, RenderedArtifact
-from vstack.frontmatter import FrontmatterParser, build_output
+from vstack.constants import VERSION
+from vstack.frontmatter import FrontmatterParser, FrontmatterSerializer
 from vstack.models import CheckMessage, ValidationResult
 
 _PLACEHOLDER_RE = re.compile(r"\{\{([A-Z_]+)\}\}")
+_META_COMMENT_RE = re.compile(r"<!--\s*VSTACK-META:\s*(\{.*?\})\s*-->")
 
 
 class GenericArtifactGenerator:
@@ -58,6 +61,32 @@ class GenericArtifactGenerator:
     def find_unresolved(text: str) -> list[str]:
         """Return a list of TOKEN names that remain unresolved in *text*."""
         return _PLACEHOLDER_RE.findall(text)
+
+    @staticmethod
+    def parse_generation_metadata(text: str) -> dict[str, str] | None:
+        """Parse the ``VSTACK-META`` footer JSON, if present."""
+        matches = _META_COMMENT_RE.findall(text)
+        if not matches:
+            return None
+        try:
+            data = json.loads(matches[-1])
+        except json.JSONDecodeError:
+            return None
+        if not isinstance(data, dict):
+            return None
+        return {str(k): str(v) for k, v in data.items()}
+
+    def _build_footer(self, artifact_name: str, artifact_version: str) -> str:
+        """Build the AUTO-GENERATED footer plus machine-readable metadata."""
+        meta = {
+            "generator": "vstack",
+            "vstack_version": VERSION,
+            "artifact_type": self.config.type_name,
+            "artifact_name": artifact_name,
+            "artifact_version": artifact_version,
+        }
+        meta_json = json.dumps(meta, separators=(",", ":"), sort_keys=True)
+        return f"{AUTO_GEN_FOOTER}<!-- VSTACK-META: {meta_json} -->\n"
 
     # ── Partials ──────────────────────────────────────────────────────────────
 
@@ -149,7 +178,7 @@ class GenericArtifactGenerator:
                 raise ValueError(
                     f"{self.config.type_name}: frontmatter_schema must be set when add_frontmatter=True"
                 )
-            fm_str = build_output(
+            fm_str = FrontmatterSerializer().serialize(
                 meta,
                 schema,
                 preserve_multiline=self.config.preserve_multiline_frontmatter,
@@ -164,7 +193,7 @@ class GenericArtifactGenerator:
                 raise ValueError(
                     f"{self.config.type_name}: frontmatter_schema must be set when add_frontmatter=True"
                 )
-            fm_str = build_output(
+            fm_str = FrontmatterSerializer().serialize(
                 meta,
                 schema,
                 preserve_multiline=self.config.preserve_multiline_frontmatter,
@@ -174,7 +203,8 @@ class GenericArtifactGenerator:
             fm_str = ""
             body_str = resolved
 
-        footer = AUTO_GEN_FOOTER if self.config.auto_gen_footer else ""
+        artifact_version = str((meta or {}).get("version") or VERSION)
+        footer = self._build_footer(name, artifact_version) if self.config.auto_gen_footer else ""
         body_content = body_str.lstrip("\n")
         output = (fm_str + body_content + footer) if (fm_str or footer) else body_str
 
@@ -362,6 +392,10 @@ class GenericArtifactGenerator:
                     ok(f"{label}: has AUTO-GENERATED footer")
                 else:
                     fail(f"{label}: missing AUTO-GENERATED footer")
+                if self.parse_generation_metadata(content) is not None:
+                    ok(f"{label}: has VSTACK-META footer")
+                else:
+                    ok(f"{label}: missing VSTACK-META footer (legacy artifact accepted)")
             if self.config.fail_on_unresolved:
                 unresolved = self.find_unresolved(content)
                 if not unresolved:

@@ -1,9 +1,9 @@
 ---
 name: python
-description: 'Python coding conventions for this repository. Use when writing or reviewing Python modules, tests, CLI code, and package internals.'
+description: 'Python coding conventions for projects. Use when writing or reviewing Python modules, tests, CLI code, and package internals.'
 applyTo: **/*.py
 ---
-Use these Python conventions in this repository.
+Use these Python conventions in this project.
 
 ## Design and readability
 
@@ -42,3 +42,4 @@ Use these Python conventions in this repository.
 1. Do not silence lint/type errors unless there is a documented, task-specific reason.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
+<!-- VSTACK-META: {"artifact_name":"python","artifact_type":"instruction","artifact_version":"0.1.1","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

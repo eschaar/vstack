@@ -1,4 +1,4 @@
-"""Utilities and tests for test models."""
+"""Tests for shared validation models."""
 
 from __future__ import annotations
 

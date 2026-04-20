@@ -1,4 +1,4 @@
-"""Utilities and tests for test config."""
+"""Tests for artifact type configuration."""
 
 from __future__ import annotations
 

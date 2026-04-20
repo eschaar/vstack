@@ -24,6 +24,14 @@ When you need clarification, use this exact format — never invent or guess:
 
 Never ask more than one question at a time without waiting for the answer.
 
+### Diagram Convention
+
+When producing hand-authored Markdown outputs, prefer Mermaid for flow,
+interaction, lifecycle, state, topology, dependency, and decision diagrams when
+the format is supported and improves clarity. Use ASCII as a fallback when
+Mermaid is unsupported or would be less readable. Keep ASCII/text trees for
+directory structures and other scan-friendly hierarchies.
+
 # adr — Architecture Decision Record
 
 Document a significant technical decision so future contributors understand
@@ -191,3 +199,4 @@ After writing, state the file path and summary so the architect or product role 
 ______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
+<!-- VSTACK-META: {"artifact_name":"adr","artifact_type":"skill","artifact_version":"1.0.2","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
