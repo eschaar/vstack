@@ -1,7 +1,7 @@
 # vstack — design
 
 > Maintained by: **designer** role\
-> Last updated: 2026-04-01
+> Last updated: 2026-04-21
 
 ## overview
 
@@ -20,17 +20,16 @@ expressed through an `ArtifactTypeConfig` descriptor rather than subclass overri
 
 ### execution flow
 
-```text
-1. Discover template directories in src/vstack/_templates/<type>/ (skip _-prefixed dirs)
-2. For each template directory:
-   a. Load config.yaml (agent frontmatter source) or parse frontmatter
-      from template.md (skills)
-   b. Validate frontmatter fields against the artifact schema
-   c. Load partials from `src/vstack/_templates/<type>/_partials/` (when `partials_subdir` is configured)
-   d. Resolve {{PLACEHOLDER}} tokens in the body
-   e. Inject frontmatter header + auto-gen footer
-3. install:           write output files to target dir
-4. validate / verify: validate all templates; print summary; exit 1 on error
+```mermaid
+flowchart TD
+  A[Discover template directories<br>skip underscore-prefixed dirs] --> B[Load per-template source]
+  B --> C[Validate frontmatter against schema]
+  C --> D[Load partials when configured]
+  D --> E[Resolve placeholder tokens]
+  E --> F[Inject frontmatter and footer]
+  F --> G{Command mode}
+  G -->|install| H[Write output files to target directory]
+  G -->|validate or verify| I[Validate templates and report failures]
 ```
 
 ### frontmatter architecture (`src/vstack/frontmatter/`)

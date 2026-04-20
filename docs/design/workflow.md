@@ -1,7 +1,7 @@
 # vstack — workflow
 
 > Maintained by: **designer** role\
-> Last updated: 2026-04-20
+> Last updated: 2026-04-21
 
 ## overview
 
@@ -61,16 +61,15 @@ ______________________________________________________________________
 
 ## current execution model — single-call
 
-The user invokes a skill from Copilot Agent Mode. Copilot loads the corresponding
-`.agent.md` file and executes the full workflow in a single model call.
+The user invokes a role or skill from Copilot Agent Mode. Copilot loads the
+relevant installed artifact and executes the full workflow in a single model call.
 
-```text
-User types: @<skill-name> <task>
-
-  → VS Code loads .github/agents/<skill>.agent.md
-  → Copilot executes all steps in one context window
-  → Artifacts written to disk (docs/architecture/architecture.md, docs/test-report.md, etc.)
-  → Done
+```mermaid
+flowchart LR
+    U[User request in Agent Mode] --> V[VS Code loads installed agent or skill]
+    V --> C[Copilot executes one context window]
+    C --> W[Artifacts written to disk]
+    W --> D[Done]
 ```
 
 **Characteristics:**
@@ -87,32 +86,17 @@ ______________________________________________________________________
 Each role becomes a separate model call. Output artifacts from one role become
 the input context for the next.
 
-```text
-┌─────────────────────────────────────────────────────────────────┐
-│  PIPELINE                                                       │
-│                                                                 │
-│  product ──→ [vision.md, requirements.md, roadmap.md]          │
-│      ↓                                                          │
-│  architect ──→ [architecture/architecture.md, architecture/adr/*.md] │
-│      ↓                                                          │
-│  designer ──→ [design/design.md]  (skip if backend-only)       │
-│      ↓                                                          │
-│  ┌── USER GATE 1: approve requirements + design ──┐            │
-│  └────────────────────────────────────────────────┘            │
-│      ↓                                                          │
-│  engineer ──→ [code + unit tests]                               │
-│      ↓                                                          │
-│  tester ──→ [test-report.md, security-report.md, performance-baseline.md]  │
-│      ↓                                                          │
-│  ┌── USER GATE 2: pre-prod sign-off ──┐                        │
-│  └─────────────────────────────────────┘                       │
-│      ↓                                                          │
-│  ┌── USER GATE 3: final merge approval ──┐                     │
-│  └────────────────────────────────────────┘                     │
-│      ↓                                                          │
-│  release ──→ [releases/{date}.md, CHANGELOG.md, PR]            │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+  P[product<br>vision.md<br>requirements.md<br>roadmap.md] --> A[architect<br>architecture.md<br>adr/*.md]
+  A --> D[designer<br>design.md]
+  D --> G1{User gate 1<br>requirements and design}
+  D -. backend-only path .-> G1
+  G1 --> E[engineer<br>code and unit tests]
+  E --> T[tester<br>test-report.md<br>security-report.md<br>performance-baseline.md]
+  T --> G2{User gate 2<br>pre-prod sign-off}
+  G2 --> G3{User gate 3<br>final merge approval}
+  G3 --> R[release<br>releases/{date}.md<br>CHANGELOG.md<br>PR]
 ```
 
 **Characteristics:**
@@ -168,11 +152,12 @@ ______________________________________________________________________
 
 Skills are the HOW inside a role call.
 
-```text
-Role call → loads role persona
-          → selects applicable skills
-          → executes skill steps sequentially
-          → writes output artifacts
+```mermaid
+flowchart LR
+  R[Role call] --> P[Load role persona]
+  P --> S[Select applicable skills]
+  S --> E[Execute skill steps]
+  E --> W[Write output artifacts]
 ```
 
 A role may use multiple skills in sequence within one model call. For example,
