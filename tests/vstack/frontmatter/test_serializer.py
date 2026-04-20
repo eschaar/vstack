@@ -14,7 +14,7 @@ class TestFrontmatterSerializer:
         schema = FrontmatterSchema(
             [FieldSpec("name", quoted=False), FieldSpec("mcp-servers", type="raw")]
         )
-        output = FrontmatterSerializer.serialize(
+        output = FrontmatterSerializer().serialize(
             {"name": "agent", "mcp-servers": "  srv:\n    command: cmd"},
             schema,
         )
@@ -25,12 +25,12 @@ class TestFrontmatterSerializer:
         schema = FrontmatterSchema(
             [FieldSpec("name", quoted=False), FieldSpec("mcp-servers", type="raw")]
         )
-        output = FrontmatterSerializer.serialize({"name": "agent", "mcp-servers": ""}, schema)
+        output = FrontmatterSerializer().serialize({"name": "agent", "mcp-servers": ""}, schema)
         assert "mcp-servers" not in output
 
     def test_serialize_frontmatter_required_fields(self) -> None:
         """Test that serialize includes required frontmatter fields."""
-        output = FrontmatterSerializer.serialize(
+        output = FrontmatterSerializer().serialize(
             {"name": "vision", "description": "A test skill"}, SKILL_SCHEMA
         )
         assert output.startswith("---\n")
@@ -38,7 +38,7 @@ class TestFrontmatterSerializer:
 
     def test_serialize_frontmatter_optional_fields(self) -> None:
         """Test that serialize includes optional frontmatter fields."""
-        output = FrontmatterSerializer.serialize(
+        output = FrontmatterSerializer().serialize(
             {
                 "name": "x",
                 "description": "d",
@@ -52,7 +52,7 @@ class TestFrontmatterSerializer:
 
     def test_serialize_strips_extra_fields(self) -> None:
         """Test that serialize strips fields not in schema."""
-        output = FrontmatterSerializer.serialize(
+        output = FrontmatterSerializer().serialize(
             {"name": "x", "description": "d", "version": "1.0.0", "extra": "value"},
             SKILL_SCHEMA,
         )
@@ -62,7 +62,7 @@ class TestFrontmatterSerializer:
     def test_serialize_object_list_without_item_schema(self) -> None:
         """Test that serialize renders object-list without item schema."""
         schema = FrontmatterSchema([FieldSpec("handoffs", type="object-list")])
-        output = FrontmatterSerializer.serialize(
+        output = FrontmatterSerializer().serialize(
             {
                 "handoffs": [
                     {"label": "A", "send": True, "prompt": "go"},
@@ -86,7 +86,7 @@ class TestFrontmatterSerializer:
         schema = FrontmatterSchema(
             [FieldSpec("handoffs", type="object-list", item_schema=item_schema)]
         )
-        output = FrontmatterSerializer.serialize(
+        output = FrontmatterSerializer().serialize(
             {
                 "handoffs": [
                     {"label": "handoff", "send": "false", "roles": ["reader", "writer"]},
@@ -102,13 +102,13 @@ class TestFrontmatterSerializer:
     def test_serialize_object_list_skips_non_dict_items(self) -> None:
         """Test that serialize skips non-dict items in object-list."""
         schema = FrontmatterSchema([FieldSpec("handoffs", type="object-list")])
-        output = FrontmatterSerializer.serialize({"handoffs": ["bad", {"label": "ok"}]}, schema)
+        output = FrontmatterSerializer().serialize({"handoffs": ["bad", {"label": "ok"}]}, schema)
         assert "- label: 'ok'" in output
         assert "bad" not in output
 
     def test_serialize_multiline_scalar_when_enabled(self) -> None:
         """Test that serialize uses folded blocks when preserve_multiline=True."""
-        output = FrontmatterSerializer.serialize(
+        output = FrontmatterSerializer().serialize(
             {
                 "name": "x",
                 "description": "This is a very long description that should be emitted as a folded block scalar when multiline output is enabled for readability in generated frontmatter.",
@@ -121,7 +121,7 @@ class TestFrontmatterSerializer:
     def test_serialize_multiline_object_list_scalar_when_enabled(self) -> None:
         """Test that serialize uses folded blocks in object-list scalars."""
         schema = FrontmatterSchema([FieldSpec("handoffs", type="object-list")])
-        output = FrontmatterSerializer.serialize(
+        output = FrontmatterSerializer().serialize(
             {
                 "handoffs": [
                     {
@@ -137,7 +137,7 @@ class TestFrontmatterSerializer:
 
     def test_serialize_multiline_scalar_preserves_content_around_blank_lines(self) -> None:
         """Test that serialize preserves blank lines in folded block scalars."""
-        output = FrontmatterSerializer.serialize(
+        output = FrontmatterSerializer().serialize(
             {
                 "name": "x",
                 "description": "First paragraph.\n\nSecond paragraph.",

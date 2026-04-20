@@ -178,7 +178,7 @@ class GenericArtifactGenerator:
                 raise ValueError(
                     f"{self.config.type_name}: frontmatter_schema must be set when add_frontmatter=True"
                 )
-            fm_str = FrontmatterSerializer.serialize(
+            fm_str = FrontmatterSerializer().serialize(
                 meta,
                 schema,
                 preserve_multiline=self.config.preserve_multiline_frontmatter,
@@ -193,7 +193,7 @@ class GenericArtifactGenerator:
                 raise ValueError(
                     f"{self.config.type_name}: frontmatter_schema must be set when add_frontmatter=True"
                 )
-            fm_str = FrontmatterSerializer.serialize(
+            fm_str = FrontmatterSerializer().serialize(
                 meta,
                 schema,
                 preserve_multiline=self.config.preserve_multiline_frontmatter,
