@@ -1,0 +1,47 @@
+[commit]
+conventional_commits = true
+subject_capitalized = false
+subject_imperative = false
+subject_max_length = 100
+allow_commit_types = [
+  "feat",
+  "feature",
+  "fix",
+  "bugfix",
+  "hotfix",
+  "opt",
+  "patch",
+  "perf",
+  "refactor",
+  "chore",
+  "revert",
+]
+allow_merge_commits = true
+allow_revert_commits = true
+allow_empty_commits = false
+allow_fixup_commits = true
+allow_wip_commits = false
+require_body = false
+require_signed_off_by = false
+
+[branch]
+conventional_branch = true
+allow_branch_types = [
+  "feature",
+  "bugfix",
+  "hotfix",
+  "release",
+  "chore",
+  "feat",
+  "fix",
+  "docs",
+  "refactor",
+  "perf",
+  "test",
+  "ci",
+  "build",
+  "style",
+  "opt",
+  "patch",
+  "dependabot",
+]

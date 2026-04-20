@@ -17,31 +17,6 @@ permissions:
   # Read-only is enough for commit metadata checks.
   contents: read
 
-env:
-  # Commit-check message/type policy, configured inline in workflow env.
-  CCHK_CONVENTIONAL_COMMITS: "true"
-  CCHK_SUBJECT_CAPITALIZED: "false"
-  CCHK_SUBJECT_IMPERATIVE: "false"
-  CCHK_SUBJECT_MAX_LENGTH: "100"
-  CCHK_ALLOW_COMMIT_TYPES: "feat,feature,fix,bugfix,hotfix,opt,patch,perf,refactor,chore,revert"
-  CCHK_ALLOW_MERGE_COMMITS: "true"
-  CCHK_ALLOW_REVERT_COMMITS: "true"
-  CCHK_ALLOW_EMPTY_COMMITS: "false"
-  CCHK_ALLOW_FIXUP_COMMITS: "true"
-  CCHK_ALLOW_WIP_COMMITS: "false"
-  CCHK_REQUIRE_BODY: "false"
-  CCHK_REQUIRE_SIGNED_OFF_BY: "false"
-  # Branch naming policy for pushed branches.
-  CCHK_CONVENTIONAL_BRANCH: "true"
-  CCHK_ALLOW_BRANCH_TYPES: >-
-    feature,bugfix,hotfix,release,chore,feat,fix,docs,refactor,perf,test,ci,build,style,
-    opt,patch,dependabot
-  # Repository-specific scope allowlist layered on top of commit-check.
-  COMMIT_ALLOWED_SCOPES: >-
-    api,auth,permissions,serializer,viewset,orm,migrations,admin,settings,deps,ci,docs,
-    build,style,test,tests,cli,agents,skills,instructions,prompts,frontmatter,artifacts,
-    release,workflow
-
 jobs:
   validate-commit-messages:
     # Single gate that validates message format/types and custom scope policy.
@@ -57,69 +32,10 @@ jobs:
       - name: Validate commits with commit-check
         uses: commit-check/commit-check-action@v2
         with:
+          # Commit and branch policy is read from cchk.toml in repo root.
           message: true
           branch: true
           author-name: false
           author-email: false
           job-summary: true
           pr-comments: false
-
-      - name: Validate allowed scopes in pushed commits
-        uses: actions/github-script@v7
-        env:
-          ALLOWED_SCOPES: ${{ env.COMMIT_ALLOWED_SCOPES }}
-        with:
-          script: |
-            const allowedScopes = process.env.ALLOWED_SCOPES.split(",").map((v) => v.trim());
-
-            const before = context.payload.before;
-            const after = context.payload.after;
-
-            if (!before || !after) {
-              core.info("No commit range available; skipping validation.");
-              return;
-            }
-
-            const compare = await github.rest.repos.compareCommits({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              base: before,
-              head: after,
-            });
-
-            const commits = compare.data.commits || [];
-            const conventional = /^(?<type>[a-z]+)(?:\((?<scope>[a-z0-9-]+)\))?(?<bang>!)?: .+/;
-            const errors = [];
-
-            for (const commit of commits) {
-              const subject = commit.commit.message.split("\n")[0].trim();
-              const sha = commit.sha.slice(0, 7);
-
-              // Allow merge commits created by git/GitHub during branch sync operations.
-              if (subject.startsWith("Merge ")) {
-                continue;
-              }
-
-              const match = subject.match(conventional);
-              if (!match) {
-                // commit-check-action validates message format and type.
-                continue;
-              }
-
-              const scope = match.groups.scope;
-
-              if (scope && !allowedScopes.includes(scope)) {
-                errors.push(`- ${sha}: scope \`${scope}\` is not allowed.`);
-              }
-            }
-
-            if (errors.length > 0) {
-              core.setFailed(
-                [
-                  "Commit message policy failed.",
-                  "Allowed scopes (optional): " + allowedScopes.join(", "),
-                  "",
-                  ...errors,
-                ].join("\n"),
-              );
-            }
