@@ -30,8 +30,8 @@ Boundary rule:
 - Policies belong in instructions.
 - Procedures belong in skills.
 
-See [docs/design/instructions.md](docs/design/instructions.md) and
-[docs/architecture/adr/013-instructions-vs-skills-boundary.md](docs/architecture/adr/013-instructions-vs-skills-boundary.md).
+See [instructions.md](./instructions.md) and
+[013-instructions-vs-skills-boundary.md](../architecture/adr/013-instructions-vs-skills-boundary.md).
 
 Key benefits:
 

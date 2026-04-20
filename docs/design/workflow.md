@@ -13,9 +13,9 @@ security, commit policy, and releases.
 
 For authoring boundaries between reusable guidance mechanisms:
 
-- [docs/design/instructions.md](docs/design/instructions.md)
-- [docs/design/skills.md](docs/design/skills.md)
-- [docs/architecture/adr/013-instructions-vs-skills-boundary.md](docs/architecture/adr/013-instructions-vs-skills-boundary.md)
+- [instructions.md](./instructions.md)
+- [skills.md](./skills.md)
+- [013-instructions-vs-skills-boundary.md](../architecture/adr/013-instructions-vs-skills-boundary.md)
 
 ______________________________________________________________________
 
@@ -34,19 +34,19 @@ and easy to reason about.
 
 ### commit policy enforcement model
 
-Commit policy is intentionally split across two components in one workflow:
+Commit policy is defined in `cchk.toml` and enforced by `commit-check`:
 
-1. `CCHK_*` environment variables in `.github/workflows/commit.yml` define commit message conventions and allowed commit types.
-1. `.github/workflows/commit.yml` also enforces allowed scopes for pushed commits.
+1. `.github/workflows/commit.yml` runs `commit-check/commit-check-action@v2` on branch pushes.
+1. Local hooks in `.pre-commit-config.yaml` run the same checks at `commit-msg` and `pre-push` stages.
 
 Additional commit workflow policy:
 
 - Maximum commit subject length is 100 characters.
 - Branch names are validated against Conventional Branch format (`type/description`).
 - Allowed branch types: `feature`, `bugfix`, `hotfix`, `release`, `chore`, `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `ci`, `build`, `style`, `opt`, `patch`, `dependabot`.
+- Commit scopes are not hard-enforced by CI; scope naming is guidance-level in documentation.
 
-This split keeps standard message validation in a purpose-built action and keeps
-repository-specific scope policy explicit in CI.
+This keeps CI and local checks aligned through one policy source of truth.
 
 ### release bump mapping
 

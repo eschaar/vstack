@@ -60,7 +60,7 @@ type(optional-scope)!: short summary
 - `chore`: repository maintenance and non-feature housekeeping.
 - `revert`: rollback of a previous commit.
 
-### 4) Allowed scopes (optional)
+### 4) Suggested scopes (optional)
 
 - Domain and backend areas: `api`, `auth`, `permissions`, `serializer`, `viewset`, `orm`, `migrations`, `admin`, `settings`.
 - Tooling and workflow areas: `deps`, `ci`, `docs`, `build`, `style`, `release`, `workflow`.
@@ -95,7 +95,8 @@ Allowed branch types:
 - `docs`, `refactor`, `perf`, `test`, `ci`, `build`, `style`
 - `opt`, `patch`, `dependabot`
 
-A dedicated CI workflow validates branch-push commit messages (non-main branches) using commit-check, and enforces this repository's allowed scope list.
+A dedicated CI workflow validates branch-push commit messages (non-main branches) using commit-check with policy from `cchk.toml`.
+Scope names are guidance-level in this document and are not currently hard-enforced by CI.
 
 ## Pull Request Expectations
 

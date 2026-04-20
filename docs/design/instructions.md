@@ -25,7 +25,7 @@ vstack uses an explicit split:
 - **Skills = procedure** (task execution workflows).
 
 Canonical decision record:
-[docs/architecture/adr/013-instructions-vs-skills-boundary.md](docs/architecture/adr/013-instructions-vs-skills-boundary.md).
+[013-instructions-vs-skills-boundary.md](../architecture/adr/013-instructions-vs-skills-boundary.md).
 
 Use instructions when guidance is:
 

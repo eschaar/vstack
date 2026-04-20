@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from tests.conftest import SKILLS_TEMPLATES_DIR
@@ -66,9 +67,12 @@ class TestGeneratedSkillFiles:
         """Test that generated files have auto gen footer."""
         for md in generated_dir.glob("*/SKILL.md"):
             content = md.read_text(encoding="utf-8")
-            assert "AUTO-GENERATED" in content
-            assert "<!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->" in content
-            assert "<!-- VSTACK-META:" in content
+            lines = content.rstrip().splitlines()
+            assert len(lines) >= 2
+            assert (
+                lines[-2] == "<!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->"
+            )
+            assert re.fullmatch(r"<!-- VSTACK-META: \{.*\} -->", lines[-1])
 
     def test_generated_count_matches_expected(self, generated_dir: Path) -> None:
         """Test that generated count matches expected."""
