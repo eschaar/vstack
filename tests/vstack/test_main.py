@@ -76,7 +76,7 @@ class TestMain:
         cli = _CLI()
         parser = type("P", (), {"parse_args": lambda self: _Args("validate")})()
 
-        monkeypatch.setattr(main_module, "build_parser", lambda: parser)
+        monkeypatch.setattr(main_module.CLIParser, "build", lambda self: parser)
         monkeypatch.setattr(main_module, "CommandLineInterface", lambda templates_root: cli)
         monkeypatch.setattr(
             main_module.sys, "exit", lambda code: (_ for _ in ()).throw(SystemExit(code))
@@ -101,8 +101,8 @@ class TestMain:
         args = _Args("install", only=["skill"], force=True, update=False, dry_run=True)
         parser = type("P", (), {"parse_args": lambda self: args})()
 
-        monkeypatch.setattr(main_module, "build_parser", lambda: parser)
-        monkeypatch.setattr(main_module, "resolve_targets", lambda _args: tmp_path)
+        monkeypatch.setattr(main_module.CLIParser, "build", lambda self: parser)
+        monkeypatch.setattr(main_module.CLIParser, "resolve_targets", lambda self, _args: tmp_path)
         monkeypatch.setattr(main_module, "CommandLineInterface", _build_cli)
         monkeypatch.setattr(
             main_module.sys, "exit", lambda code: (_ for _ in ()).throw(SystemExit(code))
@@ -132,8 +132,8 @@ class TestMain:
         args = _Args("install", only=None, use_global=True)
         parser = type("P", (), {"parse_args": lambda self: args})()
 
-        monkeypatch.setattr(main_module, "build_parser", lambda: parser)
-        monkeypatch.setattr(main_module, "resolve_targets", lambda _args: tmp_path)
+        monkeypatch.setattr(main_module.CLIParser, "build", lambda self: parser)
+        monkeypatch.setattr(main_module.CLIParser, "resolve_targets", lambda self, _args: tmp_path)
         monkeypatch.setattr(main_module, "CommandLineInterface", lambda templates_root: cli)
         monkeypatch.setattr(
             main_module.sys, "exit", lambda code: (_ for _ in ()).throw(SystemExit(code))
@@ -168,8 +168,8 @@ class TestMain:
         args = _Args("install", only=["unknown"], use_global=True)
         parser = type("P", (), {"parse_args": lambda self: args})()
 
-        monkeypatch.setattr(main_module, "build_parser", lambda: parser)
-        monkeypatch.setattr(main_module, "resolve_targets", lambda _args: tmp_path)
+        monkeypatch.setattr(main_module.CLIParser, "build", lambda self: parser)
+        monkeypatch.setattr(main_module.CLIParser, "resolve_targets", lambda self, _args: tmp_path)
         monkeypatch.setattr(main_module, "CommandLineInterface", lambda templates_root: cli)
         monkeypatch.setattr(
             main_module.sys, "exit", lambda code: (_ for _ in ()).throw(SystemExit(code))
@@ -189,8 +189,8 @@ class TestMain:
         args = _Args("verify", use_global=True, source=False, output=True)
         parser = type("P", (), {"parse_args": lambda self: args})()
 
-        monkeypatch.setattr(main_module, "build_parser", lambda: parser)
-        monkeypatch.setattr(main_module, "resolve_targets", lambda _args: tmp_path)
+        monkeypatch.setattr(main_module.CLIParser, "build", lambda self: parser)
+        monkeypatch.setattr(main_module.CLIParser, "resolve_targets", lambda self, _args: tmp_path)
         monkeypatch.setattr(main_module, "CommandLineInterface", lambda templates_root: cli)
         monkeypatch.setattr(
             main_module.sys, "exit", lambda code: (_ for _ in ()).throw(SystemExit(code))
@@ -217,8 +217,8 @@ class TestMain:
         args = _Args("uninstall")
         parser = type("P", (), {"parse_args": lambda self: args})()
 
-        monkeypatch.setattr(main_module, "build_parser", lambda: parser)
-        monkeypatch.setattr(main_module, "resolve_targets", lambda _args: tmp_path)
+        monkeypatch.setattr(main_module.CLIParser, "build", lambda self: parser)
+        monkeypatch.setattr(main_module.CLIParser, "resolve_targets", lambda self, _args: tmp_path)
         monkeypatch.setattr(main_module, "CommandLineInterface", lambda templates_root: cli)
         monkeypatch.setattr(
             main_module.sys, "exit", lambda code: (_ for _ in ()).throw(SystemExit(code))

@@ -67,9 +67,8 @@ class TestGeneratedSkillFiles:
         for md in generated_dir.glob("*/SKILL.md"):
             content = md.read_text(encoding="utf-8")
             assert "AUTO-GENERATED" in content
-            assert content.endswith(
-                "<!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->\n"
-            )
+            assert "<!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->" in content
+            assert "<!-- VSTACK-META:" in content
 
     def test_generated_count_matches_expected(self, generated_dir: Path) -> None:
         """Test that generated count matches expected."""

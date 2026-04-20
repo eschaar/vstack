@@ -5,7 +5,7 @@ from __future__ import annotations
 import sys
 
 from vstack.cli.commands import CommandLineInterface
-from vstack.cli.parser import build_parser, resolve_targets
+from vstack.cli.parser import CLIParser
 from vstack.constants import TEMPLATES_ROOT
 
 _GLOBAL_SUPPORTED_TYPES = ["agent", "instruction", "prompt", "skill"]
@@ -34,14 +34,15 @@ def _resolve_only_for_scope(args: object) -> list[str] | None:
 
 def main() -> None:
     """Parse CLI arguments and dispatch the selected command."""
-    parser = build_parser()
+    cli_parser = CLIParser()
+    parser = cli_parser.build()
     args = parser.parse_args()
     cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
 
     if args.command == "validate":
         sys.exit(cli.validate(only=getattr(args, "only", None)))
 
-    install_dir = resolve_targets(args)
+    install_dir = cli_parser.resolve_targets(args)
     only = _resolve_only_for_scope(args) if args.command in {"install", "verify"} else None
     dispatch = {
         "verify": lambda: cli.verify(
