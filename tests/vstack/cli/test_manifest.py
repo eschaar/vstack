@@ -1,4 +1,4 @@
-"""Utilities and tests for test manifest."""
+"""Tests for install manifest handling."""
 
 from __future__ import annotations
 

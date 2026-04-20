@@ -1,4 +1,4 @@
-"""Utilities and tests for parser."""
+"""CLI argument parser and install target resolution."""
 
 from __future__ import annotations
 

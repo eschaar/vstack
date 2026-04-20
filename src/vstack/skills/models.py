@@ -1,4 +1,4 @@
-"""Utilities and tests for models."""
+"""Backwards-compatible exports for skill artifact models."""
 
 from __future__ import annotations
 

@@ -105,7 +105,7 @@ This automatically triggers:
 
 ______________________________________________________________________
 
-## vstack gebruiken in Copilot Agent Mode
+## Using vstack in Copilot Agent Mode
 
 ### 1. Open Copilot Chat
 

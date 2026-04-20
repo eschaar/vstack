@@ -1,4 +1,4 @@
-"""Utilities and tests for test models."""
+"""Tests for skill model aliases."""
 
 from __future__ import annotations
 

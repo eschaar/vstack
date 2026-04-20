@@ -1,4 +1,4 @@
-"""Utilities and tests for test commands."""
+"""Tests for CLI command handlers."""
 
 from __future__ import annotations
 
@@ -177,7 +177,7 @@ class TestCommandLineInterface:
         """Test that validate returns non zero on unresolved."""
 
         class _FakeArtifact:
-            """Represents FakeArtifact."""
+            """Test double for a rendered artifact."""
 
             def __init__(self) -> None:
                 """Initialize instance state."""
@@ -185,14 +185,14 @@ class TestCommandLineInterface:
                 self.unresolved = ["MISSING"]
 
         class _Cfg:
-            """Represents Cfg."""
+            """Minimal generator config for this test."""
 
             type_name = "skill"
             manifest_key = "skills"
             output_subdir = "skills"
 
         class _FakeGen:
-            """Represents FakeGen."""
+            """Test double for an artifact generator."""
 
             config = _Cfg()
 
@@ -216,7 +216,7 @@ class TestCommandLineInterface:
         """Test that install force and verify input fail path."""
 
         class _FakeArtifact:
-            """Represents FakeArtifact."""
+            """Test double for a rendered artifact."""
 
             def __init__(self) -> None:
                 """Initialize instance state."""
@@ -226,7 +226,7 @@ class TestCommandLineInterface:
                 self.content = "content"
 
         class _Cfg:
-            """Represents Cfg."""
+            """Minimal generator config for this test."""
 
             type_name = "skill"
             manifest_key = "skills"
@@ -234,7 +234,7 @@ class TestCommandLineInterface:
             artifact_is_dir = True
 
         class _FakeGen:
-            """Represents FakeGen."""
+            """Test double for an artifact generator."""
 
             config = _Cfg()
 
@@ -269,13 +269,13 @@ class TestCommandLineInterface:
         """Test that verify source with no messages and all passed."""
 
         class _Cfg:
-            """Represents Cfg."""
+            """Minimal generator config for this test."""
 
             type_name = "skill"
             output_subdir = "skills"
 
         class _FakeGen:
-            """Represents FakeGen."""
+            """Test double for an artifact generator."""
 
             config = _Cfg()
 
@@ -334,7 +334,7 @@ class TestCommandLineInterface:
         """Test that validate returns zero when all clean."""
 
         class _FakeArtifact:
-            """Represents FakeArtifact."""
+            """Test double for a rendered artifact."""
 
             def __init__(self) -> None:
                 """Initialize instance state."""
@@ -342,14 +342,14 @@ class TestCommandLineInterface:
                 self.unresolved: list[str] = []
 
         class _Cfg:
-            """Represents Cfg."""
+            """Minimal generator config for this test."""
 
             type_name = "skill"
             manifest_key = "skills"
             output_subdir = "skills"
 
         class _FakeGen:
-            """Represents FakeGen."""
+            """Test double for an artifact generator."""
 
             config = _Cfg()
 
@@ -373,7 +373,7 @@ class TestCommandLineInterface:
         """Test that validate handles missing generator for type."""
 
         class _FakeArtifact:
-            """Represents FakeArtifact."""
+            """Test double for a rendered artifact."""
 
             def __init__(self) -> None:
                 """Initialize instance state."""
@@ -381,12 +381,12 @@ class TestCommandLineInterface:
                 self.unresolved: list[str] = []
 
         class _Cfg:
-            """Represents Cfg."""
+            """Minimal generator config for this test."""
 
             type_name = "skill"
 
         class _FakeGen:
-            """Represents FakeGen."""
+            """Test double for an artifact generator."""
 
             config = _Cfg()
 
@@ -465,13 +465,13 @@ class TestCommandLineInterface:
         """Test that verify source with messages path."""
 
         class _Cfg:
-            """Represents Cfg."""
+            """Minimal generator config for this test."""
 
             type_name = "skill"
             output_subdir = "skills"
 
         class _FakeGen:
-            """Represents FakeGen."""
+            """Test double for an artifact generator."""
 
             config = _Cfg()
 

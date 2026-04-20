@@ -1,4 +1,4 @@
-"""Utilities and tests for test generator."""
+"""Tests for generic artifact generation."""
 
 from __future__ import annotations
 

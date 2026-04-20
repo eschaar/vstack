@@ -1,4 +1,4 @@
-"""Utilities and tests for main."""
+"""CLI entrypoint and command dispatch helpers."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ _GLOBAL_SUPPORTED_TYPES = ["agent", "instruction", "prompt", "skill"]
 
 
 def _resolve_only_for_scope(args: object) -> list[str] | None:
-    """Return the type filter for this command/scope, validating global constraints."""
+    """Return the artifact type filter for the active command scope."""
     requested_only = getattr(args, "only", None)
     if not getattr(args, "use_global", False):
         return requested_only
@@ -33,7 +33,7 @@ def _resolve_only_for_scope(args: object) -> list[str] | None:
 
 
 def main() -> None:
-    """Main."""
+    """Parse CLI arguments and dispatch the selected command."""
     parser = build_parser()
     args = parser.parse_args()
     cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)

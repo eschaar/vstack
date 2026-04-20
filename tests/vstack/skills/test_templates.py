@@ -1,4 +1,4 @@
-"""Utilities and tests for test templates."""
+"""Tests for skill template source files."""
 
 from __future__ import annotations
 

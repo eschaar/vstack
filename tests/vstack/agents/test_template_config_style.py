@@ -1,4 +1,4 @@
-"""Utilities and tests for test template config style."""
+"""Tests for agent template configuration style rules."""
 
 from __future__ import annotations
 

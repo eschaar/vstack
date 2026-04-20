@@ -1,4 +1,4 @@
-"""Utilities and tests for test parser."""
+"""Tests for CLI parser behavior."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""Utilities and tests for constants."""
+"""Canonical CLI artifact names."""
 
 from __future__ import annotations
 

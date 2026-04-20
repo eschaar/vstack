@@ -1,4 +1,4 @@
-"""Utilities and tests for conftest."""
+"""Shared pytest fixtures and test helpers."""
 
 from __future__ import annotations
 

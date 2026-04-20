@@ -1,4 +1,4 @@
-"""Utilities and tests for test main."""
+"""Tests for CLI entrypoint dispatch behavior."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ main_module = importlib.import_module("vstack.main")
 
 
 class _Args:
-    """Represents parsed CLI args for main() dispatch tests."""
+    """Minimal parsed-argument object for main() dispatch tests."""
 
     def __init__(
         self,
@@ -35,7 +35,7 @@ class _Args:
 
 
 class _CLI:
-    """Represents CLI."""
+    """Test double for the CLI command handler."""
 
     def __init__(self) -> None:
         """Initialize instance state."""
@@ -63,7 +63,7 @@ class _CLI:
 
 
 class TestMain:
-    """Test cases for Main."""
+    """Test cases for the CLI entrypoint."""
 
     def test_resolve_only_for_scope_returns_requested_only_for_non_global(self) -> None:
         """Test that non-global commands keep the explicit type filter."""

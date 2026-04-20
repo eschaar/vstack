@@ -174,7 +174,7 @@ ______________________________________________________________________
 
 ## minimum skill body contract
 
-We hanteren dit als minimum voor elke skill body:
+Use this as the minimum baseline for every skill body:
 
 1. What it helps accomplish
 1. When to use it
@@ -182,7 +182,7 @@ We hanteren dit als minimum voor elke skill body:
 1. Expected input/output examples
 1. References to scripts/resources
 1. Out-of-scope + escalation/failure rules
-1. Common edge cases (sterk aanbevolen)
+1. Common edge cases (strongly recommended)
 
 Recommended additions for production-grade skills:
 

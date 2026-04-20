@@ -1,4 +1,4 @@
-"""Utilities and tests for main."""
+"""Module entrypoint for ``python -m vstack``."""
 
 from vstack.main import main
 

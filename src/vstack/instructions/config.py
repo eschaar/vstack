@@ -1,4 +1,4 @@
-"""Utilities and tests for config."""
+"""Instruction artifact type configuration."""
 
 from vstack.artifacts.config import INSTRUCTION_SCHEMA, ArtifactTypeConfig
 from vstack.instructions.constants import (

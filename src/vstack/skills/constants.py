@@ -1,4 +1,4 @@
-"""Utilities and tests for constants."""
+"""Constants for skill template and partial locations."""
 
 from __future__ import annotations
 

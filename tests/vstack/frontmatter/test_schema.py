@@ -1,4 +1,4 @@
-"""Utilities and tests for test schema."""
+"""Tests for frontmatter schema validation."""
 
 from __future__ import annotations
 

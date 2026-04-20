@@ -1,4 +1,4 @@
-"""Utilities and tests for test builder."""
+"""Tests for frontmatter builder behavior."""
 
 from __future__ import annotations
 

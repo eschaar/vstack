@@ -1,4 +1,4 @@
-"""Utilities and tests for test protocol."""
+"""Tests for artifact generator protocol compatibility."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from vstack.models import ValidationResult
 
 
 class _Impl:
-    """Represents Impl."""
+    """Minimal implementation that satisfies the artifact generator protocol."""
 
     def generate(self, output_dir: Path) -> ArtifactResult:
         """Generate."""

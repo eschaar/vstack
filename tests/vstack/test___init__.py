@@ -1,4 +1,4 @@
-"""Utilities and tests for test init."""
+"""Tests for top-level package exports."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""Utilities and tests for config."""
+"""Prompt artifact type configuration."""
 
 from vstack.artifacts.config import PROMPT_SCHEMA, ArtifactTypeConfig
 from vstack.prompts.constants import (

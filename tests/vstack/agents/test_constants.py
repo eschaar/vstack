@@ -1,4 +1,4 @@
-"""Utilities and tests for test constants."""
+"""Tests for agent constants."""
 
 from __future__ import annotations
 
