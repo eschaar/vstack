@@ -87,14 +87,14 @@ ______________________________________________________________________
 
 ```mermaid
 flowchart LR
-		A[Product intent] --> B[@product]
-		B --> C[@architect]
-		C --> D[@designer]
-		D --> E[@engineer]
-		E --> F[@tester]
-		F --> G[@release]
-		B -. focused procedure .-> H[/requirements or vision/]
-		F -. focused procedure .-> I[/verify, security, performance/]
+    A[Product intent] --> B["@product"]
+    B --> C["@architect"]
+    C --> D["@designer"]
+    D --> E["@engineer"]
+    E --> F["@tester"]
+    F --> G["@release"]
+    B -. focused procedure .-> H["requirements or vision"]
+    F -. focused procedure .-> I["verify, security, performance"]
 ```
 
 The exact deliverable can be a microservice, API, package, library, app, or broader
