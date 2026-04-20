@@ -25,6 +25,14 @@ Unlike custom instructions that primarily define coding preferences and guardrai
 skills package specialized, reusable workflows with optional scripts, examples,
 and references.
 
+Boundary rule:
+
+- Policies belong in instructions.
+- Procedures belong in skills.
+
+See [docs/design/instructions.md](docs/design/instructions.md) and
+[docs/architecture/adr/013-instructions-vs-skills-boundary.md](docs/architecture/adr/013-instructions-vs-skills-boundary.md).
+
 Key benefits:
 
 - Specialize Copilot for domain-specific tasks without repeating context.

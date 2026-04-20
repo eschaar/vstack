@@ -1,4 +1,4 @@
-Use these Python conventions in this repository.
+Use these Python conventions in this project.
 
 ## Design and readability
 

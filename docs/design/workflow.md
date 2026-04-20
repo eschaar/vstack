@@ -11,6 +11,12 @@ and a possible future orchestrated role pipeline.
 It also documents the repository-level GitHub Actions automation used for quality,
 security, commit policy, and releases.
 
+For authoring boundaries between reusable guidance mechanisms:
+
+- [docs/design/instructions.md](docs/design/instructions.md)
+- [docs/design/skills.md](docs/design/skills.md)
+- [docs/architecture/adr/013-instructions-vs-skills-boundary.md](docs/architecture/adr/013-instructions-vs-skills-boundary.md)
+
 ______________________________________________________________________
 
 ## repository automation (GitHub Actions)
@@ -172,6 +178,15 @@ Role call → loads role persona
 A role may use multiple skills in sequence within one model call. For example,
 the architect role uses the `adr` skill to write decision records and the
 `architecture` skill to produce the architecture document.
+
+## authoring decision rule
+
+Use this rule when deciding where reusable guidance belongs:
+
+1. If it is a baseline rule or standard, put it in instructions.
+1. If it is a task workflow or method, put it in skills.
+
+Instructions are policy. Skills are procedure.
 
 ______________________________________________________________________
 

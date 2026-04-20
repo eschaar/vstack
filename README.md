@@ -46,6 +46,19 @@ ______________________________________________________________________
 - **Agents** (like `@product`, `@tester`) are the main interface. Use them for all primary flows. Agents automatically select the right skills for their role and context.
 - **Skills** (like `/verify`, `/security`) can be invoked directly if you want to force a specific check. This is optional and usually not needed.
 
+### Policies vs. procedures
+
+- **Instructions** define baseline policy and conventions (for example safety rules,
+  language coding standards, and repository guardrails).
+- **Skills** define task procedures (for example debug, migration review, or
+  performance analysis flows).
+
+Decision reference:
+
+- [docs/design/instructions.md](docs/design/instructions.md)
+- [docs/design/skills.md](docs/design/skills.md)
+- [docs/architecture/adr/013-instructions-vs-skills-boundary.md](docs/architecture/adr/013-instructions-vs-skills-boundary.md)
+
 #### Invocation examples
 
 | Goal                  | Agent invocation | Optionally: direct skill invocation |
@@ -336,6 +349,7 @@ vstack/
 │   │   └── adr/             ← architecture decision records
 │   ├── design/
 │   │   ├── design.md        ← generator and builder internals
+│   │   ├── instructions.md  ← instruction model and policy scope
 │   │   ├── skills.md        ← full skill index
 │   │   └── workflow.md      ← execution model
 │   └── product/
