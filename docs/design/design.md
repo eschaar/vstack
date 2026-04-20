@@ -37,11 +37,11 @@ expressed through an `ArtifactTypeConfig` descriptor rather than subclass overri
 
 Frontmatter is handled by a dedicated package:
 
-| Module       | Responsibility                                                               |
-| ------------ | ---------------------------------------------------------------------------- |
-| `schema.py`  | `FrontmatterSchema` — ordered field specs, types, and constraints            |
-| `parser.py`  | `FrontmatterParser` — parse YAML frontmatter from Markdown + standalone YAML |
-| `builder.py` | `build_output` — serialize schema-validated fields back to YAML frontmatter  |
+| Module          | Responsibility                                                                       |
+| --------------- | ------------------------------------------------------------------------------------ |
+| `schema.py`     | `FrontmatterSchema` — ordered field specs, types, and constraints                    |
+| `parser.py`     | `FrontmatterParser` — parse YAML frontmatter from Markdown + standalone YAML         |
+| `serializer.py` | `FrontmatterSerializer` — serialize schema-validated fields back to YAML frontmatter |
 
 Supported field types: `string`, `list`, `bool`, `object-list`, `raw`
 
@@ -154,10 +154,12 @@ Every generated file ends with a footer line (when `auto_gen_footer=True` on the
 
 ```text
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
+<!-- VSTACK-META: {"artifact_name":"...","artifact_type":"...","artifact_version":"...","generator":"vstack","vstack_version":"..."} -->
 ```
 
-The footer text lives in `src/vstack/artifacts/constants.py` and is shared across all artifact types.
-Currently both skills and agents have `auto_gen_footer=True`.
+The human-readable footer text lives in `src/vstack/artifacts/constants.py` and is shared across all artifact types.
+The machine-readable `VSTACK-META` footer is emitted by `GenericArtifactGenerator._build_footer`.
+Currently skills, agents, instructions, and prompts all have `auto_gen_footer=True`.
 
 ______________________________________________________________________
 

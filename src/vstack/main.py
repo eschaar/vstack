@@ -5,14 +5,22 @@ from __future__ import annotations
 import sys
 
 from vstack.cli.commands import CommandLineInterface
-from vstack.cli.parser import CLIParser
+from vstack.cli.parser import CommandLineParser
 from vstack.constants import TEMPLATES_ROOT
 
 _GLOBAL_SUPPORTED_TYPES = ["agent", "instruction", "prompt", "skill"]
 
 
 def _resolve_only_for_scope(args: object) -> list[str] | None:
-    """Return the artifact type filter for the active command scope."""
+    """Resolve the active artifact-type filter for the parsed CLI arguments.
+
+    Args:
+        args: Parsed CLI arguments object, typically from ``argparse``.
+
+    Returns:
+        The explicit ``--only`` filter for the active scope, the default
+        global-profile artifact set, or ``None`` when no filter applies.
+    """
     requested_only = getattr(args, "only", None)
     if not getattr(args, "use_global", False):
         return requested_only
@@ -33,8 +41,8 @@ def _resolve_only_for_scope(args: object) -> list[str] | None:
 
 
 def main() -> None:
-    """Parse CLI arguments and dispatch the selected command."""
-    cli_parser = CLIParser()
+    """Parse CLI arguments and dispatch the selected top-level command."""
+    cli_parser = CommandLineParser()
     parser = cli_parser.build()
     args = parser.parse_args()
     cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)

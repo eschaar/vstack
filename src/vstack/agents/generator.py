@@ -13,8 +13,8 @@ from vstack.constants import TEMPLATES_ROOT
 
 
 class AgentGenerator(GenericArtifactGenerator):
-    """Generator for agent artifacts, pre-configured for :data:`~vstack.artifacts.type_config.AGENT_TYPE`."""
+    """Generate agent artifacts using the built-in agent type configuration."""
 
     def __init__(self) -> None:
-        """Initialize instance state."""
+        """Create an agent generator bound to the built-in template root."""
         super().__init__(AGENT_TYPE, TEMPLATES_ROOT)

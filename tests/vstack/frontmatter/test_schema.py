@@ -90,6 +90,11 @@ class TestFrontmatterSchema:
         errors = schema.validate_meta({"items": [{"enabled": "maybe"}]})
         assert any("items[0].field 'enabled'" in e for e in errors)
 
+    def test_validate_meta_object_list_mapping_without_item_schema(self) -> None:
+        """Test that mapping items are accepted when object-list has no item schema."""
+        schema = FrontmatterSchema([FieldSpec("items", type="object-list")])
+        assert schema.validate_meta({"items": [{"k": "v"}]}) == []
+
     def test_validate_meta_raw_field_has_no_structural_validation(self) -> None:
         """Test that validate meta raw field has no structural validation."""
         schema = FrontmatterSchema([FieldSpec("meta", type="raw")])

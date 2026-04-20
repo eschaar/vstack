@@ -82,7 +82,7 @@ class ArtifactTypeConfig:
     manifest_key: str = ""
 
     def __post_init__(self) -> None:
-        """Internal helper to post init."""
+        """Default ``manifest_key`` to ``output_subdir`` when not explicitly set."""
         if not self.manifest_key:
             self.manifest_key = self.output_subdir
 

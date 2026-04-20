@@ -99,6 +99,23 @@ class TestFrontmatterSerializer:
         assert "roles:" in output
         assert "- reader" in output
 
+    def test_serialize_object_list_with_empty_nested_list_omits_list_field(self) -> None:
+        """Test that empty list fields in object-list items are omitted."""
+        item_schema = FrontmatterSchema([FieldSpec("label"), FieldSpec("roles", type="list")])
+        schema = FrontmatterSchema(
+            [FieldSpec("handoffs", type="object-list", item_schema=item_schema)]
+        )
+        output = FrontmatterSerializer().serialize(
+            {
+                "handoffs": [
+                    {"label": "handoff", "roles": []},
+                ]
+            },
+            schema,
+        )
+        assert "- label: 'handoff'" in output
+        assert "roles:" not in output
+
     def test_serialize_object_list_skips_non_dict_items(self) -> None:
         """Test that serialize skips non-dict items in object-list."""
         schema = FrontmatterSchema([FieldSpec("handoffs", type="object-list")])

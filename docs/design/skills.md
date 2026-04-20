@@ -79,13 +79,13 @@ ______________________________________________________________________
 
 ## file locations
 
-| Path                                              | Purpose                                                                    |
-| ------------------------------------------------- | -------------------------------------------------------------------------- |
-| `src/vstack/_templates/skills/<name>/config.yaml` | Source of truth — skill frontmatter fields                                 |
-| `src/vstack/_templates/skills/<name>/template.md` | Source of truth — skill instructions body                                  |
-| `src/vstack/_templates/skills/_partials/*.md`     | Shared partials injected via `{{TOKEN}}`                                   |
-| `.github/skills/<name>/SKILL.md`                  | Generated output — what VS Code loads                                      |
-| `.github/vstack.json`                             | Generated install manifest and artifact index (including installed skills) |
+| Path                                              | Purpose                                                                        |
+| ------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `src/vstack/_templates/skills/<name>/config.yaml` | Source of truth — skill frontmatter fields                                     |
+| `src/vstack/_templates/skills/<name>/template.md` | Source of truth — skill instructions body                                      |
+| `src/vstack/_templates/skills/_partials/*.md`     | Shared partials injected via `{{TOKEN}}`                                       |
+| `.github/skills/<name>/SKILL.md`                  | Generated output — what VS Code loads                                          |
+| `.github/vstack.json`                             | Generated install manifest and artifact index for all installed artifact types |
 
 **Never edit `.github/skills/` directly.** Regenerate after every change:
 

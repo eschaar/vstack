@@ -100,7 +100,7 @@ See `docs/architecture/adr/009-role-model.md` for the decision record.
 ### 5. manifest (`vstack.json`)
 
 Generated at install time in the target directory. Tracks every artifact installed
-by `vstack install` (skills and agents) so that `vstack uninstall` can remove
+by `vstack install` (skills, agents, instructions, and prompts) so that `vstack uninstall` can remove
 exactly those files. Not committed to the vstack source repo.
 
 ### 6. VS Code agent files (`.github/agents/<name>.agent.md`)

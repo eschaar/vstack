@@ -409,6 +409,13 @@ class CommandLineInterface:
                     new_version=new_version,
                 )
 
+                if action == "skip" and out_file.exists():
+                    existing_meta = GenericArtifactGenerator.parse_generation_metadata(
+                        out_file.read_text(encoding="utf-8")
+                    )
+                    if existing_meta is not None and existing_meta.get("vstack_version") != VERSION:
+                        action = "install"
+
                 self._print_install_action(
                     colors=_C,
                     prefix=prefix,

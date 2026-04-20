@@ -13,8 +13,8 @@ from vstack.skills.config import SKILL_TYPE
 
 
 class SkillGenerator(GenericArtifactGenerator):
-    """Generator for skill artifacts, pre-configured for :data:`~vstack.artifacts.type_config.SKILL_TYPE`."""
+    """Generate skill artifacts using the built-in skill type configuration."""
 
     def __init__(self) -> None:
-        """Initialize instance state."""
+        """Create a skill generator bound to the built-in template root."""
         super().__init__(SKILL_TYPE, TEMPLATES_ROOT)

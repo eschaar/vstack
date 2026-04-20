@@ -9,11 +9,16 @@ from pathlib import Path
 from vstack.constants import VERSION
 
 
-class CLIParser:
-    """Build and resolve CLI arguments."""
+class CommandLineParser:
+    """Create the vstack command-line parser and resolve install targets."""
 
     def vscode_user_dir(self) -> Path | None:
-        """Detect VS Code / VS Code Server user data directory."""
+        """Return the first detected VS Code user data directory.
+
+        Returns:
+            The detected VS Code or VS Code Server user directory, or ``None``
+            when no known location exists on the current machine.
+        """
         candidates = [
             Path.home() / ".vscode-server" / "data" / "User",
             Path.home() / ".config" / "Code" / "User",
@@ -23,7 +28,18 @@ class CLIParser:
         return next((p for p in candidates if p.exists()), None)
 
     def resolve_targets(self, args: argparse.Namespace) -> Path:
-        """Return the install root directory from parsed arguments."""
+        """Resolve the install root directory from parsed CLI arguments.
+
+        Args:
+            args: Parsed ``argparse`` namespace for an install-like command.
+
+        Returns:
+            The effective install root directory.
+
+        Raises:
+            SystemExit: If ``--global`` cannot be resolved or the explicit
+                ``--target`` directory does not exist.
+        """
         if getattr(args, "use_global", False):
             user_dir = self.vscode_user_dir()
             if user_dir is None:
@@ -46,7 +62,11 @@ class CLIParser:
         return Path.cwd() / ".github"
 
     def build(self) -> argparse.ArgumentParser:
-        """Build parser."""
+        """Create and configure the top-level ``argparse`` parser for vstack.
+
+        Returns:
+            A fully configured parser with all supported subcommands and flags.
+        """
         parser = argparse.ArgumentParser(
             prog="vstack",
             description="Manage vstack skill generation and installation.",

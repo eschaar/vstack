@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+import vstack.artifacts.generator as generator_module
 from vstack.agents.config import AGENT_TYPE
 from vstack.artifacts.generator import GenericArtifactGenerator
 from vstack.skills.config import SKILL_TYPE
@@ -104,6 +105,24 @@ class TestGenericArtifactGenerator:
     def test_parse_generation_metadata_returns_none_without_footer(self) -> None:
         """Test that metadata parser returns none when footer is missing."""
         assert GenericArtifactGenerator.parse_generation_metadata("plain content") is None
+
+    def test_parse_generation_metadata_returns_none_on_invalid_json(self) -> None:
+        """Test that metadata parser returns none when footer JSON is invalid."""
+        text = "<!-- VSTACK-META: {not-json} -->"
+        assert GenericArtifactGenerator.parse_generation_metadata(text) is None
+
+    def test_parse_generation_metadata_returns_none_on_non_object(self) -> None:
+        """Test that metadata parser returns none when footer JSON is not an object."""
+        text = '<!-- VSTACK-META: ["a", "b"] -->'
+        assert GenericArtifactGenerator.parse_generation_metadata(text) is None
+
+    def test_parse_generation_metadata_returns_none_when_loader_returns_non_dict(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Test that metadata parser rejects non-dict payloads from JSON loader."""
+        monkeypatch.setattr(generator_module.json, "loads", lambda _text: ["not", "dict"])
+        text = "<!-- VSTACK-META: {} -->"
+        assert GenericArtifactGenerator.parse_generation_metadata(text) is None
 
     def test_generate_writes_files(self, tmp_path: Path) -> None:
         """Test that generate writes files."""

@@ -10,7 +10,8 @@ from typing import Any, cast
 from tests.conftest import run_vstack
 from vstack.cli.commands import CommandLineInterface, _version_gt
 from vstack.cli.constants import EXPECTED_CANONICAL_NAMES
-from vstack.constants import TEMPLATES_ROOT
+from vstack.cli.manifest import ArtifactEntry, Manifest
+from vstack.constants import TEMPLATES_ROOT, VERSION
 from vstack.models import CheckMessage, ValidationResult
 
 
@@ -498,6 +499,63 @@ class TestCommandLineInterface:
         new_content = (install_dir / "skills" / "vision" / "SKILL.md").read_text(encoding="utf-8")
         assert new_content != "old"
         assert "AUTO-GENERATED" in new_content
+
+    def test_expected_output_names_falls_back_without_manifest(self) -> None:
+        """Test that expected output names fallback is used when manifest data is absent."""
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+        gen = cli._gen_for("skill")
+        assert gen is not None
+        assert cli._expected_output_names(gen, None) == EXPECTED_CANONICAL_NAMES
+
+    def test_verify_manifest_metadata_skips_missing_artifact_files(self, tmp_path: Path) -> None:
+        """Test that missing manifest-tracked files are ignored during metadata verification."""
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+        gen = cli._gen_for("skill")
+        assert gen is not None
+
+        manifest_data = Manifest(
+            vstack_version=VERSION,
+            installed_at="2026-01-01T00:00:00Z",
+            artifacts={
+                "skills": [
+                    ArtifactEntry(
+                        name="missing-skill",
+                        file="skills/missing-skill/SKILL.md",
+                        version="1.0.0",
+                    )
+                ]
+            },
+        )
+
+        result = cli._verify_manifest_metadata(gen, manifest_data, tmp_path / ".github")
+        assert result is None
+
+    def test_install_rewrites_skipped_artifact_when_footer_version_mismatches(
+        self, tmp_path: Path
+    ) -> None:
+        """Test that install rewrites a skipped artifact when footer vstack_version is stale."""
+        install_dir = tmp_path / ".github"
+        cli = CommandLineInterface(templates_root=TEMPLATES_ROOT)
+
+        rc_install = cli.install(install_dir, only=["skill"])
+        assert rc_install == 0
+
+        artifact_path = install_dir / "skills" / "vision" / "SKILL.md"
+        original = artifact_path.read_text(encoding="utf-8")
+        tampered = re.sub(
+            r'"vstack_version":"[^"]+"',
+            '"vstack_version":"stale-version"',
+            original,
+            count=1,
+        )
+        artifact_path.write_text(tampered, encoding="utf-8")
+
+        rc_reinstall = cli.install(install_dir, only=["skill"], update=False)
+        assert rc_reinstall == 0
+
+        updated = artifact_path.read_text(encoding="utf-8")
+        assert '"vstack_version":"stale-version"' not in updated
+        assert f'"vstack_version":"{VERSION}"' in updated
 
     def test_verify_fails_on_vstack_meta_version_mismatch(self, tmp_path: Path) -> None:
         """Test that verify fails when VSTACK-META footer differs from manifest values."""

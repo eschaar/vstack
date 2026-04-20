@@ -20,7 +20,7 @@ class FrontmatterSerializer:
     """Frontmatter serializer — converts metadata dict to YAML.
 
     Instantiate once, then call :meth:`serialize` to render frontmatter.
-    No mutable instance state; state exists only for the duration of a single call.
+    No mutable instance state is retained between calls.
     """
 
     def _serialize_scalar(self, spec: FieldSpec, value: object) -> str:
@@ -50,7 +50,7 @@ class FrontmatterSerializer:
         return out
 
     def _should_emit_multiline(self, value: object, preserve_multiline: bool) -> bool:
-        """Return True when scalar should be emitted as a folded block string."""
+        """Return ``True`` when a scalar should use folded-block YAML output."""
         if not preserve_multiline:
             return False
         text = str(value)
@@ -84,7 +84,7 @@ class FrontmatterSerializer:
         value: object,
         preserve_multiline: bool = False,
     ) -> list[str]:
-        """Render one field from a schematized object."""
+        """Serialize a single schematized field/value pair for an object-list item."""
         if spec.type == "bool":
             return [f"{spec.name}: {self._serialize_bool(value)}"]
         if spec.type == "list":
@@ -138,7 +138,7 @@ class FrontmatterSerializer:
                 lines.append(f"{prefix}{obj_line}")
 
     def _append_raw_field(self, lines: list[str], name: str, value: object) -> None:
-        """Append raw field value (unserialized) to lines."""
+        """Append a raw YAML field value without additional serialization."""
         raw_str = str(value).strip() if value is not None else ""
         if raw_str:
             lines.append(f"{name}:")
@@ -186,7 +186,17 @@ class FrontmatterSerializer:
         schema: FrontmatterSchema,
         preserve_multiline: bool = False,
     ) -> str:
-        """Serialize metadata dict to VS Code frontmatter block (YAML --- / ---)."""
+        """Serialize metadata into a VS Code frontmatter block.
+
+        Args:
+            meta: Input metadata values to serialize.
+            schema: Ordered frontmatter schema that filters and formats fields.
+            preserve_multiline: When ``True``, emit long strings as folded YAML
+                block scalars where appropriate.
+
+        Returns:
+            A YAML frontmatter block including opening and closing ``---`` lines.
+        """
         lines = ["---"]
         for spec in schema.fields:
             value = meta.get(spec.name)

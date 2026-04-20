@@ -45,16 +45,16 @@ class FrontmatterContent:
         return self.metadata[key]
 
     def __bool__(self) -> bool:
-        """True when metadata is non-empty."""
+        """Return ``True`` when parsed metadata is non-empty."""
         return bool(self.metadata)
 
 
 class FrontmatterParser:
-    """Stateless parser for YAML frontmatter."""
+    """Parse the repository's supported subset of YAML frontmatter."""
 
     @staticmethod
     def _is_current_object_list_item(meta: dict, current_key: str) -> bool:
-        """Return True when current key points to the last item of an object-list."""
+        """Return ``True`` when ``current_key`` points to the active object-list item."""
         return (
             bool(current_key)
             and isinstance(meta.get(current_key), list)
@@ -70,19 +70,19 @@ class FrontmatterParser:
         object_scalar_field: str,
         object_block_lines: list[str],
     ) -> None:
-        """Flush buffered object-list block-scalar content into the current object item."""
+        """Flush buffered block-scalar content into the active object-list item."""
         text = " ".join(b for b in object_block_lines if b).strip()
         if FrontmatterParser._is_current_object_list_item(meta, current_key):
             meta[current_key][-1][object_scalar_field] = text
 
     @staticmethod
     def _flush_raw_block(*, meta: dict, current_key: str, raw_lines: list[str]) -> None:
-        """Flush buffered raw block content into current key."""
+        """Flush buffered raw block content into the current top-level key."""
         meta[current_key] = "\n".join(raw_lines).rstrip()
 
     @staticmethod
     def _flush_block_scalar(*, meta: dict, current_key: str, block_lines: list[str]) -> None:
-        """Flush buffered top-level block-scalar into current key."""
+        """Flush a buffered top-level block scalar into the current key."""
         meta[current_key] = " ".join(b for b in block_lines if b).strip()
 
     @staticmethod
@@ -101,9 +101,13 @@ class FrontmatterParser:
 
     @staticmethod
     def parse_yaml(raw: str) -> dict:
-        """Parse a raw YAML string (no ``---`` delimiters) and return a dict.
+        """Parse a raw YAML string without frontmatter delimiters.
 
-        Used for loading ``config.yaml`` files.
+        Args:
+            raw: YAML content without surrounding ``---`` delimiters.
+
+        Returns:
+            A parsed metadata dictionary.
         """
         return FrontmatterParser._parse_yaml_block(raw)
 
