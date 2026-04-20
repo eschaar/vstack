@@ -211,6 +211,107 @@ class CommandLineInterface:
 
         return result if result.messages else None
 
+    def _existing_versions_for_install(
+        self,
+        gens: list[GenericArtifactGenerator],
+        existing_manifest: Manifest | None,
+    ) -> dict[str, str | None]:
+        """Build existing-version lookup for selected generators."""
+        if existing_manifest is None:
+            return {}
+
+        existing_versions: dict[str, str | None] = {}
+        for gen in gens:
+            for entry in existing_manifest.entries_for(gen.config.manifest_key):
+                key = f"{gen.config.type_name}/{entry.name}"
+                existing_versions[key] = entry.version
+        return existing_versions
+
+    def _preserved_manifest_entries(
+        self,
+        existing_manifest: Manifest | None,
+        selected_manifest_keys: set[str],
+    ) -> dict[str, list[ArtifactEntry]]:
+        """Keep existing manifest entries for artifact families not in this run."""
+        if existing_manifest is None:
+            return {}
+
+        preserved: dict[str, list[ArtifactEntry]] = {}
+        for manifest_key, entries in existing_manifest.artifacts.items():
+            if manifest_key not in selected_manifest_keys:
+                preserved[manifest_key] = list(entries)
+        return preserved
+
+    def _install_action(
+        self,
+        *,
+        force: bool,
+        update: bool,
+        out_file: Path,
+        existing_version: str | None,
+        new_version: str,
+    ) -> str:
+        """Return install action: install, skip, or update."""
+        if force:
+            return "install"
+        if out_file.exists() and existing_version is not None:
+            if update:
+                return "update" if _version_gt(new_version, existing_version) else "skip"
+            return "skip"
+        return "install"
+
+    def _print_install_action(
+        self,
+        *,
+        colors: type[_Colors],
+        prefix: str,
+        rel: str,
+        action: str,
+        existing_version: str | None,
+        new_version: str,
+        out_file: Path,
+        force: bool,
+    ) -> None:
+        """Print install/update/skip line for one artifact."""
+        if action == "skip":
+            print(
+                f"  {colors.YELLOW}↷{colors.RESET}  {rel}"
+                f"  {colors.DIM}skipped — already v{existing_version}{colors.RESET}"
+            )
+            return
+
+        if action == "update":
+            print(
+                f"  {prefix}{colors.CYAN}↑{colors.RESET}  "
+                f"{colors.BOLD}{rel}{colors.RESET}"
+                f"  v{existing_version} → {colors.GREEN}v{new_version}{colors.RESET}"
+            )
+            return
+
+        tag = "(forced) " if force and out_file.exists() else ""
+        print(
+            f"  {prefix}{colors.GREEN}✓{colors.RESET}  "
+            f"{colors.BOLD}{rel}{colors.RESET}"
+            f"  {colors.DIM}{tag}{colors.RESET}{colors.GREEN}v{new_version}{colors.RESET}"
+        )
+
+    def _record_manifest_entry(
+        self,
+        *,
+        new_entries: dict[str, list[ArtifactEntry]],
+        gen: GenericArtifactGenerator,
+        artifact_name: str,
+        version: str,
+    ) -> None:
+        """Append one installed artifact entry to the in-memory manifest payload."""
+        new_entries.setdefault(gen.config.manifest_key, []).append(
+            ArtifactEntry(
+                name=artifact_name,
+                file=gen.install_relative_path(artifact_name),
+                version=version,
+            )
+        )
+
     # ── validate ──────────────────────────────────────────────────────────────
 
     def validate(self, only: list[str] | None = None) -> int:
@@ -275,23 +376,12 @@ class CommandLineInterface:
         # Read existing manifest once — used to look up installed versions.
         mf = self._manifest(install_dir)
         existing_manifest = mf.read()
-        existing_versions: dict[str, str | None] = {}
         selected_manifest_keys = {gen.config.manifest_key for gen in gens}
-        if existing_manifest:
-            for gen in gens:
-                for entry in existing_manifest.entries_for(gen.config.manifest_key):
-                    key = f"{gen.config.type_name}/{entry.name}"
-                    existing_versions[key] = entry.version
+        existing_versions = self._existing_versions_for_install(gens, existing_manifest)
 
         prefix = f"{_C.DIM}[dry-run]{_C.RESET} " if dry_run else ""
         all_ok = True
-        new_entries: dict[str, list[ArtifactEntry]] = {}
-        if existing_manifest:
-            # Keep manifest entries for artifact families not part of this install run
-            # (e.g. install --only instruction should not drop agents/skills entries).
-            for manifest_key, entries in existing_manifest.artifacts.items():
-                if manifest_key not in selected_manifest_keys:
-                    new_entries[manifest_key] = list(entries)
+        new_entries = self._preserved_manifest_entries(existing_manifest, selected_manifest_keys)
 
         for gen in gens:
             out_dir = install_dir / gen.config.output_subdir
@@ -311,48 +401,35 @@ class CommandLineInterface:
                         file=sys.stderr,
                     )
 
-                # Decide action.
-                action: str  # "install" | "skip" | "update"
-                if force:
-                    action = "install"
-                elif out_file.exists() and existing_version is not None:
-                    if update:
-                        action = "update" if _version_gt(new_version, existing_version) else "skip"
-                    else:
-                        action = "skip"
-                else:
-                    action = "install"
+                action = self._install_action(
+                    force=force,
+                    update=update,
+                    out_file=out_file,
+                    existing_version=existing_version,
+                    new_version=new_version,
+                )
 
-                if action == "skip":
-                    print(
-                        f"  {_C.YELLOW}↷{_C.RESET}  {rel}"
-                        f"  {_C.DIM}skipped — already v{existing_version}{_C.RESET}"
-                    )
-                elif action == "update":
-                    print(
-                        f"  {prefix}{_C.CYAN}↑{_C.RESET}  "
-                        f"{_C.BOLD}{rel}{_C.RESET}"
-                        f"  v{existing_version} → {_C.GREEN}v{new_version}{_C.RESET}"
-                    )
-                else:
-                    tag = "(forced) " if force and out_file.exists() else ""
-                    print(
-                        f"  {prefix}{_C.GREEN}✓{_C.RESET}  "
-                        f"{_C.BOLD}{rel}{_C.RESET}"
-                        f"  {_C.DIM}{tag}{_C.RESET}{_C.GREEN}v{new_version}{_C.RESET}"
-                    )
+                self._print_install_action(
+                    colors=_C,
+                    prefix=prefix,
+                    rel=rel,
+                    action=action,
+                    existing_version=existing_version,
+                    new_version=new_version,
+                    out_file=out_file,
+                    force=force,
+                )
 
                 if not dry_run and action != "skip":
                     out_dir.mkdir(parents=True, exist_ok=True)
                     out_file.parent.mkdir(parents=True, exist_ok=True)
                     out_file.write_text(artifact.content, encoding="utf-8")
 
-                new_entries.setdefault(gen.config.manifest_key, []).append(
-                    ArtifactEntry(
-                        name=artifact.name,
-                        file=gen.install_relative_path(artifact.name),
-                        version=new_version,
-                    )
+                self._record_manifest_entry(
+                    new_entries=new_entries,
+                    gen=gen,
+                    artifact_name=artifact.name,
+                    version=new_version,
                 )
 
             # Verify source for unresolvable issues.
