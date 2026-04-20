@@ -10,8 +10,8 @@ Use these Git and release hygiene conventions in this project.
 1. Use `type/short-description` branch names.
 1. Keep branch names lowercase and use hyphens to separate words.
 1. Use one of these allowed branch types when branch validation is enabled:
-	`feature`, `bugfix`, `hotfix`, `release`, `chore`, `feat`, `fix`, `docs`,
-	`refactor`, `perf`, `test`, `ci`, `build`, `style`, `opt`, `patch`, `dependabot`.
+   `feature`, `bugfix`, `hotfix`, `release`, `chore`, `feat`, `fix`, `docs`,
+   `refactor`, `perf`, `test`, `ci`, `build`, `style`, `opt`, `patch`, `dependabot`.
 
 ## Commit messages
 
@@ -41,3 +41,4 @@ Use these Git and release hygiene conventions in this project.
 1. Prefer local verification before pushing release-impacting changes.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
+<!-- VSTACK-META: {"artifact_name":"git","artifact_type":"instruction","artifact_version":"0.1.0","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

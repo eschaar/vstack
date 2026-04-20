@@ -406,3 +406,4 @@ Summary: [N critical, N warnings, N info]
 `$ref` for all reusable schemas, and validate it passes linting.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
+<!-- VSTACK-META: {"artifact_name":"openapi","artifact_type":"skill","artifact_version":"1.0.0","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
