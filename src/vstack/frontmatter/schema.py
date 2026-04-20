@@ -58,6 +58,61 @@ class FrontmatterSchema:
         """Return the :class:`FieldSpec` for *name*, or ``None`` if not declared."""
         return next((f for f in self.fields if f.name == name), None)
 
+    @staticmethod
+    def _validate_bool_field(spec: FieldSpec, value: object, errors: list[str]) -> None:
+        """Validate one bool-like field value."""
+        if str(value).lower() not in ("true", "false"):
+            errors.append(f"field '{spec.name}' must be 'true' or 'false', got: {value!r}")
+
+    @staticmethod
+    def _validate_list_field(spec: FieldSpec, value: object, errors: list[str]) -> None:
+        """Validate one list field value."""
+        if not isinstance(value, list):
+            errors.append(f"field '{spec.name}' must be a list, got: {value!r}")
+
+    @staticmethod
+    def _validate_object_list_field(spec: FieldSpec, value: object, errors: list[str]) -> None:
+        """Validate one object-list field value."""
+        if not isinstance(value, list):
+            errors.append(f"field '{spec.name}' must be a list, got: {value!r}")
+            return
+
+        for i, item in enumerate(value):
+            if not isinstance(item, dict):
+                errors.append(f"field '{spec.name}[{i}]' must be a mapping, got: {item!r}")
+                continue
+            if spec.item_schema is None:
+                continue
+            for err in spec.item_schema.validate_meta(item):
+                errors.append(f"{spec.name}[{i}].{err}")
+
+    @staticmethod
+    def _validate_str_field(spec: FieldSpec, value: object, errors: list[str]) -> None:
+        """Validate one string-like field value."""
+        if spec.max_length and isinstance(value, str) and len(value) > spec.max_length:
+            errors.append(
+                f"field '{spec.name}' exceeds max length {spec.max_length} ({len(value)} chars)"
+            )
+        if spec.pattern and isinstance(value, str) and not re.fullmatch(spec.pattern, value):
+            errors.append(
+                f"field '{spec.name}' does not match required pattern {spec.pattern!r}: {value!r}"
+            )
+
+    def _validate_field_value(self, spec: FieldSpec, value: object, errors: list[str]) -> None:
+        """Validate a field value according to its declared field type."""
+        if spec.type == "bool":
+            self._validate_bool_field(spec, value, errors)
+            return
+        if spec.type == "list":
+            self._validate_list_field(spec, value, errors)
+            return
+        if spec.type == "object-list":
+            self._validate_object_list_field(spec, value, errors)
+            return
+        if spec.type == "raw":
+            return
+        self._validate_str_field(spec, value, errors)
+
     def validate_meta(self, meta: dict) -> list[str]:
         """Validate *meta* against declared schema fields.
 
@@ -83,37 +138,5 @@ class FrontmatterSchema:
                 continue
             if value is None:
                 continue
-            if spec.type == "bool":
-                if str(value).lower() not in ("true", "false"):
-                    errors.append(f"field '{spec.name}' must be 'true' or 'false', got: {value!r}")
-            elif spec.type == "list":
-                if not isinstance(value, list):
-                    errors.append(f"field '{spec.name}' must be a list, got: {value!r}")
-            elif spec.type == "object-list":
-                if not isinstance(value, list):
-                    errors.append(f"field '{spec.name}' must be a list, got: {value!r}")
-                else:
-                    for i, item in enumerate(value):
-                        if not isinstance(item, dict):
-                            errors.append(
-                                f"field '{spec.name}[{i}]' must be a mapping, got: {item!r}"
-                            )
-                        elif spec.item_schema is not None:
-                            for err in spec.item_schema.validate_meta(item):
-                                errors.append(f"{spec.name}[{i}].{err}")
-            elif spec.type == "raw":
-                pass  # raw blocks are carried through verbatim; no structural validation
-            else:  # "str"
-                if spec.max_length and isinstance(value, str) and len(value) > spec.max_length:
-                    errors.append(
-                        f"field '{spec.name}' exceeds max length {spec.max_length} ({len(value)} chars)"
-                    )
-                if (
-                    spec.pattern
-                    and isinstance(value, str)
-                    and not re.fullmatch(spec.pattern, value)
-                ):
-                    errors.append(
-                        f"field '{spec.name}' does not match required pattern {spec.pattern!r}: {value!r}"
-                    )
+            self._validate_field_value(spec, value, errors)
         return errors

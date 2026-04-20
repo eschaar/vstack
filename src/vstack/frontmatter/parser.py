@@ -53,6 +53,39 @@ class FrontmatterParser:
     """Stateless parser for YAML frontmatter."""
 
     @staticmethod
+    def _is_current_object_list_item(meta: dict, current_key: str) -> bool:
+        """Return True when current key points to the last item of an object-list."""
+        return (
+            bool(current_key)
+            and isinstance(meta.get(current_key), list)
+            and bool(meta[current_key])
+            and isinstance(meta[current_key][-1], dict)
+        )
+
+    @staticmethod
+    def _flush_object_block_scalar(
+        *,
+        meta: dict,
+        current_key: str,
+        object_scalar_field: str,
+        object_block_lines: list[str],
+    ) -> None:
+        """Flush buffered object-list block-scalar content into the current object item."""
+        text = " ".join(b for b in object_block_lines if b).strip()
+        if FrontmatterParser._is_current_object_list_item(meta, current_key):
+            meta[current_key][-1][object_scalar_field] = text
+
+    @staticmethod
+    def _flush_raw_block(*, meta: dict, current_key: str, raw_lines: list[str]) -> None:
+        """Flush buffered raw block content into current key."""
+        meta[current_key] = "\n".join(raw_lines).rstrip()
+
+    @staticmethod
+    def _flush_block_scalar(*, meta: dict, current_key: str, block_lines: list[str]) -> None:
+        """Flush buffered top-level block-scalar into current key."""
+        meta[current_key] = " ".join(b for b in block_lines if b).strip()
+
+    @staticmethod
     def parse(content: str) -> FrontmatterContent:
         """Split YAML frontmatter from body content.
 
@@ -111,14 +144,12 @@ class FrontmatterParser:
                     object_block_lines.append(line.strip())
                     continue
                 else:
-                    text = " ".join(b for b in object_block_lines if b).strip()
-                    if (
-                        current_key
-                        and isinstance(meta.get(current_key), list)
-                        and meta[current_key]
-                        and isinstance(meta[current_key][-1], dict)
-                    ):
-                        meta[current_key][-1][object_scalar_field] = text
+                    FrontmatterParser._flush_object_block_scalar(
+                        meta=meta,
+                        current_key=current_key,
+                        object_scalar_field=object_scalar_field,
+                        object_block_lines=object_block_lines,
+                    )
                     in_object_block_scalar = False
                     object_scalar_field = ""
                     object_block_lines = []
@@ -130,7 +161,11 @@ class FrontmatterParser:
                     continue
                 else:
                     # Non-indented line closes the raw block; fall through to process it
-                    meta[current_key] = "\n".join(raw_lines).rstrip()
+                    FrontmatterParser._flush_raw_block(
+                        meta=meta,
+                        current_key=current_key,
+                        raw_lines=raw_lines,
+                    )
                     in_raw_block = False
                     raw_lines = []
 
@@ -139,19 +174,17 @@ class FrontmatterParser:
                     block_lines.append(line.strip())
                     continue
                 else:
-                    meta[current_key] = " ".join(b for b in block_lines if b).strip()
+                    FrontmatterParser._flush_block_scalar(
+                        meta=meta,
+                        current_key=current_key,
+                        block_lines=block_lines,
+                    )
                     in_block_scalar = False
                     block_lines = []
 
             # 4-space key: continuation of an object-list item
             obj_kv = re.match(r"^    ([a-zA-Z_-]+):\s*(.*)$", line)
-            if (
-                obj_kv
-                and current_key
-                and isinstance(meta.get(current_key), list)
-                and meta[current_key]
-                and isinstance(meta[current_key][-1], dict)
-            ):
+            if obj_kv and FrontmatterParser._is_current_object_list_item(meta, current_key):
                 obj_key = obj_kv.group(1)
                 obj_val = obj_kv.group(2).strip()
                 if obj_val in ("|", "|-", "|+", ">", ">-", ">+"):
@@ -212,18 +245,24 @@ class FrontmatterParser:
                     meta[current_key] = val.strip("\"'")
 
         if in_object_block_scalar:
-            text = " ".join(b for b in object_block_lines if b).strip()
-            if (
-                current_key
-                and isinstance(meta.get(current_key), list)
-                and meta[current_key]
-                and isinstance(meta[current_key][-1], dict)
-                and object_scalar_field
-            ):
-                meta[current_key][-1][object_scalar_field] = text
+            if object_scalar_field:
+                FrontmatterParser._flush_object_block_scalar(
+                    meta=meta,
+                    current_key=current_key,
+                    object_scalar_field=object_scalar_field,
+                    object_block_lines=object_block_lines,
+                )
         if in_raw_block and raw_lines:
-            meta[current_key] = "\n".join(raw_lines).rstrip()
+            FrontmatterParser._flush_raw_block(
+                meta=meta,
+                current_key=current_key,
+                raw_lines=raw_lines,
+            )
         if in_block_scalar and block_lines:
-            meta[current_key] = " ".join(b for b in block_lines if b).strip()
+            FrontmatterParser._flush_block_scalar(
+                meta=meta,
+                current_key=current_key,
+                block_lines=block_lines,
+            )
 
         return meta
