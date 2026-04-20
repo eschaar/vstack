@@ -14,6 +14,7 @@ permissions:
 env:
   # Shared interpreter version for reproducible CI behavior.
   PYTHON_VERSION: "3.11"
+  # Keep Poetry virtual environments inside the workspace for deterministic paths.
   POETRY_VIRTUALENVS_IN_PROJECT: "true"
 
 jobs:

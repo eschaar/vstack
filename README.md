@@ -240,6 +240,38 @@ make test                       # run tests on py311-py314 via tox
 make tox                        # run tests on py311-py314 (when installed)
 ```
 
+### GitHub Actions (CI/CD)
+
+This repository uses dedicated workflows for branch QA, pull request verification,
+security checks, commit policy enforcement, and release automation.
+
+| Workflow file                    | Trigger                                                                | Purpose                                                                            |
+| -------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `.github/workflows/qa.yml`       | `push` (all branches except `main`)                                    | Fast branch feedback: format, lint, typecheck, and test matrix (Python 3.11-3.14). |
+| `.github/workflows/commit.yml`   | `push` (excludes `main`, `master`, `merge/**`, `gh-readonly-queue/**`) | Enforce commit message policy on branch pushes before PR merge.                    |
+| `.github/workflows/verify.yml`   | `pull_request` to `main`                                               | Run unit tests and verify installability/validity of generated artifacts.          |
+| `.github/workflows/security.yml` | `pull_request` to `main`                                               | Run dependency audit and secret scanning on the PR diff.                           |
+| `.github/workflows/release.yml`  | `pull_request` closed on `main` (merged only)                          | Compute semantic version, create tag and GitHub release, build package artifacts.  |
+
+Commit policy specifics:
+
+- Type validation is configured inline via `CCHK_*` environment variables in `.github/workflows/commit.yml` and enforced by `commit-check/commit-check-action`.
+- Commit subject length is limited to 100 characters in `.github/workflows/commit.yml`.
+- Branch naming is validated with Conventional Branch format (`type/description`) in `.github/workflows/commit.yml`.
+- Allowed branch types are: `feature`, `bugfix`, `hotfix`, `release`, `chore`, `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `ci`, `build`, `style`, `opt`, `patch`, `dependabot`.
+- Dependabot commit prefixes are configured in `.github/dependabot.yml` as `chore(deps)` for Python updates and `chore(ci)` for GitHub Actions updates.
+- Scope allowlist validation is enforced in `.github/workflows/commit.yml`.
+- Release version bump policy is mapped in `.github/workflows/release.yml`:
+  - minor: `feat`, `feature`
+  - patch: `fix`, `bugfix`, `hotfix`, `opt`, `patch`, `perf`, `refactor`, `chore`, `revert`
+
+Recommended branch protection for `main`:
+
+- Require PR before merge.
+- Require all status checks from `verify.yml` and `security.yml`.
+- Optionally require `qa.yml` if you use direct pushes to long-lived non-main branches.
+- Disallow force pushes and branch deletion.
+
 ### local multi-python testing (pyenv + tox)
 
 This repository keeps its local interpreter order in `.python-version` so `tox`

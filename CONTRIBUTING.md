@@ -30,14 +30,72 @@ make test
 
 ## Commit Message Guidance
 
-This repository uses semantic commit prefixes for releases.
+This repository uses a Conventional Commits baseline for release automation.
 
-- `feat:` for new functionality
-- `fix:` for bug fixes
-- `chore:` for maintenance
-- `docs:` for documentation only changes
+### 1) Message format
 
-Use `BREAKING CHANGE` in the commit body when applicable.
+```text
+type(optional-scope)!: short summary
+```
+
+- `type`: what kind of change you made.
+- `scope` (optional): where the change happened.
+- `!`: marks a breaking change.
+
+### 2) Version bump rules
+
+- `major`: any commit with `!` in the header or a `BREAKING CHANGE:` footer.
+- `minor`: `feat`, `feature`.
+- `patch`: `fix`, `bugfix`, `hotfix`, `opt`, `patch`, `perf`, `refactor`, `chore`, `revert`.
+
+### 3) Allowed types
+
+- `feat`, `feature`: new behavior or capabilities.
+- `fix`, `bugfix`: bug correction.
+- `hotfix`: urgent production fix.
+- `opt`: small, practical optimization.
+- `patch`: small maintenance fix that should still trigger a patch release.
+- `perf`: measurable performance improvement.
+- `refactor`: structural cleanup without intended behavior change.
+- `chore`: repository maintenance and non-feature housekeeping.
+- `revert`: rollback of a previous commit.
+
+### 4) Allowed scopes (optional)
+
+- Domain and backend areas: `api`, `auth`, `permissions`, `serializer`, `viewset`, `orm`, `migrations`, `admin`, `settings`.
+- Tooling and workflow areas: `deps`, `ci`, `docs`, `build`, `style`, `release`, `workflow`.
+- Quality and test areas: `test`, `tests`.
+- Project modules: `cli`, `agents`, `skills`, `instructions`, `prompts`, `frontmatter`, `artifacts`.
+
+### 5) Examples
+
+- `feat(cli): add --global verify mode`
+- `fix(auth): handle missing token header`
+- `hotfix(ci): handle broken tag push race`
+- `opt(serializer): simplify optional-field validation path`
+- `patch(docs): clarify release gating`
+- `perf(orm): reduce query count in list endpoint`
+- `refactor(artifacts)!: drop legacy manifest key`
+
+### 6) Subject length
+
+- Commit subject lines are limited to 100 characters by CI.
+
+### 7) Branch naming
+
+Branch names are validated in CI using Conventional Branch format:
+
+```text
+type/short-description
+```
+
+Allowed branch types:
+
+- `feature`, `bugfix`, `hotfix`, `release`, `chore`, `feat`, `fix`
+- `docs`, `refactor`, `perf`, `test`, `ci`, `build`, `style`
+- `opt`, `patch`, `dependabot`
+
+A dedicated CI workflow validates branch-push commit messages (non-main branches) using commit-check, and enforces this repository's allowed scope list.
 
 ## Pull Request Expectations
 

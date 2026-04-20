@@ -1,12 +1,55 @@
 # vstack — workflow
 
 > Maintained by: **designer** role\
-> Last updated: 2026-04-01
+> Last updated: 2026-04-20
 
 ## overview
 
 This document describes how vstack workflows execute today (single-call execution)
 and a possible future orchestrated role pipeline.
+
+It also documents the repository-level GitHub Actions automation used for quality,
+security, commit policy, and releases.
+
+______________________________________________________________________
+
+## repository automation (GitHub Actions)
+
+The repository uses a split workflow model so each automation concern is isolated
+and easy to reason about.
+
+| Workflow                         | Trigger                                                   | Responsibility                                                                        |
+| -------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `.github/workflows/qa.yml`       | Push to non-main branches                                 | Fast feedback for formatting, linting, type checks, and tests across Python versions. |
+| `.github/workflows/commit.yml`   | Push to non-main branches (with explicit branch excludes) | Validate commit message policy before PR merge.                                       |
+| `.github/workflows/verify.yml`   | Pull request to `main`                                    | Validate source behavior and artifact install/verify flow.                            |
+| `.github/workflows/security.yml` | Pull request to `main`                                    | Dependency vulnerability audit and secret scan.                                       |
+| `.github/workflows/release.yml`  | Merged pull request to `main`                             | Compute SemVer, create tag and GitHub release, build distributions.                   |
+
+### commit policy enforcement model
+
+Commit policy is intentionally split across two components in one workflow:
+
+1. `CCHK_*` environment variables in `.github/workflows/commit.yml` define commit message conventions and allowed commit types.
+1. `.github/workflows/commit.yml` also enforces allowed scopes for pushed commits.
+
+Additional commit workflow policy:
+
+- Maximum commit subject length is 100 characters.
+- Branch names are validated against Conventional Branch format (`type/description`).
+- Allowed branch types: `feature`, `bugfix`, `hotfix`, `release`, `chore`, `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `ci`, `build`, `style`, `opt`, `patch`, `dependabot`.
+
+This split keeps standard message validation in a purpose-built action and keeps
+repository-specific scope policy explicit in CI.
+
+### release bump mapping
+
+`release.yml` computes SemVer from commit history using these mappings:
+
+- minor: `feat`, `feature`
+- patch: `fix`, `bugfix`, `hotfix`, `opt`, `patch`, `perf`, `refactor`, `chore`, `revert`
+
+Repository tag policy is strict `X.Y.Z` (no `v` prefix).
 
 ______________________________________________________________________
 
