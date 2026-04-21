@@ -128,8 +128,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          # Full history and tags required by poetry-dynamic-versioning.
-          fetch-depth: 0
+          # Build from the newly created release tag to guarantee package version.
+          ref: refs/tags/${{ needs.release.outputs.version }}
+          fetch-depth: 1
+          fetch-tags: true
 
       - name: Install Poetry
         run: pipx install poetry
@@ -141,8 +143,31 @@ jobs:
           cache: poetry
           cache-dependency-path: poetry.lock
 
+      - name: Validate release tag checkout
+        run: |
+          EXPECTED="${{ needs.release.outputs.version }}"
+          ACTUAL_TAG="$(git tag --points-at HEAD | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)"
+          echo "expected_tag=$EXPECTED"
+          echo "head_tag=$ACTUAL_TAG"
+          if [[ "$ACTUAL_TAG" != "$EXPECTED" ]]; then
+            echo "ERROR: build checkout is not pinned to expected release tag.";
+            exit 1
+          fi
+
       - name: Build distributions
         run: poetry build
+
+      - name: Validate built artifact version
+        run: |
+          EXPECTED="${{ needs.release.outputs.version }}"
+          shopt -s nullglob
+          MATCHES=(dist/*"$EXPECTED"*.whl dist/*"$EXPECTED"*.tar.gz)
+          echo "expected_version=$EXPECTED"
+          ls -1 dist/
+          if [[ ${#MATCHES[@]} -eq 0 ]]; then
+            echo "ERROR: no built artifacts contain expected version '$EXPECTED'."
+            exit 1
+          fi
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.2 - 2026-04-22
+
+Release build version-guard fix.
+
+### Fixed in 1.3.2
+
+- Fixed release build determinism by checking out `refs/tags/<version>` in the build job instead of building from a moving branch ref.
+- Fixed accidental `0.0.0` package publishing by validating that HEAD is pinned to the expected release tag before build and that produced artifacts include the expected version.
+
 ## 1.3.1 - 2026-04-22
 
 Release workflow and test isolation fixes.
