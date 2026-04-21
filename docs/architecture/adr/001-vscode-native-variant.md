@@ -13,7 +13,7 @@ automation — unsuitable for backend/microservice workflows where browser autom
 irrelevant.
 
 VS Code + GitHub Copilot is a dominant development environment that lacked an equivalent
-system. Modern models (Claude Sonnet/Opus 4.6, GPT-5.3 Codex) can execute multi-step
+system. Modern models (Claude Sonnet/Opus 4.6+, GPT-5.3 Codex) can execute multi-step
 workflows via VS Code Agent Mode.
 
 ## decision

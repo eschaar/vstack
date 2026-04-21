@@ -1,5 +1,58 @@
 # Changelog
 
+## 1.3.0 - 2026-04-22
+
+DX, onboarding, and PyPI publishing release.
+
+### Added in 1.3.0
+
+- Added GitHub Discussion templates for onboarding and adoption feedback:
+  - `onboarding-feedback`
+  - `first-run-report`
+  - `model-cost-feedback`
+- Added team setup guidance in `README.md` with project-first install flow and expected outcomes.
+- Added explicit expected output examples for first install validation in `README.md`.
+- Added a troubleshooting decision flowchart in `README.md`.
+
+### Changed in 1.3.0
+
+- Restructured `README.md` for faster onboarding with clearer quick paths, role usage guidance, and troubleshooting navigation.
+- Updated architect and product agent template model ordering and regenerated installed agent artifacts.
+- Updated generated artifact metadata and aligned generation tests with current template output.
+- Added PyPI publish job to release workflow using OIDC trusted publishing (no API tokens required).
+
+## 1.2.5 - 2026-04-21
+
+CI dependency maintenance release.
+
+### Changed in 1.2.5
+
+- GitHub Actions: bumped `actions/checkout` from v5 to v6.
+
+## 1.2.4 - 2026-04-21
+
+CI dependency maintenance release.
+
+### Changed in 1.2.4
+
+- GitHub Actions: bumped `actions/upload-artifact` from v4 to v7.
+
+## 1.2.3 - 2026-04-21
+
+Release workflow dependency maintenance.
+
+### Changed in 1.2.3
+
+- GitHub Actions: bumped `softprops/action-gh-release` from v2 to v3.
+
+## 1.2.2 - 2026-04-21
+
+Security workflow dependency maintenance.
+
+### Changed in 1.2.2
+
+- GitHub Actions: bumped `trufflesecurity/trufflehog` from `3.88.2` to `3.94.3`.
+
 ## 1.2.1 - 2026-04-21
 
 README rendering fix release.

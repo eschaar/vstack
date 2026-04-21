@@ -62,13 +62,13 @@ class TestCommandLineInterface:
             f"vstack verify --only skill failed:\n{result.stdout}\n{result.stderr}"
         )
 
-    def test_install_and_verify_exits_zero(self) -> None:
+    def test_install_and_verify_exits_zero(self, tmp_path: Path) -> None:
         """Test that install and verify exits zero."""
-        install = run_vstack(["install"])
+        install = run_vstack(["install", "--target", str(tmp_path)])
         assert install.returncode == 0, (
             f"vstack install failed:\n{install.stdout}\n{install.stderr}"
         )
-        verify = run_vstack(["verify"])
+        verify = run_vstack(["verify", "--target", str(tmp_path)])
         assert verify.returncode == 0, f"vstack verify failed:\n{verify.stdout}\n{verify.stderr}"
 
     def test_validate_with_empty_templates_returns_non_zero(self, tmp_path: Path) -> None:

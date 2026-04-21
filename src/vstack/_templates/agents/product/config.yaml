@@ -17,8 +17,8 @@ tools:
   - agent
 model:
   - Claude Sonnet 4.6 (copilot)
-  - Claude Opus 4.6 (copilot)
   - GPT-5.3-Codex (copilot)
+  - Claude Opus 4.7 (copilot)
 agents: ["*"]
 handoffs:
   - label: Continue to architecture

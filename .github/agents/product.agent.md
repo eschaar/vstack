@@ -18,8 +18,8 @@ agents:
   - *
 model:
   - Claude Sonnet 4.6 (copilot)
-  - Claude Opus 4.6 (copilot)
   - GPT-5.3-Codex (copilot)
+  - Claude Opus 4.7 (copilot)
 user-invocable: true
 target: vscode
 handoffs:
@@ -122,4 +122,4 @@ Handoffs you own:
 - `@#onboard` — contributor onboarding guide generation
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"product","artifact_type":"agent","artifact_version":"1.0.1","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"product","artifact_type":"agent","artifact_version":"1.0.1","generator":"vstack","vstack_version":"1.3.0"} -->
