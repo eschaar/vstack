@@ -7,7 +7,7 @@ Release workflow and test isolation fixes.
 ### Fixed in 1.3.1
 
 - Fixed release workflow trigger: switched from `pull_request: closed` to `push: branches: [main]` so the workflow runs under `refs/heads/main` and satisfies the PyPI environment deployment branch protection rule.
-- Fixed `build` job checkout missing `fetch-depth: 0`, required by `poetry-dynamic-versioning` to read git tags.
+- Fixed `build` job checkout configuration so `poetry-dynamic-versioning` can read git tags during the build.
 - Fixed `download-artifact` version mismatch (`v5` → `v7`) to align with `upload-artifact@v7`.
 
 ## 1.3.0 - 2026-04-22
