@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.1 - 2026-04-21
+
+README rendering fix release.
+
+### Fixed in 1.2.1
+
+- Fixed Mermaid flowchart syntax in `README.md` so GitHub renders the role-flow diagram correctly.
+
 ## 1.2.0 - 2026-04-21
 
 CLI provenance verification and documentation system alignment.
