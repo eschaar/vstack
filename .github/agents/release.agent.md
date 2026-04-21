@@ -118,4 +118,4 @@ Handoffs you own:
 - `@#code-review` — final review before PR is opened
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"release","artifact_type":"agent","artifact_version":"1.0.1","generator":"vstack","vstack_version":"1.2.5"} -->
+<!-- VSTACK-META: {"artifact_name":"release","artifact_type":"agent","artifact_version":"1.0.1","generator":"vstack","vstack_version":"1.3.0"} -->

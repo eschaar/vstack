@@ -201,4 +201,4 @@ ______________________________________________________________________
 ______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"cicd","artifact_type":"skill","artifact_version":"1.0.2","generator":"vstack","vstack_version":"1.2.5"} -->
+<!-- VSTACK-META: {"artifact_name":"cicd","artifact_type":"skill","artifact_version":"1.0.2","generator":"vstack","vstack_version":"1.3.0"} -->

@@ -4,6 +4,7 @@
     <img src="assets/branding/vstack.png" alt="vstack" width="400">
   </picture>
 
+[![PyPI version](https://img.shields.io/pypi/v/vstack?color=0B8A6F "Latest PyPI release")](https://pypi.org/project/vstack/)
 [![Python version](https://img.shields.io/badge/python-3.11--3.14-0B8A6F "Supported Python versions")](pyproject.toml)
 [![Verify status](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/verify.yml?branch=main&label=verify&color=1D6FA5 "Build and test status")](https://github.com/eschaar/vstack/actions/workflows/verify.yml)
 [![Security checks](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/security.yml?branch=main&label=security&color=B15E00 "Security workflow status")](https://github.com/eschaar/vstack/actions/workflows/security.yml)
@@ -63,7 +64,7 @@ For experienced users:
 #### New user path (2 minutes)
 
 ```bash
-pipx install git+https://github.com/eschaar/vstack.git
+pipx install vstack
 vstack install --target /path/to/your/project
 vstack validate
 ```
@@ -104,10 +105,12 @@ ______________________________________________________________________
 
 ### ⚡ Install with pipx (recommended)
 
-You can install and use vstack directly without cloning:
+`pipx` installs vstack in its own isolated environment so it never conflicts with
+your project dependencies. The `vstack` command is then available globally across
+all projects, regardless of which virtual environment is active.
 
 ```bash
-pipx install git+https://github.com/eschaar/vstack.git
+pipx install vstack
 ```
 
 Afterwards, the `vstack` command is available everywhere:
@@ -118,6 +121,21 @@ vstack install --target /path/to/your/project
 
 # Optional: install profile-wide defaults for all VS Code projects
 vstack install --global
+```
+
+### 🐙 Alternative: install directly from GitHub
+
+To install the latest unreleased version directly from the repository without cloning:
+
+```bash
+pipx install git+https://github.com/eschaar/vstack.git
+```
+
+Or a specific branch or tag:
+
+```bash
+pipx install git+https://github.com/eschaar/vstack.git@main
+pipx install git+https://github.com/eschaar/vstack.git@1.3.0
 ```
 
 ### 🐙 Alternative: manual clone and install
@@ -163,7 +181,7 @@ If you see the version and no errors, your install is working.
 Expected output (example):
 
 ```text
-vstack 1.2.5
+vstack 1.3.0
 Validation passed: no unresolved template tokens
 ```
 
@@ -430,7 +448,7 @@ flowchart TD
 - Issue: `Permission denied` during install or uninstall
   Action: Check directory permissions and rerun with appropriate privileges.
 - Issue: `Could not detect VS Code user data directory`
-  Action: Run with an explicit target, for example `vstack install --target ~/.config/Code/User`.
+  Action: Run `vstack install --global` to install into the VS Code user profile, or run `vstack install --target /path/to/your/project` to install into a specific project instead.
 
 ### Copilot Agent Mode
 

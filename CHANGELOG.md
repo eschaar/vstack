@@ -1,10 +1,10 @@
 # Changelog
 
-## 1.2.6 - 2026-04-22
+## 1.3.0 - 2026-04-22
 
-DX and onboarding quality release.
+DX, onboarding, and PyPI publishing release.
 
-### Added in 1.2.6
+### Added in 1.3.0
 
 - Added GitHub Discussion templates for onboarding and adoption feedback:
   - `onboarding-feedback`
@@ -14,11 +14,12 @@ DX and onboarding quality release.
 - Added explicit expected output examples for first install validation in `README.md`.
 - Added a troubleshooting decision flowchart in `README.md`.
 
-### Changed in 1.2.6
+### Changed in 1.3.0
 
 - Restructured `README.md` for faster onboarding with clearer quick paths, role usage guidance, and troubleshooting navigation.
 - Updated architect and product agent template model ordering and regenerated installed agent artifacts.
 - Updated generated artifact metadata and aligned generation tests with current template output.
+- Added PyPI publish job to release workflow using OIDC trusted publishing (no API tokens required).
 
 ## 1.2.5 - 2026-04-21
 

@@ -121,4 +121,4 @@ Only delegate when workstreams are genuinely independent.
 - `@#incident` — incident analysis and post-mortem writing
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"engineer","artifact_type":"agent","artifact_version":"1.0.1","generator":"vstack","vstack_version":"1.2.5"} -->
+<!-- VSTACK-META: {"artifact_name":"engineer","artifact_type":"agent","artifact_version":"1.0.1","generator":"vstack","vstack_version":"1.3.0"} -->
