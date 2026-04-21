@@ -1,5 +1,5 @@
 # Release workflow.
-# Trigger model: only on direct pushes to main (merge commits).
+# Trigger model: runs on pushes to main.
 # Using push instead of pull_request so the workflow runs under refs/heads/main,
 # which satisfies the PyPI environment deployment branch protection rule.
 name: Release
