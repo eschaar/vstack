@@ -77,4 +77,4 @@ Explicitly ask to "disable guardrails".
 ______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"guardrails","artifact_type":"skill","artifact_version":"1.0.2","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"guardrails","artifact_type":"skill","artifact_version":"1.0.2","generator":"vstack","vstack_version":"1.2.5"} -->

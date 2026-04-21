@@ -50,4 +50,4 @@ End with:
 - Biggest remaining risk: one sentence
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"code-review","artifact_type":"prompt","artifact_version":"0.1.0","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"code-review","artifact_type":"prompt","artifact_version":"0.1.0","generator":"vstack","vstack_version":"1.2.5"} -->

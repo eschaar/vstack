@@ -126,4 +126,4 @@ Handoffs you own:
 - `@#incident` — incident analysis and post-mortem writing
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"tester","artifact_type":"agent","artifact_version":"1.0.1","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"tester","artifact_type":"agent","artifact_version":"1.0.1","generator":"vstack","vstack_version":"1.2.5"} -->
