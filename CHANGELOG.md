@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.3.1 - 2026-04-22
+
+Release workflow and test isolation fixes.
+
+### Fixed in 1.3.1
+
+- Fixed release workflow trigger: switched from `pull_request: closed` to `push: branches: [main]` so the workflow runs under `refs/heads/main` and satisfies the PyPI environment deployment branch protection rule.
+- Fixed `build` job checkout configuration so `poetry-dynamic-versioning` can read git tags during the build.
+- Fixed `download-artifact` version mismatch (`v5` → `v7`) to align with `upload-artifact@v7`.
+
 ## 1.3.0 - 2026-04-22
 
 DX, onboarding, and PyPI publishing release.
@@ -20,6 +30,10 @@ DX, onboarding, and PyPI publishing release.
 - Updated architect and product agent template model ordering and regenerated installed agent artifacts.
 - Updated generated artifact metadata and aligned generation tests with current template output.
 - Added PyPI publish job to release workflow using OIDC trusted publishing (no API tokens required).
+
+### Fixed in 1.3.0
+
+- Fixed `test_install_and_verify_exits_zero` writing generated artifacts into the repository root instead of an isolated `tmp_path`.
 
 ## 1.2.5 - 2026-04-21
 
