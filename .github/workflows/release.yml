@@ -134,7 +134,12 @@ jobs:
           fetch-tags: true
 
       - name: Install Poetry
-        run: pipx install poetry
+        run: |
+          pipx install poetry
+          pipx inject poetry "poetry-dynamic-versioning[plugin]>=1.0.0,<2.0.0"
+
+      - name: Show Poetry plugins
+        run: poetry self show plugins
 
       - name: Setup Python
         uses: actions/setup-python@v6
