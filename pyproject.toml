@@ -3,9 +3,44 @@ name = "vstack"
 dynamic = ["version"]
 description = "VS Code-native AI engineering workflow system for microservices, libraries, and backend systems."
 license = "MIT"
-readme = "README.md"
+readme = "README-pypi.md"
 requires-python = ">=3.11,<3.15"
 dependencies = []
+keywords = [
+    "github-copilot",
+    "vscode",
+    "ai-workflows",
+    "developer-tools",
+    "devx",
+    "engineering-workflow",
+    "copilot-agent-mode",
+    "backend",
+    "microservices",
+    "api",
+    "workflow-automation",
+    "release-engineering",
+]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://github.com/eschaar/vstack"
+Documentation = "https://github.com/eschaar/vstack/blob/main/README.md"
+Repository = "https://github.com/eschaar/vstack"
+Issues = "https://github.com/eschaar/vstack/issues"
+Changelog = "https://github.com/eschaar/vstack/blob/main/CHANGELOG.md"
+Discussions = "https://github.com/eschaar/vstack/discussions"
+Security = "https://github.com/eschaar/vstack/blob/main/SECURITY.md"
 
 [project.scripts]
 vstack = "vstack:main"
