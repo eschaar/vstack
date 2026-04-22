@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.3.6 - 2026-04-22
+
+README and PyPI README badge/layout alignment.
+
+### Fixed in 1.3.6
+
+- Fixed oversized logo rendering in `README-pypi.md` by constraining image width.
+- Fixed duplicate title/branding in `README-pypi.md` by removing redundant `# vstack` heading.
+- Fixed badge ordering so badges render beneath the logo in `README-pypi.md`.
+- Fixed PyPI version badge formatting in both `README.md` and `README-pypi.md` to show the raw version (no `v` prefix).
+- Fixed verify/security workflow badges in both `README.md` and `README-pypi.md` by removing `branch=main` filter so PR-based workflows report status correctly.
+
 ## 1.3.5 - 2026-04-22
 
 Changelog and PyPI packaging metadata alignment update.
