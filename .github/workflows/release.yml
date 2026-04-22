@@ -15,6 +15,8 @@ permissions:
 env:
   # Shared interpreter version for build and metadata steps.
   PYTHON_VERSION: "3.11"
+  # Pin Poetry CLI version for deterministic release builds.
+  POETRY_VERSION: "2.3.4"
   # Opt in to Node.js 24 for JavaScript-based actions ahead of runner defaults.
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
@@ -76,33 +78,22 @@ jobs:
           echo "changed=${{ steps.version.outputs.changed }}"
           echo "version=${{ steps.version.outputs.version }}"
 
-      - name: Enforce no-v SemVer tags
-        if: steps.version.outputs.changed == 'true'
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-
-          # Repository policy: tags must be plain SemVer (for example 1.0.0), never v1.0.0.
-          if [[ "$VERSION" =~ ^v ]]; then
-            echo "ERROR: release tag must not start with 'v' (got '$VERSION')."
-            exit 1
-          fi
-
-          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "ERROR: release tag must match X.Y.Z (got '$VERSION')."
-            exit 1
-          fi
-
       - name: Create and push git tag
         if: steps.version.outputs.changed == 'true'
         run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
+            echo "ERROR: release tag must match X.Y.Z without a v-prefix (got '$VERSION')."
+            exit 1
+          }
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git rev-parse "${{ steps.version.outputs.version }}" >/dev/null 2>&1 && {
-            echo "ERROR: tag '${{ steps.version.outputs.version }}' already exists.";
+          git rev-parse "$VERSION" >/dev/null 2>&1 && {
+            echo "ERROR: tag '$VERSION' already exists.";
             exit 1;
           }
-          git tag -a "${{ steps.version.outputs.version }}" -m "release ${{ steps.version.outputs.version }}"
-          git push origin "${{ steps.version.outputs.version }}"
+          git tag -a "$VERSION" -m "release $VERSION"
+          git push origin "$VERSION"
 
       - name: Compute release date
         if: steps.version.outputs.changed == 'true'
@@ -135,7 +126,7 @@ jobs:
 
       - name: Install Poetry
         run: |
-          pipx install poetry
+          pipx install "poetry==${POETRY_VERSION}"
           pipx inject poetry "poetry-dynamic-versioning[plugin]>=1.0.0,<2.0.0"
 
       - name: Show Poetry plugins
