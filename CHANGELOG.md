@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.3.5 - 2026-04-22
+
+Release version resolution compatibility fixes.
+
+### Fixed in 1.3.5
+
+- Fixed `poetry dynamic-versioning` CI failures by removing unsupported `tool.poetry-dynamic-versioning.fallback-version` config.
+- Fixed release builds resolving to `0.0.0` by switching to `project.dynamic = ["version"]` and moving the placeholder version to `tool.poetry.version`, so `poetry-dynamic-versioning` can inject the computed tag version correctly.
+- Fixed `pyproject.toml` inline documentation to reflect current fallback behavior when no git tag is reachable.
+
 ## 1.3.4 - 2026-04-22
 
 Release build versioning fix: explicit plugin activation and full history checkout.
