@@ -1,6 +1,6 @@
 [project]
 name = "vstack"
-version = "0.0.0"
+dynamic = ["version"]
 description = "VS Code-native AI engineering workflow system for microservices, libraries, and backend systems."
 license = "MIT"
 readme = "README.md"
@@ -16,6 +16,7 @@ vstack = "vstack:main"
 # ---------------------------------------------------------------------------
 
 [tool.poetry]
+version = "0.0.0"
 packages = [{include = "vstack", from = "src"}]
 include = [
     { path = "src/vstack/_templates", format = ["sdist", "wheel"] },
@@ -86,14 +87,14 @@ build-backend = "poetry_dynamic_versioning.backend"
 
 # ---------------------------------------------------------------------------
 # poetry-dynamic-versioning — reads version from git tags at build time.
-# Fallback is used when no git tag is reachable (e.g. shallow clone, fresh repo).
+# If no git tag is reachable (e.g. shallow clone, fresh repo), the placeholder
+# `tool.poetry.version` value (`0.0.0`) remains in effect.
 # ---------------------------------------------------------------------------
 
 [tool.poetry-dynamic-versioning]
 enable = true
 vcs = "git"
 style = "pep440"
-fallback-version = "0.0.0"
 
 # ---------------------------------------------------------------------------
 # pyright is used for type checking in VS Code, by Pylance.
