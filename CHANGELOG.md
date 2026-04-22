@@ -2,17 +2,11 @@
 
 ## 1.3.5 - 2026-04-22
 
-Release version resolution and tagging alignment fixes.
+Changelog alignment update.
 
-### Fixed in 1.3.5
+### Changed in 1.3.5
 
-- Fixed `poetry dynamic-versioning` CI failures by removing unsupported `tool.poetry-dynamic-versioning.fallback-version` config.
-- Fixed release builds resolving to `0.0.0` by switching to `project.dynamic = ["version"]` and moving the placeholder version to `tool.poetry.version`, so `poetry-dynamic-versioning` can inject the computed tag version correctly.
-- Fixed dynamic version resolution for this repository's unprefixed tags by setting `tool.poetry-dynamic-versioning.pattern = "default-unprefixed"`.
-- Fixed dynamic versioning misconfiguration by enabling `tool.poetry-dynamic-versioning.strict = true`, so CI fails instead of silently falling back to `0.0.0` when no valid tag is found.
-- Added `tool.poetry.requires-plugins` so Poetry 2.x installations know the project requires `poetry-dynamic-versioning[plugin]`.
-- Fixed intermittent incorrect release versions by forcing build-time dynamic versioning to the computed release output via `POETRY_DYNAMIC_VERSIONING_BYPASS`.
-- Fixed `pyproject.toml` inline documentation to reflect strict mode behavior when no valid git tag/version can be resolved.
+- Corrected changelog version history from 1.3.0 onward so entries align with actual created tags and release chronology.
 
 ## 1.3.4 - 2026-04-22
 
@@ -22,6 +16,8 @@ Release build versioning fix: explicit plugin activation and full history checko
 
 - Fixed CI release builds still producing `0.0.0` artifacts by calling `poetry dynamic-versioning` explicitly before `poetry build`. Poetry reads the version once at load time — the plugin must be active and called before the build step runs.
 - Fixed release build tag visibility by setting `fetch-depth: 0` on the tag-pinned checkout so `git describe` can traverse full history.
+- Fixed dynamic versioning compatibility in `pyproject.toml` by switching to PEP 621 dynamic versioning (`project.dynamic = ["version"]`) and keeping the placeholder at `tool.poetry.version`.
+- Fixed `poetry dynamic-versioning` compatibility by removing unsupported `tool.poetry-dynamic-versioning.fallback-version`.
 - Fixed release race conditions by adding workflow `concurrency` controls, including serialized main release execution.
 - Fixed release integrity by creating the GitHub release only after PyPI publish succeeds.
 - Fixed tag existence validation to check `refs/tags/<version>` directly instead of a generic ref lookup.
