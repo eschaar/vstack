@@ -16,11 +16,16 @@ vstack = "vstack:main"
 # ---------------------------------------------------------------------------
 
 [tool.poetry]
-version = "0.0.0"
 packages = [{include = "vstack", from = "src"}]
 include = [
     { path = "src/vstack/_templates", format = ["sdist", "wheel"] },
 ]
+# Keep the placeholder version last because the plugin may remove/re-add it in
+# PEP 621 mode, which otherwise causes noisy key reordering.
+version = "0.0.0"
+
+[tool.poetry.requires-plugins]
+poetry-dynamic-versioning = { version = ">=1.0.0,<2.0.0", extras = ["plugin"] }
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=9.0"
@@ -87,13 +92,17 @@ build-backend = "poetry_dynamic_versioning.backend"
 
 # ---------------------------------------------------------------------------
 # poetry-dynamic-versioning — reads version from git tags at build time.
-# If no git tag is reachable (e.g. shallow clone, fresh repo), the placeholder
-# `tool.poetry.version` value (`0.0.0`) remains in effect.
+# With `strict = true`, build/version resolution fails when no valid tag/version
+# can be resolved (e.g. shallow clone, missing tags, or non-matching tag format).
+# The placeholder `tool.poetry.version` value (`0.0.0`) is not used as fallback.
 # ---------------------------------------------------------------------------
 
 [tool.poetry-dynamic-versioning]
 enable = true
 vcs = "git"
+# Repository tags are plain SemVer without a leading v (e.g. 1.3.4).
+pattern = "default-unprefixed"
+strict = true
 style = "pep440"
 
 # ---------------------------------------------------------------------------
