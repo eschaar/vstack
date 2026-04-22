@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.3.6 - 2026-04-22
+
+Release build determinism fix.
+
+### Fixed in 1.3.6
+
+- Fixed release version resolution by relying on strict tag-based dynamic versioning instead of a CI-only bypass override.
+- Fixed dynamic version resolution for this repository's unprefixed tags by setting `tool.poetry-dynamic-versioning.pattern = "default-unprefixed"`.
+- Fixed dynamic versioning misconfiguration by enabling `tool.poetry-dynamic-versioning.strict = true`, so CI fails instead of silently falling back to `0.0.0` when no valid tag is found.
+- Added `tool.poetry.requires-plugins` so Poetry 2.x installations know the project requires `poetry-dynamic-versioning[plugin]`.
+- Reduced configuration churn in PEP 621 mode by moving `tool.poetry.version` to the bottom of the `[tool.poetry]` table, matching the plugin's documented behavior.
+
 ## 1.3.5 - 2026-04-22
 
 Release version resolution compatibility fixes.

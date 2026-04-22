@@ -141,9 +141,6 @@ jobs:
       - name: Show active Poetry plugins
         run: poetry self show plugins
 
-      - name: Apply dynamic version
-        run: poetry dynamic-versioning
-
       - name: Build distributions
         run: poetry build
 
