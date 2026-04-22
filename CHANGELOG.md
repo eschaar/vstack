@@ -2,11 +2,18 @@
 
 ## 1.3.5 - 2026-04-22
 
-Changelog alignment update.
+Changelog and PyPI packaging metadata alignment update.
 
 ### Changed in 1.3.5
 
 - Corrected changelog version history from 1.3.0 onward so entries align with actual created tags and release chronology.
+- Switched published long description source from `README.md` to `README-pypi.md` for PyPI-compatible rendering.
+- Added PyPI-focused project metadata in `pyproject.toml`: `keywords`, `classifiers`, and `project.urls`.
+- Added explicit repository guidance to keep `README-pypi.md` in sync with `README.md`.
+
+### Added in 1.3.5
+
+- Added a dedicated `README-pypi.md` with PyPI-safe links, badges, and a concise DX-first quickstart.
 
 ## 1.3.4 - 2026-04-22
 

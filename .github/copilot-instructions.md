@@ -113,6 +113,14 @@ For hand-authored Markdown in this repository, treat baseline docs as a coherent
 - Prefer consistency across related docs: if `README.md`, architecture docs, and workflow docs describe the same flow, they should use compatible terminology and diagram style.
 - When modernizing older docs, convert diagrams selectively rather than mechanically. Preserve useful content first, then improve presentation.
 
+## PyPI README Sync Rules
+
+- `README.md` is the canonical full documentation for GitHub rendering.
+- `README-pypi.md` is the PyPI-compatible long description source referenced by `pyproject.toml`.
+- Whenever `README.md` changes in a way that affects installation, usage, positioning, links, or badges, update `README-pypi.md` in the same change.
+- Keep `README-pypi.md` minimal and PyPI-safe: no Mermaid blocks, no relative documentation links, and no `<picture>` markup.
+- Use absolute GitHub URLs in `README-pypi.md` for cross-document links and images.
+
 ## Python Docstring Style
 
 For Python modules in this repository, treat code as the source of truth and keep docstrings aligned with shipped behavior.
