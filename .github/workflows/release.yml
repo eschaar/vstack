@@ -121,16 +121,13 @@ jobs:
         with:
           # Build from the newly created release tag to guarantee package version.
           ref: refs/tags/${{ needs.release.outputs.version }}
-          fetch-depth: 1
-          fetch-tags: true
+          fetch-depth: 0
 
       - name: Install Poetry
-        run: |
-          pipx install "poetry==${POETRY_VERSION}"
-          pipx inject poetry "poetry-dynamic-versioning[plugin]>=1.0.0,<2.0.0"
+        run: pipx install "poetry==${POETRY_VERSION}"
 
-      - name: Show Poetry plugins
-        run: poetry self show plugins
+      - name: Install poetry-dynamic-versioning plugin
+        run: pipx inject poetry "poetry-dynamic-versioning[plugin]>=1.0.0,<2.0.0"
 
       - name: Setup Python
         uses: actions/setup-python@v6
@@ -149,6 +146,12 @@ jobs:
             echo "ERROR: build checkout is not pinned to expected release tag.";
             exit 1
           fi
+
+      - name: Show active Poetry plugins
+        run: poetry self show plugins
+
+      - name: Apply dynamic version
+        run: poetry dynamic-versioning
 
       - name: Build distributions
         run: poetry build

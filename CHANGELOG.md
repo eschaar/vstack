@@ -1,16 +1,23 @@
 # Changelog
 
+## 1.3.4 - 2026-04-22
+
+Release build versioning fix: explicit plugin activation and full history checkout.
+
+### Fixed in 1.3.4
+
+- Fixed CI release builds still producing `0.0.0` artifacts by calling `poetry dynamic-versioning` explicitly before `poetry build`. Poetry reads the version once at load time — the plugin must be active and called before the build step runs.
+- Fixed release build tag visibility by setting `fetch-depth: 0` on the tag-pinned checkout so `git describe` can traverse full history.
+
 ## 1.3.3 - 2026-04-22
 
 Release build plugin activation fix.
 
 ### Fixed in 1.3.3
 
-- Fixed CI release builds producing `0.0.0` artifacts by installing/enabling `poetry-dynamic-versioning` in the Poetry runtime used by the build job.
-- Fixed release build reproducibility by pinning the Poetry CLI version in workflow environment configuration.
+- Fixed CI release builds producing `0.0.0` artifacts by installing `poetry-dynamic-versioning` as a Poetry plugin via `pipx inject` in the release build job.
+- Fixed release build reproducibility by pinning the Poetry CLI version (`POETRY_VERSION`) in workflow environment configuration.
 - Fixed CI drift by aligning Poetry installation to the same pinned version across `release.yml`, `qa.yml`, `verify.yml`, and `security.yml`.
-- Fixed release workflow noise by inlining SemVer format validation into the tag creation step.
-- Added Poetry plugin visibility in release logs via `poetry self show plugins` to simplify troubleshooting.
 
 ## 1.3.2 - 2026-04-22
 
