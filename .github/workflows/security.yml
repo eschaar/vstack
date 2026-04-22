@@ -7,6 +7,11 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  # Cancel superseded security scans for the same PR.
+  group: security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   # Required by checkout and PR-context scanners.
   contents: read

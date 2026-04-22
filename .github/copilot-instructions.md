@@ -40,7 +40,7 @@ docs/            ← architecture.md, design.md, skills.md, workflow.md, roadmap
 ```
 
 *Hand-authored exceptions in `.github/`: `copilot-instructions.md`, `CODEOWNERS`,
-`pull_request_template.md`, `ISSUE_TEMPLATE/`, `workflows/`.
+`PULL_REQUEST_TEMPLATE/`, `ISSUE_TEMPLATE/`, `workflows/`.
 
 Generated files are written to `.github/` at install time:
 
@@ -131,6 +131,13 @@ For Python modules in this repository, treat code as the source of truth and kee
 - Always edit `src/vstack/_templates/skills/<name>/template.md`; generate output at install time with `python3 -m vstack install`.
 - Default to microservices and libraries unless UI is explicitly present.
 - After each change: summary + files changed + how to test.
+
+## Pull Request Response Format
+
+- When asked to provide PR content, strictly follow the repository template at `.github/PULL_REQUEST_TEMPLATE/pull_request_template.md`.
+- Always provide PR content in English.
+- Always provide PR content as copy-paste-ready Markdown in a fenced `markdown` code block.
+- Do not add extra sections that are not present in the active PR template.
 
 ## Context Exclusions
 

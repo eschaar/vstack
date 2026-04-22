@@ -13,6 +13,11 @@ on:
       - merge/**
       - gh-readonly-queue/**
 
+concurrency:
+  # Cancel superseded commit-message checks on the same branch.
+  group: commit-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   # Read-only is enough for commit metadata checks.
   contents: read
