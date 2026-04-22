@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.3.3 - 2026-04-22
+
+Release build plugin activation fix.
+
+### Fixed in 1.3.3
+
+- Fixed CI release builds producing `0.0.0` artifacts by installing/enabling `poetry-dynamic-versioning` in the Poetry runtime used by the build job.
+- Fixed release build reproducibility by pinning the Poetry CLI version in workflow environment configuration.
+- Fixed CI drift by aligning Poetry installation to the same pinned version across `release.yml`, `qa.yml`, `verify.yml`, and `security.yml`.
+- Fixed release workflow noise by inlining SemVer format validation into the tag creation step.
+- Added Poetry plugin visibility in release logs via `poetry self show plugins` to simplify troubleshooting.
+
 ## 1.3.2 - 2026-04-22
 
 Release build version-guard fix.
