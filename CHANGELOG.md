@@ -8,6 +8,12 @@ Release build versioning fix: explicit plugin activation and full history checko
 
 - Fixed CI release builds still producing `0.0.0` artifacts by calling `poetry dynamic-versioning` explicitly before `poetry build`. Poetry reads the version once at load time — the plugin must be active and called before the build step runs.
 - Fixed release build tag visibility by setting `fetch-depth: 0` on the tag-pinned checkout so `git describe` can traverse full history.
+- Fixed release race conditions by adding workflow `concurrency` controls, including serialized main release execution.
+- Fixed release integrity by creating the GitHub release only after PyPI publish succeeds.
+- Fixed tag existence validation to check `refs/tags/<version>` directly instead of a generic ref lookup.
+- Fixed rerun friction after failed release attempts by automatically deleting the freshly created tag when build or publish fails.
+- Added post-build wheel smoke test (`pip install --no-deps` + `vstack --help`) before artifact upload to avoid network-dependent dependency resolution.
+- Clarified PR workflow concurrency comments in `security.yml` and `verify.yml` to match `github.ref` behavior (`refs/pull/<id>/merge`).
 
 ## 1.3.3 - 2026-04-22
 
