@@ -1,14 +1,14 @@
-# vstack
+<p align="center">
+	<img src="https://raw.githubusercontent.com/eschaar/vstack/main/assets/branding/vstack.png" alt="vstack" width="260">
+</p>
 
-[![PyPI version](https://img.shields.io/pypi/v/vstack?color=0B8A6F)](https://pypi.org/project/vstack/)
+[![PyPI version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fpypi.org%2Fpypi%2Fvstack%2Fjson&query=%24.info.version&label=PyPI&color=0B8A6F&cacheSeconds=300)](https://pypi.org/project/vstack/)
 [![Python version](https://img.shields.io/badge/python-3.11--3.14-0B8A6F)](https://github.com/eschaar/vstack/blob/main/pyproject.toml)
-[![Verify status](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/verify.yml?branch=main&label=verify&color=1D6FA5)](https://github.com/eschaar/vstack/actions/workflows/verify.yml)
-[![Security checks](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/security.yml?branch=main&label=security&color=B15E00)](https://github.com/eschaar/vstack/actions/workflows/security.yml)
+[![Verify status](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/verify.yml?label=verify&color=1D6FA5)](https://github.com/eschaar/vstack/actions/workflows/verify.yml)
+[![Security checks](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/security.yml?label=security&color=B15E00)](https://github.com/eschaar/vstack/actions/workflows/security.yml)
 [![Runtime: stdlib only](https://img.shields.io/badge/runtime-stdlib%20only-5B6C8F)](https://github.com/eschaar/vstack/blob/main/pyproject.toml)
 [![License: MIT](https://img.shields.io/github/license/eschaar/vstack?color=5F7A1F)](https://github.com/eschaar/vstack/blob/main/LICENSE)
 [![GitHub Discussions](https://img.shields.io/badge/discussions-ask%20%26%20share-blueviolet?logo=github)](https://github.com/eschaar/vstack/discussions)
-
-![vstack logo](https://raw.githubusercontent.com/eschaar/vstack/main/assets/branding/vstack.png)
 
 The VS Code-native AI workflow system for backend engineering.
 

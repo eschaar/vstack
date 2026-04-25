@@ -4,10 +4,10 @@
     <img src="assets/branding/vstack.png" alt="vstack" width="400">
   </picture>
 
-[![PyPI version](https://img.shields.io/pypi/v/vstack?color=0B8A6F "Latest PyPI release")](https://pypi.org/project/vstack/)
+[![PyPI version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fpypi.org%2Fpypi%2Fvstack%2Fjson&query=%24.info.version&label=PyPI&color=0B8A6F&cacheSeconds=300 "Latest PyPI release")](https://pypi.org/project/vstack/)
 [![Python version](https://img.shields.io/badge/python-3.11--3.14-0B8A6F "Supported Python versions")](pyproject.toml)
-[![Verify status](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/verify.yml?branch=main&label=verify&color=1D6FA5 "Build and test status")](https://github.com/eschaar/vstack/actions/workflows/verify.yml)
-[![Security checks](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/security.yml?branch=main&label=security&color=B15E00 "Security workflow status")](https://github.com/eschaar/vstack/actions/workflows/security.yml)
+[![Verify status](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/verify.yml?label=verify&color=1D6FA5 "Build and test status")](https://github.com/eschaar/vstack/actions/workflows/verify.yml)
+[![Security checks](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/security.yml?label=security&color=B15E00 "Security workflow status")](https://github.com/eschaar/vstack/actions/workflows/security.yml)
 [![Runtime: stdlib only](https://img.shields.io/badge/runtime-stdlib%20only-5B6C8F "No runtime dependencies")](pyproject.toml)
 [![License: MIT](https://img.shields.io/github/license/eschaar/vstack?color=5F7A1F "Project license")](LICENSE)
 [![GitHub Discussions](https://img.shields.io/badge/discussions-ask%20%26%20share-blueviolet?logo=github "GitHub Discussions")](https://github.com/eschaar/vstack/discussions)
