@@ -1,96 +1,99 @@
-"""Tests for install manifest handling."""
+"""Tests for ManifestCommand dispatch logic."""
 
 from __future__ import annotations
 
-import json
+from argparse import Namespace
+from pathlib import Path
+from typing import Any, cast
 
-from vstack.cli.constants import EXPECTED_CANONICAL_NAMES
-from vstack.cli.manifest import ArtifactEntry, Manifest, ManifestFile
+import pytest
 
-
-class TestArtifactEntry:
-    """Test cases for ArtifactEntry."""
-
-    def test_artifact_entry_fields(self) -> None:
-        """Test that artifact entry fields."""
-        e = ArtifactEntry(name="vision", file="skills/vision/SKILL.md", version="1.0.0")
-        assert e.name == "vision"
-        assert e.file.endswith("SKILL.md")
+from vstack.cli.base import CommandContext
+from vstack.cli.manifest import ManifestCommand
+from vstack.cli.service import CommandService
 
 
-class TestManifest:
-    """Test cases for Manifest."""
+class TestManifestCommand:
+    """Test cases for ManifestCommand."""
 
-    def test_entries_names_files_for(self) -> None:
-        """Test that entries names files for."""
-        m = Manifest(
-            vstack_version="0.1.0",
-            installed_at="2026-01-01T00:00:00Z",
-            artifacts={"skills": [ArtifactEntry(name="vision", file="skills/vision/SKILL.md")]},
+    def test_dispatches_upgrade(self) -> None:
+        """Routes upgrade action to service.manifest_upgrade with correct arguments."""
+
+        class _Service:
+            def manifest_upgrade(self, install_dir: Path, *, backfill: bool = False) -> int:
+                assert install_dir == Path("/tmp/install")
+                assert backfill is True
+                return 17
+
+        command = ManifestCommand(cast(CommandService, _Service()))
+        context = CommandContext(
+            args=Namespace(manifest_action="upgrade", backfill=True),
+            install_dir=Path("/tmp/install"),
+            only=None,
         )
-        assert len(m.entries_for("skills")) == 1
-        assert m.names_for("skills") == ["vision"]
-        assert m.files_for("skills") == ["skills/vision/SKILL.md"]
+        assert command.run(context=context) == 17
 
-    def test_to_dict_and_from_dict_roundtrip(self) -> None:
-        """Test that to dict and from dict roundtrip."""
-        src = Manifest(
-            vstack_version="0.1.0",
-            installed_at="2026-01-01T00:00:00Z",
-            artifacts={"skills": [ArtifactEntry(name="vision", file="skills/vision/SKILL.md")]},
+    def test_dispatches_status_with_flags(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Status action forwards output format and filter flags to StatusCommand.execute."""
+        seen: dict[str, object] = {}
+
+        def _fake_execute(service, **kwargs):
+            seen["service"] = service
+            seen.update(kwargs)
+            return 9
+
+        monkeypatch.setattr(
+            "vstack.cli.manifest.StatusCommand.execute", staticmethod(_fake_execute)
         )
-        out = Manifest.from_dict(src.to_dict())
-        assert out.vstack_version == "0.1.0"
-        assert out.names_for("skills") == ["vision"]
 
-
-class TestManifestFile:
-    """Test cases for ManifestFile."""
-
-    def test_read_none_when_missing(self, tmp_path) -> None:
-        """Test that read none when missing."""
-        mf = ManifestFile(parent_dir=tmp_path)
-        assert mf.read() is None
-
-    def test_write_and_read_manifest(self, tmp_path) -> None:
-        """Test that write and read manifest."""
-        mf = ManifestFile(parent_dir=tmp_path)
-        manifest = Manifest(
-            vstack_version="0.1.0",
-            installed_at="2026-01-01T00:00:00Z",
-            artifacts={"skills": [ArtifactEntry(name="vision", file="skills/vision/SKILL.md")]},
-        )
-        mf.write(manifest)
-        loaded = mf.read()
-        assert loaded is not None
-        assert loaded.names_for("skills") == ["vision"]
-
-    def test_manifest_contains_all_expected_canonical_names(self, installed_target) -> None:
-        """Test that manifest contains all expected canonical names."""
-        data = json.loads(
-            (installed_target / ".github" / "vstack.json").read_text(encoding="utf-8")
-        )
-        skill_names = [s["name"] for s in data["artifacts"]["skills"]]
-        for name in EXPECTED_CANONICAL_NAMES:
-            assert name in skill_names
-
-    def test_read_none_when_manifest_is_invalid_json(self, tmp_path) -> None:
-        """Test that read none when manifest is invalid json."""
-        mf = ManifestFile(parent_dir=tmp_path)
-        (tmp_path / "vstack.json").write_text("{broken", encoding="utf-8")
-        assert mf.read() is None
-
-    def test_read_none_when_manifest_entry_missing_required_file_key(self, tmp_path) -> None:
-        """Test that read none when manifest entry missing required file key."""
-        mf = ManifestFile(parent_dir=tmp_path)
-        (tmp_path / "vstack.json").write_text(
-            json.dumps(
-                {
-                    "vstack_version": "0.1.0",
-                    "installed_at": "2026-01-01T00:00:00Z",
-                    "artifacts": {"skills": [{"name": "vision"}]},
-                }
+        service: Any = object()
+        command = ManifestCommand(cast(CommandService, service))
+        context = CommandContext(
+            args=Namespace(
+                manifest_action="status", output_format="yaml", verbose=True, no_color=True
             ),
-            encoding="utf-8",
+            install_dir=Path("/tmp/install"),
+            only=["skill"],
         )
-        assert mf.read() is None
+
+        assert command.run(context=context) == 9
+        assert seen["service"] is service
+        assert seen["install_dir"] == Path("/tmp/install")
+        assert seen["only"] == ["skill"]
+        assert seen["output_format"] == "yaml"
+        assert seen["verbose"] is True
+        assert seen["no_color"] is True
+
+    def test_dispatches_verify(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Verify action forces output-only verify and forwards only filter."""
+        seen: dict[str, object] = {}
+
+        def _fake_execute(service, **kwargs):
+            seen["service"] = service
+            seen.update(kwargs)
+            return 3
+
+        monkeypatch.setattr(
+            "vstack.cli.manifest.VerifyCommand.execute", staticmethod(_fake_execute)
+        )
+
+        service2: Any = object()
+        command = ManifestCommand(cast(CommandService, service2))
+        context = CommandContext(
+            args=Namespace(manifest_action="verify"),
+            install_dir=Path("/tmp/install"),
+            only=["agent"],
+        )
+
+        assert command.run(context=context) == 3
+        assert seen["service"] is service2
+        assert seen["source"] is False
+        assert seen["output"] is True
+        assert seen["only"] == ["agent"]
+
+    def test_requires_action(self) -> None:
+        """Raises ValueError when no manifest_action is present in args."""
+        command = ManifestCommand(service=cast(CommandService, object()))
+        context = CommandContext(args=Namespace(), install_dir=Path("/tmp/install"), only=None)
+        with pytest.raises(ValueError, match="manifest action is required"):
+            command.run(context=context)

@@ -62,7 +62,9 @@ Expected result:
 vstack --version
 vstack validate
 vstack install --target /path/to/your/project
-vstack verify --target /path/to/your/project
+vstack manifest verify --target /path/to/your/project
+vstack manifest status --target /path/to/your/project
+vstack manifest upgrade --target /path/to/your/project
 ```
 
 ## Common usage patterns
@@ -78,6 +80,8 @@ Profile-wide install (optional defaults for all projects):
 ```bash
 vstack install --global
 ```
+
+By default, `vstack install` preserves existing unmanaged files and local edits to tracked files by comparing the current file contents with the SHA-256 checksum recorded in `vstack.json`. Use `--adopt-name <artifact-name>` to start tracking one existing unmanaged file without overwriting it. `vstack uninstall` also preserves locally modified tracked files unless you explicitly pass `--force` or `--force-name <artifact-name>`. Use `vstack manifest status --target ...` (or `vstack status --target ...`) to see what still matches the manifest. If a legacy manifest schema is detected, run `vstack manifest upgrade --target ...` first.
 
 ## Fast troubleshooting
 

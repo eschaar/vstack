@@ -50,7 +50,7 @@ def _head_semver_tag() -> str | None:
     if repo_root is None:
         return None
     try:
-        out = subprocess.check_output(
+        out = subprocess.check_output(  # nosec B603 B607
             ["git", "-C", str(repo_root), "tag", "--points-at", "HEAD"],
             stderr=subprocess.DEVNULL,
             text=True,
