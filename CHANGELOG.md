@@ -23,7 +23,7 @@ CLI architecture refactor and manifest package extraction. **BREAKING CHANGE** �
 
 ### Internal in 2.0.0
 
-- Full test suite restructured: per-module test files, `TestClass` layout, catch-all files deleted. Test count: 288 → 337.
+- Full test suite restructured: per-module test files, `TestClass` layout, catch-all files deleted. Test count: 288 → 342.
 - End-to-end integration tests consolidated into `tests/vstack/test_integration.py`.
 
 ## 1.3.6 - 2026-04-22

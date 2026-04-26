@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -438,6 +439,28 @@ class TestManifest:
         )
         assert manifest.entries_for("skills") == []
 
+    def test_from_dict_skips_entries_missing_required_name_or_file(self) -> None:
+        """Entries missing required keys should be ignored, not fail manifest parsing."""
+        manifest = Manifest.from_dict(
+            {
+                "manifest_version": 2,
+                "hash_algorithm": "sha256",
+                "vstack_version": "1.0.0",
+                "installed_at": "2026-01-01T00:00:00Z",
+                "artifacts": {
+                    "skills": [
+                        {"name": "verify"},
+                        {"file": "skills/vision/SKILL.md"},
+                        {"name": "vision", "file": "skills/vision/SKILL.md"},
+                    ]
+                },
+            }
+        )
+        entries = manifest.entries_for("skills")
+        assert len(entries) == 1
+        assert entries[0].name == "vision"
+        assert entries[0].file == "skills/vision/SKILL.md"
+
 
 class TestManifestFile:
     """Test cases for ManifestFile."""
@@ -532,7 +555,33 @@ class TestManifestFile:
         mf.write(manifest)
 
         assert mf.path.exists()
-        assert not mf.path.with_suffix(".tmp").exists()
+        assert not mf.path.with_name(mf.path.name + ".tmp").exists()
+
+    def test_write_manifest_uses_explicit_json_tmp_filename(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        tmp_path,
+    ) -> None:
+        """Atomic write should stage to vstack.json.tmp before os.replace."""
+        mf = ManifestFile(parent_dir=tmp_path)
+        manifest = Manifest(
+            vstack_version="0.1.0",
+            installed_at="2026-01-01T00:00:00Z",
+            artifacts={},
+        )
+        captured: dict[str, Path] = {}
+        original_replace = os.replace
+
+        def _capture_replace(src: Path, dst: Path) -> None:
+            captured["src"] = src
+            captured["dst"] = dst
+            original_replace(src, dst)
+
+        monkeypatch.setattr("vstack.manifest.store.os.replace", _capture_replace)
+        mf.write(manifest)
+
+        assert captured["src"].name == "vstack.json.tmp"
+        assert captured["dst"] == mf.path
 
     def test_read_none_when_manifest_entry_missing_required_file_key(self, tmp_path) -> None:
         """Test that read none when manifest entry missing required file key."""

@@ -139,6 +139,140 @@ class TestInstallCommand:
         service = cast(CommandService, SimpleNamespace(generators=[]))
         assert InstallCommand.execute(service, Path("/tmp/install")) == 1
 
+    def test_adopt_records_version_from_disk_metadata(self, tmp_path: Path) -> None:
+        """Adopted files should use on-disk artifact_version metadata, not new template version."""
+
+        class _Gen:
+            config = SimpleNamespace(
+                type_name="skill",
+                manifest_key="skills",
+                output_subdir="skills",
+            )
+
+            @staticmethod
+            def output_path(name: str) -> Path:
+                return Path(name) / "SKILL.md"
+
+            @staticmethod
+            def install_relative_path(name: str) -> str:
+                return f"skills/{name}/SKILL.md"
+
+        existing_content = (
+            "# Skill\n"
+            "<!-- AUTO-GENERATED -->"
+            "<!-- VSTACK-META: "
+            '{"artifact_version":"1.2.3","artifact_name":"verify"}'
+            " -->\n"
+        )
+        out_dir = tmp_path / "skills"
+        out_file = out_dir / "verify" / "SKILL.md"
+        out_file.parent.mkdir(parents=True)
+        out_file.write_text(existing_content, encoding="utf-8")
+
+        new_entries: dict[str, list[Any]] = {}
+        InstallCommand._install_single_artifact(
+            service=cast(CommandService, SimpleNamespace(label=lambda path: str(path))),
+            gen=_Gen(),
+            artifact=SimpleNamespace(
+                name="verify",
+                frontmatter={"version": "9.9.9"},
+                unresolved=[],
+                content="new content",
+            ),
+            out_dir=out_dir,
+            colors=SimpleNamespace(
+                CYAN="",
+                RESET="",
+                DIM="",
+                YELLOW="",
+                GREEN="",
+                BOLD="",
+            ),
+            prefix="",
+            force=False,
+            update=False,
+            dry_run=True,
+            targeted_force_names=set(),
+            targeted_adopt_names={"verify"},
+            existing_entries={},
+            new_entries=new_entries,
+            checksum_algorithm="sha256",
+        )
+
+        adopted_entry = cast(Any, new_entries["skills"][0])
+        assert adopted_entry.version == "1.2.3"
+        assert adopted_entry.checksum == content_hash(existing_content)
+
+    def test_adopt_unreadable_file_preserves_without_crashing(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Unreadable adopt targets should be preserved and not crash install."""
+
+        class _Gen:
+            config = SimpleNamespace(
+                type_name="skill",
+                manifest_key="skills",
+                output_subdir="skills",
+            )
+
+            @staticmethod
+            def output_path(name: str) -> Path:
+                return Path(name) / "SKILL.md"
+
+            @staticmethod
+            def install_relative_path(name: str) -> str:
+                return f"skills/{name}/SKILL.md"
+
+        out_dir = tmp_path / "skills"
+        out_file = out_dir / "verify" / "SKILL.md"
+        out_file.parent.mkdir(parents=True)
+        out_file.write_text("content", encoding="utf-8")
+
+        def _raise_oserror(self: Path, encoding: str = "utf-8") -> str:
+            del self, encoding
+            raise OSError("permission denied")
+
+        monkeypatch.setattr(Path, "read_text", _raise_oserror)
+
+        new_entries: dict[str, list[Any]] = {}
+        InstallCommand._install_single_artifact(
+            service=cast(CommandService, SimpleNamespace(label=lambda path: str(path))),
+            gen=_Gen(),
+            artifact=SimpleNamespace(
+                name="verify",
+                frontmatter={"version": "9.9.9"},
+                unresolved=[],
+                content="new content",
+            ),
+            out_dir=out_dir,
+            colors=SimpleNamespace(
+                CYAN="",
+                RESET="",
+                DIM="",
+                YELLOW="",
+                GREEN="",
+                BOLD="",
+            ),
+            prefix="",
+            force=False,
+            update=False,
+            dry_run=True,
+            targeted_force_names=set(),
+            targeted_adopt_names={"verify"},
+            existing_entries={},
+            new_entries=new_entries,
+            checksum_algorithm="sha256",
+        )
+
+        out = capsys.readouterr().out
+        assert (
+            "preserved — existing file is unreadable; could not adopt into vstack manifest" in out
+        )
+        assert "skills" not in new_entries
+
     # ------------------------------------------------------------------
     # run (context forwarding)
     # ------------------------------------------------------------------

@@ -17,6 +17,36 @@ from vstack.cli.verify import VerifyCommand
 class TestVerifyCommand:
     """Test cases for VerifyCommand."""
 
+    def test_manifest_metadata_entry_returns_fail_on_unreadable_file(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        tmp_path: Path,
+    ) -> None:
+        """Unreadable artifact files should return a failing ValidationResult."""
+
+        artifact_path = tmp_path / "artifact.md"
+        artifact_path.write_text("content", encoding="utf-8")
+
+        def _raise_oserror(self: Path, encoding: str = "utf-8") -> str:
+            del self, encoding
+            raise OSError("permission denied")
+
+        monkeypatch.setattr(Path, "read_text", _raise_oserror)
+
+        service = cast(CommandService, SimpleNamespace(label=lambda path: str(path)))
+        result = VerifyCommand._verify_manifest_metadata_entry(
+            service=service,
+            gen=SimpleNamespace(config=SimpleNamespace(type_name="skill")),
+            manifest_data=SimpleNamespace(vstack_version="2.0.0"),
+            entry=SimpleNamespace(name="verify", version="1.0.0"),
+            artifact_path=artifact_path,
+        )
+
+        assert result.failures == 1
+        assert result.messages[0].level == "fail"
+        assert "could not read file during metadata verify" in result.messages[0].message
+        assert str(artifact_path) in result.messages[0].message
+
     def test_output_returns_error_when_manifest_read_fails(
         self, capsys: pytest.CaptureFixture[str]
     ) -> None:

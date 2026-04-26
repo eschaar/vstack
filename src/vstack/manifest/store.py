@@ -270,7 +270,7 @@ class Manifest:
                     ),
                 )
                 for e in entries
-                if isinstance(e, dict) and "name" in e
+                if isinstance(e, dict) and "name" in e and "file" in e
             ]
         return cls(
             manifest_version=manifest_version,
@@ -346,7 +346,7 @@ class ManifestFile:
         interrupt cannot leave ``vstack.json`` in a partially-written state.
         """
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        tmp_path = self.path.with_suffix(".tmp")
+        tmp_path = self.path.with_name(self.path.name + ".tmp")
         tmp_path.write_text(
             json.dumps(manifest.to_dict(), indent=2, ensure_ascii=False) + "\n",
             encoding="utf-8",

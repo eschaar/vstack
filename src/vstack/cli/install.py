@@ -12,6 +12,8 @@ from vstack.cli.constants import Colors
 from vstack.cli.helpers import normalize_targeted_names
 from vstack.constants import VERSION
 from vstack.manifest import (
+    CURRENT_HASH_ALGORITHM,
+    CURRENT_MANIFEST_VERSION,
     Manifest,
     content_hash,
     hash_with_algorithm,
@@ -60,7 +62,7 @@ class InstallCommand(BaseCommand):
         """Return whether on-disk content still matches the manifest checksum."""
         if not out_file.exists() or existing_entry.checksum is None:
             return None
-        checksum_algorithm = (existing_entry.checksum_algorithm or "sha256").lower()
+        checksum_algorithm = (existing_entry.checksum_algorithm or CURRENT_HASH_ALGORITHM).lower()
         try:
             return (
                 hash_with_algorithm(out_file.read_text(encoding="utf-8"), checksum_algorithm)
@@ -167,7 +169,7 @@ class InstallCommand(BaseCommand):
         new_entries,
         gen,
         artifact_name: str,
-        version: str,
+        version: str | None,
         checksum: str,
         checksum_algorithm: str,
     ) -> None:
@@ -183,6 +185,26 @@ class InstallCommand(BaseCommand):
                 checksum_algorithm=checksum_algorithm,
             )
         )
+
+    @staticmethod
+    def _adopted_manifest_values(
+        *,
+        out_file: Path,
+    ) -> tuple[str | None, str] | None:
+        """Return adopted version/checksum from on-disk content.
+
+        Version is read from ``VSTACK-META.artifact_version`` when present.
+        """
+        from vstack.artifacts.generator import GenericArtifactGenerator
+
+        try:
+            content = out_file.read_text(encoding="utf-8")
+        except OSError:
+            return None
+
+        metadata = GenericArtifactGenerator.parse_generation_metadata(content)
+        adopted_version = metadata.get("artifact_version") if metadata else None
+        return adopted_version, content_hash(content)
 
     @staticmethod
     def _load_existing_manifest(
@@ -233,6 +255,7 @@ class InstallCommand(BaseCommand):
         rel = service.label(out_file)
         force_name = artifact.name in targeted_force_names or rel in targeted_force_names
         adopt_name = artifact.name in targeted_adopt_names or rel in targeted_adopt_names
+        adopted_values: tuple[str | None, str] | None = None
 
         if artifact.unresolved:
             print(
@@ -249,6 +272,12 @@ class InstallCommand(BaseCommand):
             existing_entry=existing_entry,
             new_version=new_version,
         )
+
+        if action == "adopt" and out_file.exists():
+            adopted_values = InstallCommand._adopted_manifest_values(out_file=out_file)
+            if adopted_values is None:
+                action = "preserve"
+                reason = "existing file is unreadable; could not adopt into vstack manifest"
 
         InstallCommand._print_install_action(
             colors=colors,
@@ -279,13 +308,14 @@ class InstallCommand(BaseCommand):
             )
             return
 
-        if action == "adopt" and out_file.exists():
+        if action == "adopt" and adopted_values is not None:
+            adopted_version, adopted_checksum = adopted_values
             InstallCommand._record_manifest_entry(
                 new_entries=new_entries,
                 gen=gen,
                 artifact_name=artifact.name,
-                version=new_version,
-                checksum=content_hash(out_file.read_text(encoding="utf-8")),
+                version=adopted_version,
+                checksum=adopted_checksum,
                 checksum_algorithm=checksum_algorithm,
             )
             return
@@ -308,7 +338,7 @@ class InstallCommand(BaseCommand):
     ) -> None:
         """Persist the manifest after a non-dry-run install."""
         manifest = Manifest(
-            manifest_version=2,
+            manifest_version=CURRENT_MANIFEST_VERSION,
             hash_algorithm=checksum_algorithm,
             vstack_version=VERSION,
             installed_at=datetime.datetime.now(datetime.UTC).isoformat(),
@@ -331,7 +361,7 @@ class InstallCommand(BaseCommand):
     ) -> int:
         """Generate and install artifacts into install_dir."""
         colors = Colors
-        checksum_algorithm = "sha256"
+        checksum_algorithm = CURRENT_HASH_ALGORITHM
 
         gens = [g for g in service.generators if only is None or g.config.type_name in only]
         targeted_force_names = normalize_targeted_names(force_names)

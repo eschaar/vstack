@@ -75,9 +75,19 @@ class VerifyCommand(BaseCommand):
         from vstack.artifacts.generator import GenericArtifactGenerator
 
         result = ValidationResult()
-        content = artifact_path.read_text(encoding="utf-8")
-        metadata = GenericArtifactGenerator.parse_generation_metadata(content)
         rel_path = service.label(artifact_path)
+        try:
+            content = artifact_path.read_text(encoding="utf-8")
+        except OSError as exc:
+            result.messages.append(
+                CheckMessage(
+                    "fail",
+                    f"{rel_path}: could not read file during metadata verify — {exc}",
+                )
+            )
+            return result
+
+        metadata = GenericArtifactGenerator.parse_generation_metadata(content)
 
         if metadata is None:
             if "AUTO-GENERATED" not in content:
