@@ -67,7 +67,7 @@ pytest = ">=9.0"
 pytest-cov = ">=6.0"
 ruff = ">=0.9"
 mypy = ">=1.0"
-pre-commit = ">=3.8"
+pre-commit = ">=4.6.0"
 tox = ">=4.15"
 
 
