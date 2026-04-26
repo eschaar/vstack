@@ -25,7 +25,7 @@ What gets built is determined by the product vision. vstack fixes the delivery
 roles and boundaries: `product`, `architect`, `designer`, `engineer`, `tester`,
 and `release`.
 
-vstack started as a rethink inspired by [gstack](https://github.com/observiq/gstack),
+vstack started as a rethink inspired by [gstack](https://github.com/garrytan/gstack),
 but was rebuilt around a template-driven, VS Code-first workflow model.
 
 ______________________________________________________________________
@@ -382,7 +382,10 @@ You can also manually remove any leftover `.github/agents`, `.github/skills`, et
 
 ```bash
 vstack --version           # Show vstack version
-vstack validate            # Validate current vstack install
+vstack validate            # Validate source templates only
+vstack manifest status --target .   # Check installed files against manifest checksums
+vstack manifest verify --target .   # Verify installed output against manifest ownership/checksums
+vstack manifest upgrade --target .  # Upgrade legacy vstack.json schema
 vstack install --target .  # Install vstack artifacts into current project
 vstack install --global    # Install vstack artifacts globally
 vstack uninstall --target . # Uninstall vstack artifacts from current project
@@ -393,19 +396,31 @@ ______________________________________________________________________
 
 ## 📖 All vstack CLI commands
 
-| Command                         | Description                                          |
-| ------------------------------- | ---------------------------------------------------- |
-| `vstack --version`              | Show vstack version                                  |
-| `vstack validate`               | Validate vstack install and check for issues         |
-| `vstack verify`                 | Verify source templates and/or installed output      |
-| `vstack verify --target DIR`    | Verify installed artifacts in DIR/.github            |
-| `vstack verify --global`        | Verify artifacts in your VS Code global profile      |
-| `vstack install --target DIR`   | Install vstack artifacts into a project              |
-| `vstack install --global`       | Install vstack artifacts into your VS Code profile   |
-| `vstack install --dry-run`      | Preview install actions without writing files        |
-| `vstack uninstall --target DIR` | Uninstall vstack artifacts from a project            |
-| `vstack uninstall --global`     | Uninstall vstack artifacts from your VS Code profile |
-| `vstack uninstall`              | Uninstall from the current directory default target  |
+| Command                                | Description                                                                              |
+| -------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `vstack --version`                     | Show vstack version                                                                      |
+| `vstack validate`                      | Validate source templates only                                                           |
+| `vstack verify`                        | Verify source templates and installed output, including checksum drift                   |
+| `vstack status --target DIR`           | Report which installed artifacts still match `vstack.json`                               |
+| `vstack manifest status --target DIR`  | Manifest-scoped status for installed output and ownership                                |
+| `vstack manifest verify --target DIR`  | Manifest-scoped verify for installed output only                                         |
+| `vstack manifest upgrade --target DIR` | Upgrade a legacy `vstack.json` schema to current format                                  |
+| `vstack verify --target DIR`           | Verify installed artifacts in DIR/.github                                                |
+| `vstack verify --global`               | Verify artifacts in your VS Code global profile                                          |
+| `vstack install --target DIR`          | Install vstack artifacts into a project, preserving existing unmanaged files             |
+| `vstack install --global`              | Install vstack artifacts into your VS Code profile, preserving local edits unless forced |
+| `vstack install --dry-run`             | Preview install actions without writing files                                            |
+| `vstack uninstall --target DIR`        | Uninstall tracked artifacts that still match the manifest                                |
+| `vstack uninstall --global`            | Uninstall vstack artifacts from your VS Code profile                                     |
+| `vstack uninstall`                     | Uninstall from the current directory default target                                      |
+
+By default, `vstack install` is conservative: if a target file already exists but is not tracked by `vstack`, it is left in place. For tracked files, `--update` only rewrites artifacts whose on-disk content still matches the SHA-256 checksum of the last installed version recorded in `vstack.json`. Use `--force` to overwrite everything, `--force-name <artifact-name>` to overwrite one specific managed artifact, or `--adopt-name <artifact-name>` to start tracking one existing unmanaged file without overwriting it.
+
+`vstack uninstall` is conservative as well: it removes only tracked artifacts whose current checksum still matches the manifest. If a tracked file was edited locally, it is preserved unless you explicitly pass `--force` or `--force-name`. Use `vstack manifest status` (or `vstack status`) for a read-only overview of managed, modified, missing, and conflicting files.
+
+When a legacy manifest schema is detected, verification/status/install paths now fail fast with an upgrade hint. Run `vstack manifest upgrade --target ...` once, then retry your normal commands.
+
+For smaller terminals, `vstack manifest status` (and `vstack status`) defaults to a compact issues-focused text view with color markers. For tooling or exports, use `--format json` or `--format yaml`. Add `--verbose` to include managed entries, and `--no-color` when plain text is preferred.
 
 ______________________________________________________________________
 

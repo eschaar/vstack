@@ -1,5 +1,31 @@
 # Changelog
 
+## 2.0.0 - 2026-04-26
+
+CLI architecture refactor and manifest package extraction. **BREAKING CHANGE** — import paths have changed.
+
+### Breaking changes in 2.0.0
+
+- `vstack.cli.commands` removed. `CommandService` and command classes now live in dedicated modules (`vstack.cli.service`, `vstack.cli.install`, `vstack.cli.verify`, etc.).
+- Manifest persistence classes moved to new `vstack.manifest` package (`vstack.manifest.store`).
+
+### Added in 2.0.0
+
+- `vstack manifest upgrade --backfill`: retroactively compute and write checksums for tracked manifest entries with no checksum.
+- New `vstack.manifest` package with schema-versioned manifest read/write and `content_hash` utility.
+- 12 focused CLI modules replacing the monolithic `commands.py`.
+- mypy type checking added as a quality gate (106 files, 0 errors).
+- 4 new ADRs: manifest schema versioning (014), conservative install defaults (015), atomic manifest writes (016), checksum backfill (017).
+
+### Fixed in 2.0.0
+
+- `InstallCommand._version_gt` no longer raises `TypeError` when `existing` version is `None` on first install.
+
+### Internal in 2.0.0
+
+- Full test suite restructured: per-module test files, `TestClass` layout, catch-all files deleted. Test count: 288 → 342.
+- End-to-end integration tests consolidated into `tests/vstack/test_integration.py`.
+
 ## 1.3.6 - 2026-04-22
 
 README and PyPI README badge/layout alignment.

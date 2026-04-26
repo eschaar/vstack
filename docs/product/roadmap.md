@@ -13,7 +13,7 @@ ______________________________________________________________________
 | backend-first verification               | shipped     | Verify/inspect focus on contracts, observability, security     |
 | VS Code agent migration                  | shipped     | Native agent output format implemented                         |
 | role model + doc restructure             | shipped     | 6-role model and docs baseline established                     |
-| new skill scaffolding                    | shipped     | 20-skill set with canonical naming                             |
+| new skill scaffolding                    | shipped     | 27-skill set with canonical naming                             |
 | agent skill wiring                       | shipped     | Role-to-skill mapping and handoffs are present                 |
 | optional orchestrated role pipeline      | candidate   | Optional future model, only if coordination bottlenecks appear |
 | multi-IDE support (IntelliJ first)       | candidate   | Not planned before v1 stabilization                            |
@@ -31,7 +31,7 @@ Legend: shipped = implemented and available; candidate = optional future feature
 ### foundation [shipped]
 
 - template-driven generation with source under `src/vstack/_templates/` and install output under `.github/`
-- 19 backend-oriented skills
+- 27 backend-oriented skills
 - generated install manifest (`.github/vstack.json`) tracking installed artifacts
 - VS Code prompt file (`.prompt.md`) support
 - global install workflow (`vstack install --global`)
@@ -59,7 +59,7 @@ Legend: shipped = implemented and available; candidate = optional future feature
 
 ### new skill scaffolding [shipped]
 
-20 skills across 6 roles. New additions:
+27 skills across 6 roles. New additions:
 
 - `requirements`, `adr`, `analyse` (new)
 - Renames: `experience` → `consult`, `design-consult` → `design`, `docs-release` → `docs`, `discovery` → `explore`

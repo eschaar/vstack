@@ -16,8 +16,8 @@ This created three problems:
 
 1. **Agents must stay role-based.** Agent files represent fixed roles, not skills.
 
-1. **Install-time generation must be deterministic.** Regeneration should always overwrite
-   generated output from current templates.
+1. **Install-time generation must be deterministic.** Fresh generation from templates must be repeatable,
+   while install/update in consumer repos must preserve unmanaged files and locally modified tracked files unless forced.
 
 ## decision
 
@@ -49,6 +49,20 @@ installer generates artifacts into `.github/`, including:
 - `.github/agents/<name>.agent.md`
 - `.github/prompts/*.prompt.md`
 - `.github/instructions/*.instructions.md`
+
+The installer is conservative by default:
+
+- existing files that are not tracked in `vstack.json` are preserved
+- tracked files are updated only when their content still matches the last installed SHA-256 checksum
+- `--adopt-name <artifact-name>` allows explicitly adopting one unmanaged file into tracking without overwriting it
+- `--force-name <artifact-name>` can override preservation for one artifact
+- `--force` is the explicit opt-in for overwriting local changes
+
+The same manifest checksum is also used for safe uninstall and status reporting:
+
+- `vstack uninstall` preserves tracked files with local drift unless forced
+- `vstack verify` fails when installed output no longer matches the manifest checksum
+- `vstack status` reports which files still match the manifest and which no longer do
 
 ### 4. role-first agents (generated from templates)
 
