@@ -55,7 +55,7 @@ jobs:
 
       - name: Secret scan
         # Scan only PR diff range to reduce noise and speed up checks.
-        uses: trufflesecurity/trufflehog@v3.94.3
+        uses: trufflesecurity/trufflehog@v3.95.2
         with:
           path: ./
           base: ${{ github.event.pull_request.base.sha }}
