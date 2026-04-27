@@ -1,7 +1,7 @@
 # Test Report
 
-**Branch:** `feat/improved_cli`
-**Date:** 2026-04-26
+**Branch:** `feat/improved_cli`\
+**Date:** 2026-04-26\
 **Scope:** Full repository — CLI refactor (`catalog`, `report`, `registry`, `parser`, `interface`, `service`, `helpers`); manifest checksum backfill feature (`manifest/store.py`, `cli/service.py`, `cli/parser.py`, `cli/manifest.py`); security fixes (`cli/report.py` assert guards, `constants.py` nosec); **full test suite restructure** (per-module test files, TestClass layout, 342 tests)
 
 ______________________________________________________________________

@@ -8,6 +8,9 @@
 This document describes how vstack workflows execute today (single-call execution)
 and a possible future orchestrated role pipeline.
 
+For a precise GitHub Actions CI/CD and release pipeline specification, see
+`docs/design/cicd.md`.
+
 It also documents the repository-level GitHub Actions automation used for quality,
 security, commit policy, and releases.
 
@@ -24,19 +27,21 @@ ______________________________________________________________________
 The repository uses a split workflow model so each automation concern is isolated
 and easy to reason about.
 
-| Workflow                         | Trigger                                                   | Responsibility                                                                        |
-| -------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `.github/workflows/qa.yml`       | Push to non-main branches                                 | Fast feedback for formatting, linting, type checks, and tests across Python versions. |
-| `.github/workflows/commit.yml`   | Push to non-main branches (with explicit branch excludes) | Validate commit message policy before PR merge.                                       |
-| `.github/workflows/verify.yml`   | Pull request to `main`                                    | Validate source behavior and artifact install/verify flow.                            |
-| `.github/workflows/security.yml` | Pull request to `main`                                    | Dependency vulnerability audit and secret scan.                                       |
-| `.github/workflows/release.yml`  | Merged pull request to `main`                             | Compute SemVer, create tag and GitHub release, build distributions.                   |
+| Workflow                          | Trigger                                               | Responsibility                                                                   |
+| --------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `.github/workflows/commit.yml`    | Push to non-main branches and pull requests to `main` | Commit policy and lint/typecheck gate (branch-name policy on push).              |
+| `.github/workflows/check.yml`     | Push to non-main branches and pull requests to `main` | Single-version unit tests (py3.11) for fast feedback.                            |
+| `.github/workflows/verify.yml`    | Pull request to `main`                                | Cross-version test matrix (py3.11–3.14) and artifact install/verify flow.        |
+| `.github/workflows/security.yml`  | Pull request to `main`                                | Dependency vulnerability audit and secret scan.                                  |
+| `.github/workflows/automerge.yml` | Pull request target to `main`                         | Dependabot safe auto-merge policy for eligible updates.                          |
+| `.github/workflows/release.yml`   | Push to `main`                                        | Run release-please to maintain release PRs and create tags/releases when merged. |
+| `.github/workflows/publish.yml`   | GitHub release published                              | Build package artifacts from the release tag and publish to PyPI.                |
 
 ### commit policy enforcement model
 
 Commit policy is defined in `cchk.toml` and enforced by `commit-check`:
 
-1. `.github/workflows/commit.yml` runs `commit-check/commit-check-action@v2` on branch pushes.
+1. `.github/workflows/commit.yml` runs `commit-check/commit-check-action@v2` on branch pushes and PRs.
 1. Local hooks in `.pre-commit-config.yaml` run the same checks at `commit-msg` and `pre-push` stages.
 
 Additional commit workflow policy:
@@ -48,14 +53,14 @@ Additional commit workflow policy:
 
 This keeps CI and local checks aligned through one policy source of truth.
 
-### release bump mapping
+### release versioning model
 
-`release.yml` computes SemVer from commit history using these mappings:
+`release.yml` uses release-please as the source of truth for version calculation,
+CHANGELOG updates, and GitHub release notes based on conventional commits.
 
-- minor: `feat`, `feature`
-- patch: `fix`, `bugfix`, `hotfix`, `opt`, `patch`, `perf`, `refactor`, `chore`, `revert`
+`publish.yml` only builds and publishes artifacts for already created release tags.
 
-Repository tag policy is strict `X.Y.Z` (no `v` prefix).
+Repository tag policy remains strict `X.Y.Z` (no `v` prefix).
 
 ______________________________________________________________________
 

@@ -1,8 +1,8 @@
 # Performance Baseline
 
-**Branch:** `feat/improved_cli`
-**Date:** 2026-04-26
-**Scope:** CLI hot-path operations — parser build, target resolution, registry build; post-backfill feature addition
+**Branch:** `feat/improved_cli`\
+**Date:** 2026-04-26\
+**Scope:** CLI hot-path operations — parser build, target resolution, registry build; post-backfill feature addition\
 **Method:** `timeit.repeat` micro-benchmarks (Python 3.13.12, Linux)
 
 ______________________________________________________________________

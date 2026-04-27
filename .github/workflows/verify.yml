@@ -1,5 +1,6 @@
 # Pull request verification workflow.
-# Purpose: validate both source tests and generated/installable artifacts.
+# Purpose: cross-version test matrix and artifact install verify as required PR gates.
+# This is the primary merge gate for all PRs to main.
 name: Verify
 
 on:
@@ -25,10 +26,15 @@ env:
   POETRY_VIRTUALENVS_IN_PROJECT: "true"
 
 jobs:
-  unit-tests:
-    # Fast correctness check for repository source code.
-    name: Unit Tests
+  test-matrix:
+    # Cross-version test coverage for all supported Python runtimes.
+    # Runs on all PRs to main as a required merge gate.
+    name: Tests (py${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - name: Checkout
@@ -40,15 +46,15 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ matrix.python-version }}
           cache: poetry
           cache-dependency-path: poetry.lock
 
       - name: Install dependencies
         run: poetry install --no-interaction --no-ansi
 
-      - name: Run unit tests
-        run: make test
+      - name: Test
+        run: make test-local
 
   vstack-verify:
     # Ensures generated artifacts can be installed and validated in an isolated target.
