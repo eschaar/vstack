@@ -153,7 +153,7 @@ Use repository-scoped installation so every contributor and CI run uses the same
 
 1. Install artifacts into the repository.
 1. Commit the generated `.github/` artifacts.
-1. Require `verify.yml` and `security.yml` checks before merge.
+1. Require `commit.yml`, `check.yml`, `verify.yml`, and `security.yml` checks before merge.
 
 ```bash
 # From your repository root
@@ -686,17 +686,19 @@ ______________________________________________________________________
 
 ## 🚦 CI and Release Automation
 
-| Workflow       | Trigger                       | Purpose                                                     |
-| -------------- | ----------------------------- | ----------------------------------------------------------- |
-| `qa.yml`       | Push to non-main branches     | fast branch feedback for format, lint, typecheck, and tests |
-| `commit.yml`   | Push to non-main branches     | commit and branch naming policy enforcement                 |
-| `verify.yml`   | Pull request to `main`        | source validation plus install/verify flow checks           |
-| `security.yml` | Pull request to `main`        | dependency audit and secret scanning                        |
-| `release.yml`  | Merged pull request to `main` | SemVer calculation, tag, release, and distributions         |
+| Workflow        | Trigger                                    | Purpose                                                             |
+| --------------- | ------------------------------------------ | ------------------------------------------------------------------- |
+| `commit.yml`    | Push to non-main branches and PR to `main` | commit/branch policy and lint/typecheck gate                        |
+| `check.yml`     | Push to non-main branches and PR to `main` | single-version unit tests (py3.11)                                  |
+| `verify.yml`    | Pull request to `main`                     | cross-version test matrix (py3.11–3.14) and artifact install/verify |
+| `security.yml`  | Pull request to `main`                     | dependency audit and secret scanning                                |
+| `automerge.yml` | Pull request target to `main`              | safe Dependabot auto-merge policy                                   |
+| `release.yml`   | Push to `main`                             | Release Please orchestration (release PR, changelog, tags)          |
+| `publish.yml`   | GitHub release `published`                 | build from release tag and publish to PyPI                          |
 
 Commit policy specifics:
 
-- Type validation is configured via `CCHK_*` variables in `.github/workflows/commit.yml`.
+- Type validation is configured via `cchk.toml` and enforced by `commit-check` in `commit.yml`.
 - Commit subject length is limited to 100 characters.
 - Branch names use the `type/description` convention.
 - Allowed branch types are `feature`, `bugfix`, `hotfix`, `release`, `chore`, `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `ci`, `build`, `style`, `opt`, `patch`, and `dependabot`.
@@ -704,8 +706,10 @@ Commit policy specifics:
 Recommended branch protection for `main`:
 
 - Require PR before merge.
-- Require status checks from `verify.yml` and `security.yml`.
+- Require status checks from `commit.yml`, `check.yml`, `verify.yml`, and `security.yml`.
 - Disallow force pushes and branch deletion.
+
+Full pipeline documentation: [docs/design/cicd.md](docs/design/cicd.md)
 
 ______________________________________________________________________
 
@@ -713,6 +717,7 @@ ______________________________________________________________________
 
 - [docs/architecture/architecture.md](docs/architecture/architecture.md)
 - [docs/design/design.md](docs/design/design.md)
+- [docs/design/cicd.md](docs/design/cicd.md)
 - [docs/design/workflow.md](docs/design/workflow.md)
 - [docs/design/skills.md](docs/design/skills.md)
 - [docs/product/roadmap.md](docs/product/roadmap.md)

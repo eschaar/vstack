@@ -9,6 +9,7 @@ allow_commit_types = [
   "fix",
   "bugfix",
   "hotfix",
+  "docs",
   "opt",
   "patch",
   "perf",

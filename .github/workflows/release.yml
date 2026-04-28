@@ -1,234 +1,66 @@
-# Release workflow.
-# Trigger model: runs on pushes to main.
-# Using push instead of pull_request so the workflow runs under refs/heads/main,
-# which satisfies the PyPI environment deployment branch protection rule.
-name: Release
+# Release orchestration workflow.
+# Purpose: maintain a release PR and, once merged, create the real tag/release.
+# This workflow owns versioning, changelog, and GitHub release notes via release-please.
+name: "Release"
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+  workflow_dispatch:
 
 concurrency:
-  # Serialize main releases to avoid concurrent tag/release races.
+  # Serialize release orchestration to avoid overlapping release-please runs.
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
-  # Default to read-only; release job elevates to write for tagging/releases.
   contents: read
-
-env:
-  # Shared interpreter version for build and metadata steps.
-  PYTHON_VERSION: "3.11"
-  # Pin Poetry CLI version for deterministic release builds.
-  POETRY_VERSION: "2.3.4"
-  # Opt in to Node.js 24 for JavaScript-based actions ahead of runner defaults.
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   release:
-    # Computes semantic version from conventional commits and creates git tag.
-    name: Compute Version and Tag
+    if: github.ref == 'refs/heads/main'
+    name: Release Please (PR + Tag + Notes)
     runs-on: ubuntu-latest
-    permissions:
-      # Needed for creating tags and GitHub releases.
-      contents: write
-    outputs:
-      changed: ${{ steps.version.outputs.changed }}
-      version: ${{ steps.version.outputs.version }}
 
     steps:
-      - name: Checkout
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Checkout repository metadata
         uses: actions/checkout@v6
         with:
-          # Full history is required by semver-action to inspect commit history.
           fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
 
-      - name: Compute semantic version from conventional commits
-        id: semver
-        uses: ietf-tools/semver-action@v1.11.0
-        with:
-          token: ${{ github.token }}
-          branch: main
-          # Accept only plain SemVer tags in this repository (no v-prefix).
-          tagFilter: '^[0-9]+\.[0-9]+\.[0-9]+$'
-          prefix: ""
-          skipInvalidTags: true
-          maxTagsToFetch: 50
-
-          # Conventional commit mappings for release bump policy.
-          minorList: "feat,feature"
-          patchList: "fix,bugfix,hotfix,opt,patch,perf,refactor,chore,revert"
-
-          # Keep release workflow non-failing when a rerun has no new commits,
-          # or when no commit maps to a bump category.
-          noNewCommitBehavior: current
-          noVersionBumpBehavior: current
-
-      - name: Normalize version outputs
-        id: version
+      - name: Validate release-please manifest matches latest tag
+        shell: bash
         run: |
-          if [[ "${{ steps.semver.outputs.bump }}" == "none" ]]; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "version=${{ steps.semver.outputs.current }}" | sed 's/^version=v/version=/' >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "version=${{ steps.semver.outputs.nextStrict }}" >> "$GITHUB_OUTPUT"
+          git fetch --tags --force
+
+          latest_tag="$(git tag --list | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1)"
+          manifest_version="$(jq -r '.["."]' .release-please-manifest.json)"
+
+          if [[ -z "$latest_tag" ]]; then
+            echo "No SemVer tags found; skipping manifest drift check."
+            exit 0
           fi
 
-      - name: Show computed version
-        run: |
-          echo "bump=${{ steps.semver.outputs.bump }}"
-          echo "changed=${{ steps.version.outputs.changed }}"
-          echo "version=${{ steps.version.outputs.version }}"
-
-      - name: Create and push git tag
-        if: steps.version.outputs.changed == 'true'
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
-            echo "ERROR: release tag must match X.Y.Z without a v-prefix (got '$VERSION')."
-            exit 1
-          }
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git show-ref --verify --quiet "refs/tags/$VERSION" && {
-            echo "ERROR: tag '$VERSION' already exists.";
-            exit 1;
-          }
-          git tag -a "$VERSION" -m "release $VERSION"
-          git push origin "$VERSION"
-
-  build:
-    # Build distributions only when semver-action reports a new release.
-    name: Build Package Artifacts
-    runs-on: ubuntu-latest
-    needs: release
-    if: needs.release.outputs.changed == 'true'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          # Build from the newly created release tag to guarantee package version.
-          ref: refs/tags/${{ needs.release.outputs.version }}
-          fetch-depth: 0
-
-      - name: Install Poetry
-        run: pipx install "poetry==${POETRY_VERSION}"
-
-      - name: Install poetry-dynamic-versioning plugin
-        run: pipx inject poetry "poetry-dynamic-versioning[plugin]>=1.0.0,<2.0.0"
-
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          cache: poetry
-          cache-dependency-path: poetry.lock
-
-      - name: Validate release tag checkout
-        run: |
-          EXPECTED="${{ needs.release.outputs.version }}"
-          ACTUAL_TAG="$(git tag --points-at HEAD | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)"
-          echo "expected_tag=$EXPECTED"
-          echo "head_tag=$ACTUAL_TAG"
-          if [[ "$ACTUAL_TAG" != "$EXPECTED" ]]; then
-            echo "ERROR: build checkout is not pinned to expected release tag.";
+          if [[ "$manifest_version" != "$latest_tag" ]]; then
+            echo "ERROR: .release-please-manifest.json is stale."
+            echo "manifest version: $manifest_version"
+            echo "latest git tag:   $latest_tag"
+            echo "Update .release-please-manifest.json before running release orchestration."
             exit 1
           fi
 
-      - name: Show active Poetry plugins
-        run: poetry self show plugins
-
-      - name: Build distributions
-        run: poetry build
-
-      - name: Smoke test built wheel
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install --no-deps dist/*.whl
-          vstack --help >/dev/null
-
-      - name: Validate built artifact version
-        run: |
-          EXPECTED="${{ needs.release.outputs.version }}"
-          shopt -s nullglob
-          MATCHES=(dist/*"$EXPECTED"*.whl dist/*"$EXPECTED"*.tar.gz)
-          echo "expected_version=$EXPECTED"
-          ls -1 dist/
-          if [[ ${#MATCHES[@]} -eq 0 ]]; then
-            echo "ERROR: no built artifacts contain expected version '$EXPECTED'."
-            exit 1
-          fi
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v7
+      - name: Run release-please
+        uses: googleapis/release-please-action@v5
         with:
-          name: python-dist
-          path: dist/
-
-  publish:
-    # Publish distributions to PyPI via OIDC trusted publishing (no API tokens).
-    name: Publish to PyPI
-    runs-on: ubuntu-latest
-    needs: [release, build]
-    if: needs.release.outputs.changed == 'true'
-    environment: pypi
-    permissions:
-      # Required for OIDC trusted publishing.
-      id-token: write
-
-    steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: python-dist
-          path: dist/
-
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-
-  cleanup-failed-release-tag:
-    # Delete freshly created release tag when downstream jobs fail.
-    name: Cleanup Failed Release Tag
-    runs-on: ubuntu-latest
-    needs: [release, build, publish]
-    if: ${{ always() && needs.release.outputs.changed == 'true' && (needs.build.result == 'failure' || needs.publish.result == 'failure') }}
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Delete failed release tag
-        run: |
-          VERSION="${{ needs.release.outputs.version }}"
-          if git ls-remote --exit-code --tags origin "refs/tags/$VERSION" >/dev/null; then
-            git push origin ":refs/tags/$VERSION"
-            echo "Deleted failed release tag '$VERSION' from origin."
-          else
-            echo "Tag '$VERSION' already absent; nothing to delete."
-          fi
-
-  github-release:
-    # Create GitHub Release only after package build and publish succeed.
-    name: Publish GitHub Release
-    runs-on: ubuntu-latest
-    needs: [release, publish]
-    if: needs.release.outputs.changed == 'true'
-    permissions:
-      contents: write
-
-    steps:
-      - name: Compute release date
-        id: release_date
-        run: echo "date=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
-
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ needs.release.outputs.version }}
-          name: Release v${{ needs.release.outputs.version }} (${{ steps.release_date.outputs.date }})
-          generate_release_notes: true
+          token: ${{ steps.app-token.outputs.token }}
+          config-file: .release-please-config.json
+          manifest-file: .release-please-manifest.json

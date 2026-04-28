@@ -1,0 +1,55 @@
+# Check workflow.
+# Purpose: run fast single-version unit tests for branch and PR feedback.
+# This complements verify.yml, which runs the full cross-version matrix and artifact checks.
+name: "Check"
+
+on:
+  push:
+    # Mainline, merge-queue, and release-please refs are covered by other workflows.
+    branches-ignore:
+      - main
+      - master
+      - merge/**
+      - gh-readonly-queue/**
+      - release-please--branches--**
+  pull_request:
+    branches: [main]
+
+concurrency:
+  # Cancel superseded runs for the same ref.
+  group: check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.11"
+  POETRY_VERSION: "2.3.4"
+  POETRY_VIRTUALENVS_IN_PROJECT: "true"
+
+jobs:
+  test:
+    # Single-version unit test run for fast feedback.
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Poetry
+        run: pipx install "poetry==${POETRY_VERSION}"
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: poetry
+          cache-dependency-path: poetry.lock
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Test
+        run: make test-local

@@ -65,9 +65,9 @@ poetry-dynamic-versioning = { version = ">=1.0.0,<2.0.0", extras = ["plugin"] }
 [tool.poetry.group.dev.dependencies]
 pytest = ">=9.0"
 pytest-cov = ">=6.0"
-ruff = ">=0.9"
-mypy = ">=1.0"
-pre-commit = ">=3.8"
+ruff = ">=0.15.12"
+mypy = ">=1.20.2"
+pre-commit = ">=4.6.0"
 tox = ">=4.15"
 
 
@@ -172,7 +172,7 @@ commands =
 description = Run ruff lint checks
 package = skip
 deps =
-    ruff>=0.9
+    ruff>=0.15
 commands =
     ruff check src tests
 
@@ -180,7 +180,7 @@ commands =
 description = Run mypy type checks
 package = skip
 deps =
-    mypy>=1.0
+    mypy>=1.20
 commands =
     mypy src tests
 """

@@ -95,7 +95,7 @@ Allowed branch types:
 - `docs`, `refactor`, `perf`, `test`, `ci`, `build`, `style`
 - `opt`, `patch`, `dependabot`
 
-A dedicated CI workflow validates branch-push commit messages (non-main branches) using commit-check with policy from `cchk.toml`.
+A dedicated CI workflow validates commit messages on branch pushes and PRs using commit-check with policy from `cchk.toml`.
 Scope names are guidance-level in this document and are not currently hard-enforced by CI.
 
 ## Pull Request Expectations
@@ -109,3 +109,23 @@ Scope names are guidance-level in this document and are not currently hard-enfor
 
 Please do not report security issues in public issues.
 Use the process in `SECURITY.md`.
+
+## Repository Settings Checklist (Maintainers)
+
+Keep these GitHub settings aligned with the CI/CD design in `docs/design/cicd.md`.
+
+1. Ruleset on `main` (Settings → Rules → Rulesets):
+   - require pull request before merging
+   - required approvals: at least 1
+   - require status checks: `Commit`, `Check`, `Verify`, and `Security`
+   - allowed merge methods: include **Squash** (required by `automerge.yml`)
+   - restrict force pushes
+1. Actions permissions (Settings → Actions → General):
+   - allow GitHub Actions to create pull requests
+   - allow GitHub Actions to approve pull requests
+1. Auto-merge (Settings → General):
+   - enabled at repository level (required for Dependabot auto-merge path)
+1. PyPI environment (Settings → Environments):
+   - `pypi` environment exists
+   - OIDC trusted publishing configured
+   - any required reviewer policy matches release expectations

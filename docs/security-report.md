@@ -1,8 +1,8 @@
 # Security Report
 
-**Branch:** `feat/improved_cli`
-**Date:** 2026-04-26
-**Scope:** Full source tree — static analysis (bandit) + dependency audit (pip-audit); security fixes for S-001 (assert guards) and S-002 (subprocess nosec)
+**Branch:** `feat/improved_cli`\
+**Date:** 2026-04-26\
+**Scope:** Full source tree — static analysis (bandit) + dependency audit (pip-audit); security fixes for S-001 (assert guards) and S-002 (subprocess nosec)\
 **Method:** OWASP Top 10 + STRIDE (static analysis on a local CLI tool; no network surface, no auth surface, no DB)
 
 ______________________________________________________________________
