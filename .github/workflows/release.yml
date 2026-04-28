@@ -50,8 +50,15 @@ jobs:
             exit 0
           fi
 
-          if [[ "$manifest_version" != "$latest_tag" ]]; then
-            echo "ERROR: .release-please-manifest.json is stale."
+          if [[ ! "$manifest_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "ERROR: invalid .release-please-manifest.json version: $manifest_version"
+            exit 1
+          fi
+
+          # A merged release-please PR can make manifest_version temporarily newer than latest_tag.
+          # That state is valid; only fail if manifest_version is behind the newest existing tag.
+          if [[ "$(printf '%s\n%s\n' "$latest_tag" "$manifest_version" | sort -V | tail -n 1)" == "$latest_tag" && "$manifest_version" != "$latest_tag" ]]; then
+            echo "ERROR: .release-please-manifest.json is stale (behind latest tag)."
             echo "manifest version: $manifest_version"
             echo "latest git tag:   $latest_tag"
             echo "Update .release-please-manifest.json before running release orchestration."
