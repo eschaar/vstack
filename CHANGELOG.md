@@ -4,12 +4,23 @@
 
 ## [2.0.3](https://github.com/eschaar/vstack/compare/2.0.2...2.0.3) (2026-04-28)
 
+### Maintenance
+
+- **ci:** harden release workflows and normalize changelog ([5a38709](https://github.com/eschaar/vstack/commit/5a387091dcea8dc7545bda5430fd02aee88ac0af))
+- **ci:** restructure pipeline with release-please and GitHub App token ([8c06090](https://github.com/eschaar/vstack/commit/8c060906ae7d8a662ff1e772fa531484eafb1067))
+- **ci:** restructure pipeline with release-please and GitHub App token ([#30](https://github.com/eschaar/vstack/issues/30)) ([0008127](https://github.com/eschaar/vstack/commit/0008127fafbf261fbbf6363fe9a4eb7769edfe83))
+
+## [2.0.2](https://github.com/eschaar/vstack/compare/2.0.1...2.0.2) (2026-04-27)
 
 ### Maintenance
 
-* **ci:** harden release workflows and normalize changelog ([5a38709](https://github.com/eschaar/vstack/commit/5a387091dcea8dc7545bda5430fd02aee88ac0af))
-* **ci:** restructure pipeline with release-please and GitHub App token ([8c06090](https://github.com/eschaar/vstack/commit/8c060906ae7d8a662ff1e772fa531484eafb1067))
-* **ci:** restructure pipeline with release-please and GitHub App token ([#30](https://github.com/eschaar/vstack/issues/30)) ([0008127](https://github.com/eschaar/vstack/commit/0008127fafbf261fbbf6363fe9a4eb7769edfe83))
+- **ci:** bump trufflesecurity/trufflehog from 3.94.3 to 3.95.2 ([#25](https://github.com/eschaar/vstack/issues/25)) ([5724dbe](https://github.com/eschaar/vstack/commit/5724dbe605523da2c90a4f143fa8c4a92322adf4))
+
+## [2.0.1](https://github.com/eschaar/vstack/compare/2.0.0...2.0.1) (2026-04-27)
+
+### Maintenance
+
+- **ci:** bump actions/download-artifact from 7 to 8 ([#26](https://github.com/eschaar/vstack/issues/26)) ([24d5a58](https://github.com/eschaar/vstack/commit/24d5a585c37fe8097de41863e0085917e81a376f))
 
 ## 2.0.0 (2026-04-26)
 
