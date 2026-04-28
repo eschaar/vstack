@@ -6,7 +6,7 @@ updates:
       interval: "weekly"
     assignees:
       - "eschaar"
-    open-pull-requests-limit: 6
+    open-pull-requests-limit: 5
     labels:
       - "dependencies"
       - "python"
@@ -23,10 +23,10 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     assignees:
       - "eschaar"
-    open-pull-requests-limit: 6
+    open-pull-requests-limit: 5
     labels:
       - "dependencies"
       - "github-actions"
