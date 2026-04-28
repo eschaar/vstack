@@ -16,6 +16,7 @@ env:
   PYTHON_VERSION: "3.11"
   POETRY_VERSION: "2.3.4"
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  TRUSTED_RELEASE_ACTORS: "vstack-release-bot[bot],eschaar"
 
 jobs:
   publish:
@@ -45,13 +46,23 @@ jobs:
         shell: bash
         run: |
           ACTOR="${{ github.event.release.author.login }}"
-          ALLOWED="vstack-release-bot[bot] eschaar"
-          if ! echo "$ALLOWED" | grep -qw "$ACTOR"; then
+          IFS=',' read -r -a ALLOWED <<< "$TRUSTED_RELEASE_ACTORS"
+
+          TRUSTED=false
+          for allowed_actor in "${ALLOWED[@]}"; do
+            if [[ "$ACTOR" == "$allowed_actor" ]]; then
+              TRUSTED=true
+              break
+            fi
+          done
+
+          if [[ "$TRUSTED" != "true" ]]; then
             echo "ERROR: release created by '$ACTOR' which is not in the trusted actor list."
-            echo "Allowed: $ALLOWED"
+            echo "Allowed: $TRUSTED_RELEASE_ACTORS"
             echo "Releases must be created by vstack-release-bot automation or a trusted maintainer."
             exit 1
           fi
+
           echo "release_actor='$ACTOR' is trusted."
 
       - name: Checkout release tag

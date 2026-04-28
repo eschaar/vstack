@@ -21,7 +21,7 @@ Their jobs are merge-blocking when configured as required status checks in the `
 
 | Workflow                          | Trigger                                           | Responsibility                                                                     |
 | --------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `.github/workflows/commit.yml`    | push to non-main branches, pull_request to `main` | Commit policy and lint/typecheck (branch-name policy on push)                      |
+| `.github/workflows/commit.yml`    | push to non-main branches, pull_request to `main` | Commit/branch policy and lint/typecheck                                            |
 | `.github/workflows/check.yml`     | push to non-main branches, pull_request to `main` | Single-version unit tests (py3.11)                                                 |
 | `.github/workflows/verify.yml`    | pull_request to `main`                            | Cross-version test matrix (py3.11–3.14) and artifact install verify                |
 | `.github/workflows/security.yml`  | pull_request to `main`                            | Dependency vulnerability scan and secret scan                                      |
@@ -78,7 +78,7 @@ sequenceDiagram
 1. `[2b]` `commit.yml / Format Lint Typecheck` — runs `make format-check`, `make lint`, `make typecheck` on py3.11.
 1. `[2c]` `check.yml / Unit Tests` — runs `make test-local` on py3.11.
 1. `[3]` Open PR to `main`.
-1. `[4a]` `commit.yml / Validate Commit Messages` — validates commit messages and reserved `docs(changelog)` scope (branch-name policy runs on push).
+1. `[4a]` `commit.yml / Validate Commit Messages` — validates commit messages, branch policy, and reserved `docs(changelog)` scope.
 1. `[4b]` `commit.yml / Format Lint Typecheck` — runs `make format-check`, `make lint`, `make typecheck` on py3.11.
 1. `[4c]` `check.yml / Unit Tests` — runs `make test-local` on py3.11.
 1. `[4d]` `verify.yml / Tests (py3.11)` through `Tests (py3.14)` — 4 parallel matrix jobs run `make test-local`.

@@ -688,7 +688,7 @@ ______________________________________________________________________
 
 | Workflow        | Trigger                                    | Purpose                                                             |
 | --------------- | ------------------------------------------ | ------------------------------------------------------------------- |
-| `commit.yml`    | Push to non-main branches and PR to `main` | commit policy and lint/typecheck gate (branch-name policy on push)  |
+| `commit.yml`    | Push to non-main branches and PR to `main` | commit/branch policy and lint/typecheck gate                        |
 | `check.yml`     | Push to non-main branches and PR to `main` | single-version unit tests (py3.11)                                  |
 | `verify.yml`    | Pull request to `main`                     | cross-version test matrix (py3.11–3.14) and artifact install/verify |
 | `security.yml`  | Pull request to `main`                     | dependency audit and secret scanning                                |

@@ -65,6 +65,35 @@ jobs:
           job-summary: true
           pr-comments: false
 
+      - name: Validate PR branch name
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          BRANCH="${{ github.head_ref }}"
+
+          # Release-please uses its own generated branch naming format.
+          if [[ "$BRANCH" =~ ^release-please--branches--.+$ ]]; then
+            echo "release-please branch is allowed: $BRANCH"
+            exit 0
+          fi
+
+          if [[ ! "$BRANCH" =~ ^([a-z0-9-]+)/.+$ ]]; then
+            echo "ERROR: invalid branch name '$BRANCH'. Expected 'type/description'."
+            exit 1
+          fi
+
+          TYPE="${BASH_REMATCH[1]}"
+          case "$TYPE" in
+            feature|bugfix|hotfix|release|chore|feat|fix|docs|refactor|perf|test|ci|build|style|opt|patch|dependabot)
+              echo "branch type '$TYPE' is allowed."
+              ;;
+            *)
+              echo "ERROR: branch type '$TYPE' is not allowed."
+              echo "Allowed types: feature bugfix hotfix release chore feat fix docs refactor perf test ci build style opt patch dependabot"
+              exit 1
+              ;;
+          esac
+
       - name: Reserve docs(changelog) scope for automation
         shell: bash
         run: |

@@ -29,7 +29,7 @@ and easy to reason about.
 
 | Workflow                          | Trigger                                               | Responsibility                                                                   |
 | --------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `.github/workflows/commit.yml`    | Push to non-main branches and pull requests to `main` | Commit policy and lint/typecheck gate (branch-name policy on push).              |
+| `.github/workflows/commit.yml`    | Push to non-main branches and pull requests to `main` | Commit/branch policy and lint/typecheck gate.                                    |
 | `.github/workflows/check.yml`     | Push to non-main branches and pull requests to `main` | Single-version unit tests (py3.11) for fast feedback.                            |
 | `.github/workflows/verify.yml`    | Pull request to `main`                                | Cross-version test matrix (py3.11–3.14) and artifact install/verify flow.        |
 | `.github/workflows/security.yml`  | Pull request to `main`                                | Dependency vulnerability audit and secret scan.                                  |

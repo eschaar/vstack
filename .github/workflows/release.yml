@@ -9,11 +9,17 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  # Serialize release orchestration to avoid overlapping release-please runs.
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
 jobs:
   release:
+    if: github.ref == 'refs/heads/main'
     name: Release Please (PR + Tag + Notes)
     runs-on: ubuntu-latest
 

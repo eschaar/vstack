@@ -8,7 +8,7 @@ For the full CI/CD design and release model, see `docs/design/cicd.md`.
 
 | Workflow | Trigger | Purpose |
 | --- | --- | --- |
-| `commit.yml` | push to non-main branches and PRs to `main` | Commit policy and lint/typecheck (branch-name policy on push) |
+| `commit.yml` | push to non-main branches and PRs to `main` | Commit/branch policy and lint/typecheck |
 | `check.yml` | push to non-main branches and PRs to `main` | Single-version unit test feedback (py3.11) |
 | `verify.yml` | pull_request to `main` | Required verification checks: cross-version test matrix + artifact verify |
 | `security.yml` | pull_request to `main` | Required security checks |
