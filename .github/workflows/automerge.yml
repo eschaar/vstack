@@ -51,7 +51,7 @@ jobs:
 
       - name: Approve eligible PR
         if: steps.decision.outputs.should_automerge == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -65,7 +65,7 @@ jobs:
 
       - name: Enable auto-merge for eligible PR
         if: steps.decision.outputs.should_automerge == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
