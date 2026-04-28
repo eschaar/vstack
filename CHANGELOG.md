@@ -2,6 +2,15 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [2.0.3](https://github.com/eschaar/vstack/compare/2.0.2...2.0.3) (2026-04-28)
+
+
+### Maintenance
+
+* **ci:** harden release workflows and normalize changelog ([5a38709](https://github.com/eschaar/vstack/commit/5a387091dcea8dc7545bda5430fd02aee88ac0af))
+* **ci:** restructure pipeline with release-please and GitHub App token ([8c06090](https://github.com/eschaar/vstack/commit/8c060906ae7d8a662ff1e772fa531484eafb1067))
+* **ci:** restructure pipeline with release-please and GitHub App token ([#30](https://github.com/eschaar/vstack/issues/30)) ([0008127](https://github.com/eschaar/vstack/commit/0008127fafbf261fbbf6363fe9a4eb7769edfe83))
+
 ## 2.0.0 (2026-04-26)
 
 CLI architecture refactor and manifest package extraction. **BREAKING CHANGE** — import paths have changed.
