@@ -2,6 +2,26 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [2.0.4](https://github.com/eschaar/vstack/compare/2.0.3...2.0.4) (2026-04-28)
+
+
+### Fixes
+
+* **ci:** allow release manifest ahead of latest tag ([6e049b9](https://github.com/eschaar/vstack/commit/6e049b94f2dce202cc1805a1299e8c9df9c52d8b))
+
+
+### Documentation
+
+* **release:** restore release-please style for 2.0.x ([98d8ee1](https://github.com/eschaar/vstack/commit/98d8ee1c3e6680ab16fa07b7781bbec8db71ae3c))
+
+
+### Maintenance
+
+* **ci:** bump automerge action dependencies ([db701d5](https://github.com/eschaar/vstack/commit/db701d5cf6ba3a370c2eb8333c49ed63176872bb))
+* **ci:** tune dependabot automerge policy ([ca6155c](https://github.com/eschaar/vstack/commit/ca6155c2f117c3e9a8ebf43d7f7a926e6dce264f))
+* **ci:** use app client id for release token generation ([4198797](https://github.com/eschaar/vstack/commit/41987971d521dbf8f257863b155de6c3503a6d65))
+* **deps:** tune dependabot cadence and PR limits ([c3fe474](https://github.com/eschaar/vstack/commit/c3fe47498b84ecfc44c3ccd39b9c81215f00e47c))
+
 ## [2.0.3](https://github.com/eschaar/vstack/compare/2.0.2...2.0.3) (2026-04-28)
 
 ### Maintenance
