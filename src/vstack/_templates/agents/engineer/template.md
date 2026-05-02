@@ -122,3 +122,10 @@ Only delegate when workstreams are genuinely independent.
 - `@#openapi` — OpenAPI 3.1 spec writing and review
 - `@#dependency` — dependency health audit
 - `@#incident` — incident analysis and post-mortem writing
+- `@#dependabot` — configure automated dependency updates
+- `@#secret-scan` — configure GitHub secret scanning and push protection
+- `@#gdpr` — GDPR engineering practices for data models, APIs, logging, and retention
+- `@#terraform` — Terraform IaC authoring and review
+- `@#terragrunt` — Terragrunt DRY multi-environment IaC configuration
+- `@#cloudformation` — AWS CloudFormation template writing and review
+- `@#aws-cli` — AWS CLI operations and scripting

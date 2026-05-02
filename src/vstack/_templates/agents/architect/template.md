@@ -108,3 +108,4 @@ Handoffs you own:
 - `@#code-review` — review existing code for architectural alignment
 - `@#explore` — codebase discovery and mapping
 - `@#analyse` — impact analysis, tradeoffs, feasibility
+- `@#gdpr` — privacy by design and data processing architecture review

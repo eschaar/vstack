@@ -109,3 +109,4 @@ Handoffs you own:
 - `@#analyse` — impact analysis, tradeoffs, feasibility
 - `@#adr` — architecture decision record writing (if significant decisions)
 - `@#onboard` — contributor onboarding guide generation
+- `@#gh-issues` — create and manage GitHub Issues for requirements, tasks, and user stories
