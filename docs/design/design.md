@@ -308,11 +308,10 @@ class BaseCommand(ABC):
     def run(
         self,
     *,
-    args: argparse.Namespace,
-    install_dir: Path | None,
-    only: list[str] | None,
+    context: CommandContext,
     ) -> int: ...
   # Returns 0 on success, non-zero on errors.
+  # CommandContext carries args, install_dir, and only.
 
 
 def build_command_registry(service: CommandService) -> dict[str, BaseCommand]: ...
@@ -325,37 +324,37 @@ ______________________________________________________________________
 
 ### 3.1 skill frontmatter (`config.yaml`)
 
-| Field                      | Type   | Required | Constraints                                                           |
-| -------------------------- | ------ | -------- | --------------------------------------------------------------------- |
-| `name`                     | string | **yes**  | Lowercase kebab-case; max 64 chars; must match directory name         |
-| `version`                  | string | **yes**  | Semver                                                                |
-| `description`              | string | **yes**  | Max 1024 chars; what the skill does and when to invoke it             |
-| `license`                  | string | no       | SPDX identifier                                                       |
-| `compatibility`            | string | no       | Free text compatibility note                                          |
-| `metadata.owner`           | string | no       | —                                                                     |
-| `metadata.maturity`        | string | no       | `"stable"` \| `"beta"` \| `"experimental"`                            |
-| `argument-hint`            | string | no       | Shown after `/skill-name` in chat input                               |
-| `user-invocable`           | bool   | no       | Default `true`; `false` hides skill from slash-command menu           |
-| `disable-model-invocation` | bool   | no       | Default `false`; `true` prevents Copilot from auto-loading this skill |
+| Field                      | Type   | Required | Constraints                                                                 |
+| -------------------------- | ------ | -------- | --------------------------------------------------------------------------- |
+| `name`                     | string | **yes**  | Lowercase kebab-case; max 64 chars; must match directory name               |
+| `version`                  | string | **yes**  | Semver; used for manifest tracking only — not emitted to generated SKILL.md |
+| `description`              | string | **yes**  | Max 1024 chars; what the skill does and when to invoke it                   |
+| `license`                  | string | no       | SPDX identifier                                                             |
+| `compatibility`            | string | no       | Free text compatibility note                                                |
+| `metadata.owner`           | string | no       | —                                                                           |
+| `metadata.maturity`        | string | no       | `"stable"` \| `"beta"` \| `"experimental"`                                  |
+| `argument-hint`            | string | no       | Shown after `/skill-name` in chat input                                     |
+| `user-invocable`           | bool   | no       | Default `true`; `false` hides skill from slash-command menu                 |
+| `disable-model-invocation` | bool   | no       | Default `false`; `true` prevents Copilot from auto-loading this skill       |
 
 ### 3.2 agent frontmatter (`config.yaml`)
 
-| Field                      | Type        | Required | Notes                                                          |
-| -------------------------- | ----------- | -------- | -------------------------------------------------------------- |
-| `name`                     | string      | no       | Overrides filename as picker label                             |
-| `description`              | string      | no       | Placeholder text in chat input                                 |
-| `argument-hint`            | string      | no       | Hint text shown after `@agent` in chat                         |
-| `tools`                    | list        | no       | `read`, `search`, `edit`, `web`, `vscode`, `todo`, `agent`     |
-| `agents`                   | list        | no       | Subagents this agent may invoke; `["*"]` = all                 |
-| `model`                    | string      | no       | Force a specific model; omit to allow user selection           |
-| `user-invocable`           | bool        | no       | Default `true`                                                 |
-| `disable-model-invocation` | bool        | no       | Default `false`; `true` prevents other agents calling this one |
-| `target`                   | string      | no       | `"vscode"` (default) or `"github-copilot"`                     |
-| `handoffs`                 | object-list | no       | Sequential workflow handoff steps                              |
-| `mcp-servers`              | raw         | no       | MCP server config — `github-copilot` target only               |
-| `hooks`                    | raw         | no       | Chat hooks (preview feature)                                   |
-| `metadata`                 | raw         | no       | String key/value annotations — `github-copilot` target only    |
-| `version`                  | string      | no       | **Internal only — never emitted.** vstack change-tracking only |
+| Field                      | Type           | Required | Notes                                                                  |
+| -------------------------- | -------------- | -------- | ---------------------------------------------------------------------- |
+| `name`                     | string         | no       | Overrides filename as picker label                                     |
+| `description`              | string         | no       | Placeholder text in chat input                                         |
+| `argument-hint`            | string         | no       | Hint text shown after `@agent` in chat                                 |
+| `tools`                    | list           | no       | `read`, `search`, `edit`, `web`, `vscode`, `todo`, `agent`             |
+| `agents`                   | list           | no       | Subagents this agent may invoke; `["*"]` = all                         |
+| `model`                    | string or list | no       | Force a specific model or list of models; omit to allow user selection |
+| `user-invocable`           | bool           | no       | Default `true`                                                         |
+| `disable-model-invocation` | bool           | no       | Default `false`; `true` prevents other agents calling this one         |
+| `target`                   | string         | no       | `"vscode"` (default) or `"github-copilot"`                             |
+| `handoffs`                 | object-list    | no       | Sequential workflow handoff steps                                      |
+| `mcp-servers`              | raw            | no       | MCP server config — `github-copilot` target only                       |
+| `hooks`                    | raw            | no       | Chat hooks (preview feature)                                           |
+| `metadata`                 | raw            | no       | String key/value annotations — `github-copilot` target only            |
+| `version`                  | string         | no       | **Internal only — never emitted.** vstack change-tracking only         |
 
 ### 3.3 instruction frontmatter (`config.yaml`)
 
@@ -390,7 +389,6 @@ from lowercase-kebab to `UPPER_SNAKE` to form the token:
 | `{{BASE_BRANCH}}`             | `base-branch.md`             | Skills that reference git diff    |
 | `{{RUN_TESTS}}`               | `run-tests.md`               | Skills that run tests             |
 | `{{OBSERVABILITY_CHECKLIST}}` | `observability-checklist.md` | `verify`, `architecture`          |
-| `{{API_CONTRACT_CHECKLIST}}`  | `api-contract-checklist.md`  | `design`, `code-review`           |
 
 **Resolution rules:**
 
@@ -646,9 +644,9 @@ flowchart TD
   C --> D[CommandService created with templates_root]
   D --> E[build_command_registry → name→BaseCommand map]
   C --> F[resolve install_dir and only scope]
-  E --> G[command.run&#40;args, install_dir, only&#41;]
+  E --> G[command.run&#40;&#42;, context=CommandContext&#40;args, install_dir, only&#41;&#41;]
   F --> G
-  G --> H[BaseCommand.execute classmethod]
+  G --> H[BaseCommand subclass executes]
   H --> I[service.generators / service.label / service.manifest_for / service.artifact_control_state]
 ```
 
@@ -661,7 +659,7 @@ ______________________________________________________________________
 | `interface.py` | `CommandLineInterface`     | Facade: parser construction, service creation, target/scope resolution, dispatch        |
 | `registry.py`  | `build_command_registry`   | Maps command names to `BaseCommand` instances                                           |
 | `service.py`   | `CommandService`           | Shared coordinator: generators, path labelling, manifest access, artifact state         |
-| `base.py`      | `BaseCommand`              | ABC: all handlers implement `run(args, install_dir, only) → int`                        |
+| `base.py`      | `BaseCommand`              | ABC: all handlers implement `run(*, context: CommandContext) → int`                     |
 | `install.py`   | `InstallCommand`           | Install flow: per-artifact write, checksum recording, dry-run, force/adopt/update modes |
 | `verify.py`    | `VerifyCommand`            | Source + output verification: schema, tokens, presence, checksum drift                  |
 | `status.py`    | `StatusCommand`            | Read-only report across text, JSON, and YAML output formats                             |
