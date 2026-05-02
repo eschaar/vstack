@@ -39,6 +39,7 @@ List non-blocking but mandatory follow-ups to ship safely.
 ## Evidence Reviewed
 
 List the exact artifacts checked (reports, docs, CI evidence, manifests).
+For each expected artifact that is missing, flag it explicitly as: MISSING — [artifact name].
 
 ## Recommended Next Action
 

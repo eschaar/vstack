@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-05-02T13:41:24.082947+00:00",
+  "installed_at": "2026-05-02T13:47:26.160895+00:00",
   "artifacts": {
     "skills": [
       {
@@ -278,17 +278,31 @@
     ],
     "prompts": [
       {
+        "name": "api-design-review",
+        "file": "prompts/api-design-review.prompt.md",
+        "version": "0.1.0",
+        "checksum": "31788f6b656c66ba06cd78cbb9dca850ab612fe771fbb66097dbee727d4f03fb",
+        "checksum_algorithm": "sha256"
+      },
+      {
         "name": "architecture-risk",
         "file": "prompts/architecture-risk.prompt.md",
         "version": "0.1.0",
-        "checksum": "733e3ad10a062ca9e963dfe92e37d96653fcd6b20b3b26ed4815126692d974dc",
+        "checksum": "c6fb9c87585be6e20209fc2e717712b7933d9a706f2dcd33b628c3526037e40a",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "code-review",
         "file": "prompts/code-review.prompt.md",
         "version": "0.1.0",
-        "checksum": "6cf5cac23aa2f2e989e6bc395a681174d5b9550975941648aada70bdb59d829a",
+        "checksum": "fcab80ce897f01b865d0433636dbc00d462342124f9eccc5d87a5e61463c410e",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "dependency-audit",
+        "file": "prompts/dependency-audit.prompt.md",
+        "version": "0.1.0",
+        "checksum": "931b5aa603970e4364ec947b428f4eed03b5776e5ba8a1dfb274e7362968d6ba",
         "checksum_algorithm": "sha256"
       },
       {
@@ -309,7 +323,7 @@
         "name": "release-readiness",
         "file": "prompts/release-readiness.prompt.md",
         "version": "0.1.0",
-        "checksum": "c4f8708c13d9289dcc58e782c8b7e28e9f2e6a99f15c76a116bea34452b01fb8",
+        "checksum": "8bc75eea3d2f3e4797a0b0e672e2a01aacf98aaeb0200474cb8c17cc5776008c",
         "checksum_algorithm": "sha256"
       }
     ]

@@ -79,8 +79,10 @@ EXPECTED_INPUT_NAMES: dict[str, list[str]] = {
     "agent": ["architect", "designer", "engineer", "product", "release", "tester"],
     "instruction": ["git", "markdown", "python", "security", "testing"],
     "prompt": [
+        "api-design-review",
         "architecture-risk",
         "code-review",
+        "dependency-audit",
         "incident-timeline",
         "migration-safety",
         "release-readiness",

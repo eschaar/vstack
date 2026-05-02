@@ -11,7 +11,7 @@ List risks that can materially fail production or block safe delivery.
 
 For each risk:
 
-- impacted boundary (service, data, contract, deployment, observability)
+- impacted boundary (service, data, contract, deployment, observability, security)
 - why it is risky in one sentence
 - mitigation with smallest viable change
 - owner role
@@ -31,6 +31,10 @@ List decisions that should become ADRs before implementation.
 ## Recommended Sequence
 
 Provide an ordered mitigation sequence (step 1..N).
+
+## Security Considerations
+
+List security-specific risks not covered above: auth boundaries, sensitive data exposure, trust model assumptions, supply chain concerns.
 
 ## Go/No-Go
 
