@@ -697,6 +697,7 @@ files in `.github/`.
 vim src/vstack/_templates/skills/verify/template.md
 vim src/vstack/_templates/agents/engineer/template.md
 vim src/vstack/_templates/instructions/python/template.md
+vim src/vstack/_templates/instructions/typescript/template.md
 poetry run vstack validate
 poetry run pytest
 poetry run vstack install
