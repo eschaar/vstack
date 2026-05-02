@@ -12,6 +12,7 @@ EXPECTED_CLI_NAMES = [
     "design",
     "consult",
     "concise",
+    "conventional-commit",
     "code-review",
     "release-notes",
     "pr",

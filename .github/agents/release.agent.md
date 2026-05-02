@@ -133,6 +133,7 @@ Handoffs you own:
 
 - `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
 - `@#release-notes` — write `docs/releases/{date}.md` and update `CHANGELOG.md`
+- `@#conventional-commit` — produce compliant Conventional Commit messages before PR
 - `@#pr` — commit, push, and open pull request
 - `@#gh-release` — create or update GitHub Release with `gh` CLI
 - `@#docs` — update README/API docs consistency after release packaging
