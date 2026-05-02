@@ -43,7 +43,6 @@ Report findings; do not change code.
 - Architecture recommendations (use `architecture`)
 - Performance analysis (use `performance` or `analyse`)
 
-
 ## Phase 1: Project Overview
 
 ```bash
@@ -62,7 +61,6 @@ Record:
 - **Tech stack** (language, framework, runtime)
 - **Project type** (API service, library, CLI, worker, monorepo)
 
-
 ## Phase 2: Directory Structure
 
 ```bash
@@ -79,7 +77,6 @@ Identify:
 - Where configs live (`config/`, `.env*`, `*config.yaml`)
 - CI/CD configuration (`.github/workflows/`, `.gitlab-ci.yml`, etc.)
 - Infrastructure code (`k8s/`, `terraform/`, `docker-compose.yml`)
-
 
 ## Phase 3: Dependencies & External Services
 
@@ -102,7 +99,6 @@ grep -r -E 'postgres|mysql|redis|mongodb|kafka|rabbitmq|elasticsearch|dynamodb|s
   --exclude-dir=node_modules --exclude-dir=vendor . 2>/dev/null | grep -v test | head -20
 ```
 
-
 ## Phase 4: API & Service Contracts
 
 ```bash
@@ -115,7 +111,6 @@ grep -r -n '@app.route\|router\.\|@Get\|@Post\|path=' \
   --include='*.ts' --include='*.py' --include='*.go' \
   --exclude-dir=node_modules . 2>/dev/null | head -30
 ```
-
 
 ## Phase 5: Test Infrastructure
 
@@ -152,7 +147,6 @@ cat .nycrc 2>/dev/null || cat vitest.config.* 2>/dev/null | head -20 || \
   cat pytest.ini 2>/dev/null | head -20 || true
 ```
 
-
 ## Phase 6: CI/CD Pipeline
 
 ```bash
@@ -161,7 +155,6 @@ ls .github/workflows/ 2>/dev/null | head -10
 cat .github/workflows/*.yml 2>/dev/null | head -80 || true
 cat .gitlab-ci.yml 2>/dev/null | head -60 || true
 ```
-
 
 ## Phase 7: Technical Debt & Health
 
@@ -174,7 +167,6 @@ grep -r -n "TODO\|FIXME\|HACK\|XXX\|DEPRECATED\|BUG" \
 # Check for TODOS.md
 cat TODOS.md 2>/dev/null | head -40 || true
 ```
-
 
 ## Discovery Report
 
@@ -229,7 +221,6 @@ Stack:   [language, framework, runtime versions]
 - Gotchas: [anything that surprised me]
 
 ```
-
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"explore","artifact_type":"skill","artifact_version":"20260421015","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

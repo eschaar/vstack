@@ -43,7 +43,6 @@ These files live in the PR — the pipeline runs after merge.
 - Container image authoring (use `container`)
 - Post-deploy monitoring (CI/CD's responsibility after merge)
 
-
 ## Step 1: Detect context
 
 ```bash
@@ -56,7 +55,6 @@ ls .github/workflows/ 2>/dev/null || echo "No workflows found"
 # Detect container config
 ls Dockerfile 2>/dev/null && echo "Dockerfile present"
 ```
-
 
 ## Step 2: CI workflow — `.github/workflows/ci.yml`
 
@@ -102,7 +100,6 @@ jobs:
       # - run: go test ./...
 ```
 
-
 ## Step 3: Security scan — add to CI or separate workflow
 
 Add dependency and secret scanning:
@@ -126,7 +123,6 @@ Add dependency and secret scanning:
           path: ./
           base: ${{ github.event.repository.default_branch }}
 ```
-
 
 ## Step 4: CD workflow — `.github/workflows/cd.yml`
 
@@ -166,7 +162,6 @@ jobs:
 
 Adapt the deploy trigger to match the target platform (Fly.io, Render, Railway, K8s, etc.).
 
-
 ## Step 5: Branch protection (document, don't automate)
 
 Record in `docs/architecture/architecture.md` or a README section:
@@ -181,7 +176,6 @@ Branch protection rules for `main`:
 
 Configure these in GitHub → Settings → Branches.
 
-
 ## Step 6: Review checklist
 
 - [ ] CI workflow triggers on push + PR
@@ -191,7 +185,6 @@ Configure these in GitHub → Settings → Branches.
 - [ ] No secrets hardcoded in workflow files — use `secrets.*`
 - [ ] Container image tagged with both `latest` and `${{ github.sha }}`
 - [ ] Workflows validate locally: `act` (optional, for local testing)
-
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"cicd","artifact_type":"skill","artifact_version":"20260421006","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

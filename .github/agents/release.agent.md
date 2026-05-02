@@ -134,6 +134,7 @@ Handoffs you own:
 - `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
 - `@#release-notes` — write `docs/releases/{date}.md` and update `CHANGELOG.md`
 - `@#pr` — commit, push, and open pull request
+- `@#gh-release` — create or update GitHub Release with `gh` CLI
 - `@#docs` — update README/API docs consistency after release packaging
 - `@#cicd` — write GitHub Actions CI/CD workflows
 - `@#explore` — codebase discovery and mapping

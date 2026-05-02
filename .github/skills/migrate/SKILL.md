@@ -56,7 +56,6 @@ deployability. No migration ships without a rollback plan.
 **Golden rule: Every migration must be reversible or explicitly documented as
 irreversible with a data-recovery plan.**
 
-
 ## Step 0: Understand the Change
 
 Before reviewing or writing anything, gather context:
@@ -94,7 +93,6 @@ Deployment:    [rolling | blue-green | big-bang | maintenance window]
 Direction:     [new migration | review existing | both]
 ```
 
-
 ## Step 1: Classify the Migration
 
 Classify every DDL operation by risk level:
@@ -122,7 +120,6 @@ Operations:
   2. ...
 Overall risk: [Low | Medium | High | Destructive]
 ```
-
 
 ## Step 2: Zero-Downtime Analysis
 
@@ -155,7 +152,6 @@ If the migration violates zero-downtime, flag it:
   Fix:       [expand/contract steps or maintenance window required]
 ```
 
-
 ## Step 3: Rollback Plan
 
 Every migration must have a defined rollback:
@@ -178,7 +174,6 @@ For destructive operations (DROP, TRUNCATE), rollback is not possible — docume
   Recovery: Restore from snapshot (RTO: [estimate])
 ```
 
-
 ## Step 4: Data Integrity
 
 Check:
@@ -200,7 +195,6 @@ SELECT column, COUNT(*) FROM table GROUP BY column HAVING COUNT(*) > 1;
 -- Before adding CHECK constraint: verify no violations
 SELECT COUNT(*) FROM table WHERE NOT (constraint_expression);
 ```
-
 
 ## Step 5: Index Safety
 
@@ -226,7 +220,6 @@ Check:
 - [ ] Composite index column order matches query patterns
 - [ ] No redundant indexes (subset of existing composite index)
 - [ ] Partial indexes considered for filtered queries
-
 
 ## Step 6: Performance on Large Tables
 
@@ -269,7 +262,6 @@ BEGIN
 END $$;
 ```
 
-
 ## Step 7: Testing
 
 ```bash
@@ -290,7 +282,6 @@ Check:
 - [ ] Rollback/downgrade works cleanly
 - [ ] Application tests pass with the new schema
 - [ ] No model/schema drift detected
-
 
 ## Output
 

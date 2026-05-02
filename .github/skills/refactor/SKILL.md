@@ -57,7 +57,6 @@ Refactoring is not rewriting. Every step must leave tests green.
 **Golden rule: If all tests pass before and after each step, the refactor is
 correct. If behavior changes, stop — that is a feature or bug fix, not a refactor.**
 
-
 ## Step 0: Define the Scope
 
 > **Question:** What needs refactoring and why?
@@ -83,7 +82,6 @@ Scope:       [file(s) or module(s)]
 Motivation:  [duplication | complexity | naming | coupling | size | other]
 Constraints: [what must not change]
 ```
-
 
 ## Step 1: Establish a Baseline
 
@@ -129,7 +127,6 @@ Baseline:
   Lint:     [clean | N warnings]
 ```
 
-
 ## Step 2: Identify Code Smells
 
 Scan the target area for common smells:
@@ -168,7 +165,6 @@ Smells found:
   P3 (low):         [smell] — [location]
 ```
 
-
 ## Step 3: Plan the Refactoring
 
 Break the refactoring into small, independent steps. Each step must:
@@ -192,7 +188,6 @@ Risk:            [Low | Medium — reason]
 - The plan requires changing a public API or exported interface
 - The plan requires changing database schema
 - More than 10 files are affected
-
 
 ## Step 4: Execute — One Step at a Time
 
@@ -310,7 +305,6 @@ def create_user(request: CreateUserRequest) -> User:
     ...
 ```
 
-
 ## Step 5: Verify
 
 After all steps are complete, run the full verification suite:
@@ -351,7 +345,6 @@ Check:
 git diff --stat
 git diff
 ```
-
 
 ## Output
 
