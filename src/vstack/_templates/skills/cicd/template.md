@@ -36,10 +36,18 @@ on:
     branches: ["**"]
   pull_request:
     branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -49,6 +57,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('**/pyproject.toml', '**/requirements*.txt') }}
+          restore-keys: pip-${{ runner.os }}-
       - run: pip install -e ".[dev]"
       - run: ruff check .
       - run: mypy .
@@ -57,6 +70,10 @@ jobs:
       # Node
       # - uses: actions/setup-node@v4
       #   with: { node-version: "22" }
+      # - uses: actions/cache@v4
+      #   with:
+      #     path: ~/.npm
+      #     key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       # - run: npm ci
       # - run: npm run lint
       # - run: npm test
@@ -64,6 +81,10 @@ jobs:
       # Go
       # - uses: actions/setup-go@v5
       #   with: { go-version: "1.22" }
+      # - uses: actions/cache@v4
+      #   with:
+      #     path: ~/go/pkg/mod
+      #     key: go-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
       # - run: go vet ./...
       # - run: go test ./...
 ```
@@ -86,7 +107,7 @@ Add dependency and secret scanning:
       # - run: npm audit --audit-level=high
 
       # Secret scan
-      - uses: trufflesecurity/trufflehog-actions-scan@main
+      - uses: trufflesecurity/trufflehog-actions-scan@v3
         with:
           path: ./
           base: ${{ github.event.repository.default_branch }}
@@ -146,9 +167,13 @@ Configure these in GitHub → Settings → Branches.
 
 ## Step 6: Review checklist
 
-- [ ] CI workflow triggers on push + PR
+- [ ] CI workflow triggers on push + PR + `workflow_dispatch`
+- [ ] `concurrency` group set to cancel stale runs
+- [ ] `timeout-minutes` set on each job
+- [ ] `permissions: contents: read` on CI jobs (least privilege)
+- [ ] Dependency cache configured for faster builds
 - [ ] Lint, type-check, and tests all run in CI
-- [ ] Security scan included
+- [ ] Security scan included with pinned action version (not `@main`)
 - [ ] CD triggers only on merge to main
 - [ ] No secrets hardcoded in workflow files — use `secrets.*`
 - [ ] Container image tagged with both `latest` and `${{ github.sha }}`

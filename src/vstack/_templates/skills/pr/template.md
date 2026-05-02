@@ -18,6 +18,9 @@ before CI/CD takes over.
 ## Step 1: Pre-flight
 
 ```bash
+# Confirm gh CLI is authenticated
+gh auth status 2>/dev/null || echo "WARNING: gh CLI not authenticated — Step 4 will fail"
+
 # Confirm not on the target base branch
 BRANCH=$(git branch --show-current)
 if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
@@ -26,9 +29,22 @@ if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
 fi
 echo "Branch: $BRANCH"
 
+# Check if a PR already exists for this branch
+EXISTING_PR=$(gh pr view --json url --jq '.url' 2>/dev/null)
+if [ -n "$EXISTING_PR" ]; then
+  echo "PR already open: $EXISTING_PR"
+  exit 0
+fi
+
 # Show what will be included
 git status --short
 git log origin/main..HEAD --oneline
+
+# Detect PR template for body structure
+PR_TEMPLATE=$(cat .github/PULL_REQUEST_TEMPLATE.md \
+  .github/PULL_REQUEST_TEMPLATE/pull_request_template.md \
+  .github/pull_request_template.md 2>/dev/null | head -5)
+[ -n "$PR_TEMPLATE" ] && echo "PR template found — use its structure for the body"
 ```
 
 ## Step 2: Commit
@@ -53,15 +69,33 @@ git push --set-upstream origin "$BRANCH"
 
 Use the PR title and body provided by the invoking agent or user.
 If no body is provided, write a short summary of the changes on this branch.
+Use `--draft` when the work is not yet ready for review.
 
 ```bash
+# Short body (inline):
 gh pr create \
   --base main \
   --title "<title>" \
   --body "<body>"
+
+# Long body (write to file first):
+cat > /tmp/pr-body.md <<'EOF'
+<body>
+EOF
+gh pr create \
+  --base main \
+  --title "<title>" \
+  --body-file /tmp/pr-body.md
+
+# Draft PR (not ready for review):
+gh pr create \
+  --base main \
+  --title "<title>" \
+  --body "<body>" \
+  --draft
 ```
 
-If `gh` is not available:
+If `gh` is not available or not authenticated:
 
 ```bash
 echo "Open PR manually:"

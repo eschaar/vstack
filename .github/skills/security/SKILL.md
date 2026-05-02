@@ -88,7 +88,7 @@ grep -r -n "is_admin\|hasRole\|checkPermission\|authorize\|can(" \
 # Look for endpoints missing auth
 grep -r -n "@app.route\|router\.\|@Get\|@Post\|@Put\|@Delete\|@Patch" \
   --include='*.ts' --include='*.py' --include='*.go' \
-  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build . 2>/dev/null | head -30
+  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build --exclude-dir=vendor . 2>/dev/null | head -30
 ```
 
 Check:
@@ -105,12 +105,12 @@ Check:
 # Find hardcoded secrets
 grep -r -E '(password|secret|api_key|private_key|token)\s*[=:]\s*["\x27][^"\x27]{8,}' \
   --include='*.ts' --include='*.py' --include='*.go' --include='*.yaml' --include='*.env' \
-  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build --exclude-dir=.git . 2>/dev/null | grep -v test | grep -v example
+  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build --exclude-dir=vendor --exclude-dir=.git . 2>/dev/null | grep -v test | grep -v example
 
 # Find weak crypto
 grep -r -n "MD5\|SHA1\|DES\|RC4\|Math.random\|random.random" \
   --include='*.ts' --include='*.py' --include='*.go' \
-  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build . 2>/dev/null | head -20
+  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build --exclude-dir=vendor . 2>/dev/null | head -20
 ```
 
 Check:
@@ -127,12 +127,12 @@ Check:
 # SQL injection risk
 grep -r -n 'query\|execute\|raw\|f"' \
   --include='*.py' --include='*.ts' --include='*.go' \
-  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build . 2>/dev/null | grep -E '"SELECT|"INSERT|"UPDATE|"DELETE|f".*sql' | head -20
+  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build --exclude-dir=vendor . 2>/dev/null | grep -E '"SELECT|"INSERT|"UPDATE|"DELETE|f".*sql' | head -20
 
 # Command injection risk
 grep -r -n 'exec\|subprocess\|shell=True\|execSync\|spawnSync' \
   --include='*.py' --include='*.ts' --include='*.go' \
-  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build . 2>/dev/null | head -20
+  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build --exclude-dir=vendor . 2>/dev/null | head -20
 ```
 
 Check:
@@ -155,12 +155,12 @@ Check:
 # Check for debug/development modes
 grep -r -n 'DEBUG\s*=\s*True\|debug:\s*true\|development\|NODE_ENV' \
   --include='*.py' --include='*.ts' --include='*.yaml' --include='*.json' \
-  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build . 2>/dev/null | grep -v test | head -20
+  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build --exclude-dir=vendor . 2>/dev/null | grep -v test | head -20
 
 # Check for permissive CORS
 grep -r -n 'cors\|CORS\|Access-Control-Allow-Origin' \
   --include='*.ts' --include='*.py' --include='*.go' \
-  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build . 2>/dev/null | head -20
+  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build --exclude-dir=vendor . 2>/dev/null | head -20
 ```
 
 Check:
@@ -188,7 +188,7 @@ Check:
 # Check session/token implementation
 grep -r -n 'jwt\|JWT\|session\|cookie\|token' \
   --include='*.ts' --include='*.py' --include='*.go' \
-  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build . 2>/dev/null | grep -i 'expire\|expiry\|secret\|key' | head -20
+  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build --exclude-dir=vendor . 2>/dev/null | grep -i 'expire\|expiry\|secret\|key' | head -20
 ```
 
 Check:
@@ -217,7 +217,7 @@ Check:
 ```bash
 grep -r -n 'audit\|security_log\|auth.*log\|access.*log' \
   --include='*.ts' --include='*.py' --include='*.go' \
-  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build . 2>/dev/null | head -20
+  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build --exclude-dir=vendor . 2>/dev/null | head -20
 ```
 
 Check:
@@ -233,7 +233,7 @@ Check:
 ```bash
 grep -r -n 'fetch\|requests\.\|http\.get\|axios\|urllib' \
   --include='*.ts' --include='*.py' --include='*.go' \
-  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build . 2>/dev/null | grep -v test | head -20
+  --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=env --exclude-dir=__pycache__ --exclude-dir=dist --exclude-dir=build --exclude-dir=vendor . 2>/dev/null | grep -v test | head -20
 ```
 
 Check:

@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-05-02T15:09:51.319284+00:00",
+  "installed_at": "2026-05-02T15:21:42.701308+00:00",
   "artifacts": {
     "skills": [
       {
@@ -30,7 +30,7 @@
         "name": "cicd",
         "file": "skills/cicd/SKILL.md",
         "version": "20260421006",
-        "checksum": "4366f4f4b33d8e62026a133986acbbd0ec1ebeb614e540c057898889c84e2ed1",
+        "checksum": "3adc8d90695d4db09022ba5016c2562cf698247f1c43e68cce11c68919b3ce5c",
         "checksum_algorithm": "sha256"
       },
       {
@@ -65,7 +65,7 @@
         "name": "conventional-commit",
         "file": "skills/conventional-commit/SKILL.md",
         "version": "20260502024",
-        "checksum": "6b314d44033d49fe2c25c48e6e7c6af7fb9a3cabdcd4e16c41c2b329a3a29149",
+        "checksum": "76477b42b17c9f6eec92baa36dc172e7ee98b20a86399eabdd2b7d2a90923509",
         "checksum_algorithm": "sha256"
       },
       {
@@ -100,7 +100,7 @@
         "name": "explore",
         "file": "skills/explore/SKILL.md",
         "version": "20260421015",
-        "checksum": "c1804b78a40af26b0c69f49c39bc4c96babafdf50f7aa87d52a62e15d519c480",
+        "checksum": "a257941d7b577f782b5d41703b1fbd25c5ab13f664e696d83cc3a9fd91a5565f",
         "checksum_algorithm": "sha256"
       },
       {
@@ -135,7 +135,7 @@
         "name": "migrate",
         "file": "skills/migrate/SKILL.md",
         "version": "20260421019",
-        "checksum": "9871429e351eec474433614df96eee1c3b41c241938ba2f663b64574ff2b43cb",
+        "checksum": "c6c18c750319c0feb14526d637cb591f51ffde341b1385b4063aeb1edf12fd8b",
         "checksum_algorithm": "sha256"
       },
       {
@@ -163,7 +163,7 @@
         "name": "pr",
         "file": "skills/pr/SKILL.md",
         "version": "20260502013",
-        "checksum": "f4361ff805890f592587abafb5781e7326084801e992e8ee54f785b0908636a4",
+        "checksum": "ed4b13b69b325b21d9abf17ae9be34c2b2fa6ff1dd78cc6ee04af73d428438b8",
         "checksum_algorithm": "sha256"
       },
       {
@@ -191,7 +191,7 @@
         "name": "security",
         "file": "skills/security/SKILL.md",
         "version": "20260421025",
-        "checksum": "125dc0d007db1671b953dcbc5b9841cc0338dd1d6ea62666cb8b83aba0956fcf",
+        "checksum": "3566dd5e85b183256fcf1a2156a3da8aa2d4f2417a6c01c681388bf2baac78a8",
         "checksum_algorithm": "sha256"
       },
       {
