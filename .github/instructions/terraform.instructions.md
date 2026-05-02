@@ -51,5 +51,13 @@ Use these Terraform conventions in this project.
 1. Run `terraform validate` before every plan.
 1. Run `tfsec` or `checkov` on all changes; fix HIGH and CRITICAL findings before merging.
 
+## References
+
+> Always use the official documentation for the provider and Terraform version in use — resource arguments and defaults change between provider releases.
+
+- [Terraform documentation](https://developer.hashicorp.com/terraform/docs)
+- [Terraform provider registry](https://registry.terraform.io/)
+- [tfsec](https://aquasecurity.github.io/tfsec/) · [checkov](https://www.checkov.io/)
+
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"terraform","artifact_type":"instruction","artifact_version":"20260502034","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

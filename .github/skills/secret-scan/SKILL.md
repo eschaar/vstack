@@ -230,5 +230,13 @@ credential formats.
 - [ ] Custom patterns defined for any organization-specific credential formats
 - [ ] Secrets stored in environment variables or a secret store — never in source code
 
+## References
+
+> Always use the official documentation for the exact version in use — supported secret patterns and push protection rules are updated regularly.
+
+- [GitHub secret scanning documentation](https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning)
+- [Push protection](https://docs.github.com/en/code-security/secret-scanning/protecting-pushes-with-secret-scanning)
+- [Supported secret patterns](https://docs.github.com/en/code-security/secret-scanning/introduction/supported-secret-scanning-patterns)
+
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"secret-scan","artifact_type":"skill","artifact_version":"20260502028","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

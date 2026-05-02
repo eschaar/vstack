@@ -110,3 +110,11 @@ For production-like local testing, write a separate `docker-compose.prod.yml` wi
 - [ ] `HEALTHCHECK` defined
 - [ ] Image builds successfully: `docker build -t app:local .`
 - [ ] Container starts and responds: `docker run --rm -p <port>:<port> app:local`
+
+## References
+
+> Always use the official documentation for the Docker and Compose versions in use — Dockerfile syntax, base image tags, and Compose spec fields evolve with each release.
+
+- [Dockerfile reference](https://docs.docker.com/reference/dockerfile/)
+- [Docker Compose specification](https://docs.docker.com/compose/intro/compose-application-model/)
+- [Docker official images](https://hub.docker.com/search?image_filter=official)

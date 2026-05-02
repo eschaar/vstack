@@ -208,3 +208,11 @@ GITHUB_TOKEN=<token> codeql github upload-results \
 - [ ] Compiled language build mode confirmed (`autobuild` or `manual`)
 - [ ] `paths-ignore` excludes documentation-only PRs if useful
 - [ ] Actions pinned to `@v4` (not floating `@main`)
+
+## References
+
+> Always use the official documentation for the exact version in use — action versions, query suites, and language identifiers change between releases.
+
+- [CodeQL documentation](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql)
+- [github/codeql-action releases](https://github.com/github/codeql-action/releases)
+- [Supported languages and frameworks](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/codeql-code-scanning-for-compiled-languages)

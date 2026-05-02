@@ -236,5 +236,13 @@ Use `@example.com` for all test email addresses.
 - [ ] New sub-processors have a signed DPA and a RoPA entry
 - [ ] DPIA triggered if the change involves high-risk processing
 
+## References
+
+> GDPR is a legal instrument — always consult the authoritative text and current DPA guidance rather than summaries.
+
+- [GDPR full text (EUR-Lex)](https://eur-lex.europa.eu/eli/reg/2016/679)
+- [CNIL developer guide (privacy by design)](https://www.cnil.fr/en/cnil-publishes-gdpr-guide-developers)
+- [EDPB guidelines](https://www.edpb.europa.eu/our-work-tools/general-guidance/guidelines-recommendations-best-practices_en)
+
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"gdpr","artifact_type":"skill","artifact_version":"20260502029","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

@@ -308,5 +308,13 @@ Action items (priority order):
   2. ...
 ```
 
+## References
+
+> Always use the official advisories and registry documentation for the ecosystems in use — vulnerability databases and package registry APIs are updated continuously.
+
+- [GitHub Advisory Database](https://github.com/advisories)
+- [OSV — Open Source Vulnerabilities](https://osv.dev/)
+- [PyPI / npm / crates.io / Maven Central](https://pypi.org) (replace with the relevant registry)
+
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"dependency","artifact_type":"skill","artifact_version":"20260421012","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

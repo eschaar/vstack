@@ -275,3 +275,11 @@ Action items (priority order):
   1. [action] — [package] — [severity]
   2. ...
 ```
+
+## References
+
+> Always use the official advisories and registry documentation for the ecosystems in use — vulnerability databases and package registry APIs are updated continuously.
+
+- [GitHub Advisory Database](https://github.com/advisories)
+- [OSV — Open Source Vulnerabilities](https://osv.dev/)
+- [PyPI / npm / crates.io / Maven Central](https://pypi.org) (replace with the relevant registry)

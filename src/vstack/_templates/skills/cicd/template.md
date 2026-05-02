@@ -178,3 +178,11 @@ Configure these in GitHub → Settings → Branches.
 - [ ] No secrets hardcoded in workflow files — use `secrets.*`
 - [ ] Container image tagged with both `latest` and `${{ github.sha }}`
 - [ ] Workflows validate locally: `act` (optional, for local testing)
+
+## References
+
+> Always use the official documentation for the exact runner version and action versions in use — available runners, contexts, and action APIs change between GitHub updates.
+
+- [GitHub Actions documentation](https://docs.github.com/en/actions)
+- [Workflow syntax reference](https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions)
+- [GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners)

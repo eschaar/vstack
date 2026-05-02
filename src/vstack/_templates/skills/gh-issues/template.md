@@ -185,3 +185,10 @@ Report the URL after creation or update:
 ```text
 https://github.com/<org>/<repo>/issues/<number>
 ```
+
+## References
+
+> Always use the official documentation for the exact version in use — options and syntax change between releases.
+
+- [gh issue — GitHub CLI manual](https://cli.github.com/manual/gh_issue)
+- [GitHub Issues documentation](https://docs.github.com/en/issues)

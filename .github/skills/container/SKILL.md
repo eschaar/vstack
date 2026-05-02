@@ -143,5 +143,13 @@ For production-like local testing, write a separate `docker-compose.prod.yml` wi
 - [ ] Image builds successfully: `docker build -t app:local .`
 - [ ] Container starts and responds: `docker run --rm -p <port>:<port> app:local`
 
+## References
+
+> Always use the official documentation for the Docker and Compose versions in use — Dockerfile syntax, base image tags, and Compose spec fields evolve with each release.
+
+- [Dockerfile reference](https://docs.docker.com/reference/dockerfile/)
+- [Docker Compose specification](https://docs.docker.com/compose/intro/compose-application-model/)
+- [Docker official images](https://hub.docker.com/search?image_filter=official)
+
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"container","artifact_type":"skill","artifact_version":"20260421010","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

@@ -197,3 +197,11 @@ credential formats.
 - [ ] Non-provider pattern scanning enabled for internal credential formats
 - [ ] Custom patterns defined for any organization-specific credential formats
 - [ ] Secrets stored in environment variables or a secret store — never in source code
+
+## References
+
+> Always use the official documentation for the exact version in use — supported secret patterns and push protection rules are updated regularly.
+
+- [GitHub secret scanning documentation](https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning)
+- [Push protection](https://docs.github.com/en/code-security/secret-scanning/protecting-pushes-with-secret-scanning)
+- [Supported secret patterns](https://docs.github.com/en/code-security/secret-scanning/introduction/supported-secret-scanning-patterns)

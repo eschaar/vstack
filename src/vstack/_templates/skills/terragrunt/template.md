@@ -264,3 +264,11 @@ Use `--terragrunt-non-interactive` in CI to prevent hanging on prompts.
 - [ ] Secrets supplied via environment variables or a secrets manager data source
 - [ ] `--terragrunt-non-interactive` used in all CI/CD invocations
 - [ ] `.terragrunt-cache/` in `.gitignore`
+
+## References
+
+> Always use the official documentation for the Terragrunt version in use — built-in functions, flags, and configuration options evolve with each release.
+
+- [Terragrunt documentation](https://terragrunt.gruntwork.io/docs/)
+- [Terragrunt CLI reference](https://terragrunt.gruntwork.io/docs/reference/cli-options/)
+- [Gruntwork module registry](https://www.gruntwork.io/)

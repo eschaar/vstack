@@ -246,3 +246,11 @@ Scope: [full/diff/dependency/config]
 ### Recommendation
 [SHIP-READY / FIX CRITICALS / SECURITY REVIEW REQUIRED]
 ```
+
+## References
+
+> OWASP Top 10 and STRIDE are living documents — always refer to the current edition.
+
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
+- [OWASP API Security Top 10](https://owasp.org/www-project-api-security/)
+- [STRIDE threat modeling (Microsoft)](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats)

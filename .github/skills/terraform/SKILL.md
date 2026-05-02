@@ -324,5 +324,14 @@ Run `terraform plan` after every state operation to verify the outcome.
 - [ ] `terraform fmt -check` passes in CI
 - [ ] `terraform validate` passes in CI
 
+## References
+
+> Always use the official documentation for the provider and Terraform version in use — resource schema, argument names, and defaults change between provider releases.
+
+- [Terraform documentation](https://developer.hashicorp.com/terraform/docs)
+- [Terraform provider registry](https://registry.terraform.io/)
+- [AWS provider documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+- [tfsec rules](https://aquasecurity.github.io/tfsec/latest/checks/aws/) · [checkov checks](https://www.checkov.io/5.Policy%20Index/terraform.html)
+
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"terraform","artifact_type":"skill","artifact_version":"20260502030","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

@@ -277,3 +277,11 @@ updates:
 - [ ] Security update grouping configured
 - [ ] Monorepo: `directories` (plural) with globs if workspace spans subdirs
 - [ ] Private registries use `${{ secrets.* }}` — never hardcoded tokens
+
+## References
+
+> Always use the official documentation for the exact version in use — supported ecosystems, grouping syntax, and available options expand with each release.
+
+- [Dependabot configuration options](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file)
+- [Supported package ecosystems](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/about-dependabot-version-updates#supported-repositories-and-ecosystems)
+- [Dependabot security updates](https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates)
