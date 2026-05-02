@@ -13,7 +13,7 @@ ______________________________________________________________________
 | backend-first verification               | shipped     | Verify/inspect focus on contracts, observability, security                                              |
 | VS Code agent migration                  | shipped     | Native agent output format implemented                                                                  |
 | role model + doc restructure             | shipped     | 6-role model and docs baseline established                                                              |
-| new skill scaffolding                    | shipped     | 39-skill set with canonical naming                                                                      |
+| new skill scaffolding                    | shipped     | 42-skill set with canonical naming                                                                      |
 | agent skill wiring                       | shipped     | Role-to-skill mapping and handoffs are present                                                          |
 | CLI modularisation (v2.0.0)              | shipped     | 12 focused CLI modules; BaseCommand + CommandContext contract                                           |
 | manifest package (v2.0.0)                | shipped     | Dedicated `manifest/` package; atomic writes (ADR-016)                                                  |
@@ -50,7 +50,7 @@ Legend: shipped = implemented and available; candidate = optional future feature
 ### foundation [shipped]
 
 - template-driven generation with source under `src/vstack/_templates/` and install output under `.github/`
-- 39 backend-oriented skills
+- 42 backend-oriented skills
 - generated install manifest (`.github/vstack.json`) tracking installed artifacts
 - VS Code prompt file (`.prompt.md`) support
 - global install workflow (`vstack install --global`)

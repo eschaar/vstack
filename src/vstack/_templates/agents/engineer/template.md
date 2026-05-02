@@ -129,3 +129,6 @@ Only delegate when workstreams are genuinely independent.
 - `@#terragrunt` — Terragrunt DRY multi-environment IaC configuration
 - `@#cloudformation` — AWS CloudFormation template writing and review
 - `@#aws-cli` — AWS CLI operations and scripting
+- `@#k8s` — Kubernetes manifest authoring, rollout operations, and troubleshooting
+- `@#helm` — Helm chart authoring and release lifecycle operations
+- `@#rancher` — Rancher and Fleet multi-cluster operations and governance

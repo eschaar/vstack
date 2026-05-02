@@ -1,0 +1,16 @@
+name: rancher
+version: 20260502038
+description: |
+  Operate Kubernetes workloads and governance through Rancher. Covers cluster and
+  project context, role-based access, app deployment workflows, Fleet/GitOps basics,
+  and multi-cluster operational checks. Use when asked to "deploy through Rancher",
+  "review Rancher setup", "manage Rancher projects", or "troubleshoot Rancher-managed clusters".
+argument-hint: '[rancher server/context, cluster/project, and scope: deploy | governance | fleet | troubleshooting]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access. Requires Rancher UI/API access or Rancher CLI where applicable.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

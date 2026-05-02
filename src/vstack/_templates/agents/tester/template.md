@@ -116,3 +116,6 @@ Handoffs you own:
 - `@#dependabot` — review and validate dependency update configuration
 - `@#gdpr` — GDPR compliance review for data handling and privacy controls
 - `@#aws-cli` — AWS resource inspection and observability queries
+- `@#k8s` — Kubernetes workload validation, deployment safety, and runtime diagnostics
+- `@#helm` — Helm chart and release validation with rollback safety checks
+- `@#rancher` — Rancher/Fleet configuration and multi-cluster governance review

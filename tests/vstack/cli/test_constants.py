@@ -44,6 +44,9 @@ EXPECTED_CLI_NAMES = [
     "terragrunt",
     "cloudformation",
     "aws-cli",
+    "k8s",
+    "helm",
+    "rancher",
 ]
 
 

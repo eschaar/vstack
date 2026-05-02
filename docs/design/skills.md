@@ -86,6 +86,9 @@ ______________________________________________________________________
 | `terragrunt`          | Write, review, and refactor Terragrunt DRY multi-environment IaC. Root config, dependency blocks, `_envcommon`, and run-all workflows.               | engineer                                                | `terragrunt.hcl` files                      |
 | `cloudformation`      | Write and review AWS CloudFormation templates. Parameters, conditions, cross-stack references, change sets, drift detection, and security hardening. | engineer                                                | CFN template `.yaml`                        |
 | `aws-cli`             | AWS CLI workflows for IAM, S3, EC2, RDS, ECS, Lambda, CloudWatch, Secrets Manager, and SSM Parameter Store.                                          | engineer, tester                                        | —                                           |
+| `k8s`                 | Write, review, and troubleshoot Kubernetes manifests and operations. Covers rollout safety, probes, RBAC, namespace isolation, and diagnostics.      | engineer, tester                                        | Kubernetes manifests                        |
+| `helm`                | Write, review, and operate Helm charts and release lifecycles. Covers lint/template validation, upgrades, rollbacks, and dependencies.               | engineer, tester                                        | Helm charts + release config                |
+| `rancher`             | Operate Kubernetes workloads and governance through Rancher. Covers project scope, RBAC, Fleet/GitOps basics, and multi-cluster checks.              | engineer, tester                                        | Rancher/Fleet config                        |
 
 ______________________________________________________________________
 
