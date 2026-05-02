@@ -209,5 +209,3 @@ For each significant structural decision made during this review (technology cho
 - Write an ADR via `@#adr`.
 - Cross-reference related ADRs.
 - Update `docs/architecture/architecture.md` to reflect the final decisions.
-
-______________________________________________________________________

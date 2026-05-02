@@ -15,8 +15,6 @@ document. The goal is learning and prevention — not blame.
 **Golden rule: Incidents are system failures, not human failures. Every finding
 must be framed as a system improvement opportunity, never as individual blame.**
 
-______________________________________________________________________
-
 ## Step 0: Gather Incident Context
 
 Before analysis, collect all available evidence:
@@ -54,8 +52,6 @@ Services:      [list of affected services]
 Impact:        [user-facing description]
 ```
 
-______________________________________________________________________
-
 ## Step 1: Reconstruct the Timeline
 
 Build a precise, chronological timeline of events. Include:
@@ -80,8 +76,6 @@ Key markers:
   Full resolution:   HH:MM
   Total duration:    N hours N minutes
 ```
-
-______________________________________________________________________
 
 ## Step 2: Identify Contributing Factors
 
@@ -119,8 +113,6 @@ Categorize contributing factors:
 | External      | [e.g. upstream dependency failure, cloud provider issue] |
 | Knowledge     | [e.g. undocumented behaviour, tribal knowledge gap]      |
 
-______________________________________________________________________
-
 ## Step 3: Determine Root Cause
 
 The root cause is the deepest systemic condition that, if addressed, would
@@ -144,8 +136,6 @@ Class of incident:
    Capacity / traffic | Data corruption | Security breach | Other]
 ```
 
-______________________________________________________________________
-
 ## Step 4: Assess Impact
 
 Quantify the impact precisely:
@@ -168,8 +158,6 @@ Detection gap:
   How detected:       [alert | user complaint | manual]
   Why not faster:     [threshold too high | missing alert | other]
 ```
-
-______________________________________________________________________
 
 ## Step 5: Write Action Items
 
@@ -196,8 +184,6 @@ Response (resolve it faster next time):
 Process (improve how we handle incidents):
   [ ] [specific action] — owner: [name/team] — due: [date/sprint]
 ```
-
-______________________________________________________________________
 
 ## Step 6: Produce the Post-Mortem Document
 
@@ -271,8 +257,6 @@ Written for a non-technical audience.]
 [2–4 sentences summarizing the key takeaways for the team and organization.
 What does this incident teach us about our system, processes, or culture?]
 ```
-
-______________________________________________________________________
 
 ## Output
 

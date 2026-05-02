@@ -12,8 +12,6 @@ becomes the source of truth for implementation.
 - Implementation (engineering role)
 - Contract compliance validation (use `verify` or `code-review`)
 
-______________________________________________________________________
-
 ## Deliverable and artifact policy
 
 - Primary deliverable: `docs/design/design.md`
@@ -21,8 +19,6 @@ ______________________________________________________________________
 - Baseline-first default: write final design decisions directly to `docs/design/*.md` on the feature branch.
 - Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/DESIGN_DELTA.md`
 - Before merge: consolidate any delta draft into baseline design docs.
-
-______________________________________________________________________
 
 ## Step 0: Understand the Domain
 
@@ -41,8 +37,6 @@ Gather context:
 # Existing code/contracts
 find . -name 'openapi*' -o -name '*.proto' -o -name 'asyncapi*' 2>/dev/null | head -5
 ```
-
-______________________________________________________________________
 
 ## Step 1: Resource Design
 
@@ -71,8 +65,6 @@ erDiagram
   }
 ```
 
-______________________________________________________________________
-
 ## Step 2: Endpoint Design
 
 For each resource, define CRUD + custom actions:
@@ -89,8 +81,6 @@ DELETE /users/{id}     # Soft delete
 POST   /users/{id}/activate    # Non-CRUD action
 POST   /users/{id}/deactivate
 ```
-
-______________________________________________________________________
 
 ## Step 3: Request/Response Conventions
 
@@ -126,8 +116,6 @@ Define the standard envelope:
 }
 ```
 
-______________________________________________________________________
-
 ## Step 4: Error Code Taxonomy
 
 Define a machine-readable error code taxonomy:
@@ -155,8 +143,6 @@ INTERNAL_ERROR        — Unexpected server error (don't expose details)
 DEPENDENCY_ERROR      — Upstream service failure
 UNAVAILABLE           — Service temporarily unavailable
 ```
-
-______________________________________________________________________
 
 ## Step 5: Versioning & Contract Discipline
 
@@ -186,8 +172,6 @@ Deprecation process:
   - MINOR → new optional fields, backward compatible
   - MAJOR → breaking change
 
-______________________________________________________________________
-
 ## Step 6: Authentication & Authorization
 
 ```text
@@ -196,8 +180,6 @@ Token lifecycle: Access (15min) + Refresh (30 days)
 Token claims: user_id, roles[], tenant_id
 Authorization model: RBAC with per-resource checks
 ```
-
-______________________________________________________________________
 
 ## Step 7: Produce the Design Document
 
@@ -227,5 +209,3 @@ Output a complete design document to `docs/design/design.md` or `openapi.yaml`:
 ## Security
 [Input validation, rate limiting, CORS policy]
 ```
-
-______________________________________________________________________

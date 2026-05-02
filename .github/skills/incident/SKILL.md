@@ -47,7 +47,6 @@ document. The goal is learning and prevention — not blame.
 **Golden rule: Incidents are system failures, not human failures. Every finding
 must be framed as a system improvement opportunity, never as individual blame.**
 
-______________________________________________________________________
 
 ## Step 0: Gather Incident Context
 
@@ -86,7 +85,6 @@ Services:      [list of affected services]
 Impact:        [user-facing description]
 ```
 
-______________________________________________________________________
 
 ## Step 1: Reconstruct the Timeline
 
@@ -113,7 +111,6 @@ Key markers:
   Total duration:    N hours N minutes
 ```
 
-______________________________________________________________________
 
 ## Step 2: Identify Contributing Factors
 
@@ -151,7 +148,6 @@ Categorize contributing factors:
 | External      | [e.g. upstream dependency failure, cloud provider issue] |
 | Knowledge     | [e.g. undocumented behaviour, tribal knowledge gap]      |
 
-______________________________________________________________________
 
 ## Step 3: Determine Root Cause
 
@@ -176,7 +172,6 @@ Class of incident:
    Capacity / traffic | Data corruption | Security breach | Other]
 ```
 
-______________________________________________________________________
 
 ## Step 4: Assess Impact
 
@@ -201,7 +196,6 @@ Detection gap:
   Why not faster:     [threshold too high | missing alert | other]
 ```
 
-______________________________________________________________________
 
 ## Step 5: Write Action Items
 
@@ -229,7 +223,6 @@ Process (improve how we handle incidents):
   [ ] [specific action] — owner: [name/team] — due: [date/sprint]
 ```
 
-______________________________________________________________________
 
 ## Step 6: Produce the Post-Mortem Document
 
@@ -304,7 +297,6 @@ Written for a non-technical audience.]
 What does this incident teach us about our system, processes, or culture?]
 ```
 
-______________________________________________________________________
 
 ## Output
 

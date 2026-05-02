@@ -137,6 +137,7 @@ Handoffs you own:
 - `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
 - `@#inspect` — read-only verification audit, produces findings report
 - `@#security` — security audit
+- `@#threat-model` — structured threat analysis and mitigation prioritization
 - `@#performance` — performance review
 - `@#docs` — keep verification and audit documentation complete and current
 - `@#guardrails` — reliability and observability review

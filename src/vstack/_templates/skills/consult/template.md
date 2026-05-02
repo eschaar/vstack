@@ -17,8 +17,6 @@ Read only — do not change any code.
 - Performance profiling/regression analysis (use `performance`)
 - Tradeoff/impact/feasibility analysis (use `analyse`)
 
-______________________________________________________________________
-
 ## Step 0: Classify and Route
 
 Determine the user's real intent before reviewing anything.
@@ -48,8 +46,6 @@ If D, stop and return this routing recommendation:
 - Verification/fix loop -> `verify`
 
 Do not continue with DX scoring when routing to another skill.
-
-______________________________________________________________________
 
 ## Step 1: Run Exactly One Path
 
@@ -154,8 +150,6 @@ cat .github/workflows/*.yml 2>/dev/null | grep -E 'timeout|runs-on|steps' | head
 - Is there type checking?
 - Are these run on commit (pre-commit hooks) or in CI?
 
-______________________________________________________________________
-
 ## Step 2: Improvement Plan (ROI-first)
 
 For each weak area (typically score < 7), provide:
@@ -163,8 +157,6 @@ For each weak area (typically score < 7), provide:
 1. **Quick win (< 2 hours):** Highest immediate impact.
 1. **Medium investment (1-2 days):** Most likely path to 9/10.
 1. **Long-term:** Structural change to reach 10/10.
-
-______________________________________________________________________
 
 ## Output Contract
 
@@ -191,5 +183,3 @@ overall_score: [N/10 or N/A when routed]
 recommended_skill: [design|analyse|debug|code-review|security|performance|verify]
 reason: [one sentence]
 ```
-
-______________________________________________________________________

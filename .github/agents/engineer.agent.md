@@ -145,6 +145,7 @@ Only delegate when workstreams are genuinely independent.
 - `@#verify` — run tests, fix issues, re-verify loop
 - `@#code-review` — pre-merge review
 - `@#debug` — root-cause debugging
+- `@#threat-model` — threat model updates when design or attack surface changes
 - `@#performance` — performance investigation
 - `@#container` — Dockerfile and docker-compose authoring
 - `@#cicd` — GitHub Actions CI/CD workflow configuration

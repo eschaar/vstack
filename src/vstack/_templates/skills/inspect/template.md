@@ -23,16 +23,12 @@ Use `verify` when a fix loop is required.
 - Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/TESTING_DELTA.md`
 - Before merge: consolidate any blocking findings and final verdict into baseline reports.
 
-______________________________________________________________________
-
 ## Step 0: Scope
 
 ```text
 Report only. No edits. No commits.
 If critical issues are found, recommend `verify`.
 ```
-
-______________________________________________________________________
 
 ## Step 1: Baseline Checks
 
@@ -45,8 +41,6 @@ ______________________________________________________________________
 ```
 
 {{RUN_TESTS}}
-
-______________________________________________________________________
 
 ## Step 2: Extended Checks (when present)
 
@@ -75,8 +69,6 @@ Confirm for changed paths:
 - Trace propagation exists across service boundaries where applicable.
 - Alerts/runbooks exist for high-severity failure modes.
 
-______________________________________________________________________
-
 ## Step 3: Report
 
 ```text
@@ -101,5 +93,3 @@ ______________________________________________________________________
 ### Recommendation
 [SHIP-READY | USE VERIFY FIX LOOP | NEEDS ARCH/DESIGN REVIEW]
 ```
-
-______________________________________________________________________

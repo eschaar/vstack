@@ -64,6 +64,7 @@ ______________________________________________________________________
 | `verify`        | Verification fix-loop with mode routing (quick/standard/exhaustive). Runs targeted checks, fixes by severity, and re-verifies impacted paths.       | engineer, tester                                        | fixes + verification report                 |
 | `cicd`          | Write GitHub Actions CI/CD workflow configuration. Covers build, test, lint, security scan, container publish, deploy.                              | release                                                 | GitHub Actions workflow                     |
 | `container`     | Write and review Dockerfile, docker-compose, and container config. Covers multi-stage builds, non-root users, layer optimisation.                   | engineer                                                | Dockerfile + compose                        |
+| `threat-model`  | Threat modeling with STRIDE-first identification, optional DREAD prioritization, and selective PASTA depth for critical systems.                    | architect, tester, engineer, designer                   | `docs/architecture/threat-model.md`         |
 | `release-notes` | Prepare release artifacts: write release notes, own CHANGELOG updates, produce `docs/releases/{date}.md`.                                           | release                                                 | CHANGELOG + release doc                     |
 | `pr`            | Commit, push, and open a pull request from the current branch to main.                                                                              | release                                                 | commit + PR                                 |
 | `docs`          | Post-release documentation alignment for README/API docs/migrations and related artifacts (no CHANGELOG ownership).                                 | product, architect, designer, engineer, tester, release | updated docs artifacts                      |
@@ -213,6 +214,11 @@ Recommended skill directory layout:
 - `assets/` (templates, sample data, static resources)
 
 This aligns with progressive disclosure: keep `SKILL.md` focused (instructions body under about 5000 tokens; target under 500 lines), and move detailed material into `references/`, `scripts/`, or `assets/`.
+
+Token-efficiency guidance:
+
+- Prefer heading hierarchy and concise transition text over decorative separator lines.
+- Avoid long horizontal ruler lines made from repeated characters (for example `_____`) in skill bodies.
 
 ## search and context hygiene
 

@@ -15,8 +15,6 @@ analysis report. Do not implement changes — that is engineering role work.
 - Implementation (engineering role)
 - Full test run (use `verify`)
 
-______________________________________________________________________
-
 ## Step 0: Define the Question
 
 Clarify exactly what is being analysed:
@@ -37,8 +35,6 @@ Analysis type: [impact | tradeoff | feasibility | root-cause | risk | other]
 Question:      [Precise question being answered]
 Scope:         [What's in and out of scope for this analysis]
 ```
-
-______________________________________________________________________
 
 ## Phase 1: Evidence Gathering
 
@@ -71,8 +67,6 @@ For **dependency analysis**:
 # Dependency graph (if available)
 [ -f package.json ] && npx madge --circular --extensions ts ./src 2>/dev/null || true
 ```
-
-______________________________________________________________________
 
 ## Phase 2: Dimension Analysis
 
@@ -119,8 +113,6 @@ For each option:
 | ---- | --------------- | --------------- | ---------- |
 | ...  | High/Medium/Low | High/Medium/Low | ...        |
 
-______________________________________________________________________
-
 ## Phase 3: Data & Evidence
 
 Support findings with concrete evidence:
@@ -135,8 +127,6 @@ Reference specific:
 - Code locations (file:line)
 - Data points (error counts, latency numbers, test results)
 - Documentation (ADRs, design docs, API specs)
-
-______________________________________________________________________
 
 ## Phase 4: Findings & Conclusions
 
@@ -157,8 +147,6 @@ State conclusions with confidence level:
 - **Certain:** evidenced directly from code/data
 - **Probable:** well-supported by evidence but not confirmed
 - **Uncertain:** hypothesis that requires further investigation
-
-______________________________________________________________________
 
 ## Analysis Report
 
@@ -184,5 +172,3 @@ ______________________________________________________________________
 ### Confidence
 [Overall confidence level: high / medium / low — and why]
 ```
-
-______________________________________________________________________

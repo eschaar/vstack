@@ -165,5 +165,3 @@ For each finding: explain the tradeoff, give an opinionated recommendation, ask 
 - **SCOPE CHANGE NEEDED:** Here's the revised scope I recommend.
 
 Present as: "Overall assessment: [READY/NEEDS REVISION/SCOPE CHANGE] because [1-2 sentence reason]."
-
-______________________________________________________________________
