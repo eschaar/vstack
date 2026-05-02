@@ -160,7 +160,7 @@ jobs:
 | `security-and-quality`  | Security + code quality queries (larger, slower)           |
 | `security-experimental` | Experimental queries (higher false-positive rate)          |
 
-## Step 4: Monorepo Configuration (optional)
+## Step 4: Monorepo and Path Configuration (optional)
 
 To restrict analysis to specific paths, create `.github/codeql/codeql-config.yml`:
 
@@ -182,13 +182,13 @@ Reference it in the workflow:
     config-file: .github/codeql/codeql-config.yml
 ```
 
-For monorepos with per-component results, use the `category` parameter:
+For monorepos with per-component results:
 
 ```yaml
 category: "/language:${{ matrix.language }}/component:backend"
 ```
 
-## Step 5: Skip Documentation-Only PRs
+To skip documentation-only PRs:
 
 ```yaml
 on:
@@ -199,7 +199,7 @@ on:
       - 'docs/**'
 ```
 
-## Step 6: Alert Triage
+## Step 5: Alert Triage
 
 Alerts appear in the repository Security tab after the first scan.
 
@@ -214,29 +214,19 @@ Alerts appear in the repository Security tab after the first scan.
 - Dismiss false positives with a documented reason (creates an audit trail)
 - Copilot Autofix generates fix suggestions automatically for CodeQL alerts in PRs — review carefully before accepting
 
-## Step 7: CodeQL CLI (local scanning)
+## Step 6: CodeQL CLI (local scanning)
 
 ```bash
-# Install: download CodeQL bundle from github/codeql-action releases
-# Add codeql binary to PATH, then:
-
-# Create database
-codeql database create codeql-db \
-  --language=python \
-  --source-root=src
+# Create database (after adding codeql binary to PATH)
+codeql database create codeql-db --language=python --source-root=src
 
 # Analyze
 codeql database analyze codeql-db \
-  python-security-extended.qls \
-  --format=sarif-latest \
-  --output=results.sarif
+  python-security-extended.qls --format=sarif-latest --output=results.sarif
 
-# Upload results to GitHub
+# Upload to GitHub
 GITHUB_TOKEN=<token> codeql github upload-results \
-  --repository=<owner/repo> \
-  --ref=refs/heads/main \
-  --commit=<sha> \
-  --sarif=results.sarif
+  --repository=<owner/repo> --ref=refs/heads/main --commit=<sha> --sarif=results.sarif
 ```
 
 ## Review checklist

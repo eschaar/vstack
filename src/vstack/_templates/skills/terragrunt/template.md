@@ -205,25 +205,19 @@ and parallelizes independent units.
 
 ## Step 7: DRY with \_envcommon
 
-Share inputs across environments without duplication:
+Share defaults across environments without duplication:
 
 ```hcl
-# infra/_envcommon/rds.hcl — shared defaults
-locals {
-  # Callers can override these
-  instance_class   = "db.t3.medium"
-  allocated_storage = 20
-}
-
+# infra/_envcommon/rds.hcl
 inputs = {
-  instance_class    = local.instance_class
-  allocated_storage = local.allocated_storage
-  storage_encrypted = true
+  instance_class      = "db.t3.medium"
+  allocated_storage   = 20
+  storage_encrypted   = true
   deletion_protection = true
 }
 ```
 
-Units reference it:
+Override per environment using `merge`:
 
 ```hcl
 locals {
@@ -231,8 +225,7 @@ locals {
 }
 
 inputs = merge(local.common.inputs, {
-  # Overrides for this environment
-  instance_class = "db.t3.large"
+  instance_class = "db.t3.large"  # prod override
 })
 ```
 

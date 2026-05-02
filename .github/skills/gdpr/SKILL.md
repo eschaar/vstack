@@ -197,21 +197,6 @@ Never MD5, SHA-1, or SHA-256 for passwords.
 Use synthetic data generators: `Faker` (Python/JS/Ruby), `factory_boy` (Python).
 Use `@example.com` for all test email addresses.
 
-## Step 11: Anti-Patterns
-
-| Anti-pattern                                  | Correct approach                        |
-| --------------------------------------------- | --------------------------------------- |
-| PII in URLs                                   | Opaque UUIDs as public identifiers      |
-| Logging full request bodies                   | Log structured event metadata only      |
-| "Keep forever" schema                         | TTL defined at design time              |
-| Production data in dev/test                   | Synthetic data + scrubbing pipeline     |
-| Hardcoded secrets                             | KMS + secret manager                    |
-| `Access-Control-Allow-Origin: *` on auth APIs | Explicit CORS allowlist                 |
-| Storing consent with profile data             | Dedicated consent store                 |
-| PII in GET query params                       | POST body or authenticated session      |
-| Sequential integer IDs in public URLs         | UUIDs                                   |
-| Backup regions outside EEA                    | Explicit region lockdown on backup jobs |
-
 ## PR Review Checklist
 
 ### Data model

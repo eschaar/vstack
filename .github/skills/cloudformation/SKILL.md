@@ -144,27 +144,19 @@ Parameters:
 
 ```yaml
 Resources:
-  # Use logical IDs in PascalCase — they appear in change sets and console
   AppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      # Physical resource names: include stack name and environment to avoid collisions
       GroupName: !Sub "${AWS::StackName}-app-${Environment}"
       VpcId: !Ref VpcId
       Tags:
-        - Key: Name
-          Value: !Sub "${AWS::StackName}-app"
         - Key: Environment
           Value: !Ref Environment
         - Key: ManagedBy
           Value: cloudformation
 ```
 
-**Naming rules:**
-
-- Logical IDs: PascalCase, descriptive, no hyphens (e.g. `AppServiceSecurityGroup`)
-- Physical names: use `!Sub "${AWS::StackName}-<role>"` — guarantees uniqueness across stacks
-- Avoid hardcoded physical names where possible — they block replacement operations
+**Rules:** Logical IDs in PascalCase; physical names use `!Sub "${AWS::StackName}-<role>"` to guarantee cross-stack uniqueness; avoid hardcoded physical names — they block replacement operations.
 
 ## Step 4: Intrinsic Functions
 
@@ -325,11 +317,7 @@ AppSecurityGroup:
         CidrIp: 0.0.0.0/0   # HTTPS only — review for internal services
 ```
 
-**cfn-lint checks to enforce:**
-
-- `E3001` — invalid resource type
-- `W3045` — security group with unrestricted ingress
-- `E3030` — invalid property values
+**cfn-lint errors to enforce:** `E3001` (invalid resource type), `W3045` (unrestricted SG ingress), `E3030` (invalid property values).
 
 ## Review Checklist
 

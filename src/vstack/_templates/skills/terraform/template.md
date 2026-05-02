@@ -13,18 +13,14 @@ Write, review, and refactor Terraform configurations for any provider.
 ## Step 0: Detect Context
 
 ```bash
-# Check Terraform version and existing structure
 terraform version 2>/dev/null || echo "terraform not installed"
 
 # Find all Terraform roots
-find . -name "*.tf" -not -path "*/.terraform/*" -not -path "*/vendor/*" | \
-  sed 's|/[^/]*\.tf$||' | sort -u
+find . -name "*.tf" -not -path "*/.terraform/*" | sed 's|/[^/]*\.tf$||' | sort -u
 
-# Check existing backend configuration
-grep -r "backend" . --include="*.tf" -l 2>/dev/null
-
-# Check provider constraints
-grep -A5 'required_providers' . -r --include="*.tf" | head -40
+# Check backend and provider constraints
+grep -rl "backend" . --include="*.tf" 2>/dev/null
+grep -A5 'required_providers' -r . --include="*.tf" 2>/dev/null | head -20
 ```
 
 ## Step 1: Repository Structure
@@ -260,13 +256,13 @@ Set up drift detection in CI:
 
 ## Step 10: State Operations (high risk)
 
-State manipulations are destructive. Always back up state first.
+Always back up state before state manipulations.
 
 ```bash
 # List state resources
 terraform state list
 
-# Show a specific resource's state
+# Show a specific resource
 terraform state show aws_s3_bucket.uploads
 
 # Move resource to new address (after refactor)
@@ -279,8 +275,7 @@ terraform import aws_s3_bucket.uploads my-existing-bucket-name
 terraform state rm aws_s3_bucket.old_name
 ```
 
-> These operations modify state directly — run `terraform plan` after every
-> state operation to verify the outcome before applying.
+Run `terraform plan` after every state operation to verify the outcome.
 
 ## Review Checklist
 

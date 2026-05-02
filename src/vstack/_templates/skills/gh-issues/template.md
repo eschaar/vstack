@@ -134,15 +134,12 @@ gh issue edit <number> --milestone "<milestone-title>"
 # Close or reopen
 gh issue close <number> --comment "Resolved in <commit/PR>."
 gh issue reopen <number>
-```
 
-## Step 5: Add a Comment
-
-```bash
+# Add a comment
 gh issue comment <number> --body "Comment text."
 ```
 
-## Step 6: Sub-issues (if hierarchy is needed)
+## Step 5: Sub-issues (if hierarchy is needed)
 
 GitHub supports sub-issues via the REST API:
 
@@ -183,9 +180,8 @@ gh api "repos/$OWNER_REPO/issues/$PARENT/sub_issues" \
 
 ## Output
 
-Report the issue URL after creation or update:
+Report the URL after creation or update:
 
 ```text
-Issue created: https://github.com/<org>/<repo>/issues/<number>
-Title: <title>
+https://github.com/<org>/<repo>/issues/<number>
 ```
