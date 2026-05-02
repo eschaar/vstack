@@ -2,6 +2,29 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [2.1.0](https://github.com/eschaar/vstack/compare/2.0.4...2.1.0) (2026-05-02)
+
+
+### Features
+
+* **cli:** add dry-run install with type/name selector summary and conflict resolution hints ([c783552](https://github.com/eschaar/vstack/commit/c7835526eddabea99b0642acf645ec14d2518eae))
+
+
+### Fixes
+
+* **ci:** use job-scoped PyPI fallback token checks ([267417a](https://github.com/eschaar/vstack/commit/267417a2fd6899d9d3c4ecd7bbdfab5ba602d84f))
+* **cli:** align dry-run summary guidance and tests ([c11b67d](https://github.com/eschaar/vstack/commit/c11b67d53da9e9b706b187278f88ad9d87fcad93))
+
+
+### Maintenance
+
+* **ci:** add trusted publishing fallback and publish concurrency group ([ef4702d](https://github.com/eschaar/vstack/commit/ef4702d04839aa1f16c4343f8e27b517c90508f2))
+* **deps:** bump cachetools to 7.1.0 and tox to 4.53.1 ([5d60804](https://github.com/eschaar/vstack/commit/5d60804b72d111ca7444e79b233aa57325c08754))
+* **docs:** add Development Commands and CLI Architecture to copilot-instructions ([5bf4c24](https://github.com/eschaar/vstack/commit/5bf4c244df64f2adacf9a020e76828423222baab))
+* **docs:** add first-install dry-run workflow and preserved-file conflict resolution ([fa8ef18](https://github.com/eschaar/vstack/commit/fa8ef18230c5f43c0c4439e5c74cb15839c8fc04))
+* **docs:** fix BaseCommand signature, model type, role assignments, and contributor workflow ([45a19be](https://github.com/eschaar/vstack/commit/45a19be8f17459a158915bfda8a6d9508af16b7c))
+* **docs:** fix maintainer role, stale paths, gate count, and tool names in ADRs 001-012 ([dcf596a](https://github.com/eschaar/vstack/commit/dcf596a2b145c1ae31e7c3a326edd5fae728f11a))
+
 ## [2.0.4](https://github.com/eschaar/vstack/compare/2.0.3...2.0.4) (2026-04-28)
 
 ### Fixes
