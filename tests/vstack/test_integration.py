@@ -91,6 +91,22 @@ class TestIntegrationVstack:
         assert upgraded["manifest_version"] == 2
         assert upgraded["hash_algorithm"] == "sha256"
 
+    def test_dry_run_preserved_selectors_include_type_prefix(self, tmp_path: Path) -> None:
+        """Preserved selectors include type/name prefix so artifacts can be targeted precisely."""
+        github = tmp_path / ".github"
+        (github / "agents").mkdir(parents=True)
+        (github / "agents" / "engineer.agent.md").write_text("# custom engineer", encoding="utf-8")
+        (github / "agents" / "architect.agent.md").write_text(
+            "# custom architect", encoding="utf-8"
+        )
+
+        result = run_vstack(["install", "--dry-run", "--target", str(tmp_path)])
+        assert result.returncode == 0, (
+            f"vstack install --dry-run failed:\n{result.stdout}\n{result.stderr}"
+        )
+        assert "agent/engineer" in result.stdout
+        assert "agent/architect" in result.stdout
+
     def test_manifest_upgrade_backfill_adds_checksum_for_footer_tagged_legacy_entry(
         self,
         tmp_path: Path,

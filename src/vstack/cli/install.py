@@ -128,22 +128,21 @@ class InstallCommand(BaseCommand):
         """Print install/update/skip output line for one artifact."""
         if action == "adopt":
             print(
-                f"  {colors.CYAN}≈{colors.RESET}  {rel}"
+                f"  {prefix}{colors.CYAN}≈{colors.RESET}  {rel}"
                 f"  {colors.DIM}adopted — {reason}{colors.RESET}"
             )
             return
 
         if action == "preserve":
-            force_hint = " Use --force or --force-name for this artifact."
             print(
-                f"  {colors.YELLOW}↷{colors.RESET}  {rel}"
-                f"  {colors.DIM}preserved — {reason}.{force_hint}{colors.RESET}"
+                f"  {prefix}{colors.YELLOW}↷{colors.RESET}  {rel}"
+                f"  {colors.DIM}preserved — {reason}{colors.RESET}"
             )
             return
 
         if action == "skip":
             print(
-                f"  {colors.YELLOW}↷{colors.RESET}  {rel}"
+                f"  {prefix}{colors.YELLOW}↷{colors.RESET}  {rel}"
                 f"  {colors.DIM}skipped — already v{existing_version}{colors.RESET}"
             )
             return
@@ -245,16 +244,24 @@ class InstallCommand(BaseCommand):
         existing_entries,
         new_entries,
         checksum_algorithm: str,
-    ) -> None:
-        """Apply install decision flow for one rendered artifact."""
+    ) -> str:
+        """Apply install decision flow for one rendered artifact and return the action taken."""
         out_file = out_dir / gen.output_path(artifact.name)
         new_version = (artifact.frontmatter or {}).get("version") or VERSION
         key = f"{gen.config.type_name}/{artifact.name}"
         existing_entry = existing_entries.get(key)
         existing_version = existing_entry.version if existing_entry is not None else None
         rel = service.label(out_file)
-        force_name = artifact.name in targeted_force_names or rel in targeted_force_names
-        adopt_name = artifact.name in targeted_adopt_names or rel in targeted_adopt_names
+        force_name = (
+            artifact.name in targeted_force_names
+            or key in targeted_force_names
+            or rel in targeted_force_names
+        )
+        adopt_name = (
+            artifact.name in targeted_adopt_names
+            or key in targeted_adopt_names
+            or rel in targeted_adopt_names
+        )
         adopted_values: tuple[str | None, str] | None = None
 
         if artifact.unresolved:
@@ -306,7 +313,7 @@ class InstallCommand(BaseCommand):
                 checksum=content_hash(artifact.content),
                 checksum_algorithm=checksum_algorithm,
             )
-            return
+            return action
 
         if action == "adopt" and adopted_values is not None:
             adopted_version, adopted_checksum = adopted_values
@@ -318,7 +325,7 @@ class InstallCommand(BaseCommand):
                 checksum=adopted_checksum,
                 checksum_algorithm=checksum_algorithm,
             )
-            return
+            return action
 
         if existing_entry is not None:
             preserve_existing_entry(
@@ -326,6 +333,7 @@ class InstallCommand(BaseCommand):
                 manifest_key=gen.config.manifest_key,
                 existing_entry=existing_entry,
             )
+        return action
 
     @staticmethod
     def _write_manifest(
@@ -346,6 +354,54 @@ class InstallCommand(BaseCommand):
         )
         manifest_file.write(manifest)
         print(f"  {colors.DIM}wrote  {service.label(manifest_file.path)}{colors.RESET}")
+
+    @staticmethod
+    def _print_summary(
+        *,
+        colors,
+        action_counts: dict[str, int],
+        preserved_selectors: list[str],
+        dry_run: bool,
+    ) -> None:
+        """Print a readable summary and conflict guidance after an install run."""
+        installed = action_counts.get("install", 0)
+        updated = action_counts.get("update", 0)
+        preserved = action_counts.get("preserve", 0)
+        skipped = action_counts.get("skip", 0)
+        adopted = action_counts.get("adopt", 0)
+
+        install_label = "installed"
+        summary_title = "Summary (dry-run)" if dry_run else "Summary"
+        total = installed + updated + preserved + skipped + adopted
+
+        print()
+        print(f"  {colors.BOLD}{summary_title}{colors.RESET}")
+        print(f"    total processed : {colors.BOLD}{total}{colors.RESET}")
+        print(f"    {install_label:<15}: {colors.BOLD}{installed}{colors.RESET}")
+        print(f"    updated         : {colors.BOLD}{updated}{colors.RESET}")
+        print(f"    preserved       : {colors.BOLD}{preserved}{colors.RESET}")
+        print(f"    skipped         : {colors.BOLD}{skipped}{colors.RESET}")
+        print(f"    adopted         : {colors.BOLD}{adopted}{colors.RESET}")
+
+        if preserved:
+            noun = "file" if preserved == 1 else "files"
+            selectors_suffix = " Preserved selectors:" if preserved_selectors else ""
+            print()
+            print(
+                f"  {colors.YELLOW}⚠{colors.RESET}  "
+                f"{preserved} {noun} preserved — existing files were not overwritten."
+                f"{selectors_suffix}"
+            )
+            if preserved_selectors:
+                for selector in sorted(preserved_selectors):
+                    print(f"     - {selector}")
+            print("  Next steps:")
+            print(f"     {colors.DIM}--force{colors.RESET}               overwrite all")
+            print(f"     {colors.DIM}--force-name NAME{colors.RESET}     overwrite one artifact")
+            print(
+                f"     {colors.DIM}--adopt-name NAME{colors.RESET}     "
+                "take ownership without overwriting"
+            )
 
     @staticmethod
     def execute(
@@ -377,13 +433,15 @@ class InstallCommand(BaseCommand):
 
         prefix = f"{colors.DIM}[dry-run]{colors.RESET} " if dry_run else ""
         all_ok = True
+        action_counts: dict[str, int] = {}
+        preserved_selectors: set[str] = set()
 
         for gen in gens:
             out_dir = install_dir / gen.config.output_subdir
             artifacts = gen.render_all()
 
             for artifact in artifacts:
-                InstallCommand._install_single_artifact(
+                artifact_action = InstallCommand._install_single_artifact(
                     service=service,
                     gen=gen,
                     artifact=artifact,
@@ -399,6 +457,9 @@ class InstallCommand(BaseCommand):
                     new_entries=new_entries,
                     checksum_algorithm=checksum_algorithm,
                 )
+                action_counts[artifact_action] = action_counts.get(artifact_action, 0) + 1
+                if artifact_action == "preserve":
+                    preserved_selectors.add(f"{gen.config.type_name}/{artifact.name}")
 
             # Verify source for unresolvable issues.
             verify_result = gen.verify_input()
@@ -406,6 +467,13 @@ class InstallCommand(BaseCommand):
                 if msg.level == "fail":
                     print(f"  ERROR [{gen.config.type_name}]: {msg.message}", file=sys.stderr)
                     all_ok = False
+
+        InstallCommand._print_summary(
+            colors=colors,
+            action_counts=action_counts,
+            preserved_selectors=sorted(preserved_selectors),
+            dry_run=dry_run,
+        )
 
         if not dry_run:
             InstallCommand._write_manifest(
