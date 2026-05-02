@@ -397,9 +397,12 @@ class InstallCommand(BaseCommand):
                     print(f"     - {selector}")
             print("  Next steps:")
             print(f"     {colors.DIM}--force{colors.RESET}               overwrite all")
-            print(f"     {colors.DIM}--force-name NAME{colors.RESET}     overwrite one artifact")
             print(
-                f"     {colors.DIM}--adopt-name NAME{colors.RESET}     "
+                f"     {colors.DIM}--force-name <name|type/name>{colors.RESET} "
+                "overwrite one artifact"
+            )
+            print(
+                f"     {colors.DIM}--adopt-name <name|type/name>{colors.RESET} "
                 "take ownership without overwriting"
             )
 

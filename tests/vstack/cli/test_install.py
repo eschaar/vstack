@@ -336,7 +336,7 @@ class TestInstallCommand:
         capsys: pytest.CaptureFixture[str],
     ) -> None:
         """Summary with preserved files shows count, warning, and flag guidance."""
-        colors = SimpleNamespace(YELLOW="⚠", RESET="", BOLD="", DIM="", GREEN="", CYAN="")
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="", CYAN="")
         InstallCommand._print_summary(
             colors=colors,
             action_counts={"install": 3, "preserve": 2},
@@ -345,13 +345,14 @@ class TestInstallCommand:
         )
         out = capsys.readouterr().out
         assert "Summary" in out
+        assert "⚠" in out
         assert "preserved" in out and ": 2" in out
         assert "2 files preserved" in out
         assert "Preserved selectors:" in out
         assert "Next steps:" in out
         assert "--force" in out
-        assert "--force-name NAME" in out
-        assert "--adopt-name NAME" in out
+        assert "--force-name <name|type/name>" in out
+        assert "--adopt-name <name|type/name>" in out
         assert "- agent/engineer" in out
         assert "- skill/verify" in out
 
@@ -370,7 +371,7 @@ class TestInstallCommand:
         out = capsys.readouterr().out
         assert "1 file preserved" in out
 
-    def test_print_summary_dry_run_uses_would_install_label(
+    def test_print_summary_dry_run_marks_header_and_keeps_installed_label(
         self,
         capsys: pytest.CaptureFixture[str],
     ) -> None:
