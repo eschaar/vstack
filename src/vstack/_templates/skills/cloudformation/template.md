@@ -1,0 +1,314 @@
+{{SKILL_CONTEXT}}
+
+# cloudformation — AWS CloudFormation
+
+Write and review CloudFormation templates for AWS infrastructure.
+
+## Out of scope
+
+- Terraform / Terragrunt IaC (use `terraform` or `terragrunt`)
+- General AWS CLI operations (use `aws-cli`)
+- CDK authoring (CDK synthesizes to CloudFormation — review the synthesized template with this skill)
+
+## Step 0: Detect Context
+
+```bash
+# Check for existing stacks and templates
+find . -name "*.yaml" -o -name "*.json" | xargs grep -l "AWSTemplateFormatVersion" 2>/dev/null
+
+# Check for SAM templates
+find . -name "template.yaml" -o -name "samconfig.toml" 2>/dev/null
+
+# List deployed stacks in current region
+aws cloudformation list-stacks \
+  --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE \
+  --query 'StackSummaries[*].[StackName,StackStatus]' \
+  --output table
+```
+
+## Step 1: Template Structure
+
+```yaml
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  One-line description of what this stack provisions.
+  Used in the AWS Console — keep it informative.
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "Network Configuration"
+        Parameters:
+          - VpcId
+          - SubnetIds
+    ParameterLabels:
+      VpcId:
+        default: "VPC ID"
+
+Parameters:
+  Environment:
+    Type: String
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC to deploy into
+
+Conditions:
+  IsProd: !Equals [!Ref Environment, prod]
+
+Resources:
+  # ... all resources
+
+Outputs:
+  ServiceEndpoint:
+    Description: Load balancer DNS name
+    Value: !GetAtt LoadBalancer.DNSName
+    Export:
+      Name: !Sub "${AWS::StackName}-ServiceEndpoint"
+```
+
+## Step 2: Parameters
+
+```yaml
+Parameters:
+  # Use AWS-specific parameter types for validation
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+
+  # Constrain values with AllowedValues
+  InstanceType:
+    Type: String
+    Default: t3.medium
+    AllowedValues: [t3.small, t3.medium, t3.large, m5.large]
+
+  # Mark secrets as NoEcho
+  DbPassword:
+    Type: String
+    NoEcho: true
+    MinLength: 16
+    Description: Database password — supply via SSM Parameter or Secrets Manager
+
+  # Prefer SSM Parameter references over raw values for secrets
+  DbPasswordSsmPath:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /myapp/prod/db_password
+    NoEcho: true
+```
+
+**Rules:**
+
+- Use AWS-specific parameter types (`AWS::EC2::VPC::Id`, `AWS::EC2::Subnet::Id`) for automatic validation
+- Always add `NoEcho: true` to secret parameters
+- Prefer SSM Parameter Store references (`AWS::SSM::Parameter::Value<T>`) for secrets over raw string parameters
+- Add `AllowedValues` for all constrained strings
+
+## Step 3: Resource Naming
+
+```yaml
+Resources:
+  # Use logical IDs in PascalCase — they appear in change sets and console
+  AppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      # Physical resource names: include stack name and environment to avoid collisions
+      GroupName: !Sub "${AWS::StackName}-app-${Environment}"
+      VpcId: !Ref VpcId
+      Tags:
+        - Key: Name
+          Value: !Sub "${AWS::StackName}-app"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+```
+
+**Naming rules:**
+
+- Logical IDs: PascalCase, descriptive, no hyphens (e.g. `AppServiceSecurityGroup`)
+- Physical names: use `!Sub "${AWS::StackName}-<role>"` — guarantees uniqueness across stacks
+- Avoid hardcoded physical names where possible — they block replacement operations
+
+## Step 4: Intrinsic Functions
+
+| Function                             | Use                                                    |
+| ------------------------------------ | ------------------------------------------------------ |
+| `!Ref`                               | Reference a parameter or resource's primary identifier |
+| `!GetAtt Resource.Attr`              | Get a specific attribute of a resource                 |
+| `!Sub "text ${Variable}"`            | String interpolation                                   |
+| `!Select [n, !Ref List]`             | Pick item from a list                                  |
+| `!Split [",", !Ref StringList]`      | Split a comma-separated string                         |
+| `!ImportValue StackName-Export`      | Cross-stack reference                                  |
+| `!If [Condition, TrueVal, FalseVal]` | Conditional value                                      |
+| `!And`, `!Or`, `!Not`, `!Equals`     | Condition logic                                        |
+
+```yaml
+# Cross-stack reference — import an export from another stack
+DatabaseEndpoint: !ImportValue
+  Fn::Sub: "${NetworkStackName}-DatabaseEndpoint"
+```
+
+## Step 5: Conditions
+
+```yaml
+Conditions:
+  IsProd: !Equals [!Ref Environment, prod]
+  IsNotProd: !Not [Condition: IsProd]
+  EnableDeletion: !Equals [!Ref EnableDeletion, "true"]
+
+Resources:
+  ReadReplica:
+    Type: AWS::RDS::DBInstance
+    Condition: IsProd   # only created in prod
+    Properties:
+      # ...
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      # ...
+      PolicyDocument:
+        Statement:
+          - Effect: !If [IsProd, Deny, Allow]
+```
+
+## Step 6: Stack Outputs and Cross-Stack References
+
+```yaml
+Outputs:
+  VpcId:
+    Description: VPC ID for use by dependent stacks.
+    Value: !Ref VPC
+    Export:
+      Name: !Sub "${AWS::StackName}-VpcId"
+
+  PrivateSubnetIds:
+    Description: Comma-separated private subnet IDs.
+    Value: !Join [",", [!Ref PrivateSubnet1, !Ref PrivateSubnet2]]
+    Export:
+      Name: !Sub "${AWS::StackName}-PrivateSubnetIds"
+```
+
+**Cross-stack dependency rules:**
+
+- Export names must be unique within a region/account
+- A stack cannot be deleted while another stack imports its exports
+- Use `!ImportValue` sparingly — tight coupling between stacks; consider SSM Parameter Store for loose coupling
+
+## Step 7: Deploy Workflow
+
+```bash
+# Validate template syntax and resource types
+aws cloudformation validate-template --template-body file://template.yaml
+
+# Lint with cfn-lint (catches more issues than validate)
+cfn-lint template.yaml
+
+# Create/update via change set (recommended — review before execute)
+aws cloudformation deploy \
+  --template-file template.yaml \
+  --stack-name myapp-dev \
+  --parameter-overrides \
+      Environment=dev \
+      VpcId=vpc-12345678 \
+  --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
+  --no-execute-changeset  # review first
+
+# Show the change set before executing
+aws cloudformation describe-change-set \
+  --stack-name myapp-dev \
+  --change-set-name <change-set-name> \
+  --query 'Changes[*].ResourceChange.[Action,ResourceType,LogicalResourceId,Replacement]' \
+  --output table
+
+# Execute after review
+aws cloudformation deploy \
+  --template-file template.yaml \
+  --stack-name myapp-dev \
+  --parameter-overrides Environment=dev VpcId=vpc-12345678 \
+  --capabilities CAPABILITY_IAM
+```
+
+## Step 8: Drift Detection
+
+```bash
+# Start drift detection
+aws cloudformation detect-stack-drift --stack-name myapp-prod
+
+# Check detection status (wait until DETECTION_COMPLETE)
+aws cloudformation describe-stack-drift-detection-status \
+  --stack-drift-detection-id <id>
+
+# Show drifted resources
+aws cloudformation describe-stack-resource-drifts \
+  --stack-name myapp-prod \
+  --stack-resource-drift-status-filters MODIFIED DELETED \
+  --query 'StackResourceDrifts[*].[LogicalResourceId,ResourceType,StackResourceDriftStatus]' \
+  --output table
+```
+
+## Step 9: Security Hardening
+
+```yaml
+# S3 bucket — block public access, enable encryption
+AppBucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketEncryption:
+      ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: aws:kms
+            KMSMasterKeyID: !Ref KmsKey
+    PublicAccessBlockConfiguration:
+      BlockPublicAcls: true
+      BlockPublicPolicy: true
+      IgnorePublicAcls: true
+      RestrictPublicBuckets: true
+    VersioningConfiguration:
+      Status: Enabled
+
+# RDS — encryption, no public access, deletion protection in prod
+Database:
+  Type: AWS::RDS::DBInstance
+  DeletionPolicy: Snapshot
+  Properties:
+    StorageEncrypted: true
+    MultiAZ: !If [IsProd, true, false]
+    PubliclyAccessible: false
+    DeletionProtection: !If [IsProd, true, false]
+
+# Security group — no 0.0.0.0/0 on admin ports
+AppSecurityGroup:
+  Type: AWS::EC2::SecurityGroup
+  Properties:
+    SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: 0.0.0.0/0   # HTTPS only — review for internal services
+```
+
+**cfn-lint checks to enforce:**
+
+- `E3001` — invalid resource type
+- `W3045` — security group with unrestricted ingress
+- `E3030` — invalid property values
+
+## Review Checklist
+
+- [ ] `AWSTemplateFormatVersion` and `Description` present
+- [ ] All parameters have `Description`; secret parameters have `NoEcho: true`
+- [ ] Secrets use SSM Parameter Store references, not raw strings
+- [ ] Physical resource names use `!Sub "${AWS::StackName}-..."` to avoid collisions
+- [ ] All resources tagged with `Environment` and `ManagedBy: cloudformation`
+- [ ] S3 buckets: public access blocked, encryption enabled, versioning on
+- [ ] RDS: `StorageEncrypted: true`, `PubliclyAccessible: false`, `DeletionProtection` set in prod
+- [ ] Security groups: no `0.0.0.0/0` on SSH/RDP; document HTTPS exceptions
+- [ ] IAM roles: least-privilege policies; no `*` actions on `*` resources
+- [ ] `cfn-lint` passes with no errors or warnings
+- [ ] Change set reviewed before executing in production

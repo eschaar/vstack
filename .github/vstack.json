@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-05-02T15:29:19.471919+00:00",
+  "installed_at": "2026-05-02T15:39:12.574837+00:00",
   "artifacts": {
     "skills": [
       {
@@ -27,10 +27,24 @@
         "checksum_algorithm": "sha256"
       },
       {
+        "name": "aws-cli",
+        "file": "skills/aws-cli/SKILL.md",
+        "version": "20260502033",
+        "checksum": "d97c868ac6da4d0c469a9ca61a6a08a7b4fdb3cdec4fde79c6d7e6a90633952d",
+        "checksum_algorithm": "sha256"
+      },
+      {
         "name": "cicd",
         "file": "skills/cicd/SKILL.md",
         "version": "20260421006",
         "checksum": "3adc8d90695d4db09022ba5016c2562cf698247f1c43e68cce11c68919b3ce5c",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "cloudformation",
+        "file": "skills/cloudformation/SKILL.md",
+        "version": "20260502032",
+        "checksum": "4f7c055dec6f6c7893a4942428701d2d6263851906b08172998b6c46ecb937f2",
         "checksum_algorithm": "sha256"
       },
       {
@@ -115,6 +129,13 @@
         "file": "skills/explore/SKILL.md",
         "version": "20260421015",
         "checksum": "a257941d7b577f782b5d41703b1fbd25c5ab13f664e696d83cc3a9fd91a5565f",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "gdpr",
+        "file": "skills/gdpr/SKILL.md",
+        "version": "20260502029",
+        "checksum": "e24afff2e7160058db827fc488bf03e8d0a0793e1d498bcf26470db3e275810d",
         "checksum_algorithm": "sha256"
       },
       {
@@ -220,6 +241,20 @@
         "file": "skills/security/SKILL.md",
         "version": "20260421025",
         "checksum": "3566dd5e85b183256fcf1a2156a3da8aa2d4f2417a6c01c681388bf2baac78a8",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "terraform",
+        "file": "skills/terraform/SKILL.md",
+        "version": "20260502030",
+        "checksum": "fcf2961bb4819c18223e4e552de2d156705d18b589e7b54e371061c7b26617a8",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "terragrunt",
+        "file": "skills/terragrunt/SKILL.md",
+        "version": "20260502031",
+        "checksum": "027216ba93fc0abfdbfff9b0ab7121adcd64f593b9da999f3469d3175e3394e3",
         "checksum_algorithm": "sha256"
       },
       {

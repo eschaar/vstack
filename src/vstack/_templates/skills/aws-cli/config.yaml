@@ -1,0 +1,17 @@
+name: aws-cli
+version: 20260502033
+description: |
+  AWS CLI command reference and workflow patterns for backend engineers.
+  Covers IAM, EC2, S3, RDS, ECS, Lambda, CloudWatch, Secrets Manager,
+  SSM Parameter Store, and cross-account operations. Use when asked to
+  "query AWS", "list resources", "rotate secrets", "check CloudWatch logs",
+  "scale ECS", "run an SSM command", or "script an AWS operation".
+argument-hint: '[service: iam | ec2 | s3 | rds | ecs | lambda | cloudwatch | ssm | secrets]'
+
+license: MIT
+compatibility: Requires AWS CLI v2 installed and configured (aws configure or environment variables). IAM permissions vary by operation — principle of least privilege applies.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false
