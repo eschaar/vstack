@@ -1,5 +1,5 @@
 name: code-review
-version: 1.0.2
+version: 20260421007
 description: |
   Pre-landing code review. Finds bugs that pass CI but break in production —
   race conditions, missing error handling, API contract violations, observability

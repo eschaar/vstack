@@ -95,13 +95,13 @@ Top-level field contracts:
 
 Per-artifact entry (`ArtifactEntry`) field contracts:
 
-| Field                | Type   | Required | Notes                                                                   |
-| -------------------- | ------ | -------- | ----------------------------------------------------------------------- |
-| `name`               | string | yes      | Canonical artifact name                                                 |
-| `file`               | string | yes      | Relative file path under install root (for example `skills/x/SKILL.md`) |
-| `version`            | string | no       | May be absent on legacy entries                                         |
-| `checksum`           | string | no       | May be absent on legacy entries                                         |
-| `checksum_algorithm` | string | no       | May be absent on legacy entries                                         |
+| Field                | Type   | Required | Notes                                                                                    |
+| -------------------- | ------ | -------- | ---------------------------------------------------------------------------------------- |
+| `name`               | string | yes      | Canonical artifact name                                                                  |
+| `file`               | string | yes      | Relative file path under install root (for example `skills/x/SKILL.md`)                  |
+| `version`            | string | no       | Template revision token (current policy: `YYYYMMDDNNN`); may be absent on legacy entries |
+| `checksum`           | string | no       | May be absent on legacy entries                                                          |
+| `checksum_algorithm` | string | no       | May be absent on legacy entries                                                          |
 
 ### 1.3 manifest version gate
 

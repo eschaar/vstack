@@ -1,5 +1,5 @@
 name: pr
-version: 1.1.0
+version: 20260502013
 description: |
   Commit, push, and open a pull request from the current branch to main.
   Uses the release notes from docs/releases/{date}.md as the PR body.

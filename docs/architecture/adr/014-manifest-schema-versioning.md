@@ -33,6 +33,11 @@ pointing to `vstack manifest upgrade`. The upgrade is never automatic.
 `vstack manifest upgrade --target DIR` explicitly migrates the manifest to the
 current schema and is the only path that changes the version field.
 
+For per-artifact entries (`artifacts.*[].version`), vstack stores the template
+revision token supplied by the template config. This value is treated as an
+ordering token, not semantic versioning. Current template policy uses
+`YYYYMMDDNNN`.
+
 ## alternatives considered
 
 ### Option A: Transparent auto-upgrade on every read

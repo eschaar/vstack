@@ -46,4 +46,4 @@ For each expected artifact that is missing, flag it explicitly as: MISSING — [
 One clear next step for the team.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"release-readiness","artifact_type":"prompt","artifact_version":"0.1.1","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"release-readiness","artifact_type":"prompt","artifact_version":"20260502012","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

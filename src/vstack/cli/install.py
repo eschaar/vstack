@@ -33,10 +33,14 @@ class InstallCommand(BaseCommand):
 
     @staticmethod
     def _version_gt(new: str, existing: str | None) -> bool:
-        """Return True when *new* semver string is strictly greater than *existing*."""
+        """Return ``True`` when *new* template revision is strictly greater than *existing*.
+
+        Supported formats are numeric dot-separated revisions (legacy) and plain
+        numeric revisions such as ``YYYYMMDDNNN``.
+        """
 
         def _tuple(v: str) -> tuple[int, ...]:
-            """Convert a dotted version string to an integer tuple for comparison."""
+            """Convert a version-like string to an integer tuple for comparison."""
             try:
                 return tuple(int(x) for x in v.split("."))
             except (ValueError, AttributeError):

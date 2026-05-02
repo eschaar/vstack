@@ -22,7 +22,7 @@ class TestInstallCommand:
     # ------------------------------------------------------------------
 
     def test_version_gt_true_for_higher(self) -> None:
-        """Newer semver string is strictly greater."""
+        """Higher dotted numeric revision is strictly greater."""
         assert InstallCommand._version_gt("1.2.0", "1.1.9")
 
     def test_version_gt_false_for_equal(self) -> None:
@@ -30,12 +30,20 @@ class TestInstallCommand:
         assert not InstallCommand._version_gt("1.2.0", "1.2.0")
 
     def test_version_gt_handles_invalid(self) -> None:
-        """Non-semver strings are treated as (0,) and not greater than a real version."""
+        """Non-numeric strings are treated as (0,) and not greater than a real revision."""
         assert not InstallCommand._version_gt("abc", "1.0.0")
 
     def test_version_gt_handles_none_existing(self) -> None:
         """None for existing falls back to (0,) so any real version is greater."""
         assert InstallCommand._version_gt("1.2.0", None) is True
+
+    def test_version_gt_true_for_date_revision(self) -> None:
+        """Higher date-based revision is strictly greater."""
+        assert InstallCommand._version_gt("20260502012", "20260502011")
+
+    def test_version_gt_false_for_same_date_revision(self) -> None:
+        """Equal date-based revisions are not greater."""
+        assert not InstallCommand._version_gt("20260502012", "20260502012")
 
     # ------------------------------------------------------------------
     # _installed_content_matches
