@@ -1,0 +1,18 @@
+name: conventional-commit
+version: 20260502024
+description: |
+  Prepare high-quality Conventional Commit messages from current staged or
+  unstaged changes with explicit type, optional scope, and concise subject.
+  Validates commit intent against change content and blocks ambiguous or
+  non-compliant messages before commit.
+  Use when asked to "write a commit message", "make a conventional commit", or
+  "prepare commits before PR".
+argument-hint: '[changes to commit and desired release intent]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

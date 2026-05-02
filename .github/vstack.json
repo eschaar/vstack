@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-05-02T15:05:51.193598+00:00",
+  "installed_at": "2026-05-02T15:09:51.319284+00:00",
   "artifacts": {
     "skills": [
       {
@@ -59,6 +59,13 @@
         "file": "skills/container/SKILL.md",
         "version": "20260421010",
         "checksum": "3c52787e99f78d9b4beff200407871cc3b700f9acd1680dfb24c0f114a3140ad",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "conventional-commit",
+        "file": "skills/conventional-commit/SKILL.md",
+        "version": "20260502024",
+        "checksum": "6b314d44033d49fe2c25c48e6e7c6af7fb9a3cabdcd4e16c41c2b329a3a29149",
         "checksum_algorithm": "sha256"
       },
       {
@@ -228,7 +235,7 @@
         "name": "engineer",
         "file": "agents/engineer.agent.md",
         "version": "20260502017",
-        "checksum": "7fb1909068022be7ec2d7dac479e3680ccc993a54d0cfca2fa893aa75a921bd2",
+        "checksum": "5f3238f6ca68a77ff9c47499494db3381ad6d0f1e9167fa4ae9de130d7481f9a",
         "checksum_algorithm": "sha256"
       },
       {
@@ -242,7 +249,7 @@
         "name": "release",
         "file": "agents/release.agent.md",
         "version": "20260502019",
-        "checksum": "95a95cd9028d00ea46977c866a681e210635c2356c527cc246a8d69e2d64cb44",
+        "checksum": "bbf1061b726c6bd4ce30fd332831b562aceef46fd7222afc13249d9d9c7ccb2b",
         "checksum_algorithm": "sha256"
       },
       {

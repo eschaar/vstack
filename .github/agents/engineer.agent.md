@@ -143,6 +143,7 @@ Only delegate when workstreams are genuinely independent.
 - `@#analyse` — impact analysis, tradeoffs, feasibility
 - `@#docs` — keep implementation and technical documentation accurate when behavior changes
 - `@#verify` — run tests, fix issues, re-verify loop
+- `@#conventional-commit` — prepare policy-aligned Conventional Commit messages
 - `@#code-review` — pre-merge review
 - `@#debug` — root-cause debugging
 - `@#threat-model` — threat model updates when design or attack surface changes

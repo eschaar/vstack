@@ -15,6 +15,7 @@ EXPECTED_CANONICAL_NAMES = [
     "design",
     "consult",
     "concise",
+    "conventional-commit",
     "code-review",
     "release-notes",
     "pr",
