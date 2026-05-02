@@ -45,6 +45,23 @@ class TestInstallCommand:
         """Equal date-based revisions are not greater."""
         assert not InstallCommand._version_gt("20260502012", "20260502012")
 
+    def test_version_gt_date_revision_gt_legacy_dotted(self) -> None:
+        """YYYYMMDDNNN token is greater than a legacy dotted version from an existing manifest.
+
+        This is the real upgrade path: a freshly installed repo may have artifacts
+        versioned as e.g. 1.2.0 (legacy) and the new template uses 20260502012.
+        The comparison must return True so the artifact is upgraded, not skipped.
+        """
+        assert InstallCommand._version_gt("20260502012", "1.2.0")
+
+    def test_version_gt_date_revision_gt_legacy_dotted_high_patch(self) -> None:
+        """YYYYMMDDNNN token is greater than a legacy high-patch dotted version."""
+        assert InstallCommand._version_gt("20260421001", "9.99.999")
+
+    def test_version_gt_legacy_dotted_not_gt_date_revision(self) -> None:
+        """Legacy dotted version is never greater than a YYYYMMDDNNN token."""
+        assert not InstallCommand._version_gt("1.2.0", "20260502012")
+
     # ------------------------------------------------------------------
     # _installed_content_matches
     # ------------------------------------------------------------------

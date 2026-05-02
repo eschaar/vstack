@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from vstack.artifacts.config import INSTRUCTION_SCHEMA
 from vstack.frontmatter import FieldSpec, FrontmatterSchema, FrontmatterSerializer
 from vstack.skills.config import SKILL_SCHEMA
 
@@ -165,3 +166,34 @@ class TestFrontmatterSerializer:
         assert "description: >-" in output
         assert "  First paragraph." in output
         assert "  Second paragraph." in output
+
+    def test_instruction_schema_applyto_glob_is_quoted(self) -> None:
+        """Test that applyTo glob values are single-quoted in generated instruction frontmatter.
+
+        YAML plain scalars cannot start with * because that token denotes an alias.
+        Globs like **/* must be emitted in single quotes so that consumer repos can
+        parse the installed instruction frontmatter without a YAML parse error.
+        """
+        output = FrontmatterSerializer().serialize(
+            {
+                "name": "python",
+                "description": "Python coding conventions.",
+                "applyTo": "**/*.py",
+            },
+            INSTRUCTION_SCHEMA,
+        )
+        assert "applyTo: '**/*.py'" in output
+        assert "applyTo: **/*.py" not in output
+
+    def test_instruction_schema_applyto_multi_glob_is_quoted(self) -> None:
+        """Test that multi-extension applyTo globs are quoted in instruction frontmatter."""
+        output = FrontmatterSerializer().serialize(
+            {
+                "name": "typescript",
+                "description": "TypeScript conventions.",
+                "applyTo": "**/*.{ts,tsx,js,jsx}",
+            },
+            INSTRUCTION_SCHEMA,
+        )
+        assert "applyTo: '**/*.{ts,tsx,js,jsx}'" in output
+        assert "applyTo: **/*.{ts,tsx,js,jsx}" not in output
