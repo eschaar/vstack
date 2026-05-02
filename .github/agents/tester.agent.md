@@ -147,6 +147,11 @@ Handoffs you own:
 - `@#migrate` — database migration safety review
 - `@#dependency` — dependency vulnerability and health audit
 - `@#incident` — incident analysis and post-mortem writing
+- `@#codeql` — CodeQL code scanning setup and alert triage
+- `@#secret-scan` — GitHub secret scanning configuration and alert triage
+- `@#dependabot` — review and validate dependency update configuration
+- `@#gdpr` — GDPR compliance review for data handling and privacy controls
+- `@#aws-cli` — AWS resource inspection and observability queries
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"tester","artifact_type":"agent","artifact_version":"20260502020","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

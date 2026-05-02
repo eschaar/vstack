@@ -108,3 +108,4 @@ Handoffs you own:
 - `@#cicd` — write GitHub Actions CI/CD workflows
 - `@#explore` — codebase discovery and mapping
 - `@#code-review` — final review before PR is opened
+- `@#gh-issues` — create and manage GitHub Issues for tracking work and bug reports

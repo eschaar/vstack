@@ -111,3 +111,8 @@ Handoffs you own:
 - `@#migrate` — database migration safety review
 - `@#dependency` — dependency vulnerability and health audit
 - `@#incident` — incident analysis and post-mortem writing
+- `@#codeql` — CodeQL code scanning setup and alert triage
+- `@#secret-scan` — GitHub secret scanning configuration and alert triage
+- `@#dependabot` — review and validate dependency update configuration
+- `@#gdpr` — GDPR compliance review for data handling and privacy controls
+- `@#aws-cli` — AWS resource inspection and observability queries

@@ -140,6 +140,7 @@ Handoffs you own:
 - `@#cicd` — write GitHub Actions CI/CD workflows
 - `@#explore` — codebase discovery and mapping
 - `@#code-review` — final review before PR is opened
+- `@#gh-issues` — create and manage GitHub Issues for tracking work and bug reports
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"release","artifact_type":"agent","artifact_version":"20260502019","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

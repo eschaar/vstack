@@ -1,7 +1,7 @@
 # vstack — instructions
 
 > Maintained by: **designer** role\
-> Last updated: 2026-04-20
+> Last updated: 2026-05-02\\
 
 ## what are instructions?
 
@@ -76,6 +76,8 @@ ______________________________________________________________________
 | `markdown`   | `**/*.md`                              | Markdown authoring conventions for prose and docs               |
 | `python`     | `**/*.py`                              | Python coding conventions, typing, imports, tooling             |
 | `security`   | `**/*`                                 | Security policy: secrets, input validation, authz, dependencies |
+| `terraform`  | `**/*.tf`                              | Terraform naming, pinning, state, variables, tagging, security  |
+| `terragrunt` | `**/terragrunt.hcl`                    | Terragrunt structure, remote state, provider generation, DRY    |
 | `testing`    | `**/*`                                 | Test authoring conventions for any language                     |
 | `typescript` | `**/*.{ts,tsx,js,jsx,mts,cts,mjs,cjs}` | TypeScript/JavaScript coding conventions, type safety           |
 

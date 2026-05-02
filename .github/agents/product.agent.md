@@ -144,6 +144,7 @@ Handoffs you own:
 - `@#analyse` — impact analysis, tradeoffs, feasibility
 - `@#adr` — architecture decision record writing (if significant decisions)
 - `@#onboard` — contributor onboarding guide generation
+- `@#gh-issues` — create and manage GitHub Issues for requirements, tasks, and user stories
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"product","artifact_type":"agent","artifact_version":"20260502018","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
