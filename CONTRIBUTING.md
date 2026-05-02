@@ -16,17 +16,40 @@ pip install -U pip
 pip install -e ".[dev]"
 ```
 
+Run `make bootstrap` once after cloning to install all development tools.
+
 ## Development Workflow
 
 1. Create a branch from `main`.
 1. Make focused, reviewable changes.
-1. Run checks locally:
+1. Run the fast test suite locally before pushing:
 
 ```bash
-make test
+make test-local
+```
+
+1. Alternatively, run the full quality gate (format-check + lint + typecheck + test):
+
+```bash
+make check
 ```
 
 1. Open a pull request with clear context.
+
+### Available make targets
+
+| Command           | Purpose                                                 |
+| ----------------- | ------------------------------------------------------- |
+| `make test-local` | Run tests against the current interpreter with coverage |
+| `make check`      | Full quality gate: format-check, lint, typecheck, test  |
+| `make lint`       | Lint with ruff                                          |
+| `make typecheck`  | Type-check with mypy                                    |
+| `make format`     | Auto-format Python and Markdown                         |
+
+### Coverage requirement
+
+Test coverage is enforced at **100%** (`--cov-fail-under=100`). Every behavioral
+change must be accompanied by tests that keep all checks green.
 
 ## Commit Message Guidance
 

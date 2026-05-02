@@ -1,26 +1,33 @@
 # vstack — roadmap
 
 > Maintained by: **product** role\
-> Last updated: 2026-04-16
+> Last updated: 2026-05-02
 
 ______________________________________________________________________
 
 ## feature status table
 
-| Feature                                  | Status      | Notes                                                          |
-| ---------------------------------------- | ----------- | -------------------------------------------------------------- |
-| foundation                               | shipped     | Core template-driven install model is in place                 |
-| backend-first verification               | shipped     | Verify/inspect focus on contracts, observability, security     |
-| VS Code agent migration                  | shipped     | Native agent output format implemented                         |
-| role model + doc restructure             | shipped     | 6-role model and docs baseline established                     |
-| new skill scaffolding                    | shipped     | 27-skill set with canonical naming                             |
-| agent skill wiring                       | shipped     | Role-to-skill mapping and handoffs are present                 |
-| optional orchestrated role pipeline      | candidate   | Optional future model, only if coordination bottlenecks appear |
-| multi-IDE support (IntelliJ first)       | candidate   | Not planned before v1 stabilization                            |
-| heavy agent runtime framework            | not planned | Keeps runtime lightweight and transparent                      |
-| cloud control plane dependency           | not planned | Keeps operation local/offline-capable                          |
-| VS Code extension packaging              | not planned | Not required for current install model                         |
-| browser automation as default dependency | not planned | Backend/microservice-first remains default                     |
+| Feature                                  | Status      | Notes                                                                             |
+| ---------------------------------------- | ----------- | --------------------------------------------------------------------------------- |
+| foundation                               | shipped     | Core template-driven install model is in place                                    |
+| backend-first verification               | shipped     | Verify/inspect focus on contracts, observability, security                        |
+| VS Code agent migration                  | shipped     | Native agent output format implemented                                            |
+| role model + doc restructure             | shipped     | 6-role model and docs baseline established                                        |
+| new skill scaffolding                    | shipped     | 27-skill set with canonical naming                                                |
+| agent skill wiring                       | shipped     | Role-to-skill mapping and handoffs are present                                    |
+| CLI modularisation (v2.0.0)              | shipped     | 12 focused CLI modules; BaseCommand + CommandContext contract                     |
+| manifest package (v2.0.0)                | shipped     | Dedicated `manifest/` package; atomic writes (ADR-016)                            |
+| mypy type checking (v2.0.0)              | shipped     | Full mypy coverage enforced in CI; 100% test coverage gate                        |
+| manifest schema versioning (v2.0.0)      | shipped     | `manifest_version: 2`; upgrade path via `manifest upgrade` (ADR-014)              |
+| checksum backfill (v2.0.0)               | shipped     | `manifest upgrade --backfill` adds SHA-256 for VSTACK-META-tagged files (ADR-017) |
+| conservative install (v2.0.0)            | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015)                |
+| dry-run install                          | shipped     | `vstack install --dry-run` previews actions; type/name selectors in summary       |
+| optional orchestrated role pipeline      | candidate   | Optional future model, only if coordination bottlenecks appear                    |
+| multi-IDE support (IntelliJ first)       | candidate   | Not planned before v1 stabilization                                               |
+| heavy agent runtime framework            | not planned | Keeps runtime lightweight and transparent                                         |
+| cloud control plane dependency           | not planned | Keeps operation local/offline-capable                                             |
+| VS Code extension packaging              | not planned | Not required for current install model                                            |
+| browser automation as default dependency | not planned | Backend/microservice-first remains default                                        |
 
 ______________________________________________________________________
 
@@ -74,6 +81,31 @@ Role templates now reference the intended canonical skills:
 - Architect + engineer include `analyse` and `explore`
 - Designer includes `consult`
 - Agent configs define role-to-role handoff buttons for pipeline flow
+
+______________________________________________________________________
+
+### CLI modularisation [shipped — v2.0.0]
+
+- 12 focused CLI modules under `src/vstack/cli/`; one `BaseCommand` subclass per command
+- `BaseCommand` + `CommandContext` contract replaces ad hoc argument passing
+- `CommandService` refactored to shared coordinator (generators, manifest, state)
+- `COMMAND_CATALOG` as the single registration point for all commands
+
+### manifest package [shipped — v2.0.0]
+
+- Dedicated `src/vstack/manifest/` package extracted from CLI internals
+- Atomic manifest writes via temp-file + `os.replace` (ADR-016)
+- `ManifestFile` handles read/write/existence checks; `read_error` for diagnostics
+- `manifest_version: 2` schema with `hash_algorithm` and per-entry `checksum_algorithm`
+- Upgrade path: `vstack manifest upgrade [--backfill]`
+- Checksum backfill for VSTACK-META-tagged files (ADR-017)
+
+### conservative install [shipped — v2.0.0]
+
+- Untracked files are never overwritten by default (ADR-015)
+- Checksum-gated `--update` mode: only rewrites clean tracked files
+- `--force-name` / `--adopt-name` accept `type/name` selectors (e.g. `agent/engineer`)
+- `--dry-run` previews all actions with a summary and preserved-selectors list
 
 ______________________________________________________________________
 

@@ -1,13 +1,16 @@
-"""All vstack CLI commands as instance methods on :class:`CommandService`.
+"""Shared coordinator for vstack CLI command handlers.
 
-The CLI is entirely type-generic: it iterates over
-:data:`~vstack.artifacts.type_config.KNOWN_TYPES` for validate, install, and
-verify instead of hard-coding skill-specific and agent-specific logic.
+:class:`CommandService` wires artifact-type generators and manifest access
+into the services that individual :class:`~vstack.cli.base.BaseCommand`
+subclasses use when executing.  Commands live in their own modules
+(``install``, ``verify``, ``uninstall``, ``validate``, ``manifest``,
+``status``) and receive a :class:`~vstack.cli.base.CommandContext` at
+dispatch time.
 
-All commands that touch the install root accept a single ``install_dir``
-(either workspace ``.github/`` or the VS Code user profile directory)
-rather than separate ``skills_dir`` / ``agents_dir`` parameters — per-type
-sub-directories are derived from
+The service is type-generic: it iterates over
+:data:`~vstack.artifacts.type_config.KNOWN_TYPES` rather than hard-coding
+skill-specific or agent-specific logic.  Per-type sub-directories are
+derived from
 :attr:`~vstack.artifacts.type_config.ArtifactTypeConfig.output_subdir`.
 """
 

@@ -78,7 +78,6 @@ Key resolvers defined inline in the generator:
 | `{{BASE_BRANCH}}`             | Shell snippet to detect git base branch                             |
 | `{{RUN_TESTS}}`               | Detect test framework and run tests                                 |
 | `{{OBSERVABILITY_CHECKLIST}}` | Observability coverage checklist                                    |
-| `{{API_CONTRACT_CHECKLIST}}`  | API contract review checklist                                       |
 
 ### 4. role model
 
@@ -150,7 +149,7 @@ dispatch flow.
 | `CommandLineInterface`   | Facade: parser construction, service creation, target/scope resolution, dispatch    |
 | `CommandService`         | Shared coordinator: generators, path labelling, manifest access, artifact state     |
 | `build_command_registry` | Maps command names to `BaseCommand` instances                                       |
-| `BaseCommand`            | ABC contract: all handlers implement `run(args, install_dir, only) → int`           |
+| `BaseCommand`            | ABC contract: all handlers implement `run(*, context: CommandContext) → int`        |
 | Per-command modules      | `install`, `verify`, `status`, `uninstall`, `validate`, `manifest` — one class each |
 | `helpers.py`             | Shared install/uninstall utilities (name normalization, manifest preservation)      |
 

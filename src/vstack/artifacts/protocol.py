@@ -15,9 +15,12 @@ from vstack.models import ValidationResult
 
 
 class ArtifactGenerator(Protocol):
-    """Structural protocol satisfied by :class:`~vstack.skills.generator.SkillGenerator`
-    and :class:`~vstack.agents.generator.AgentGenerator` (and future generators for
-    prompts, instructions, etc.).
+    """Structural protocol satisfied by all artifact generators.
+
+    Implemented by :class:`~vstack.skills.generator.SkillGenerator`,
+    :class:`~vstack.agents.generator.AgentGenerator`,
+    :class:`~vstack.instructions.generator.InstructionGenerator`, and
+    :class:`~vstack.prompts.generator.PromptGenerator`.
     """
 
     def generate(self, output_dir: Path) -> ArtifactResult:
