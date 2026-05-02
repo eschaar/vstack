@@ -6,4 +6,4 @@ model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
-version: 0.1.0
+version: 0.1.1
