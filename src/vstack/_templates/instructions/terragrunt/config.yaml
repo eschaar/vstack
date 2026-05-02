@@ -1,0 +1,4 @@
+name: terragrunt
+description: Terragrunt coding conventions for projects. Use when writing or reviewing Terragrunt HCL configurations, root configs, unit modules, and dependency blocks.
+applyTo: "**/terragrunt.hcl"
+version: 20260502035

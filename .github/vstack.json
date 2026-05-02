@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-05-02T15:39:12.574837+00:00",
+  "installed_at": "2026-05-02T15:42:05.502908+00:00",
   "artifacts": {
     "skills": [
       {
@@ -357,6 +357,20 @@
         "file": "instructions/security.instructions.md",
         "version": "20260502003",
         "checksum": "4bba567c8dd9ff0b8bdf53cac2db44af22ec350c2590c5f8e5cde2ac9f3707de",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "terraform",
+        "file": "instructions/terraform.instructions.md",
+        "version": "20260502034",
+        "checksum": "bb4c16622c9d74fb730cbf824befa29580785535999b44a3fd8a2f081e24d3d0",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "terragrunt",
+        "file": "instructions/terragrunt.instructions.md",
+        "version": "20260502035",
+        "checksum": "ecb54dcf36fbc4c5092db9ffa206e38bdc953078da887461dd6ab191538e74ae",
         "checksum_algorithm": "sha256"
       },
       {
