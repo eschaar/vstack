@@ -177,17 +177,24 @@ class CommandLineParser:
             "--force-name",
             dest="force_names",
             action="append",
-            metavar="<artifact-name>",
-            help="Force install one named artifact without overwriting everything",
+            metavar="<name|type/name>",
+            help=(
+                "Force install one named artifact without overwriting everything. "
+                "Accepts a plain name (e.g. engineer) or a type/name selector "
+                "(e.g. agent/engineer) to disambiguate when multiple artifact types "
+                "share the same name. Repeat to target multiple artifacts."
+            ),
         )
         parser.add_argument(
             "--adopt-name",
             action="append",
             default=None,
-            metavar="NAME",
+            metavar="<name|type/name>",
             help=(
                 "Adopt only the named existing unmanaged artifact into the manifest without overwriting it. "
-                "Repeat this option to target multiple names."
+                "Accepts a plain name (e.g. engineer) or a type/name selector "
+                "(e.g. agent/engineer) to disambiguate when multiple artifact types "
+                "share the same name. Repeat to target multiple artifacts."
             ),
         )
         parser.add_argument(

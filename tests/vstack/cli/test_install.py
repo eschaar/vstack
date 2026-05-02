@@ -304,3 +304,208 @@ class TestInstallCommand:
         assert InstallCommand(service=cast(CommandService, object())).run(context=context) == 1
         assert captured["kwargs"]["adopt_names"] == ["b"]
         assert captured["kwargs"]["force"] is True
+
+    # ------------------------------------------------------------------
+    # _print_summary
+    # ------------------------------------------------------------------
+
+    def test_print_summary_no_conflicts_shows_installed_count(
+        self,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Summary without preserves shows heading, fixed counters, and no guidance."""
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="", CYAN="")
+        InstallCommand._print_summary(
+            colors=colors,
+            action_counts={"install": 7, "update": 1},
+            preserved_selectors=[],
+            dry_run=False,
+        )
+        out = capsys.readouterr().out
+        assert "Summary" in out
+        assert "total processed : 8" in out
+        assert "installed" in out and ": 7" in out
+        assert "updated" in out and ": 1" in out
+        assert "preserved" in out and ": 0" in out
+        assert "skipped" in out and ": 0" in out
+        assert "adopted" in out and ": 0" in out
+        assert "--force" not in out
+
+    def test_print_summary_with_conflicts_shows_guidance(
+        self,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Summary with preserved files shows count, warning, and flag guidance."""
+        colors = SimpleNamespace(YELLOW="⚠", RESET="", BOLD="", DIM="", GREEN="", CYAN="")
+        InstallCommand._print_summary(
+            colors=colors,
+            action_counts={"install": 3, "preserve": 2},
+            preserved_selectors=["agent/engineer", "skill/verify"],
+            dry_run=False,
+        )
+        out = capsys.readouterr().out
+        assert "Summary" in out
+        assert "preserved" in out and ": 2" in out
+        assert "2 files preserved" in out
+        assert "Preserved selectors:" in out
+        assert "Next steps:" in out
+        assert "--force" in out
+        assert "--force-name NAME" in out
+        assert "--adopt-name NAME" in out
+        assert "- agent/engineer" in out
+        assert "- skill/verify" in out
+
+    def test_print_summary_single_preserve_uses_singular_noun(
+        self,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """A single preserved file uses the singular 'file' noun."""
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="", CYAN="")
+        InstallCommand._print_summary(
+            colors=colors,
+            action_counts={"install": 1, "preserve": 1},
+            preserved_selectors=["agent/engineer"],
+            dry_run=False,
+        )
+        out = capsys.readouterr().out
+        assert "1 file preserved" in out
+
+    def test_print_summary_dry_run_uses_would_install_label(
+        self,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Dry-run mode marks the summary header and keeps action labels consistent."""
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="", CYAN="")
+        InstallCommand._print_summary(
+            colors=colors,
+            action_counts={"install": 10},
+            preserved_selectors=[],
+            dry_run=True,
+        )
+        out = capsys.readouterr().out
+        assert "Summary (dry-run)" in out
+        assert "installed" in out and ": 10" in out
+        assert "would install" not in out
+
+    def test_print_summary_shows_optional_counts_when_nonzero(
+        self,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Skipped and adopted counters are rendered with their non-zero values."""
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="", CYAN="")
+        InstallCommand._print_summary(
+            colors=colors,
+            action_counts={"install": 2, "skip": 3, "adopt": 1},
+            preserved_selectors=[],
+            dry_run=False,
+        )
+        out = capsys.readouterr().out
+        assert "skipped" in out and ": 3" in out
+        assert "adopted" in out and ": 1" in out
+
+    # ------------------------------------------------------------------
+    # _install_single_artifact — return value
+    # ------------------------------------------------------------------
+
+    def test_install_single_artifact_returns_preserve_for_untracked_file(
+        self,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Returns 'preserve' when an existing untracked file blocks install."""
+
+        class _Gen:
+            config = SimpleNamespace(
+                type_name="agent",
+                manifest_key="agents",
+                output_subdir="agents",
+            )
+
+            @staticmethod
+            def output_path(name: str) -> Path:
+                return Path(f"{name}.agent.md")
+
+            @staticmethod
+            def install_relative_path(name: str) -> str:
+                return f"agents/{name}.agent.md"
+
+        out_dir = tmp_path / "agents"
+        out_dir.mkdir()
+        (out_dir / "engineer.agent.md").write_text("existing", encoding="utf-8")
+
+        colors = SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD="")
+        result = InstallCommand._install_single_artifact(
+            service=cast(CommandService, SimpleNamespace(label=lambda p: str(p))),
+            gen=_Gen(),
+            artifact=SimpleNamespace(
+                name="engineer",
+                frontmatter={"version": "1.0.0"},
+                unresolved=[],
+                content="new content",
+            ),
+            out_dir=out_dir,
+            colors=colors,
+            prefix="",
+            force=False,
+            update=False,
+            dry_run=True,
+            targeted_force_names=set(),
+            targeted_adopt_names=set(),
+            existing_entries={},
+            new_entries={},
+            checksum_algorithm="sha256",
+        )
+        assert result == "preserve"
+        capsys.readouterr()
+
+    def test_install_single_artifact_returns_adopt_when_adopting(
+        self,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Returns 'adopt' when taking ownership of an existing untracked file."""
+
+        class _Gen:
+            config = SimpleNamespace(
+                type_name="agent",
+                manifest_key="agents",
+                output_subdir="agents",
+            )
+
+            @staticmethod
+            def output_path(name: str) -> Path:
+                return Path(f"{name}.agent.md")
+
+            @staticmethod
+            def install_relative_path(name: str) -> str:
+                return f"agents/{name}.agent.md"
+
+        out_dir = tmp_path / "agents"
+        out_dir.mkdir()
+        (out_dir / "engineer.agent.md").write_text("existing", encoding="utf-8")
+
+        new_entries: dict[str, list[Any]] = {}
+        colors = SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD="")
+        result = InstallCommand._install_single_artifact(
+            service=cast(CommandService, SimpleNamespace(label=lambda p: str(p))),
+            gen=_Gen(),
+            artifact=SimpleNamespace(
+                name="engineer",
+                frontmatter={"version": "1.0.0"},
+                unresolved=[],
+                content="new content",
+            ),
+            out_dir=out_dir,
+            colors=colors,
+            prefix="",
+            force=False,
+            update=False,
+            dry_run=True,
+            targeted_force_names=set(),
+            targeted_adopt_names={"engineer"},
+            existing_entries={},
+            new_entries=new_entries,
+            checksum_algorithm="sha256",
+        )
+        assert result == "adopt"
+        capsys.readouterr()
