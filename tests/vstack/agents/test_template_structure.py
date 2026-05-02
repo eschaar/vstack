@@ -17,6 +17,7 @@ REQUIRED_HEADINGS_IN_ORDER = [
     "## workflow and handoffs",
     "## success criteria",
     "## failure and escalation rules",
+    "## artifacts you own",
     "## completion checklist",
     "## skills you use",
 ]
@@ -43,12 +44,3 @@ def test_all_role_templates_follow_canonical_section_order() -> None:
             positions.append(headings.index(heading))
 
         assert positions == sorted(positions), f"{role} canonical headings out of order"
-
-
-def test_all_role_templates_declare_artifacts_section() -> None:
-    """Each role template should include an artifacts ownership section."""
-    for role in ROLES:
-        headings = _headings(_read(role))
-        assert "## artifacts you own" in headings or "## artifacts you touch" in headings, (
-            f"{role} missing artifacts ownership section"
-        )
