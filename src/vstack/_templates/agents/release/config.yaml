@@ -1,5 +1,5 @@
 name: release
-version: 20260417001
+version: 20260502019
 description: >
   Senior platform and release engineer. Acts as release gatekeeper: verifies
   baseline artifacts are complete (docs/product, docs/architecture,

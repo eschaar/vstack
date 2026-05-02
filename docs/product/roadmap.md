@@ -7,27 +7,28 @@ ______________________________________________________________________
 
 ## feature status table
 
-| Feature                                  | Status      | Notes                                                                             |
-| ---------------------------------------- | ----------- | --------------------------------------------------------------------------------- |
-| foundation                               | shipped     | Core template-driven install model is in place                                    |
-| backend-first verification               | shipped     | Verify/inspect focus on contracts, observability, security                        |
-| VS Code agent migration                  | shipped     | Native agent output format implemented                                            |
-| role model + doc restructure             | shipped     | 6-role model and docs baseline established                                        |
-| new skill scaffolding                    | shipped     | 27-skill set with canonical naming                                                |
-| agent skill wiring                       | shipped     | Role-to-skill mapping and handoffs are present                                    |
-| CLI modularisation (v2.0.0)              | shipped     | 12 focused CLI modules; BaseCommand + CommandContext contract                     |
-| manifest package (v2.0.0)                | shipped     | Dedicated `manifest/` package; atomic writes (ADR-016)                            |
-| mypy type checking (v2.0.0)              | shipped     | Full mypy coverage enforced in CI; 100% test coverage gate                        |
-| manifest schema versioning (v2.0.0)      | shipped     | `manifest_version: 2`; upgrade path via `manifest upgrade` (ADR-014)              |
-| checksum backfill (v2.0.0)               | shipped     | `manifest upgrade --backfill` adds SHA-256 for VSTACK-META-tagged files (ADR-017) |
-| conservative install (v2.0.0)            | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015)                |
-| dry-run install                          | shipped     | `vstack install --dry-run` previews actions; type/name selectors in summary       |
-| optional orchestrated role pipeline      | candidate   | Optional future model, only if coordination bottlenecks appear                    |
-| multi-IDE support (IntelliJ first)       | candidate   | Not planned before v1 stabilization                                               |
-| heavy agent runtime framework            | not planned | Keeps runtime lightweight and transparent                                         |
-| cloud control plane dependency           | not planned | Keeps operation local/offline-capable                                             |
-| VS Code extension packaging              | not planned | Not required for current install model                                            |
-| browser automation as default dependency | not planned | Backend/microservice-first remains default                                        |
+| Feature                                  | Status      | Notes                                                                                                |
+| ---------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------- |
+| foundation                               | shipped     | Core template-driven install model is in place                                                       |
+| backend-first verification               | shipped     | Verify/inspect focus on contracts, observability, security                                           |
+| VS Code agent migration                  | shipped     | Native agent output format implemented                                                               |
+| role model + doc restructure             | shipped     | 6-role model and docs baseline established                                                           |
+| new skill scaffolding                    | shipped     | 27-skill set with canonical naming                                                                   |
+| agent skill wiring                       | shipped     | Role-to-skill mapping and handoffs are present                                                       |
+| CLI modularisation (v2.0.0)              | shipped     | 12 focused CLI modules; BaseCommand + CommandContext contract                                        |
+| manifest package (v2.0.0)                | shipped     | Dedicated `manifest/` package; atomic writes (ADR-016)                                               |
+| mypy type checking (v2.0.0)              | shipped     | Full mypy coverage enforced in CI; 100% test coverage gate                                           |
+| manifest schema versioning (v2.0.0)      | shipped     | `manifest_version: 2`; upgrade path via `manifest upgrade` (ADR-014)                                 |
+| checksum backfill (v2.0.0)               | shipped     | `manifest upgrade --backfill` adds SHA-256 for VSTACK-META-tagged files (ADR-017)                    |
+| conservative install (v2.0.0)            | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015)                                   |
+| dry-run install                          | shipped     | `vstack install --dry-run` previews actions; type/name selectors in summary                          |
+| workflow contract source-of-truth        | candidate   | Defer until current template expansion is complete; then add machine-readable role workflow contract |
+| optional orchestrated role pipeline      | candidate   | Optional future model, only if coordination bottlenecks appear                                       |
+| multi-IDE support (IntelliJ first)       | candidate   | Not planned before v1 stabilization                                                                  |
+| heavy agent runtime framework            | not planned | Keeps runtime lightweight and transparent                                                            |
+| cloud control plane dependency           | not planned | Keeps operation local/offline-capable                                                                |
+| VS Code extension packaging              | not planned | Not required for current install model                                                               |
+| browser automation as default dependency | not planned | Backend/microservice-first remains default                                                           |
 
 ______________________________________________________________________
 
@@ -120,6 +121,18 @@ Possible future workflow with explicit orchestration (only if real coordination 
 - Parallel execution possible for multiple tester passes
 
 See `docs/design/workflow.md` for current execution and the orchestrated future model.
+
+### workflow contract source-of-truth [candidate]
+
+Deferred until the current templates expansion is complete.
+
+Planned direction:
+
+- Keep one machine-readable workflow contract describing role inputs, outputs, gates, and handoffs.
+- Use that contract to keep agent workflow sections and checks aligned.
+- Keep `docs/design/workflow.md` as the human-readable explanation layer.
+
+This reduces drift risk between agent behavior and workflow documentation while keeping skills and instructions generic.
 
 ### multi-IDE support [candidate]
 
