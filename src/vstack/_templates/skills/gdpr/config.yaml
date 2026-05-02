@@ -1,0 +1,19 @@
+name: gdpr
+version: 20260502029
+description: |
+  GDPR-compliant engineering practices for APIs, data models, authentication
+  flows, logging, retention, erasure, and infrastructure. Covers privacy by
+  design, data minimization, storage limitation, lawful basis, user rights
+  (access, erasure, portability), encryption, pseudonymization, and PR review
+  checklists. Use when asked to "GDPR review", "is this GDPR-compliant?",
+  "privacy by design", "data retention policy", "right to erasure", or
+  "DPIA". Proactively suggest before any feature that handles personal data.
+argument-hint: '[component or feature: data model | API | logging | retention | erasure | infra | PR review]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

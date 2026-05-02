@@ -1,0 +1,18 @@
+name: terraform
+version: 20260502030
+description: |
+  Write, review, and refactor Terraform infrastructure-as-code. Covers resource
+  design, module structure, state management, variable and output conventions,
+  provider pinning, remote backends, workspace strategy, drift detection, and
+  security hardening. Use when asked to "write Terraform", "review this Terraform",
+  "refactor IaC", "add a Terraform module", "plan state migration", or
+  "harden Terraform configuration".
+argument-hint: '[provider: aws | azure | gcp | generic, and scope: new resource | module | state migration | security review]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access. Requires Terraform CLI installed for plan/apply operations.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

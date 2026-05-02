@@ -39,6 +39,11 @@ EXPECTED_CLI_NAMES = [
     "codeql",
     "dependabot",
     "secret-scan",
+    "gdpr",
+    "terraform",
+    "terragrunt",
+    "cloudformation",
+    "aws-cli",
 ]
 
 

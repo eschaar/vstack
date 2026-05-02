@@ -42,6 +42,11 @@ EXPECTED_CANONICAL_NAMES = [
     "codeql",
     "dependabot",
     "secret-scan",
+    "gdpr",
+    "terraform",
+    "terragrunt",
+    "cloudformation",
+    "aws-cli",
 ]
 
 
