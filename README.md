@@ -181,7 +181,7 @@ If you see the version and no errors, your install is working.
 Expected output (example):
 
 ```text
-vstack 1.3.0
+vstack X.Y.Z
 Validation passed: no unresolved template tokens
 ```
 
@@ -414,7 +414,29 @@ ______________________________________________________________________
 | `vstack uninstall --global`            | Uninstall vstack artifacts from your VS Code profile                                     |
 | `vstack uninstall`                     | Uninstall from the current directory default target                                      |
 
-By default, `vstack install` is conservative: if a target file already exists but is not tracked by `vstack`, it is left in place. For tracked files, `--update` only rewrites artifacts whose on-disk content still matches the SHA-256 checksum of the last installed version recorded in `vstack.json`. Use `--force` to overwrite everything, `--force-name <artifact-name>` to overwrite one specific managed artifact, or `--adopt-name <artifact-name>` to start tracking one existing unmanaged file without overwriting it.
+By default, `vstack install` is conservative: if a target file already exists but is not tracked by `vstack`, it is left in place. For tracked files, `--update` only rewrites artifacts whose on-disk content still matches the SHA-256 checksum of the last installed version recorded in `vstack.json`. Use `--force` to overwrite everything, `--force-name <name>` to overwrite one specific managed artifact, or `--adopt-name <name>` to start tracking one existing unmanaged file without overwriting it.
+
+If you already have agents, skills, or other files in `.github/`, run a dry-run first to see what would be preserved before committing:
+
+```bash
+# Preview what install would do — no files are written
+vstack install --dry-run --target /path/to/your/project
+```
+
+The summary shows every preserved file as a `type/name` selector (e.g. `agent/engineer`, `skill/verify`). You can then resolve each conflict selectively:
+
+```bash
+# Overwrite a specific preserved artifact
+vstack install --target . --force-name agent/engineer
+
+# Take ownership of an existing file without overwriting it
+vstack install --target . --adopt-name agent/engineer
+
+# Overwrite everything
+vstack install --target . --force
+```
+
+When multiple artifact types share the same name (e.g. an `agent` and a `skill` both named `engineer`), use the `type/name` form to target one precisely.
 
 `vstack uninstall` is conservative as well: it removes only tracked artifacts whose current checksum still matches the manifest. If a tracked file was edited locally, it is preserved unless you explicitly pass `--force` or `--force-name`. Use `vstack manifest status` (or `vstack status`) for a read-only overview of managed, modified, missing, and conflicting files.
 
@@ -475,6 +497,8 @@ flowchart TD
   Action: Confirm templates exist under `src/vstack/_templates/agents/`, then run `Developer: Reload Window` in VS Code.
 - Issue: Agent does not execute actions
   Action: Make sure Copilot is in Agent Mode, not Ask or Edit mode.
+- Issue: Files were preserved during install and vstack agents are not visible
+  Action: Run `vstack install --dry-run --target .` to see which files were preserved. Then use `--force-name type/name` to overwrite a specific file (e.g. `--force-name agent/engineer`), `--adopt-name type/name` to take ownership without overwriting, or `--force` to overwrite everything.
 
 ### CI parity and badges
 

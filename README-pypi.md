@@ -81,7 +81,15 @@ Profile-wide install (optional defaults for all projects):
 vstack install --global
 ```
 
-By default, `vstack install` preserves existing unmanaged files and local edits to tracked files by comparing the current file contents with the SHA-256 checksum recorded in `vstack.json`. Use `--adopt-name <artifact-name>` to start tracking one existing unmanaged file without overwriting it. `vstack uninstall` also preserves locally modified tracked files unless you explicitly pass `--force` or `--force-name <artifact-name>`. Use `vstack manifest status --target ...` (or `vstack status --target ...`) to see what still matches the manifest. If a legacy manifest schema is detected, run `vstack manifest upgrade --target ...` first.
+By default, `vstack install` preserves existing unmanaged files and local edits to tracked files by comparing the current file contents with the SHA-256 checksum recorded in `vstack.json`. Use `--adopt-name <name>` to start tracking one existing unmanaged file without overwriting it. `vstack uninstall` also preserves locally modified tracked files unless you explicitly pass `--force` or `--force-name <name>`. Use `vstack manifest status --target ...` (or `vstack status --target ...`) to see what still matches the manifest. If a legacy manifest schema is detected, run `vstack manifest upgrade --target ...` first.
+
+If you already have agents, skills, or other files in `.github/`, run a dry-run first to see what would be preserved before committing:
+
+```bash
+vstack install --dry-run --target /path/to/your/project
+```
+
+The summary lists preserved files as `type/name` selectors (e.g. `agent/engineer`). Resolve each conflict with `--force-name type/name` to overwrite, `--adopt-name type/name` to take ownership without overwriting, or `--force` to overwrite everything.
 
 ## Fast troubleshooting
 
