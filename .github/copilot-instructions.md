@@ -133,6 +133,30 @@ For Python modules in this repository, treat code as the source of truth and kee
 - Avoid placeholder docstrings such as "Initialize instance state" or "Build parser". Describe intent and contract instead.
 - When a behavior, public API, or exception contract changes, update the corresponding docstring in the same change.
 
+## Development Commands
+
+| Task | Command |
+|------|---------|
+| Fast tests (current interpreter only) | `make test-local` |
+| Full quality gate (format-check + lint + typecheck + test) | `make check` |
+| Lint | `make lint` |
+| Type-check | `make typecheck` |
+| Format Python + Markdown | `make format` |
+| Regenerate `.github/` artifacts from templates | `python3 -m vstack install` |
+
+Test coverage is enforced at **100%** (`--cov-fail-under=100`). Every behavioral change must keep all checks green. See [CONTRIBUTING.md](../CONTRIBUTING.md) for full dev setup.
+
+## CLI Architecture
+
+CLI commands live in `src/vstack/cli/`, one file per command (e.g. `install.py`, `verify.py`, `validate.py`).
+
+- Each command subclasses `BaseCommand` and implements `run(*, context: CommandContext) -> int`.
+- `CommandLineInterface` (`interface.py`) is the parsing/dispatch facade — no business logic.
+- `CommandService` (`service.py`) constructs and dispatches commands.
+- `COMMAND_CATALOG` (`catalog.py`) is the registration point for all commands.
+
+When adding a new CLI command: create the command class in a new file, then register it in `COMMAND_CATALOG`.
+
 ## Work Style
 
 - Produce small, reviewable changes.
