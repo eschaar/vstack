@@ -1,0 +1,16 @@
+name: helm
+version: 20260502037
+description: |
+  Write, review, and operate Helm charts and release lifecycles. Covers chart
+  structure, values layering, lint/template validation, install/upgrade/rollback,
+  dependency handling, and release troubleshooting. Use when asked to "create a Helm chart",
+  "review Helm values", "upgrade Helm release", or "debug Helm deployment".
+argument-hint: '[chart path, release name, namespace, and scope: chart review | install | upgrade | rollback]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access. Requires Helm CLI and target cluster access for live release operations.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

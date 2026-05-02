@@ -1,0 +1,17 @@
+name: k8s
+version: 20260502036
+description: |
+  Write, review, and troubleshoot Kubernetes manifests and operational workflows.
+  Covers workload resources, service exposure, rollout safety, health probes,
+  RBAC, namespace isolation, and kubectl-based diagnostics. Use when asked to
+  "deploy to Kubernetes", "review Kubernetes manifests", "debug Kubernetes rollout",
+  "harden Kubernetes config", or "operate a workload on a cluster".
+argument-hint: '[cluster/context, namespace, and scope: manifest review | deploy | rollout debug | hardening]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access. Requires kubectl access to a target cluster for live operations.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

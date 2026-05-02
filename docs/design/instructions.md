@@ -69,17 +69,20 @@ ______________________________________________________________________
 
 ## available instructions
 
-| Name         | Scope (`applyTo`)                      | Purpose                                                         |
-| ------------ | -------------------------------------- | --------------------------------------------------------------- |
-| `git`        | `**/*`                                 | Branch naming, commit conventions, SemVer, safe operations      |
-| `java`       | `**/*.java`                            | Java coding conventions, null safety, exception handling        |
-| `markdown`   | `**/*.md`                              | Markdown authoring conventions for prose and docs               |
-| `python`     | `**/*.py`                              | Python coding conventions, typing, imports, tooling             |
-| `security`   | `**/*`                                 | Security policy: secrets, input validation, authz, dependencies |
-| `terraform`  | `**/*.tf`                              | Terraform naming, pinning, state, variables, tagging, security  |
-| `terragrunt` | `**/terragrunt.hcl`                    | Terragrunt structure, remote state, provider generation, DRY    |
-| `testing`    | `**/*`                                 | Test authoring conventions for any language                     |
-| `typescript` | `**/*.{ts,tsx,js,jsx,mts,cts,mjs,cjs}` | TypeScript/JavaScript coding conventions, type safety           |
+| Name         | Scope (`applyTo`)                               | Purpose                                                                      |
+| ------------ | ----------------------------------------------- | ---------------------------------------------------------------------------- |
+| `git`        | `**/*`                                          | Branch naming, commit conventions, SemVer, safe operations                   |
+| `helm`       | `**/charts/**/*.{yaml,yml,tpl}`                 | Helm chart conventions: structure, templating, values, release safety        |
+| `java`       | `**/*.java`                                     | Java coding conventions, null safety, exception handling                     |
+| `k8s`        | `**/{k8s,kubernetes,manifests}/**/*.{yaml,yml}` | Kubernetes manifest conventions: API stability, probes, RBAC, rollout safety |
+| `markdown`   | `**/*.md`                                       | Markdown authoring conventions for prose and docs                            |
+| `python`     | `**/*.py`                                       | Python coding conventions, typing, imports, tooling                          |
+| `rancher`    | `**/{rancher,fleet}/**/*.{yaml,yml}`            | Rancher/Fleet conventions: scope control, GitOps hygiene, RBAC, operations   |
+| `security`   | `**/*`                                          | Security policy: secrets, input validation, authz, dependencies              |
+| `terraform`  | `**/*.tf`                                       | Terraform naming, pinning, state, variables, tagging, security               |
+| `terragrunt` | `**/terragrunt.hcl`                             | Terragrunt structure, remote state, provider generation, DRY                 |
+| `testing`    | `**/*`                                          | Test authoring conventions for any language                                  |
+| `typescript` | `**/*.{ts,tsx,js,jsx,mts,cts,mjs,cjs}`          | TypeScript/JavaScript coding conventions, type safety                        |
 
 ______________________________________________________________________
 

@@ -47,6 +47,9 @@ EXPECTED_CANONICAL_NAMES = [
     "terragrunt",
     "cloudformation",
     "aws-cli",
+    "k8s",
+    "helm",
+    "rancher",
 ]
 
 
@@ -89,7 +92,20 @@ class ArtifactState:
 EXPECTED_INPUT_NAMES: dict[str, list[str]] = {
     "skill": EXPECTED_CANONICAL_NAMES,
     "agent": ["architect", "designer", "engineer", "product", "release", "tester"],
-    "instruction": ["git", "java", "markdown", "python", "security", "testing", "typescript"],
+    "instruction": [
+        "git",
+        "java",
+        "k8s",
+        "helm",
+        "markdown",
+        "python",
+        "rancher",
+        "security",
+        "terraform",
+        "terragrunt",
+        "testing",
+        "typescript",
+    ],
     "prompt": [
         "api-design-review",
         "architecture-risk",
