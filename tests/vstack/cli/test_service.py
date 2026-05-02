@@ -213,7 +213,7 @@ class TestCommandService:
                     {
                         "name": "vision",
                         "file": "skills/vision/SKILL.md",
-                        "version": "999.0.0",
+                        "version": "99999999999",
                         "checksum": content_hash("old"),
                     }
                 ]

@@ -1,4 +1,4 @@
 name: typescript
 description: TypeScript coding conventions for projects. Use when writing or reviewing TypeScript or JavaScript modules, components, and package internals.
 applyTo: "**/*.{ts,tsx,js,jsx,mts,cts,mjs,cjs}"
-version: 0.1.0
+version: 20260502005

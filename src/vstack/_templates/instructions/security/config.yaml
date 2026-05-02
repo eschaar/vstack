@@ -1,4 +1,4 @@
 name: security
 description: Security policy for all code, configuration, and infrastructure. Use when writing or reviewing any code, configuration, or workflow file.
 applyTo: "**/*"
-version: 0.1.0
+version: 20260502003

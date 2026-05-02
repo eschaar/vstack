@@ -1,5 +1,5 @@
 name: analyse
-version: 1.0.2
+version: 20260421004
 description: |
   Cross-cutting technical analysis. Investigates impact, tradeoffs, root causes,
   or feasibility without implementing changes. Use when asked to "analyse this",

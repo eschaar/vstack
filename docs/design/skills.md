@@ -155,6 +155,12 @@ ______________________________________________________________________
 
 `version` is maintained in `config.yaml` for vstack install/update tracking and is not emitted into generated `SKILL.md` frontmatter.
 
+Template revision format is `YYYYMMDDNNN` (for example `20260502001`):
+
+1. `YYYYMMDD` is the template file modified date used for the update.
+1. `NNN` is a zero-padded sequence for multiple updates on the same day.
+1. The value is treated as an opaque, monotonically increasing revision token (not semantic versioning).
+
 `allowed-tools` is currently not emitted by vstack because support is inconsistent across target agents.
 
 `name` must satisfy the Agent Skills naming rules enforced by vstack: lowercase kebab-case, no leading/trailing hyphen, max 64 characters.

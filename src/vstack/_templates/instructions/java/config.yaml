@@ -1,4 +1,4 @@
 name: java
 description: Java coding conventions for projects. Use when writing or reviewing Java source files, tests, and build configuration.
 applyTo: "**/*.java"
-version: 0.1.0
+version: 20260502001

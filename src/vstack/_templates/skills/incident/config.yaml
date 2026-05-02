@@ -1,5 +1,5 @@
 name: incident
-version: 1.0.1
+version: 20260421017
 description: |
   Incident analysis and post-mortem writing. Guides a structured investigation
   from timeline reconstruction through root cause identification to a blameless
