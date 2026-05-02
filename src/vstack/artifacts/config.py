@@ -106,6 +106,6 @@ INSTRUCTION_SCHEMA = FrontmatterSchema(
     [
         FieldSpec("name", quoted=False),
         FieldSpec("description"),
-        FieldSpec("applyTo", quoted=False),
+        FieldSpec("applyTo"),
     ]
 )

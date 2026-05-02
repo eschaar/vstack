@@ -54,6 +54,14 @@
         {
           "type": "revert",
           "section": "Maintenance"
+        },
+        {
+          "type": "test",
+          "section": "Tests"
+        },
+        {
+          "type": "tests",
+          "section": "Tests"
         }
       ]
     }

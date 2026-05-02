@@ -1,7 +1,7 @@
 ---
 name: k8s
 description: 'Kubernetes manifest conventions. Use when writing or reviewing Kubernetes workload and service manifests.'
-applyTo: **/{k8s,kubernetes,manifests}/**/*.{yaml,yml}
+applyTo: '**/{k8s,kubernetes,manifests}/**/*.{yaml,yml}'
 ---
 Use these Kubernetes conventions in this project.
 

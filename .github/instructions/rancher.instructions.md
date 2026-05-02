@@ -1,7 +1,7 @@
 ---
 name: rancher
 description: 'Rancher and Fleet conventions. Use when writing or reviewing Rancher/Fleet configuration files and cluster governance manifests.'
-applyTo: **/{rancher,fleet}/**/*.{yaml,yml}
+applyTo: '**/{rancher,fleet}/**/*.{yaml,yml}'
 ---
 Use these Rancher conventions in this project.
 

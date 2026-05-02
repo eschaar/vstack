@@ -1,7 +1,7 @@
 ---
 name: security
 description: 'Security policy for all code, configuration, and infrastructure. Use when writing or reviewing any code, configuration, or workflow file.'
-applyTo: **/*
+applyTo: '**/*'
 ---
 Apply these security policies in this project.
 

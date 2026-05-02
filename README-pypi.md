@@ -29,6 +29,30 @@ It provides a fixed role model for end-to-end software delivery: `product`, `arc
 - Backend-first verification, security, and release discipline
 - Standard-library-only runtime dependencies
 
+## Building blocks
+
+| Artifact type | Purpose                                                    | Typical invocation     |
+| ------------- | ---------------------------------------------------------- | ---------------------- |
+| Agents        | Main operating interface for role-based work               | `@product`, `@tester`  |
+| Skills        | Reusable task procedures                                   | `/verify`, `/security` |
+| Instructions  | Baseline policy and repository guardrails                  | auto-loaded by context |
+| Prompts       | Reusable prompt artifacts where direct prompting is useful | explicit prompt use    |
+
+## Prompt catalog
+
+Prompts are `.prompt.md` files installed to `.github/prompts/`. Invoke them via the
+VS Code command palette (`Chat: Run Prompt File`) or the Copilot Chat attach button.
+
+| Prompt              | Purpose                                                   |
+| ------------------- | --------------------------------------------------------- |
+| `api-design-review` | Review an API design or OpenAPI spec for correctness      |
+| `architecture-risk` | Identify architectural risks and mitigation priorities    |
+| `code-review`       | Review a change for bugs, regressions, and missing tests  |
+| `dependency-audit`  | Audit dependencies for vulnerabilities and licence risks  |
+| `incident-timeline` | Build an evidence-based incident timeline and post-mortem |
+| `migration-safety`  | Review DB migration safety, rollback, and zero-downtime   |
+| `release-readiness` | Evaluate release readiness from reports and open blockers |
+
 ## Quick start
 
 Install with `pipx`, then install vstack artifacts into your repository:
