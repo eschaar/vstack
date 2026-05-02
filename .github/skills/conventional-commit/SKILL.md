@@ -96,7 +96,7 @@ type(optional-scope)!: short summary
 Quality rules:
 
 - imperative mood (`add`, `fix`, `remove`)
-- summary <= 100 characters
+- summary \<= 100 characters
 - no trailing period
 - no vague text like `update stuff`
 

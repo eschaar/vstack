@@ -86,8 +86,8 @@ grep -r -n '@app.route\|router\.\|@Get\|@Post\|path=' \
 
 ```bash
 # Test count and coverage setup
-find . -name '*.test.*' -o -name '*_test.*' -o -name '*spec.*' \
-  --exclude-dir=node_modules 2>/dev/null | wc -l
+find . \( -name '*.test.*' -o -name '*_test.*' -o -name '*spec.*' \) \
+  -not -path '*/node_modules/*' -not -path '*/.venv/*' 2>/dev/null | wc -l
 
 # Coverage config
 cat .nycrc 2>/dev/null || cat vitest.config.* 2>/dev/null | head -20 || \

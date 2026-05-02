@@ -32,7 +32,7 @@ Before reviewing or writing anything, gather context:
 ```bash
 # Find existing migration files
 find . -type f \( -name '*.sql' -o -name '*migration*' -o -name '*migrate*' \) \
-  --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=build \
+  -not \( -path '*/.venv/*' -o -path '*/node_modules/*' -o -path '*/dist/*' -o -path '*/build/*' \) \
   2>/dev/null | sort | tail -20
 
 # Show migration files changed in this branch
