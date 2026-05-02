@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-05-02T14:02:34.679105+00:00",
+  "installed_at": "2026-05-02T14:03:37.026325+00:00",
   "artifacts": {
     "skills": [
       {
@@ -301,15 +301,15 @@
       {
         "name": "architecture-risk",
         "file": "prompts/architecture-risk.prompt.md",
-        "version": "0.1.0",
-        "checksum": "c6fb9c87585be6e20209fc2e717712b7933d9a706f2dcd33b628c3526037e40a",
+        "version": "0.1.1",
+        "checksum": "b6758c6e6c0b6ce25b83892f145681887e3ef6a1ae89987a80436f0b0bd50fbb",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "code-review",
         "file": "prompts/code-review.prompt.md",
-        "version": "0.1.0",
-        "checksum": "fcab80ce897f01b865d0433636dbc00d462342124f9eccc5d87a5e61463c410e",
+        "version": "0.1.1",
+        "checksum": "58becdbb1497b4ad61cc6c6274f97260ed917bc2195ad04bb38167ec0e2a4858",
         "checksum_algorithm": "sha256"
       },
       {
@@ -336,8 +336,8 @@
       {
         "name": "release-readiness",
         "file": "prompts/release-readiness.prompt.md",
-        "version": "0.1.0",
-        "checksum": "8bc75eea3d2f3e4797a0b0e672e2a01aacf98aaeb0200474cb8c17cc5776008c",
+        "version": "0.1.1",
+        "checksum": "f89721c392bf3a2e3eaf0206884a562fa42ce91840c64ab4f572724599d531f7",
         "checksum_algorithm": "sha256"
       }
     ]
