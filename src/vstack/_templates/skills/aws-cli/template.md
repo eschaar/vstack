@@ -331,3 +331,11 @@ aws ce get-cost-and-usage \
 - [ ] `--dry-run` used for EC2 mutation operations before executing
 - [ ] Scripts use `set -euo pipefail` for safety in bash
 - [ ] Cross-account operations use `assume-role` with time-limited session credentials
+
+## References
+
+> Always use the official documentation for the AWS CLI version in use — command syntax, flags, and available operations change between v2 minor releases.
+
+- [AWS CLI v2 command reference](https://awscli.amazonaws.com/v2/documentation/api/latest/index.html)
+- [AWS CLI configuration](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)
+- [AWS CLI named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html)

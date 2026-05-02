@@ -333,5 +333,14 @@ AppSecurityGroup:
 - [ ] `cfn-lint` passes with no errors or warnings
 - [ ] Change set reviewed before executing in production
 
+## References
+
+> Always use the official documentation for the resource types in use — properties, attributes, and supported values change with AWS service updates.
+
+- [CloudFormation resource reference](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
+- [Intrinsic function reference](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html)
+- [cfn-lint](https://github.com/aws-cloudformation/cfn-lint)
+- [AWS SAM documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/)
+
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"cloudformation","artifact_type":"skill","artifact_version":"20260502032","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

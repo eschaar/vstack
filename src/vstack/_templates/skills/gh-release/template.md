@@ -172,3 +172,10 @@ GitHub Release ready:
 ```
 
 If blocked, report exact blocker and required user action.
+
+## References
+
+> Always use the official documentation for the gh CLI version in use — flags and subcommands are added and changed between releases.
+
+- [gh release — GitHub CLI manual](https://cli.github.com/manual/gh_release)
+- [GitHub Releases documentation](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)

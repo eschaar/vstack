@@ -43,3 +43,10 @@ Use these Terragrunt conventions in this project.
 
 1. Never hardcode secrets in `.hcl` files — supply them via environment variables (`TF_VAR_*`) or a secrets manager data source.
 1. Do not commit `.tfvars` files containing real secrets.
+
+## References
+
+> Always use the official documentation for the Terragrunt version in use — built-in functions and CLI flags evolve with each release.
+
+- [Terragrunt documentation](https://terragrunt.gruntwork.io/docs/)
+- [Terragrunt CLI reference](https://terragrunt.gruntwork.io/docs/reference/cli-options/)

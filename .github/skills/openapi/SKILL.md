@@ -393,5 +393,13 @@ Summary: [N critical, N warnings, N info]
 **If writing or correcting the spec:** produce the complete corrected YAML, using
 `$ref` for all reusable schemas, and validate it passes linting.
 
+## References
+
+> Always use the official specification for the OpenAPI version in use — schema keywords, security scheme types, and JSON Schema dialect support differ between 3.0 and 3.1.
+
+- [OpenAPI Specification 3.1](https://spec.openapis.org/oas/latest.html)
+- [JSON Schema (2020-12)](https://json-schema.org/specification)
+- [Redocly CLI (linting)](https://redocly.com/docs/cli/)
+
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"openapi","artifact_type":"skill","artifact_version":"20260421021","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

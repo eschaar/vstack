@@ -364,5 +364,13 @@ aws ce get-cost-and-usage \
 - [ ] Scripts use `set -euo pipefail` for safety in bash
 - [ ] Cross-account operations use `assume-role` with time-limited session credentials
 
+## References
+
+> Always use the official documentation for the AWS CLI version in use — command syntax, flags, and available operations change between v2 minor releases.
+
+- [AWS CLI v2 command reference](https://awscli.amazonaws.com/v2/documentation/api/latest/index.html)
+- [AWS CLI configuration](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)
+- [AWS CLI named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html)
+
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"aws-cli","artifact_type":"skill","artifact_version":"20260502033","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

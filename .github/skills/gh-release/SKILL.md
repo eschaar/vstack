@@ -205,5 +205,12 @@ GitHub Release ready:
 
 If blocked, report exact blocker and required user action.
 
+## References
+
+> Always use the official documentation for the gh CLI version in use — flags and subcommands are added and changed between releases.
+
+- [gh release — GitHub CLI manual](https://cli.github.com/manual/gh_release)
+- [GitHub Releases documentation](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)
+
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"gh-release","artifact_type":"skill","artifact_version":"20260502023","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
