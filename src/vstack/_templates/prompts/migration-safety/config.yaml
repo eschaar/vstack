@@ -1,0 +1,10 @@
+name: migration-safety
+description: Review database migration safety, rollback strategy, and zero-downtime risk.
+argument-hint: "[migration files, schema, or rollout plan]"
+agent: engineer
+model: GPT-5.3-Codex (copilot)
+tools:
+  - read
+  - search
+  - edit
+version: 0.1.0

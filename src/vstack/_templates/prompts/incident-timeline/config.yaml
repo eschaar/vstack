@@ -1,0 +1,9 @@
+name: incident-timeline
+description: Build a structured, evidence-based incident timeline and action-oriented postmortem summary.
+argument-hint: "[logs, alerts, timeline notes, or incident ID]"
+agent: tester
+model: GPT-5.3-Codex (copilot)
+tools:
+  - read
+  - search
+version: 0.1.0

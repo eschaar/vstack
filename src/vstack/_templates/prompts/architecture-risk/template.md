@@ -1,0 +1,38 @@
+Evaluate the provided architecture for delivery and runtime risk.
+
+Prioritize issues that could cause outages, data loss, severe operability pain, or major rework.
+Do not focus on stylistic preferences.
+
+Output exactly in this format:
+
+## High-Severity Risks
+
+List risks that can materially fail production or block safe delivery.
+
+For each risk:
+
+- impacted boundary (service, data, contract, deployment, observability)
+- why it is risky in one sentence
+- mitigation with smallest viable change
+- owner role
+
+## Medium Risks
+
+List important but non-blocking risks.
+
+## Tradeoff Notes
+
+List major tradeoffs and what is being optimized.
+
+## Missing Decisions
+
+List decisions that should become ADRs before implementation.
+
+## Recommended Sequence
+
+Provide an ordered mitigation sequence (step 1..N).
+
+## Go/No-Go
+
+- go | conditional-go | no-go
+- one-sentence rationale

@@ -1,0 +1,9 @@
+name: architecture-risk
+description: Identify architectural risks, tradeoffs, and mitigation priorities for a proposed design.
+argument-hint: "[design doc, ADR, or architecture scope]"
+agent: architect
+model: GPT-5.3-Codex (copilot)
+tools:
+  - read
+  - search
+version: 0.1.0
