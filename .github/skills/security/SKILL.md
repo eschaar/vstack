@@ -75,7 +75,6 @@ CURRENT=$(git branch --show-current)
 git diff <base> --stat 2>/dev/null | head -20 || true
 ```
 
-______________________________________________________________________
 
 ## Part 1: OWASP Top 10
 
@@ -244,7 +243,6 @@ Check:
 - [ ] Private network ranges blocked (169.254.0.0/16, 10.0.0.0/8, etc.)
 - [ ] SSRF protection on any URL-fetching functionality
 
-______________________________________________________________________
 
 ## Part 2: STRIDE Threat Model
 
@@ -259,7 +257,6 @@ For each new service/component, answer:
 | **Denial of Service**      | Can the service be made unavailable? Rate limiting?       |                      |
 | **Elevation of Privilege** | Can a user gain admin access through normal flows?        |                      |
 
-______________________________________________________________________
 
 ## Audit Report
 
@@ -292,7 +289,6 @@ Scope: [full/diff/dependency/config]
 [SHIP-READY / FIX CRITICALS / SECURITY REVIEW REQUIRED]
 ```
 
-______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"security","artifact_type":"skill","artifact_version":"20260421025","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

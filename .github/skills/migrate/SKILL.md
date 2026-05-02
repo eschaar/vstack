@@ -56,7 +56,6 @@ deployability. No migration ships without a rollback plan.
 **Golden rule: Every migration must be reversible or explicitly documented as
 irreversible with a data-recovery plan.**
 
-______________________________________________________________________
 
 ## Step 0: Understand the Change
 
@@ -95,7 +94,6 @@ Deployment:    [rolling | blue-green | big-bang | maintenance window]
 Direction:     [new migration | review existing | both]
 ```
 
-______________________________________________________________________
 
 ## Step 1: Classify the Migration
 
@@ -125,7 +123,6 @@ Operations:
 Overall risk: [Low | Medium | High | Destructive]
 ```
 
-______________________________________________________________________
 
 ## Step 2: Zero-Downtime Analysis
 
@@ -158,7 +155,6 @@ If the migration violates zero-downtime, flag it:
   Fix:       [expand/contract steps or maintenance window required]
 ```
 
-______________________________________________________________________
 
 ## Step 3: Rollback Plan
 
@@ -182,7 +178,6 @@ For destructive operations (DROP, TRUNCATE), rollback is not possible — docume
   Recovery: Restore from snapshot (RTO: [estimate])
 ```
 
-______________________________________________________________________
 
 ## Step 4: Data Integrity
 
@@ -206,7 +201,6 @@ SELECT column, COUNT(*) FROM table GROUP BY column HAVING COUNT(*) > 1;
 SELECT COUNT(*) FROM table WHERE NOT (constraint_expression);
 ```
 
-______________________________________________________________________
 
 ## Step 5: Index Safety
 
@@ -233,7 +227,6 @@ Check:
 - [ ] No redundant indexes (subset of existing composite index)
 - [ ] Partial indexes considered for filtered queries
 
-______________________________________________________________________
 
 ## Step 6: Performance on Large Tables
 
@@ -276,7 +269,6 @@ BEGIN
 END $$;
 ```
 
-______________________________________________________________________
 
 ## Step 7: Testing
 
@@ -299,7 +291,6 @@ Check:
 - [ ] Application tests pass with the new schema
 - [ ] No model/schema drift detected
 
-______________________________________________________________________
 
 ## Output
 

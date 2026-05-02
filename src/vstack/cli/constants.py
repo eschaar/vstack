@@ -21,6 +21,7 @@ EXPECTED_CANONICAL_NAMES = [
     "verify",
     "inspect",
     "security",
+    "threat-model",
     "debug",
     "performance",
     "analyse",

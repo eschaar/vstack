@@ -47,7 +47,6 @@ before CI/CD takes over.
 
 - A pull request open against the target base branch (typically `main`)
 
-______________________________________________________________________
 
 ## Step 1: Pre-flight
 
@@ -65,7 +64,6 @@ git status --short
 git log origin/main..HEAD --oneline
 ```
 
-______________________________________________________________________
 
 ## Step 2: Commit
 
@@ -79,7 +77,6 @@ git diff --cached --stat
 git diff --cached --quiet || git commit -m "chore: pre-release cleanup"
 ```
 
-______________________________________________________________________
 
 ## Step 3: Push
 
@@ -87,7 +84,6 @@ ______________________________________________________________________
 git push --set-upstream origin "$BRANCH"
 ```
 
-______________________________________________________________________
 
 ## Step 4: Open PR
 
@@ -111,7 +107,6 @@ echo "  Head:  $BRANCH"
 echo "  URL:   https://github.com/<org>/<repo>/compare/main...$BRANCH"
 ```
 
-______________________________________________________________________
 
 ## Step 5: Report to user
 
@@ -125,7 +120,6 @@ Next steps depend on the repository CI/CD configuration:
 - Merge when all checks pass and reviewers approve.
 ```
 
-______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"pr","artifact_type":"skill","artifact_version":"20260502013","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

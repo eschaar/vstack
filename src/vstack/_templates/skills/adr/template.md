@@ -12,8 +12,6 @@ what was decided, why, and what alternatives were considered.
 - Implementation (engineering role)
 - Running analysis to inform the decision (use `analyse`)
 
-______________________________________________________________________
-
 ## Step 0: Context Gathering
 
 Read existing ADRs and architecture docs:
@@ -26,8 +24,6 @@ ls docs/architecture/adr/*.md 2>/dev/null | grep -oE '[0-9]+' | sort -n | tail -
 ```
 
 Determine the next ADR number (pad to 3 digits: 001, 002, ...).
-
-______________________________________________________________________
 
 ## Step 1: Understand the Decision
 
@@ -42,8 +38,6 @@ Decision: [One-line statement of what was decided]
 Status:   proposed | accepted | rejected | deprecated | superseded
 Date:     YYYY-MM-DD
 ```
-
-______________________________________________________________________
 
 ## Step 2: Context
 
@@ -61,8 +55,6 @@ Include:
 [2-4 paragraphs explaining the situation, constraints, and why this matters]
 ```
 
-______________________________________________________________________
-
 ## Step 3: Alternatives Considered
 
 List all serious options that were evaluated. For each:
@@ -79,8 +71,6 @@ List all serious options that were evaluated. For each:
 
 Include at least 2-3 alternatives. Including a "do nothing" option is recommended.
 
-______________________________________________________________________
-
 ## Step 4: Decision
 
 State the chosen option clearly:
@@ -92,8 +82,6 @@ We will [chosen option].
 [1-2 sentences on why this option was selected over alternatives]
 ```
 
-______________________________________________________________________
-
 ## Step 5: Rationale
 
 Explain the reasoning in depth:
@@ -103,8 +91,6 @@ Explain the reasoning in depth:
 [Detailed explanation: what made this the right choice given the context and constraints.
 Reference specific cons from rejected options and explain why they were acceptable tradeoffs.]
 ```
-
-______________________________________________________________________
 
 ## Step 6: Consequences & Impact
 
@@ -121,16 +107,12 @@ ______________________________________________________________________
 - [What could go wrong, and how we'd detect or mitigate it]
 ```
 
-______________________________________________________________________
-
 ## Step 7: Related Decisions
 
 ```markdown
 ## Related ADRs
 - ADR-NNN: [title] — [relationship: supersedes / related to / depends on]
 ```
-
-______________________________________________________________________
 
 ## Output: ADR file
 
@@ -163,5 +145,3 @@ is a kebab-case title.
 ```
 
 After writing, state the file path and summary so the architect or product role can review.
-
-______________________________________________________________________

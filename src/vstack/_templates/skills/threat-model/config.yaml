@@ -1,0 +1,17 @@
+name: threat-model
+version: 20260502021
+description: |
+  Threat modeling for APIs, services, and systems using a practical STRIDE-first
+  approach with optional DREAD prioritization and PASTA depth for high-criticality
+  contexts. Produces actionable threat scenarios, mitigations, and risk priorities.
+  Use when asked to "threat model", "analyze attack paths", "STRIDE review", or
+  "prioritize security design risks".
+argument-hint: '[system, component, or architecture to threat model]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

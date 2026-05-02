@@ -140,6 +140,7 @@ Handoffs you own:
 - `@#architecture` — architecture document writing and review
 - `@#adr` — architecture decision record writing (when available)
 - `@#docs` — keep architecture artifacts and supporting documentation synchronized
+- `@#threat-model` — design-time threat modeling (STRIDE-first, with DREAD/PASTA as needed)
 - `@#code-review` — review existing code for architectural alignment
 - `@#explore` — codebase discovery and mapping
 - `@#analyse` — impact analysis, tradeoffs, feasibility

@@ -54,7 +54,6 @@ analysis report. Do not implement changes — that is engineering role work.
 - Implementation (engineering role)
 - Full test run (use `verify`)
 
-______________________________________________________________________
 
 ## Step 0: Define the Question
 
@@ -77,7 +76,6 @@ Question:      [Precise question being answered]
 Scope:         [What's in and out of scope for this analysis]
 ```
 
-______________________________________________________________________
 
 ## Phase 1: Evidence Gathering
 
@@ -111,7 +109,6 @@ For **dependency analysis**:
 [ -f package.json ] && npx madge --circular --extensions ts ./src 2>/dev/null || true
 ```
 
-______________________________________________________________________
 
 ## Phase 2: Dimension Analysis
 
@@ -158,7 +155,6 @@ For each option:
 | ---- | --------------- | --------------- | ---------- |
 | ...  | High/Medium/Low | High/Medium/Low | ...        |
 
-______________________________________________________________________
 
 ## Phase 3: Data & Evidence
 
@@ -175,7 +171,6 @@ Reference specific:
 - Data points (error counts, latency numbers, test results)
 - Documentation (ADRs, design docs, API specs)
 
-______________________________________________________________________
 
 ## Phase 4: Findings & Conclusions
 
@@ -197,7 +192,6 @@ State conclusions with confidence level:
 - **Probable:** well-supported by evidence but not confirmed
 - **Uncertain:** hypothesis that requires further investigation
 
-______________________________________________________________________
 
 ## Analysis Report
 
@@ -224,7 +218,6 @@ ______________________________________________________________________
 [Overall confidence level: high / medium / low — and why]
 ```
 
-______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"analyse","artifact_type":"skill","artifact_version":"20260421004","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

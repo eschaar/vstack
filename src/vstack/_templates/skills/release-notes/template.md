@@ -19,8 +19,6 @@ before the PR is opened.
 The invoking agent determines which files to read as evidence and where to write
 the release notes. This skill describes the procedure, not the file paths.
 
-______________________________________________________________________
-
 ## Step 1: Evidence review
 
 Verify that the evidence the invoking agent has designated as required is present
@@ -34,8 +32,6 @@ Typical evidence to check (agent-defined):
 - Acceptance criteria from requirements
 
 If any required evidence is missing: **STOP and report to the invoking agent**.
-
-______________________________________________________________________
 
 ## Step 2: Summarise changes
 
@@ -52,8 +48,6 @@ Identify:
 - Bug fixes
 - Breaking changes (if any)
 - Internal/infrastructure changes
-
-______________________________________________________________________
 
 ## Step 3: Write release notes
 
@@ -89,8 +83,6 @@ Rules:
 - No internal tracking references
 - Every entry should make someone think "oh nice, I want that"
 
-______________________________________________________________________
-
 ## Step 4: Update `CHANGELOG.md`
 
 Prepend a new entry at the top of `CHANGELOG.md`:
@@ -109,5 +101,3 @@ Prepend a new entry at the top of `CHANGELOG.md`:
 ```
 
 Keep existing entries intact.
-
-______________________________________________________________________

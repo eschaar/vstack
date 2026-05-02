@@ -8,8 +8,6 @@ Activate careful mode for this session. Two behaviors are now enabled.
 
 - Code review or security audit (use `code-review` or `security`)
 
-______________________________________________________________________
-
 ## Behavior 1: Careful Mode (always active after invoking this skill)
 
 **Before executing any of the following commands, get explicit confirmation:**
@@ -36,10 +34,6 @@ ______________________________________________________________________
 1. Only proceed if the user says yes.
 1. Never use workarounds to avoid this confirmation.
 
-______________________________________________________________________
-
 ## How to Deactivate
 
 Explicitly ask to "disable guardrails".
-
-______________________________________________________________________

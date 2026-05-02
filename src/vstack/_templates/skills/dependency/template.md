@@ -18,8 +18,6 @@ risk, pinning policy, and supply chain hygiene.
 **Golden rule: A dependency is owned code you didn't write. Treat it with the
 same scrutiny as your own code.**
 
-______________________________________________________________________
-
 ## Step 0: Detect the Stack
 
 ```bash
@@ -44,8 +42,6 @@ Manager:     [Poetry | pip | npm | yarn | pnpm | cargo | go modules | other]
 Manifests:   [list of files found]
 Lock file:   [present | absent — flag if absent]
 ```
-
-______________________________________________________________________
 
 ## Part 1: Vulnerability Scan
 
@@ -91,8 +87,6 @@ Vulnerabilities found:
 should be tracked and resolved within the sprint. LOW may be deferred with
 documented rationale.
 
-______________________________________________________________________
-
 ## Part 2: Outdated Packages
 
 ```bash
@@ -125,8 +119,6 @@ Classify each outdated package:
 - Patch updates: update immediately (no breaking changes expected)
 - Minor updates: update soon (check changelog for deprecations)
 - Major updates: plan upgrade (read migration guide, test thoroughly)
-
-______________________________________________________________________
 
 ## Part 3: Licence Compliance
 
@@ -169,8 +161,6 @@ Licence issues:
   🔴 [package] — [licence] — [risk] — [recommendation]
 ```
 
-______________________________________________________________________
-
 ## Part 4: Pinning Policy
 
 A healthy dependency policy requires reproducible builds:
@@ -197,8 +187,6 @@ cat pyproject.toml 2>/dev/null | grep -E '^\s+[a-z]' | grep -v '^#' | head -30
 | `package = "^1.0"` (Poetry) | Low    | Acceptable for non-critical deps             |
 | `package = "1.2.3"` (exact) | Low    | Fine for direct deps; brittle for transitive |
 | No lock file                | High   | Add lock file and commit it                  |
-
-______________________________________________________________________
 
 ## Part 5: Transitive Risk
 
@@ -231,8 +219,6 @@ Flags to look for:
 # (manual step: check PyPI / npm registry for each critical dep)
 ```
 
-______________________________________________________________________
-
 ## Part 6: Supply Chain Hygiene
 
 ```bash
@@ -254,8 +240,6 @@ Check:
 - [ ] Private package names are not also available on public registries (confusion attack)
 - [ ] `pip install` / `npm install` output reviewed for unexpected packages
 - [ ] CI pipeline pins the package manager version itself
-
-______________________________________________________________________
 
 ## Output
 

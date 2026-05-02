@@ -49,7 +49,6 @@ Read only — do not change any code.
 - Performance profiling/regression analysis (use `performance`)
 - Tradeoff/impact/feasibility analysis (use `analyse`)
 
-______________________________________________________________________
 
 ## Step 0: Classify and Route
 
@@ -81,7 +80,6 @@ If D, stop and return this routing recommendation:
 
 Do not continue with DX scoring when routing to another skill.
 
-______________________________________________________________________
 
 ## Step 1: Run Exactly One Path
 
@@ -186,7 +184,6 @@ cat .github/workflows/*.yml 2>/dev/null | grep -E 'timeout|runs-on|steps' | head
 - Is there type checking?
 - Are these run on commit (pre-commit hooks) or in CI?
 
-______________________________________________________________________
 
 ## Step 2: Improvement Plan (ROI-first)
 
@@ -196,7 +193,6 @@ For each weak area (typically score < 7), provide:
 1. **Medium investment (1-2 days):** Most likely path to 9/10.
 1. **Long-term:** Structural change to reach 10/10.
 
-______________________________________________________________________
 
 ## Output Contract
 
@@ -224,7 +220,6 @@ recommended_skill: [design|analyse|debug|code-review|security|performance|verify
 reason: [one sentence]
 ```
 
-______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"consult","artifact_type":"skill","artifact_version":"20260421009","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

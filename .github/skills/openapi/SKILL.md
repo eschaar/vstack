@@ -47,7 +47,6 @@ be precise, complete, and implementable without ambiguity.
 **Golden rule: The spec is the source of truth. Code must conform to the spec,
 not the other way around.**
 
-______________________________________________________________________
 
 ## Step 0: Understand the Task
 
@@ -71,7 +70,6 @@ find . -name 'openapi*.yaml' -o -name 'openapi*.json' \
 [ -f openapi.yaml ] && npx swagger-cli validate openapi.yaml 2>/dev/null || true
 ```
 
-______________________________________________________________________
 
 ## Part 1: Spec Structure
 
@@ -116,7 +114,6 @@ Check:
 - [ ] Tags defined at root level and used consistently on operations
 - [ ] `components` section exists for reusable schemas
 
-______________________________________________________________________
 
 ## Part 2: Resource & Path Design
 
@@ -149,7 +146,6 @@ Check each path:
 - [ ] Every operation has a unique `operationId` (camelCase, e.g. `listUsers`, `createOrder`)
 - [ ] Every operation has a `summary` (short title, ≤ 80 chars) and `tags`
 
-______________________________________________________________________
 
 ## Part 3: Status Codes
 
@@ -177,7 +173,6 @@ Check:
 - [ ] `401` and `403` are distinct and documented
 - [ ] `500` is documented but never includes stack traces
 
-______________________________________________________________________
 
 ## Part 4: Error Response Schema
 
@@ -224,7 +219,6 @@ Check:
 - [ ] `request_id` for correlation is present
 - [ ] Field-level errors included for `400`/`422`
 
-______________________________________________________________________
 
 ## Part 5: Pagination
 
@@ -278,7 +272,6 @@ Check:
 - [ ] Response includes `has_more` and `next_cursor`
 - [ ] `total` is optional (expensive query — only include if needed)
 
-______________________________________________________________________
 
 ## Part 6: Schema Quality
 
@@ -322,7 +315,6 @@ Check:
 - [ ] No `type: object` without properties (use `additionalProperties` explicitly)
 - [ ] No circular `$ref` without a nullable break
 
-______________________________________________________________________
 
 ## Part 7: Security Schemes
 
@@ -359,7 +351,6 @@ Check:
 - [ ] OAuth2 scopes are defined if using OAuth
 - [ ] No API keys in query parameters (use headers)
 
-______________________________________________________________________
 
 ## Part 8: Versioning
 
@@ -385,7 +376,6 @@ Check:
     description: "Deprecated. Use /v2/users/{userId} instead."
 ```
 
-______________________________________________________________________
 
 ## Output
 

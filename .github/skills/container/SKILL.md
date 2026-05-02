@@ -42,7 +42,6 @@ Write production-grade container configuration for the service.
 - Kubernetes manifests (use `cicd`)
 - Application code changes (engineering role)
 
-______________________________________________________________________
 
 ## Step 1: Detect context
 
@@ -54,7 +53,6 @@ ls pyproject.toml requirements.txt package.json go.mod Cargo.toml pom.xml 2>/dev
 ls Dockerfile* docker-compose* .dockerignore 2>/dev/null || echo "No container config found"
 ```
 
-______________________________________________________________________
 
 ## Step 2: Dockerfile
 
@@ -110,7 +108,6 @@ ENTRYPOINT ["<executable>"]
 CMD ["<default args>"]
 ```
 
-______________________________________________________________________
 
 ## Step 3: docker-compose.yml (local dev)
 
@@ -138,7 +135,6 @@ services:
 
 For production-like local testing, write a separate `docker-compose.prod.yml` without volume mounts.
 
-______________________________________________________________________
 
 ## Step 4: Review checklist
 
@@ -151,7 +147,6 @@ ______________________________________________________________________
 - [ ] Image builds successfully: `docker build -t app:local .`
 - [ ] Container starts and responds: `docker run --rm -p <port>:<port> app:local`
 
-______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"container","artifact_type":"skill","artifact_version":"20260421010","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

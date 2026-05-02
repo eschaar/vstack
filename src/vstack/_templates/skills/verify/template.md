@@ -29,8 +29,6 @@ Use `inspect` for read-only auditing.
 - Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/VERIFY_DELTA.md`
 - Before merge: consolidate final findings, severity, and ship-readiness verdict into baseline reports.
 
-______________________________________________________________________
-
 ## Step 0: Route Mode
 
 Classify first, then run one mode.
@@ -44,8 +42,6 @@ Classify first, then run one mode.
 > **Default if no response:** B
 
 If D, stop and route to `inspect`.
-
-______________________________________________________________________
 
 ## Step 1: Scope and Safety
 
@@ -67,8 +63,6 @@ Bootstrap test command:
 
 {{RUN_TESTS}}
 
-______________________________________________________________________
-
 ## Step 2: Baseline Checks (all modes)
 
 Run baseline checks for the selected scope.
@@ -86,8 +80,6 @@ Run baseline checks for the selected scope.
 ### 2.2 Unit Tests
 
 {{RUN_TESTS}}
-
-______________________________________________________________________
 
 ## Step 3: Conditional Checks by Mode
 
@@ -136,8 +128,6 @@ For exhaustive mode, require observability evidence (logs/metrics/traces/alerts)
 
 If deep security/performance concerns appear, stop and route to `security` or `performance`.
 
-______________________________________________________________________
-
 ## Step 4: Triage
 
 Classify findings:
@@ -155,8 +145,6 @@ Fix policy:
 - standard: critical + high + medium
 - exhaustive: all severities
 
-______________________________________________________________________
-
 ## Step 5: Fix and Re-verify Loop
 
 For each fixable issue in severity order:
@@ -168,8 +156,6 @@ For each fixable issue in severity order:
 1. If needed, run the relevant broader check suite.
 
 If an issue implies architecture or design mismatch, stop and escalate.
-
-______________________________________________________________________
 
 ## Step 6: Final Report
 
@@ -197,5 +183,3 @@ scope: [path/component/full]
 ### Ship Readiness
 [READY TO SHIP | NEEDS FIXES | BLOCKED]
 ```
-
-______________________________________________________________________

@@ -68,7 +68,6 @@ Use `inspect` for read-only auditing.
 - Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/VERIFY_DELTA.md`
 - Before merge: consolidate final findings, severity, and ship-readiness verdict into baseline reports.
 
-______________________________________________________________________
 
 ## Step 0: Route Mode
 
@@ -84,7 +83,6 @@ Classify first, then run one mode.
 
 If D, stop and route to `inspect`.
 
-______________________________________________________________________
 
 ## Step 1: Scope and Safety
 
@@ -127,7 +125,6 @@ else
 fi
 ```
 
-______________________________________________________________________
 
 ## Step 2: Baseline Checks (all modes)
 
@@ -168,7 +165,6 @@ else
 fi
 ```
 
-______________________________________________________________________
 
 ## Step 3: Conditional Checks by Mode
 
@@ -217,7 +213,6 @@ For exhaustive mode, require observability evidence (logs/metrics/traces/alerts)
 
 If deep security/performance concerns appear, stop and route to `security` or `performance`.
 
-______________________________________________________________________
 
 ## Step 4: Triage
 
@@ -236,7 +231,6 @@ Fix policy:
 - standard: critical + high + medium
 - exhaustive: all severities
 
-______________________________________________________________________
 
 ## Step 5: Fix and Re-verify Loop
 
@@ -250,7 +244,6 @@ For each fixable issue in severity order:
 
 If an issue implies architecture or design mismatch, stop and escalate.
 
-______________________________________________________________________
 
 ## Step 6: Final Report
 
@@ -279,7 +272,6 @@ scope: [path/component/full]
 [READY TO SHIP | NEEDS FIXES | BLOCKED]
 ```
 
-______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"verify","artifact_type":"skill","artifact_version":"20260421026","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

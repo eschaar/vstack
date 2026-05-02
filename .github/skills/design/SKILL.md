@@ -44,7 +44,6 @@ becomes the source of truth for implementation.
 - Implementation (engineering role)
 - Contract compliance validation (use `verify` or `code-review`)
 
-______________________________________________________________________
 
 ## Deliverable and artifact policy
 
@@ -54,7 +53,6 @@ ______________________________________________________________________
 - Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/DESIGN_DELTA.md`
 - Before merge: consolidate any delta draft into baseline design docs.
 
-______________________________________________________________________
 
 ## Step 0: Understand the Domain
 
@@ -74,7 +72,6 @@ Gather context:
 find . -name 'openapi*' -o -name '*.proto' -o -name 'asyncapi*' 2>/dev/null | head -5
 ```
 
-______________________________________________________________________
 
 ## Step 1: Resource Design
 
@@ -103,7 +100,6 @@ erDiagram
   }
 ```
 
-______________________________________________________________________
 
 ## Step 2: Endpoint Design
 
@@ -122,7 +118,6 @@ POST   /users/{id}/activate    # Non-CRUD action
 POST   /users/{id}/deactivate
 ```
 
-______________________________________________________________________
 
 ## Step 3: Request/Response Conventions
 
@@ -158,7 +153,6 @@ Define the standard envelope:
 }
 ```
 
-______________________________________________________________________
 
 ## Step 4: Error Code Taxonomy
 
@@ -188,7 +182,6 @@ DEPENDENCY_ERROR      — Upstream service failure
 UNAVAILABLE           — Service temporarily unavailable
 ```
 
-______________________________________________________________________
 
 ## Step 5: Versioning & Contract Discipline
 
@@ -218,7 +211,6 @@ Deprecation process:
   - MINOR → new optional fields, backward compatible
   - MAJOR → breaking change
 
-______________________________________________________________________
 
 ## Step 6: Authentication & Authorization
 
@@ -229,7 +221,6 @@ Token claims: user_id, roles[], tenant_id
 Authorization model: RBAC with per-resource checks
 ```
 
-______________________________________________________________________
 
 ## Step 7: Produce the Design Document
 
@@ -260,7 +251,6 @@ Output a complete design document to `docs/design/design.md` or `openapi.yaml`:
 [Input validation, rate limiting, CORS policy]
 ```
 
-______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"design","artifact_type":"skill","artifact_version":"20260421013","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

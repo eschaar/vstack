@@ -62,7 +62,6 @@ Use `verify` when a fix loop is required.
 - Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/TESTING_DELTA.md`
 - Before merge: consolidate any blocking findings and final verdict into baseline reports.
 
-______________________________________________________________________
 
 ## Step 0: Scope
 
@@ -71,7 +70,6 @@ Report only. No edits. No commits.
 If critical issues are found, recommend `verify`.
 ```
 
-______________________________________________________________________
 
 ## Step 1: Baseline Checks
 
@@ -106,7 +104,6 @@ else
 fi
 ```
 
-______________________________________________________________________
 
 ## Step 2: Extended Checks (when present)
 
@@ -135,7 +132,6 @@ Confirm for changed paths:
 - Trace propagation exists across service boundaries where applicable.
 - Alerts/runbooks exist for high-severity failure modes.
 
-______________________________________________________________________
 
 ## Step 3: Report
 
@@ -162,7 +158,6 @@ ______________________________________________________________________
 [SHIP-READY | USE VERIFY FIX LOOP | NEEDS ARCH/DESIGN REVIEW]
 ```
 
-______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"inspect","artifact_type":"skill","artifact_version":"20260421018","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

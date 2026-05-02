@@ -20,8 +20,6 @@ work from.
 - Optional WIP area for complex/uncertain intake: `docs/delta/{intake-id}/REQUIREMENTS_DELTA.md`
 - Before merge: consolidate any required content from optional delta notes back into `docs/product/requirements.md`, then remove stale WIP notes.
 
-______________________________________________________________________
-
 ## Step 0: Context
 
 Read existing artifacts before asking questions:
@@ -34,8 +32,6 @@ cat README.md 2>/dev/null | head -40 || true
 ```
 
 Identify what's already known and what needs clarification.
-
-______________________________________________________________________
 
 ## Step 1: Problem Statement
 
@@ -54,8 +50,6 @@ Document:
 [One paragraph: root problem, who has it, impact of not solving it]
 ```
 
-______________________________________________________________________
-
 ## Step 2: Users & Stakeholders
 
 Who uses or is affected by this?
@@ -63,8 +57,6 @@ Who uses or is affected by this?
 | Role        | Description | Primary need |
 | ----------- | ----------- | ------------ |
 | [User type] |             |              |
-
-______________________________________________________________________
 
 ## Step 3: Functional Requirements
 
@@ -88,8 +80,6 @@ Ask for clarity on ambiguous areas:
 - [State what will NOT be built in this iteration]
 ```
 
-______________________________________________________________________
-
 ## Step 4: Non-Functional Requirements
 
 | Category     | Requirement    | Measurable target                    |
@@ -104,8 +94,6 @@ Ask:
 
 > **Question:** Are there any hard non-functional requirements (performance, security,
 > compliance, data residency)?
-
-______________________________________________________________________
 
 ## Step 5: Constraints & Assumptions
 
@@ -123,8 +111,6 @@ Document known constraints:
 - [Things assumed true that could invalidate requirements if wrong]
 ```
 
-______________________________________________________________________
-
 ## Step 6: Success Criteria
 
 What does "done" look like? How do we know the requirements are met?
@@ -136,8 +122,6 @@ What does "done" look like? How do we know the requirements are met?
 - [ ] [Acceptance test: given X, when Y, then Z]
 ```
 
-______________________________________________________________________
-
 ## Step 7: Open Questions
 
 List anything that is unclear and needs a decision before work begins:
@@ -146,8 +130,6 @@ List anything that is unclear and needs a decision before work begins:
 ## Open Questions
 - [ ] [Question] — Owner: [who decides] — Deadline: [when needed]
 ```
-
-______________________________________________________________________
 
 ## Output: requirements.md
 
@@ -183,5 +165,3 @@ Write all findings to `docs/product/requirements.md`:
 ```
 
 After writing, summarize what was decided so the architect role can start.
-
-______________________________________________________________________

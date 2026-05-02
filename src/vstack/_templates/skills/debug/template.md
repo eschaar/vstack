@@ -23,8 +23,6 @@ Follow the scientific method:
 1. **Fix** — Minimal change that addresses root cause
 1. **Prevent** — Add a test that would have caught this
 
-______________________________________________________________________
-
 ## Step 0: Understand the Problem
 
 Before touching any code, gather complete context:
@@ -56,8 +54,6 @@ git stash list
 git diff HEAD~10 -- package.json package-lock.json go.mod go.sum pyproject.toml 2>/dev/null | head -40
 ```
 
-______________________________________________________________________
-
 ## Step 1: Reproduce
 
 **First, reproduce the bug reliably before attempting any fix.**
@@ -83,8 +79,6 @@ Reproducer:
   Environment: [local / CI / staging / prod]
 ```
 
-______________________________________________________________________
-
 ## Step 2: Gather Evidence
 
 **Read all available logs and error output:**
@@ -109,8 +103,6 @@ cat /var/log/app.log 2>/dev/null | tail -100 || true
 # Read recent changes: git show HEAD
 git diff HEAD~3 -- relevant-files
 ```
-
-______________________________________________________________________
 
 ## Step 3: Form Hypotheses
 
@@ -138,8 +130,6 @@ Hypotheses (most likely first):
 - **Memory:** Leak, fragmentation, GC pressure
 - **Timing:** TTL expiry, clock skew, eventual consistency window
 
-______________________________________________________________________
-
 ## Step 4: Test Each Hypothesis
 
 For each hypothesis in rank order:
@@ -161,8 +151,6 @@ go test -race ./... 2>/dev/null || true
 
 Eliminate hypotheses one by one until only one remains.
 
-______________________________________________________________________
-
 ## Step 5: Root Cause Identification
 
 State the root cause with precision:
@@ -175,8 +163,6 @@ Root Cause:
   Timeline:  [when was this introduced? git log shows...]
   Scope:     [Which environments? Which users? How often?]
 ```
-
-______________________________________________________________________
 
 ## Step 6: Fix
 
@@ -191,8 +177,6 @@ Design the minimal fix:
 # Apply the fix
 # Run the reproducer to confirm it's fixed
 ```
-
-______________________________________________________________________
 
 ## Step 7: Regression Test
 
@@ -218,8 +202,6 @@ Reproducer: [if non-obvious]
 Test: [test file added/updated]"
 ```
 
-______________________________________________________________________
-
 ## Step 8: Prevent Recurrence
 
 Consider:
@@ -229,8 +211,6 @@ Consider:
 1. Should a runbook be updated?
 1. Should an alert be added to catch this class of failure in production?
 1. Should TODOS.md be updated with related improvements?
-
-______________________________________________________________________
 
 ## Debug Summary
 
@@ -243,5 +223,3 @@ Fix: [change made in commit SHA]
 Regression test: [test file:function]
 Prevention: [any follow-up items]
 ```
-
-______________________________________________________________________

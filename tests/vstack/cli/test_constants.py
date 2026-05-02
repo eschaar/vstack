@@ -18,6 +18,7 @@ EXPECTED_CLI_NAMES = [
     "verify",
     "inspect",
     "security",
+    "threat-model",
     "debug",
     "performance",
     "analyse",

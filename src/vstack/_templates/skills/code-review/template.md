@@ -176,5 +176,3 @@ Format:
 
 Confidence: [HIGH/MEDIUM/LOW — explain if not HIGH]
 ```
-
-______________________________________________________________________

@@ -60,7 +60,6 @@ change source code.
 - Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/DOCS_DELTA.md`
 - Before merge: consolidate any documentation delta notes into baseline docs.
 
-______________________________________________________________________
 
 ## Step 0: Scope the Release
 
@@ -75,7 +74,6 @@ cat VERSION 2>/dev/null \
   || echo "unknown"
 ```
 
-______________________________________________________________________
 
 ## Step 1: README
 
@@ -93,7 +91,6 @@ Check:
 - [ ] Any deprecated features removed from featured examples?
 - [ ] Badges (version, CI status) still accurate?
 
-______________________________________________________________________
 
 ## Step 2: API Documentation
 
@@ -117,7 +114,6 @@ If there's generated API documentation (Swagger UI, Redoc, TypeDoc, Sphinx):
 npm run docs 2>/dev/null || make docs 2>/dev/null || true
 ```
 
-______________________________________________________________________
 
 ## Step 3: MIGRATIONS Guide (if applicable)
 
@@ -126,7 +122,6 @@ If this release contains breaking changes or migration steps:
 - Create or update `MIGRATIONS.md` or `docs/migrations/vX.md`
 - Document: why the change was made, what behavior changed, migration steps, code examples
 
-______________________________________________________________________
 
 ## Step 4: Code Comments & ADRs
 
@@ -138,7 +133,6 @@ For significant architectural changes:
 
   (use the `adr` skill for the full ADR writing procedure)
 
-______________________________________________________________________
 
 ## Step 5: Commit Documentation Updates
 
@@ -147,7 +141,6 @@ git add README.md openapi.yaml docs/ 2>/dev/null || true
 git commit -m "docs: update documentation for v$(cat VERSION 2>/dev/null || echo 'unknown')"
 ```
 
-______________________________________________________________________
 
 ## Summary
 
@@ -164,7 +157,6 @@ Skipped (n/a):
 - [ ] [reason]
 ```
 
-______________________________________________________________________
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"docs","artifact_type":"skill","artifact_version":"20260421014","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

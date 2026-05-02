@@ -10,8 +10,6 @@ Control response brevity at runtime without regenerating any agent artifacts.
 - Persisting style mode across independent chat sessions
 - Overriding safety-critical clarity requirements
 
-______________________________________________________________________
-
 ## Commands
 
 Supported commands:
@@ -30,8 +28,6 @@ Unknown arguments:
 
 - If argument is unknown, do not guess. Return usage and keep current mode unchanged.
 
-______________________________________________________________________
-
 ## Mode Semantics
 
 - `normal`: full, explicit explanation depth.
@@ -43,8 +39,6 @@ Hard invariants for all concise modes:
 - Keep code blocks, commands, paths, and symbols exact.
 - Do not remove required warnings, constraints, or irreversible-action cautions.
 - Never trade correctness for brevity.
-
-______________________________________________________________________
 
 ## Priority and Resolution
 
@@ -63,8 +57,6 @@ Resolve active mode with this precedence:
 - global default mode
 - whether auto-clarity override is currently active
 
-______________________________________________________________________
-
 ## Suggested Agent Defaults
 
 When no session override exists, use these defaults:
@@ -76,8 +68,6 @@ When no session override exists, use these defaults:
 - `tester`: `ultra`
 - `release`: `compact`
 
-______________________________________________________________________
-
 ## Auto-Clarity Override (Mandatory)
 
 Temporarily force `normal` regardless of active concise mode for:
@@ -88,8 +78,6 @@ Temporarily force `normal` regardless of active concise mode for:
 - user confusion or repeated clarification requests
 
 After the high-clarity segment ends, return to previously active concise mode.
-
-______________________________________________________________________
 
 ## Expected Responses
 
@@ -117,8 +105,6 @@ Unknown concise mode: <value>
 Usage: concise normal|compact|ultra|status|on|off
 Current mode unchanged: <mode>
 ```
-
-______________________________________________________________________
 
 ## Completion Checklist
 
