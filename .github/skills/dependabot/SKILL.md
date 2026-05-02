@@ -257,25 +257,20 @@ exclude-paths:
 
 ## Step 8: Advanced Options
 
-### Cooldown periods (avoid early-adopter issues)
+### Cooldown periods
 
 ```yaml
 cooldown:
   default-days: 5
   semver-major-days: 30
   semver-minor-days: 7
-  semver-patch-days: 3
 ```
 
 ### Versioning strategy
 
-| Value                   | Behavior                                          |
-| ----------------------- | ------------------------------------------------- |
-| `auto`                  | Default — increase for apps, widen for libraries  |
-| `increase`              | Always increase minimum version                   |
-| `increase-if-necessary` | Only change if current range excludes new version |
-| `lockfile-only`         | Update lockfiles only; ignore manifests           |
-| `widen`                 | Widen range to include both old and new versions  |
+`auto` (default) increases the minimum for apps and widens ranges for libraries.
+Use `lockfile-only` to update only lock files without touching manifests.
+Use `increase-if-necessary` to change the range only when it excludes the new version.
 
 ### Private registries
 
@@ -295,17 +290,14 @@ updates:
 
 ## PR Comment Commands
 
-| Comment                                 | Effect                       |
-| --------------------------------------- | ---------------------------- |
-| `@dependabot rebase`                    | Rebase the PR                |
-| `@dependabot recreate`                  | Recreate the PR from scratch |
-| `@dependabot ignore this dependency`    | Close and never update       |
-| `@dependabot ignore this major version` | Ignore this major version    |
-| `@dependabot ignore this minor version` | Ignore this minor version    |
-| `@dependabot ignore this patch version` | Ignore this patch version    |
-
-Note: merge/close/reopen commands were deprecated in January 2026. Use the
-GitHub UI, `gh pr merge`, or auto-merge instead.
+| Comment                                 | Effect                    |
+| --------------------------------------- | ------------------------- |
+| `@dependabot rebase`                    | Rebase the PR             |
+| `@dependabot recreate`                  | Recreate from scratch     |
+| `@dependabot ignore this dependency`    | Close and never update    |
+| `@dependabot ignore this major version` | Ignore this major version |
+| `@dependabot ignore this minor version` | Ignore this minor version |
+| `@dependabot ignore this patch version` | Ignore this patch version |
 
 ## Review checklist
 
