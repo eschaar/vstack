@@ -1,6 +1,6 @@
 # ADR-012: Template Directories and Install-Time Generation
 
-> Maintained by: **agents** role
+> Maintained by: **architect** role
 
 **date:** 2026-03-28\
 **status:** accepted — implemented

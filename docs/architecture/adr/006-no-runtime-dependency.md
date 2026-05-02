@@ -1,6 +1,6 @@
 # ADR-006: No Runtime Dependency on External Binaries in Skill Content
 
-> Maintained by: **agents** role
+> Maintained by: **architect** role
 
 **date:** 2026-03-27\
 **status:** accepted

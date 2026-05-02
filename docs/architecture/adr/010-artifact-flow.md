@@ -1,6 +1,6 @@
 # ADR-010: Artifact Hand-off Pipeline
 
-> Maintained by: **agents** role
+> Maintained by: **architect** role
 
 **date:** 2026-03-28\
 **status:** accepted
@@ -37,13 +37,14 @@ and stops — it does not proceed with partial context.
 
 ### user gate moments
 
-There are 3 explicit user gate moments:
+There are 4 explicit user gate moments:
 
 | Gate                         | Trigger                                              | Required                              |
 | ---------------------------- | ---------------------------------------------------- | ------------------------------------- |
 | **1. Requirements approval** | After `product` writes requirements.md               | User approves before architect starts |
 | **2. Design approval**       | After `architect` + `designer` write their artifacts | User approves before engineer starts  |
 | **3. Pre-prod sign-off**     | After `tester` reports are ready                     | User approves before release starts   |
+| **4. Merge approval**        | Before `release` creates PR                          | User approves final merge             |
 
 ## alternatives considered
 
@@ -64,6 +65,6 @@ Files on disk:
 
 ## impact on future orchestrated pipeline
 
-The pipeline runner (`scripts/runner.py`) reads artifact paths from a config and
+The pipeline runner reads artifact paths from a config and
 checks for existence before invoking the next role. This makes the runner
 a thin orchestrator, not a data manager.

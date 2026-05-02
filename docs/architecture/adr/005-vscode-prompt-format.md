@@ -1,6 +1,6 @@
 # ADR-005: VS Code Prompt File Format
 
-> Maintained by: **agents** role
+> Maintained by: **architect** role
 
 **date:** 2026-03-27\
 **status:** superseded by ADR-009

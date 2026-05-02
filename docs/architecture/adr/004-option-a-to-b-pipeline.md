@@ -1,6 +1,6 @@
 # ADR-004: Single-Call Execution with Optional Future Orchestration
 
-> Maintained by: **agents** role
+> Maintained by: **architect** role
 
 **date:** 2026-03-27\
 **status:** accepted

@@ -1,6 +1,6 @@
 # ADR-007: Python 3 as Canonical Runtime
 
-> Maintained by: **agents** role
+> Maintained by: **architect** role
 
 **date:** 2026-03-27\
 **status:** accepted (consolidates superseded ADR-007/ADR-008 from DECISIONS.md)
@@ -15,18 +15,17 @@ The toolchain was initially prototyped in TypeScript/Bun. In practice:
 
 ## decision
 
-**Python 3 is the sole canonical runtime** for vstack's toolchain:
+**Python 3 is the sole canonical runtime** for vstack's toolchain.
+The implementation lives in the `src/vstack/` package:
 
-- `scripts/gen_skill_docs.py` — template generator
-- `scripts/validate_skills.py` — skill validation
-- `scripts/skill_check.py` — health dashboard
-- `test/test_skills.py` — test suite (pytest)
+- `src/vstack/cli/` — CLI command handlers
+- `src/vstack/artifacts/` — generic template generator
+- `src/vstack/manifest/` — manifest read/write and upgrade
+- `src/vstack/frontmatter/` — YAML frontmatter parsing and validation
+- `tests/vstack/` — pytest test suite (100% coverage enforced)
 
-`package.json` is kept as a convenience wrapper (`npm run build` etc.) but no
-`node_modules` are installed.
-
-Zero external Python dependencies. All scripts use stdlib only:
-`re`, `json`, `pathlib`, `subprocess`, `sys`, `textwrap`.
+Zero external Python dependencies at runtime. All runtime code uses stdlib only:
+`re`, `json`, `pathlib`, `subprocess`, `sys`, `textwrap`, `hashlib`, `dataclasses`.
 
 ## alternatives considered
 
@@ -36,11 +35,12 @@ Zero external Python dependencies. All scripts use stdlib only:
 
 ## rationale
 
-Python 3.11+ is universally available on macOS, Linux, and CI systems.
-The entire toolchain is under 1000 lines of Python 3 with zero external dependencies.
+Python 3.11–3.14 is the supported range, matching CI and type-checking compatibility
+requirements. The package is distributed via PyPI with no runtime dependencies beyond
+the Python standard library.
 
 ## impact on future orchestrated pipeline
 
-The future orchestrated pipeline runner (`scripts/runner.py`) will be implemented in Python.
+The future orchestrated pipeline runner will be implemented in Python.
 `asyncio` + `subprocess` provide sufficient primitives for sequential and parallel
 stage execution.
