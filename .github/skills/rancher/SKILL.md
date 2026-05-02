@@ -68,9 +68,9 @@ Operational rule:
 Typical workflow:
 
 1. Select target cluster and project.
-2. Validate namespace-level quotas/limits.
-3. Deploy or update app workload.
-4. Verify pod readiness, service reachability, and events.
+1. Validate namespace-level quotas/limits.
+1. Deploy or update app workload.
+1. Verify pod readiness, service reachability, and events.
 
 If Rancher app workflow uses Helm, validate chart and values first (via `helm` skill).
 

@@ -70,6 +70,7 @@ type(optional-scope)!: short summary
 - `major`: any commit with `!` in the header or a `BREAKING CHANGE:` footer.
 - `minor`: `feat`, `feature`.
 - `patch`: `fix`, `bugfix`, `hotfix`, `opt`, `patch`, `perf`, `refactor`, `chore`, `revert`.
+- `no bump`: `docs`, `test`, `tests` (appear in changelog but do not trigger a version increment).
 
 ### 3) Allowed types
 
@@ -82,6 +83,7 @@ type(optional-scope)!: short summary
 - `refactor`: structural cleanup without intended behavior change.
 - `chore`: repository maintenance and non-feature housekeeping.
 - `revert`: rollback of a previous commit.
+- `test`, `tests`: test-only changes with no production behavior change.
 
 ### 4) Suggested scopes (optional)
 

@@ -16,6 +16,8 @@ allow_commit_types = [
   "refactor",
   "chore",
   "revert",
+  "test",
+  "tests",
 ]
 allow_merge_commits = true
 allow_revert_commits = true
