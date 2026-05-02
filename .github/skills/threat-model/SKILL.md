@@ -59,7 +59,6 @@ This skill uses a practical framework selection model:
 - Incident post-mortem analysis (use `incident`)
 - Generic architecture review without threat analysis focus (use `architecture`)
 
-
 ## Deliverable and artifact policy
 
 - Primary deliverable: `docs/architecture/threat-model.md`
@@ -67,19 +66,17 @@ This skill uses a practical framework selection model:
 - Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/THREAT_MODEL_DELTA.md`
 - Before merge: consolidate delta notes into the baseline threat model.
 
-
 ## Framework selection guide
 
 Use this decision table to choose depth and method:
 
-| Need | Preferred framework |
-| ---- | ------------------- |
-| Identify threats quickly during design | STRIDE |
-| Rank many discovered threats for remediation | STRIDE + DREAD |
+| Need                                             | Preferred framework                       |
+| ------------------------------------------------ | ----------------------------------------- |
+| Identify threats quickly during design           | STRIDE                                    |
+| Rank many discovered threats for remediation     | STRIDE + DREAD                            |
 | Model business-aligned risk for critical systems | PASTA (optionally with STRIDE categories) |
 
 Default path for most teams: **STRIDE + DREAD**.
-
 
 ## Step 0: Define model scope and trust boundaries
 
@@ -105,7 +102,6 @@ find docs -maxdepth 3 -type f \
 
 If there is no architecture or design context, stop and request it before continuing.
 
-
 ## Step 1: Build a lightweight system model
 
 Create a concise component and data-flow view before threat enumeration.
@@ -128,19 +124,18 @@ flowchart LR
   SVC --> EXT[Third-party API]
 ```
 
-
 ## Step 2: Identify threats with STRIDE
 
 For each component and data flow, enumerate threats by category.
 
-| STRIDE category | Core question | Typical controls |
-| --------------- | ------------- | ---------------- |
-| Spoofing | Can an attacker impersonate an identity? | Strong auth, token validation, mTLS |
-| Tampering | Can data/state be modified without authorization? | Integrity checks, signatures, immutable logs |
-| Repudiation | Could actions be denied without evidence? | Audit trails, non-repudiation logs |
-| Information Disclosure | Could sensitive data leak? | Access control, encryption, data minimization |
-| Denial of Service | Can availability be degraded or exhausted? | Rate limits, quotas, circuit breakers |
-| Elevation of Privilege | Can lower privilege gain higher access? | Least privilege, authorization hardening |
+| STRIDE category        | Core question                                     | Typical controls                              |
+| ---------------------- | ------------------------------------------------- | --------------------------------------------- |
+| Spoofing               | Can an attacker impersonate an identity?          | Strong auth, token validation, mTLS           |
+| Tampering              | Can data/state be modified without authorization? | Integrity checks, signatures, immutable logs  |
+| Repudiation            | Could actions be denied without evidence?         | Audit trails, non-repudiation logs            |
+| Information Disclosure | Could sensitive data leak?                        | Access control, encryption, data minimization |
+| Denial of Service      | Can availability be degraded or exhausted?        | Rate limits, quotas, circuit breakers         |
+| Elevation of Privilege | Can lower privilege gain higher access?           | Least privilege, authorization hardening      |
 
 Threat entry format:
 
@@ -155,7 +150,6 @@ Control gaps: [what is missing]
 Proposed mitigations: [specific, testable controls]
 ```
 
-
 ## Step 3: Prioritize with DREAD (optional but recommended)
 
 If you have more than a few threats, score each threat:
@@ -168,13 +162,12 @@ If you have more than a few threats, score each threat:
 
 Use a 1-10 scale and compute the average.
 
-| ID | D | R | E | A | Dv | Score | Priority |
-| -- | - | - | - | - | -- | ----- | -------- |
-| TM-auth-1 | 9 | 8 | 8 | 9 | 7 | 8.2 | P1 |
+| ID        | D   | R   | E   | A   | Dv  | Score | Priority |
+| --------- | --- | --- | --- | --- | --- | ----- | -------- |
+| TM-auth-1 | 9   | 8   | 8   | 9   | 7   | 8.2   | P1       |
 
 Prioritization note: keep scoring criteria explicit and tie final priority to
 business and operational context, not score alone.
-
 
 ## Step 4: Use PASTA depth when context demands it
 
@@ -194,7 +187,6 @@ PASTA-aligned expansion (compact):
 If PASTA depth is out of scope due to time or maturity constraints, document that
 explicitly and continue with STRIDE + DREAD.
 
-
 ## Step 5: Produce mitigation plan and security requirements
 
 Convert prioritized threats into implementation-ready controls:
@@ -210,7 +202,6 @@ For each high-priority threat include:
 - Expected artifact change (architecture, design, code, tests, runbook)
 - Deadline/sprint target
 - Verification method (test, scan, review, chaos/failure drill)
-
 
 ## Threat model report template
 
@@ -243,7 +234,6 @@ For each high-priority threat include:
 - decisions requiring ADR or product sign-off
 ```
 
-
 ## Completion checklist
 
 - Scope, trust boundaries, and critical assets are explicit.
@@ -252,7 +242,6 @@ For each high-priority threat include:
 - PASTA depth is either applied with rationale or explicitly deferred.
 - Mitigations are actionable, owned, and verifiable.
 - Final report is written to `docs/architecture/threat-model.md`.
-
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"threat-model","artifact_type":"skill","artifact_version":"20260502021","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

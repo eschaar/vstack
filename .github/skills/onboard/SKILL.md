@@ -47,7 +47,6 @@ clone to first PR with zero tribal knowledge required.
 **Golden rule: If a new contributor needs to ask a question that isn't answered
 by the docs, that is a documentation gap — not a knowledge problem.**
 
-
 ## Step 0: Audit Existing Documentation
 
 ```bash
@@ -75,7 +74,6 @@ Tech stack:      [Python | Node | Go | other]
 Build tool:      [Poetry | npm | make | other]
 ```
 
-
 ## Step 1: Understand the Project
 
 Read the codebase to extract onboarding-relevant facts:
@@ -100,7 +98,6 @@ cat .node-version 2>/dev/null
 cat .github/workflows/*.yml 2>/dev/null | grep -E 'run:|uses:' | head -30
 ```
 
-
 ## Step 2: Verify the Setup Steps Work
 
 Before documenting setup steps, verify they actually work:
@@ -123,7 +120,6 @@ For each setup step, confirm:
 - [ ] Environment variables are documented (use `.env.example` if present)
 - [ ] The setup completes in < 5 minutes on a fresh machine
 
-
 ## Step 3: Extract Test Commands
 
 ```bash
@@ -143,7 +139,6 @@ Type check only:                     [command]
 Single test:                         [command pattern]
 ```
 
-
 ## Step 4: Identify "Good First Issues"
 
 ```bash
@@ -157,11 +152,9 @@ grep -r -n "TODO\|FIXME\|HACK\|good.first" \
 # (manual step — list any open "good first issue" labels)
 ```
 
-
 ## Step 5: Write the Onboarding Guide
 
 Produce or update `CONTRIBUTING.md` with the following sections:
-
 
 ````markdown
 # Contributing to [Project Name]
@@ -266,8 +259,6 @@ Link to docs/architecture/architecture.md for details.\]
 
 ````
 
-
-
 ## Step 6: Supplement README (if needed)
 
 If README lacks a dev setup section, add a minimal one linking to CONTRIBUTING.md:
@@ -285,7 +276,6 @@ Quick start:
 ```
 
 ````
-
 
 ## Output
 

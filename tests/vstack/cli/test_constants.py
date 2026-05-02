@@ -15,6 +15,7 @@ EXPECTED_CLI_NAMES = [
     "code-review",
     "release-notes",
     "pr",
+    "gh-release",
     "verify",
     "inspect",
     "security",

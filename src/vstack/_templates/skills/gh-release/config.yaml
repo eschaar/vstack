@@ -1,0 +1,17 @@
+name: gh-release
+version: 20260502023
+description: |
+  Create or update a GitHub Release using the gh CLI from prepared release artifacts.
+  Handles immutable tag checks, draft/publish/prerelease flow, release notes source
+  selection, optional asset upload, and release metadata verification before publication.
+  Use when asked to "create a GitHub release", "publish a release", or
+  "draft release with gh".
+argument-hint: '[version/tag and release notes source]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access, terminal command execution, and GitHub CLI authentication (`gh auth status`).
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

@@ -60,7 +60,6 @@ optimizations. Measure first; never optimize without evidence.
 - Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/PERFORMANCE_DELTA.md`
 - Before merge: consolidate thresholds, measurements, and recommendations into the baseline performance report.
 
-
 ## Setup
 
 **Parse the user's request:**
@@ -70,7 +69,6 @@ optimizations. Measure first; never optimize without evidence.
 | Target    | Whole service / entry point | `Focus on the /search endpoint`          |
 | Mode      | Comparison (vs base branch) | `--baseline`, `--profile`, `--load-test` |
 | Threshold | 5% regression               | `--threshold 0.10` (10%)                 |
-
 
 ## Phase 1: Establish Baseline
 
@@ -121,7 +119,6 @@ fi
 [ -f Cargo.toml ] && cargo bench 2>/dev/null || true
 ```
 
-
 ## Phase 2: Comparison vs Base Branch
 
 ```bash
@@ -147,7 +144,6 @@ Compare results:
 
 **Regression threshold:** Flag if any metric degrades by more than 5% (or configured threshold).
 
-
 ## Phase 3: Load Testing (if applicable)
 
 ```bash
@@ -170,7 +166,6 @@ hey -n 1000 -c 50 "${SERVICE_URL}/health" 2>/dev/null || true
 # Using wrk (if available)
 wrk -t4 -c100 -d30s "${SERVICE_URL}/health" 2>/dev/null || true
 ```
-
 
 ## Phase 4: Profiling (if regression found)
 
@@ -200,7 +195,6 @@ Common bottleneck categories:
 - **Sync where async:** Blocking I/O on hot path
 - **Regex compilation:** Regex compiled inside hot loop
 
-
 ## Phase 5: Optimization Loop
 
 For each bottleneck identified:
@@ -218,7 +212,6 @@ For each bottleneck identified:
 - Cache invalidation is a correctness problem, not just a performance trick.
 - Async I/O > sync I/O for I/O-bound work.
 - Batch > N individual calls.
-
 
 ## Performance Report
 
@@ -247,7 +240,6 @@ For each bottleneck identified:
 ### Verdict
 [NO REGRESSION / REGRESSION FIXED / REGRESSION NEEDS ATTENTION]
 ```
-
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
 <!-- VSTACK-META: {"artifact_name":"performance","artifact_type":"skill","artifact_version":"20260421022","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
