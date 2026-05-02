@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from vstack.frontmatter import FrontmatterParser
+
 TEMPLATES_ROOT = Path(__file__).resolve().parents[3] / "src" / "vstack" / "_templates" / "agents"
 
 
@@ -55,3 +57,16 @@ def test_all_role_configs_define_handoffs_block() -> None:
         assert "handoffs:" in config
         assert "label:" in config
         assert "agent:" in config
+
+
+def test_all_role_handoff_targets_are_known_roles() -> None:
+    """Each handoff target should reference one of the known role agents."""
+    roles = ["product", "architect", "designer", "engineer", "tester", "release"]
+    valid_targets = set(roles)
+
+    for role in roles:
+        config = FrontmatterParser.parse_yaml(_read(f"{role}/config.yaml"))
+        handoffs = config.get("handoffs") or []
+        for handoff in handoffs:
+            target = handoff.get("agent")
+            assert target in valid_targets, f"{role} has unknown handoff target: {target!r}"

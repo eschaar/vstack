@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-05-02T14:11:01.517517+00:00",
+  "installed_at": "2026-05-02T14:28:42.639458+00:00",
   "artifacts": {
     "skills": [
       {
@@ -199,43 +199,43 @@
       {
         "name": "architect",
         "file": "agents/architect.agent.md",
-        "version": "20260422001",
-        "checksum": "26968f9f9977f797feced0b330213238ddf9efed225e34100f3b82b3a3546df9",
+        "version": "20260502015",
+        "checksum": "08a2beeaaede82af499df445ba5901b8ff909796c5488f5ea00895ca5ff114ec",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "designer",
         "file": "agents/designer.agent.md",
-        "version": "20260419001",
-        "checksum": "2ae1487cd828483aa7de69d8cdd2f93c43def52823c7d6daf3f0c84786fc605b",
+        "version": "20260502016",
+        "checksum": "fd3ded2f4889c36d40f9f782f78a05efe8ae8440b3ee1e933c13fdf7457a7454",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "engineer",
         "file": "agents/engineer.agent.md",
-        "version": "20260419002",
-        "checksum": "476e1a7c39f1a431b950ffbb96c73c37d58e2f42e4ee9f4735959be5ec932ed9",
+        "version": "20260502017",
+        "checksum": "d84b09fad09f11a12ce60b53400d6c534e039072a8715282e29826c1062dd5ea",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "product",
         "file": "agents/product.agent.md",
-        "version": "20260422002",
-        "checksum": "aea007b9d9471bf46635a3dcb31d40d1dcf856056b9f40e20f90590fb0590045",
+        "version": "20260502018",
+        "checksum": "fcf36cb453840ae70afdcc9d6077ac7a8da191458a91dc8699759228464c6469",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "release",
         "file": "agents/release.agent.md",
-        "version": "20260417001",
-        "checksum": "c22af76cd4f874cbebb1bb4b356a96750d2147c9da38a6475e6648f87d41ec38",
+        "version": "20260502019",
+        "checksum": "f803cf0cc7e2309a2ab48cd6ff34877d3654ed056291ea906b2786f43f9e6af2",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "tester",
         "file": "agents/tester.agent.md",
-        "version": "20260419003",
-        "checksum": "36dd3d00056651228df2b8c2d253c7914587b1abc14bed0955903331fd428994",
+        "version": "20260502020",
+        "checksum": "131bf85ecc630fa4c1e581ca75b2639a2cb64d84bfc12772b17815ac7137c317",
         "checksum_algorithm": "sha256"
       }
     ],
