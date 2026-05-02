@@ -78,5 +78,11 @@ EXPECTED_INPUT_NAMES: dict[str, list[str]] = {
     "skill": EXPECTED_CANONICAL_NAMES,
     "agent": ["architect", "designer", "engineer", "product", "release", "tester"],
     "instruction": ["git", "python"],
-    "prompt": ["code-review"],
+    "prompt": [
+        "architecture-risk",
+        "code-review",
+        "incident-timeline",
+        "migration-safety",
+        "release-readiness",
+    ],
 }

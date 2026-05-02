@@ -546,6 +546,25 @@ ______________________________________________________________________
 | Instructions  | Baseline policy and repository guardrails                  | auto-loaded by context |
 | Prompts       | Reusable prompt artifacts where direct prompting is useful | explicit prompt use    |
 
+### Prompt catalog
+
+Prompts are `.prompt.md` files installed to `.github/prompts/`. Use them when you want a focused,
+structured output for a specific task without a full agent session.
+
+**How to invoke:**
+
+- **Command palette:** `Chat: Run Prompt File` → select the prompt by name.
+- **Copilot Chat attach button:** click the paperclip icon → select "Prompt Files".
+- Some prompts accept an argument — pass it as the first message after selecting the prompt.
+
+| Prompt              | Purpose                                                   | Agent        | Argument                                     |
+| ------------------- | --------------------------------------------------------- | ------------ | -------------------------------------------- |
+| `architecture-risk` | Identify architectural risks and mitigation priorities    | `@architect` | design doc, ADR, or architecture scope       |
+| `code-review`       | Review a change for bugs, regressions, and missing tests  | `@engineer`  | scope or files to review                     |
+| `incident-timeline` | Build an evidence-based incident timeline and post-mortem | `@tester`    | logs, alerts, timeline notes, or incident ID |
+| `migration-safety`  | Review DB migration safety, rollback, and zero-downtime   | `@engineer`  | migration files, schema, or rollout plan     |
+| `release-readiness` | Evaluate release readiness from reports and open blockers | `@release`   | scope, release date, or branch               |
+
 Boundary rule:
 
 - Policies belong in instructions.
