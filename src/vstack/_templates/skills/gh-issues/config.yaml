@@ -1,0 +1,16 @@
+name: gh-issues
+version: 20260502025
+description: |
+  Create, update, and manage GitHub issues using the gh CLI. Covers bug reports,
+  feature requests, tasks, labels, assignees, milestones, sub-issues, and issue
+  workflows. Use when asked to "create an issue", "file a bug", "create a feature
+  request", "update issue #N", "add a label", or "close an issue".
+argument-hint: '[what to create or which issue number to update]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with terminal command execution and GitHub CLI authentication (`gh auth status`).
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-05-02T15:21:42.701308+00:00",
+  "installed_at": "2026-05-02T15:29:19.471919+00:00",
   "artifacts": {
     "skills": [
       {
@@ -41,6 +41,13 @@
         "checksum_algorithm": "sha256"
       },
       {
+        "name": "codeql",
+        "file": "skills/codeql/SKILL.md",
+        "version": "20260502026",
+        "checksum": "d86e991e7b46fdfae62282f6184d7805b74a1247de379b5fb352f7416c48279d",
+        "checksum_algorithm": "sha256"
+      },
+      {
         "name": "concise",
         "file": "skills/concise/SKILL.md",
         "version": "20260421008",
@@ -76,6 +83,13 @@
         "checksum_algorithm": "sha256"
       },
       {
+        "name": "dependabot",
+        "file": "skills/dependabot/SKILL.md",
+        "version": "20260502027",
+        "checksum": "83784a1ce245938ac5e125f4e369e7b756c7e2df92a378c03a1e29ad29d89838",
+        "checksum_algorithm": "sha256"
+      },
+      {
         "name": "dependency",
         "file": "skills/dependency/SKILL.md",
         "version": "20260421012",
@@ -101,6 +115,13 @@
         "file": "skills/explore/SKILL.md",
         "version": "20260421015",
         "checksum": "a257941d7b577f782b5d41703b1fbd25c5ab13f664e696d83cc3a9fd91a5565f",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "gh-issues",
+        "file": "skills/gh-issues/SKILL.md",
+        "version": "20260502025",
+        "checksum": "344ab2e32a5b57e06332e1765ea70ac0647ec1cece4fe3cf77facb63d50380d1",
         "checksum_algorithm": "sha256"
       },
       {
@@ -185,6 +206,13 @@
         "file": "skills/requirements/SKILL.md",
         "version": "20260421024",
         "checksum": "4fa0a00259210b7e200d188cd00b9921c934385520eb21d00fa8361bbe4e6e57",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "secret-scan",
+        "file": "skills/secret-scan/SKILL.md",
+        "version": "20260502028",
+        "checksum": "dc6bffe4c96ac5302180f301d362a9192e5d7c1cad70c99606c5b493c59dc77d",
         "checksum_algorithm": "sha256"
       },
       {

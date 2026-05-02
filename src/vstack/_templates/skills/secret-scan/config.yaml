@@ -1,0 +1,17 @@
+name: secret-scan
+version: 20260502028
+description: |
+  Configure and manage GitHub secret scanning and push protection. Covers enabling
+  secret scanning, push protection, custom patterns, alert triage, and remediation
+  of exposed credentials. Use when asked to "set up secret scanning", "configure
+  push protection", "define custom secret patterns", "triage a secret alert", or
+  "fix a leaked credential".
+argument-hint: '[scope: enable | configure push-protection | custom-pattern | triage alerts | remediate]'
+
+license: MIT
+compatibility: Requires repository access and GitHub Advanced Security (private repos) or public repository. Alert management requires gh CLI authentication.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false
