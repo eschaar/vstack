@@ -1,0 +1,17 @@
+name: dependabot
+version: 20260502027
+description: |
+  Create or optimize a Dependabot configuration file (.github/dependabot.yml).
+  Covers dependency update strategies, grouping, monorepo patterns, security
+  update configuration, schedule optimization, and PR customization. Use when
+  asked to "set up Dependabot", "configure dependency updates", "add dependabot.yml",
+  or "reduce Dependabot PR noise".
+argument-hint: '[repository type: library | service | monorepo, and ecosystems to cover]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access. Dependabot requires GitHub repository access (public or private with GitHub Advanced Security for private).
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

@@ -1,0 +1,17 @@
+name: codeql
+version: 20260502026
+description: |
+  Set up and configure CodeQL code scanning via GitHub Actions or the CodeQL CLI.
+  Covers workflow creation, language matrix, build modes, query suites, monorepo
+  configuration, SARIF output, and alert triage. Use when asked to "set up CodeQL",
+  "configure code scanning", "add a codeql workflow", or "scan for vulnerabilities
+  with CodeQL".
+argument-hint: '[languages and setup type: default or advanced]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution. GitHub Advanced Security or public repository required for alert upload.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

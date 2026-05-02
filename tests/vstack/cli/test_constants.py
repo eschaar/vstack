@@ -35,6 +35,10 @@ EXPECTED_CLI_NAMES = [
     "onboard",
     "dependency",
     "incident",
+    "gh-issues",
+    "codeql",
+    "dependabot",
+    "secret-scan",
 ]
 
 
