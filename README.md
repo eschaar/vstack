@@ -557,13 +557,15 @@ structured output for a specific task without a full agent session.
 - **Copilot Chat attach button:** click the paperclip icon → select "Prompt Files".
 - Some prompts accept an argument — pass it as the first message after selecting the prompt.
 
-| Prompt              | Purpose                                                   | Agent        | Argument                                     |
-| ------------------- | --------------------------------------------------------- | ------------ | -------------------------------------------- |
-| `architecture-risk` | Identify architectural risks and mitigation priorities    | `@architect` | design doc, ADR, or architecture scope       |
-| `code-review`       | Review a change for bugs, regressions, and missing tests  | `@engineer`  | scope or files to review                     |
-| `incident-timeline` | Build an evidence-based incident timeline and post-mortem | `@tester`    | logs, alerts, timeline notes, or incident ID |
-| `migration-safety`  | Review DB migration safety, rollback, and zero-downtime   | `@engineer`  | migration files, schema, or rollout plan     |
-| `release-readiness` | Evaluate release readiness from reports and open blockers | `@release`   | scope, release date, or branch               |
+| Prompt              | Purpose                                                   | Agent        | Argument                                         |
+| ------------------- | --------------------------------------------------------- | ------------ | ------------------------------------------------ |
+| `api-design-review` | Review an API design or OpenAPI spec for correctness      | `@designer`  | OpenAPI spec file, design doc, or endpoint scope |
+| `architecture-risk` | Identify architectural risks and mitigation priorities    | `@architect` | design doc, ADR, or architecture scope           |
+| `code-review`       | Review a change for bugs, regressions, and missing tests  | `@engineer`  | scope or files to review                         |
+| `dependency-audit`  | Audit dependencies for vulnerabilities and licence risks  | `@tester`    | dependency manifest, lockfile, or package scope  |
+| `incident-timeline` | Build an evidence-based incident timeline and post-mortem | `@tester`    | logs, alerts, timeline notes, or incident ID     |
+| `migration-safety`  | Review DB migration safety, rollback, and zero-downtime   | `@engineer`  | migration files, schema, or rollout plan         |
+| `release-readiness` | Evaluate release readiness from reports and open blockers | `@release`   | scope, release date, or branch                   |
 
 Boundary rule:
 

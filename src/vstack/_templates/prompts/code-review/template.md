@@ -7,6 +7,7 @@ Focus only on issues with real impact:
 - performance and scalability
 - maintainability and ownership boundaries
 - missing tests for changed behavior
+- API contract changes: breaking changes, schema drift, missing versioning
 
 Ignore:
 
