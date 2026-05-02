@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-05-02T13:38:13.130409+00:00",
+  "installed_at": "2026-05-02T13:41:24.082947+00:00",
   "artifacts": {
     "skills": [
       {
@@ -259,6 +259,13 @@
         "file": "instructions/python.instructions.md",
         "version": "0.1.1",
         "checksum": "4021c5a3cefea9b6871ec0232f9e36b75e6df1ee10174dd31eb6cece60fb5c89",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "security",
+        "file": "instructions/security.instructions.md",
+        "version": "0.1.0",
+        "checksum": "49b7e72b174afb55e708a4b508aa6a3b295d13add1eb7e39650abeb4b608d0dc",
         "checksum_algorithm": "sha256"
       },
       {
