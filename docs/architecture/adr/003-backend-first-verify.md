@@ -1,6 +1,6 @@
 # ADR-003: Backend-First Verification (`verify` skill)
 
-> Maintained by: **agents** role
+> Maintained by: **architect** role
 
 **date:** 2026-03-27\
 **status:** accepted

@@ -1,6 +1,6 @@
 # ADR-002: Artifact Naming and Compatibility Policy
 
-> Maintained by: **agents** role
+> Maintained by: **architect** role
 
 **date:** 2026-03-27\
 **status:** accepted

@@ -1,6 +1,6 @@
 # ADR-009: 6-Role Agent Model
 
-> Maintained by: **agents** role
+> Maintained by: **architect** role
 
 **date:** 2026-03-28\
 **status:** accepted

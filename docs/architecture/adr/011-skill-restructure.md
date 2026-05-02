@@ -1,9 +1,9 @@
 # ADR-011: Skill Restructure (rename, new, retire)
 
-> Maintained by: **agents** role
+> Maintained by: **architect** role
 
 **date:** 2026-03-28\
-**status:** accepted — implementation planned for v0.5.0
+**status:** accepted — implemented
 
 ## context
 
@@ -38,12 +38,12 @@ or carry ambiguous scope (e.g., `design-consult`, `experience`, `discovery`).
 
 ### skills to retire (become documentation, not skills)
 
-| skill         | disposition                                          |
-| ------------- | ---------------------------------------------------- |
-| `guardrails`  | Inline note in tester/release workflow documentation |
-| `freeze`      | Inline note in engineer/architect agent file         |
-| `unfreeze`    | Inline note in engineer/architect agent file         |
-| `orchestrate` | Responsibility moves to product + release roles      |
+| skill         | disposition                                                                                                                             |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `guardrails`  | Originally planned for retirement; **retained** as an active per-project installable safety skill (see `agent skill wiring` in roadmap) |
+| `freeze`      | Inline note in engineer/architect agent file                                                                                            |
+| `unfreeze`    | Inline note in engineer/architect agent file                                                                                            |
+| `orchestrate` | Responsibility moves to product + release roles                                                                                         |
 
 ## alternatives considered
 

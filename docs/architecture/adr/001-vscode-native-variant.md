@@ -1,6 +1,6 @@
 # ADR-001: VS Code–Native Variant
 
-> Maintained by: **agents** role
+> Maintained by: **architect** role
 
 **date:** 2026-03-27\
 **status:** accepted
