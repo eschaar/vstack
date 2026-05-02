@@ -34,9 +34,8 @@ directory structures and other scan-friendly hierarchies.
 
 # release-notes — Release Artifact Preparation
 
-Verify all artifacts are complete, write release notes, and update the changelog.
-
-This skill owns both `docs/releases/{date}.md` and `CHANGELOG.md` updates.
+Write release notes and update the changelog so that the release is documented
+before the PR is opened.
 
 ## Out of scope
 
@@ -44,38 +43,35 @@ This skill owns both `docs/releases/{date}.md` and `CHANGELOG.md` updates.
 - Creating the PR (use `pr`)
 - Deployment — CI/CD takes over after merge
 
-## Deliverable and artifact policy
+## Deliverable
 
-- Primary deliverables: `docs/releases/{date}.md`, `CHANGELOG.md`
-- Baseline-first default: write final release artifacts directly to baseline docs on the feature branch.
-- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/RELEASE_DELTA.md`
-- Before merge: consolidate final release summary and changelog entries into baseline artifacts.
+- A release notes document summarising what changed
+- An updated `CHANGELOG.md` entry
+
+The invoking agent determines which files to read as evidence and where to write
+the release notes. This skill describes the procedure, not the file paths.
 
 ______________________________________________________________________
 
-## Step 1: Artifact checklist
+## Step 1: Evidence review
 
-Verify these files exist and are not empty:
+Verify that the evidence the invoking agent has designated as required is present
+and not empty. Report any missing items and stop if blockers exist.
 
-```bash
-for f in docs/product/requirements.md docs/architecture/architecture.md docs/design/design.md \
-          docs/test-report.md docs/security-report.md CHANGELOG.md; do
-  [ -f "$f" ] && echo "✓ $f" || echo "✗ MISSING: $f"
-done
+Typical evidence to check (agent-defined):
 
-# Scope-conditional artifacts
-[ -f docs/performance-baseline.md ] && echo "✓ docs/performance-baseline.md" || echo "i docs/performance-baseline.md (optional unless performance validation is in scope)"
-[ -f docs/observability-baseline.md ] && echo "✓ docs/observability-baseline.md" || echo "i docs/observability-baseline.md (optional; observability evidence may be in docs/test-report.md)"
-```
+- Test results or verification report
+- Security findings or sign-off
+- Change summary (git log, diff stat, or agent-provided summary)
+- Acceptance criteria from requirements
 
-If any required artifact is missing: **STOP and report**. Do not proceed.
-If performance validation is in scope and `docs/performance-baseline.md` is missing: **STOP and report**.
+If any required evidence is missing: **STOP and report to the invoking agent**.
 
 ______________________________________________________________________
 
 ## Step 2: Summarise changes
 
-Review what changed on this branch vs main:
+Review what changed on this branch vs the base branch:
 
 ```bash
 git log origin/main..HEAD --oneline
@@ -91,42 +87,32 @@ Identify:
 
 ______________________________________________________________________
 
-## Step 3: Write `docs/releases/{date}.md`
+## Step 3: Write release notes
 
+Write a release notes document to the location designated by the invoking agent.
 Date format: `YYYY-MM-DD` (today). Never overwrite an existing file.
 
-```bash
-DATE=$(date +%Y-%m-%d)
-RELEASE_FILE="docs/releases/${DATE}.md"
-[ -f "$RELEASE_FILE" ] && echo "ERROR: $RELEASE_FILE already exists" && exit 1
-mkdir -p docs/releases
-```
-
-Write the file with this structure:
+Use this structure:
 
 ```markdown
 # Release {date}
 
-## summary
+## Summary
 [1–3 sentences: what changed and why it matters to users]
 
-## what's new
+## What's new
 - [user-visible feature or fix — lead with what the user can now DO]
 
-## fixed
+## Fixed
 - [bug fixes]
 
-## internal
+## Internal
 - [infra, tooling, tests — optional]
 
-## artifacts reviewed
-| artifact | status |
+## Evidence reviewed
+| evidence | status |
 |----------|--------|
-| docs/product/requirements.md | ✓ |
-| docs/architecture/architecture.md | ✓ |
-| docs/design/design.md | ✓ |
-| docs/test-report.md | ✓ |
-| docs/security-report.md | ✓ |
+| [evidence item] | ✓ / ✗ MISSING |
 ```
 
 Rules:
@@ -142,7 +128,7 @@ ______________________________________________________________________
 Prepend a new entry at the top of `CHANGELOG.md`:
 
 ```markdown
-## {date}
+## {version or date}
 
 ### What's new
 - [user-visible changes]

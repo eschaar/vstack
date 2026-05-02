@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-05-02T13:51:25.500555+00:00",
+  "installed_at": "2026-05-02T14:01:18.186707+00:00",
   "artifacts": {
     "skills": [
       {
@@ -149,7 +149,7 @@
         "name": "pr",
         "file": "skills/pr/SKILL.md",
         "version": "1.0.2",
-        "checksum": "9faebc42ce7ac720502943fed0c295d3999d46ba4cf35936a24395ccfd3f9a74",
+        "checksum": "bf463295ff2bd357f3857b5758fefb96d6c354a9b558616a05c504822b82b319",
         "checksum_algorithm": "sha256"
       },
       {
@@ -163,7 +163,7 @@
         "name": "release-notes",
         "file": "skills/release-notes/SKILL.md",
         "version": "1.0.2",
-        "checksum": "e8fe5b190b6c52fa9f76e1766ecf1f1116dd728ea0845b5a6b01f9d0458fcde3",
+        "checksum": "53e40817ea3d61a2973ec586e8a9d13feed3884572bf5bde308e25751e9453bf",
         "checksum_algorithm": "sha256"
       },
       {

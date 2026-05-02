@@ -2,7 +2,7 @@
 
 # pr — Commit, Push & Open Pull Request
 
-Push the current branch and open a PR targeting main. This is the final step
+Push the current branch and open a pull request. This is the final step
 before CI/CD takes over.
 
 ## Out of scope
@@ -11,30 +11,22 @@ before CI/CD takes over.
 - Writing release notes (use `release-notes`)
 - Merging or deploying — CI/CD handles that after merge
 
-## Deliverable and artifact policy
+## Deliverable
 
-- Primary deliverable: release pull request targeting main
-- Baseline-first default: use existing branch artifacts directly; do not create parallel release records outside baseline docs.
-- PR body source: `docs/releases/{date}.md` when present
-- Before merge: ensure release artifact references in the PR body reflect final baseline files.
+- A pull request open against the target base branch (typically `main`)
 
 ______________________________________________________________________
 
 ## Step 1: Pre-flight
 
 ```bash
-# Confirm not on main
+# Confirm not on the target base branch
 BRANCH=$(git branch --show-current)
 if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
   echo "ERROR: on $BRANCH — create a feature branch first"
   exit 1
 fi
 echo "Branch: $BRANCH"
-
-# Check release notes exist
-DATE=$(date +%Y-%m-%d)
-RELEASE_FILE="docs/releases/${DATE}.md"
-[ -f "$RELEASE_FILE" ] || echo "WARN: $RELEASE_FILE not found — PR body will be empty"
 
 # Show what will be included
 git status --short
@@ -52,7 +44,7 @@ git add -A
 git diff --cached --stat
 
 # Only commit if there are staged changes
-git diff --cached --quiet || git commit -m "release: $(date +%Y-%m-%d)"
+git diff --cached --quiet || git commit -m "chore: pre-release cleanup"
 ```
 
 ______________________________________________________________________
@@ -67,23 +59,21 @@ ______________________________________________________________________
 
 ## Step 4: Open PR
 
-```bash
-DATE=$(date +%Y-%m-%d)
-RELEASE_FILE="docs/releases/${DATE}.md"
-BODY=""
-[ -f "$RELEASE_FILE" ] && BODY=$(cat "$RELEASE_FILE")
+Use the PR title and body provided by the invoking agent or user.
+If no body is provided, write a short summary of the changes on this branch.
 
+```bash
 gh pr create \
   --base main \
-  --title "release: ${DATE}" \
-  --body "$BODY"
+  --title "<title>" \
+  --body "<body>"
 ```
 
 If `gh` is not available:
 
 ```bash
 echo "Open PR manually:"
-echo "  Title: release: $(date +%Y-%m-%d)"
+echo "  Title: <title>"
 echo "  Base:  main"
 echo "  Head:  $BRANCH"
 echo "  URL:   https://github.com/<org>/<repo>/compare/main...$BRANCH"
@@ -93,16 +83,14 @@ ______________________________________________________________________
 
 ## Step 5: Report to user
 
-Report the PR URL and next steps:
+Report the PR URL and confirm what CI/CD will do next:
 
 ```text
 PR created: <url>
 
-CI/CD will now:
-- Run tests and security scan
-- Build and publish container image
-- Determine version (semantic-release / conventional commits)
-- Deploy after approval and merge
+Next steps depend on the repository CI/CD configuration:
+- Automated tests and checks will run on the PR.
+- Merge when all checks pass and reviewers approve.
 ```
 
 ______________________________________________________________________
