@@ -77,7 +77,7 @@ class ArtifactState:
 EXPECTED_INPUT_NAMES: dict[str, list[str]] = {
     "skill": EXPECTED_CANONICAL_NAMES,
     "agent": ["architect", "designer", "engineer", "product", "release", "tester"],
-    "instruction": ["git", "markdown", "python", "security", "testing"],
+    "instruction": ["git", "java", "markdown", "python", "security", "testing", "typescript"],
     "prompt": [
         "api-design-review",
         "architecture-risk",

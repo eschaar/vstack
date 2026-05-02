@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-05-02T13:47:26.160895+00:00",
+  "installed_at": "2026-05-02T13:51:25.500555+00:00",
   "artifacts": {
     "skills": [
       {
@@ -248,6 +248,13 @@
         "checksum_algorithm": "sha256"
       },
       {
+        "name": "java",
+        "file": "instructions/java.instructions.md",
+        "version": "0.1.0",
+        "checksum": "466d32b4c492fef5cbb9a8e158d87fac20f2d8b2583214c2ca279d7f6958f55e",
+        "checksum_algorithm": "sha256"
+      },
+      {
         "name": "markdown",
         "file": "instructions/markdown.instructions.md",
         "version": "0.1.0",
@@ -273,6 +280,13 @@
         "file": "instructions/testing.instructions.md",
         "version": "0.1.0",
         "checksum": "12a37adaf6ce5b184f5341b8e54853cc46e5b794d1a52cf2e0941fe2cbe24bfd",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "typescript",
+        "file": "instructions/typescript.instructions.md",
+        "version": "0.1.0",
+        "checksum": "57717f9f1fee590c3771693f25606e6469b61702b76fc23a8d6104466c79feab",
         "checksum_algorithm": "sha256"
       }
     ],
