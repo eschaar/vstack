@@ -408,9 +408,11 @@ ______________________________________________________________________
 | `vstack verify --target DIR`           | Verify installed artifacts in DIR/.github                                                |
 | `vstack verify --global`               | Verify artifacts in your VS Code global profile                                          |
 | `vstack install --target DIR`          | First-run setup: seeds `.vstack/`, then generates `.github/` artifacts from templates    |
+| `vstack install`                       | Same as above, using the current directory as target                                     |
 | `vstack install --global`              | Install vstack artifacts into your VS Code profile, preserving local edits unless forced |
 | `vstack install --dry-run`             | Preview install actions without writing files                                            |
 | `vstack init --target DIR`             | Idempotent regeneration: reads `.vstack/config.yaml` and updates `.github/` artifacts    |
+| `vstack init`                          | Same as above, using the current directory as target                                     |
 | `vstack uninstall --target DIR`        | Uninstall tracked artifacts that still match the manifest                                |
 | `vstack uninstall --global`            | Uninstall vstack artifacts from your VS Code profile                                     |
 | `vstack uninstall`                     | Uninstall from the current directory default target                                      |
@@ -454,7 +456,7 @@ For smaller terminals, `vstack manifest status` (and `vstack status`) defaults t
 | `vstack install` | Once per project (or when onboarding a machine) | Seeds `.vstack/config.yaml` if missing (never overwrites), then runs `init`       |
 | `vstack init`    | On every vstack upgrade, or in CI               | Idempotent regeneration — reads `.vstack/config.yaml` and applies it on every run |
 
-Both commands accept the same flags (`--only`, `--force`, `--update`, `--dry-run`, etc.).
+Both commands default to the current working directory when `--target` is omitted — run them from the repository root. Both accept the same flags (`--only`, `--force`, `--update`, `--dry-run`, etc.).
 
 ### `.vstack/config.yaml` — project configuration
 
