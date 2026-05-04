@@ -4,6 +4,7 @@ MD003: false   # heading-style — disabled (atx style intentional throughout; s
 MD004: false   # ul-style — disabled (mixed bullets are allowed)
 MD007: false   # ul-indent — disabled (indent style varies across templates)
 MD010: false   # no-hard-tabs — disabled (tab-indented JSON snippets are intentional)
+MD012: false   # no-multiple-blanks — disabled (release-please CHANGELOG format emits double blank lines)
 MD013: false   # line-length — disabled (long lines allowed)
 MD022: false   # blanks-around-headings — disabled (frontmatter/template structure differs)
 MD026: false   # no-trailing-punctuation — disabled (headings like "Step 1:" are intentional)
