@@ -1,5 +1,16 @@
-# Selective install exclusions.
-# Remove or comment out to install everything (default).
+# vstack project configuration
+#
+# vstack install  — first-run setup. Seeds this file if missing (never overwrites).
+#                   Then runs init to generate .github/ artifacts from templates.
+#                   Use once per project, or when onboarding a new machine.
+#
+# vstack init     — idempotent regeneration. Reads this file on every run.
+#                   Safe to re-run in CI after pip install --upgrade vstack.
+#
+# This file is committed to git. It expresses stable project preferences —
+# editing it is a deliberate choice that affects all future vstack init runs.
+
+# Selective install exclusions — remove or comment out to install everything.
 #
 # exclude:
 #   skills:

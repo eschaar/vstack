@@ -233,3 +233,123 @@ class TestReadArtifactsRoot:
         interface.run()
 
         assert captured == ["custom"]
+
+
+class TestReadExclude:
+    """Tests for CommandLineInterface._read_exclude."""
+
+    def test_returns_empty_when_install_dir_is_none(self) -> None:
+        """Returns empty sets when no install dir is provided."""
+        excluded_types, excluded_names = CommandLineInterface._read_exclude(None)
+        assert excluded_types == frozenset()
+        assert excluded_names == {}
+
+    def test_returns_empty_when_config_absent(self, tmp_path: Path) -> None:
+        """Returns empty sets when .vstack/config.yaml does not exist."""
+        install_dir = tmp_path / ".github"
+        excluded_types, excluded_names = CommandLineInterface._read_exclude(install_dir)
+        assert excluded_types == frozenset()
+        assert excluded_names == {}
+
+    def test_returns_excluded_type_for_all(self, tmp_path: Path) -> None:
+        """Returns excluded type when a type entry is 'all'."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text("exclude:\n  instructions: all\n", encoding="utf-8")
+        excluded_types, excluded_names = CommandLineInterface._read_exclude(tmp_path / ".github")
+        assert "instruction" in excluded_types
+        assert excluded_names == {}
+
+    def test_returns_excluded_names_for_list(self, tmp_path: Path) -> None:
+        """Returns name list when a type entry is a list of artifact names."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "exclude:\n  skills:\n    - terraform\n    - helm\n", encoding="utf-8"
+        )
+        excluded_types, excluded_names = CommandLineInterface._read_exclude(tmp_path / ".github")
+        assert excluded_types == frozenset()
+        assert excluded_names == {"skill": ["terraform", "helm"]}
+
+    def test_handles_mixed_all_and_list(self, tmp_path: Path) -> None:
+        """Handles both 'all' and name-list entries in the same exclude block."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "exclude:\n  prompts: all\n  skills:\n    - helm\n", encoding="utf-8"
+        )
+        excluded_types, excluded_names = CommandLineInterface._read_exclude(tmp_path / ".github")
+        assert "prompt" in excluded_types
+        assert excluded_names == {"skill": ["helm"]}
+
+    def test_ignores_unknown_keys(self, tmp_path: Path) -> None:
+        """Unknown type keys in exclude block are silently ignored."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text("exclude:\n  workflows: all\n", encoding="utf-8")
+        excluded_types, excluded_names = CommandLineInterface._read_exclude(tmp_path / ".github")
+        assert excluded_types == frozenset()
+        assert excluded_names == {}
+
+    def test_returns_empty_when_exclude_key_absent(self, tmp_path: Path) -> None:
+        """Returns empty sets when config.yaml has no exclude key."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text("artifacts:\n  root: docs\n", encoding="utf-8")
+        excluded_types, excluded_names = CommandLineInterface._read_exclude(tmp_path / ".github")
+        assert excluded_types == frozenset()
+        assert excluded_names == {}
+
+    def test_run_removes_excluded_type_from_only(self, monkeypatch, tmp_path: Path) -> None:
+        """run() removes excluded types from effective_only when exclude: type: all."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "exclude:\n  prompts: all\n  instructions: all\n", encoding="utf-8"
+        )
+        install_dir = tmp_path / ".github"
+        args = argparse.Namespace(command="install", only=None, use_global=False)
+        parser = _Parser(args=args, resolved_target=install_dir)
+        command = _Command(exit_code=0)
+
+        monkeypatch.setattr(
+            "vstack.cli.interface.build_command_registry",
+            lambda service: {"install": command},
+        )
+        interface = CommandLineInterface(
+            parser_cls=cast(Any, lambda: parser),
+            service_cls=cast(Any, _Service),
+            templates_root=tmp_path,
+        )
+        interface.run()
+
+        assert command.calls[0].only is not None
+        assert "prompt" not in command.calls[0].only
+        assert "instruction" not in command.calls[0].only
+        assert "skill" in command.calls[0].only
+        assert "agent" in command.calls[0].only
+
+    def test_run_passes_excluded_names_to_context(self, monkeypatch, tmp_path: Path) -> None:
+        """run() passes name-level exclusions as context.excluded_names."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "exclude:\n  skills:\n    - terraform\n    - helm\n", encoding="utf-8"
+        )
+        install_dir = tmp_path / ".github"
+        args = argparse.Namespace(command="install", only=None, use_global=False)
+        parser = _Parser(args=args, resolved_target=install_dir)
+        command = _Command(exit_code=0)
+
+        monkeypatch.setattr(
+            "vstack.cli.interface.build_command_registry",
+            lambda service: {"install": command},
+        )
+        interface = CommandLineInterface(
+            parser_cls=cast(Any, lambda: parser),
+            service_cls=cast(Any, _Service),
+            templates_root=tmp_path,
+        )
+        interface.run()
+
+        assert command.calls[0].excluded_names == {"skill": ["terraform", "helm"]}
