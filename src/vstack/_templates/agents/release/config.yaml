@@ -19,11 +19,12 @@ model:
   - GPT-5.3-Codex (copilot)
 agents: ["*"]
 artifacts:
-  target: docs/releases
+  dir: releases
   input:
-    - docs/**/*.md
+    - "**/*.md"
   output:
-    - "*.md"
+    - path: "*.md"
+      notes: includes release notes and sign-off record
 target: vscode
 user-invocable: true
 

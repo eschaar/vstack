@@ -28,11 +28,13 @@ handoffs:
       this change, assess and confirm that explicitly, then pass through to
       the next stage.
 artifacts:
-  target: docs/product
+  dir: product
   output:
     - vision.md
     - requirements.md
     - roadmap.md
+    - changes/*.md
+    - issues/*.md
 target: vscode
 user-invocable: true
 

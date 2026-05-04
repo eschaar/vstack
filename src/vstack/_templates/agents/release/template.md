@@ -83,19 +83,9 @@ and wait for explicit user routing decisions.
 
 ## artifacts you use
 
-<!-- This section will be generated from config.yaml artifacts block in a future release. -->
+{{AGENT_ARTIFACTS_INPUT}}
 
-### input
-
-| Artifact       |
-| -------------- |
-| `docs/**/*.md` |
-
-### output
-
-| Artifact             | Notes                                      |
-| -------------------- | ------------------------------------------ |
-| `docs/releases/*.md` | includes release notes and sign-off record |
+{{AGENT_ARTIFACTS_OUTPUT}}
 
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.

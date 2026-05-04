@@ -29,9 +29,9 @@ handoffs:
       this change, assess and confirm that explicitly, then pass through to
       the next stage.
 artifacts:
-  target: docs/architecture
+  dir: architecture
   input:
-    - docs/product/**/*.md
+    - product/**/*.md
   output:
     - overview.md
     - adr/*.md

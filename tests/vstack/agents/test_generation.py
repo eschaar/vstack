@@ -40,3 +40,23 @@ class TestAgentGeneration:
         assert handoffs[0].get("label")
 
         assert parsed.content.lstrip().startswith("# architect")
+
+    def test_all_agents_include_generated_artifacts_section(self, tmp_path: Path) -> None:
+        """Test that all generated agents include artifacts tables from config.yaml."""
+        result = run_vstack(["install", "--only", "agent", "--target", str(tmp_path)], timeout=60)
+        assert result.returncode == 0
+
+        agents_dir = tmp_path / ".github" / "agents"
+        for agent_file in agents_dir.glob("*.agent.md"):
+            content = agent_file.read_text(encoding="utf-8")
+            assert "## artifacts you use" in content, (
+                f"{agent_file.name} missing '## artifacts you use' section"
+            )
+            assert "Agents do not write to artifacts owned by other roles." in content, (
+                f"{agent_file.name} missing role-boundary notice"
+            )
+            # Placeholders must not appear in rendered output
+            for token in ("AGENT_ARTIFACTS_INPUT", "AGENT_ARTIFACTS_OUTPUT"):
+                assert f"{{{{{token}}}}}" not in content, (
+                    f"{agent_file.name} has unresolved {{{{{token}}}}} placeholder"
+                )

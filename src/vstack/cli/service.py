@@ -19,6 +19,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+from vstack.agents.config import AGENT_TYPE
+from vstack.agents.generator import AgentGenerator
 from vstack.artifacts.generator import GenericArtifactGenerator
 from vstack.cli.constants import KNOWN_TYPES, ArtifactState
 from vstack.constants import VSTACK_DIR_NAME
@@ -35,12 +37,20 @@ class CommandService:
     def __init__(self, templates_root: Path) -> None:
         """Create generators for all known artifact families.
 
+        Per-type generator subclasses are used when available so that
+        type-specific placeholder injection (e.g. ``{{AGENT_ARTIFACTS_*}}``)
+        runs during install without requiring changes to
+        :class:`~vstack.artifacts.generator.GenericArtifactGenerator`.
+
         Args:
             templates_root: Root directory containing the source templates.
         """
         self.root = templates_root
         self.generators: list[GenericArtifactGenerator] = [
-            GenericArtifactGenerator(tc, templates_root) for tc in KNOWN_TYPES
+            AgentGenerator(templates_root)
+            if tc is AGENT_TYPE
+            else GenericArtifactGenerator(tc, templates_root)
+            for tc in KNOWN_TYPES
         ]
 
     # ── Shared helpers ───────────────────────────────────────────────────────

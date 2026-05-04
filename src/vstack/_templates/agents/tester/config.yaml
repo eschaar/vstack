@@ -26,12 +26,13 @@ handoffs:
       the release as needed. Create and/or update the relevant artifacts if needed,
       as well as any sign-offs.
 artifacts:
-  target: docs/reports
+  dir: reports
   input:
-    - docs/architecture/**/*.md
-    - docs/design/**/*.md
+    - architecture/**/*.md
+    - design/**/*.md
   output:
     - "**/*.md"
+    - ./tests/**/*
 target: vscode
 user-invocable: true
 

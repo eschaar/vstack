@@ -144,6 +144,17 @@ class GenericArtifactGenerator:
 
     # ── Rendering ─────────────────────────────────────────────────────────────
 
+    def template_partials(self, tmpl_dir: Path) -> dict[str, str]:
+        """Return per-template placeholder overrides merged with global partials.
+
+        Subclasses may override this method to inject additional ``{{TOKEN}}``
+        resolvers that depend on the specific template being rendered (for
+        example, resolvers built from the template's ``config.yaml``).
+
+        Returns an empty dict by default.
+        """
+        return {}
+
     def render(self, tmpl_dir: Path) -> RenderedArtifact:
         """Render a single template directory to a :class:`~vstack.artifacts.models.RenderedArtifact`.
 
@@ -156,8 +167,9 @@ class GenericArtifactGenerator:
         tmpl_file = tmpl_dir / self.config.template_filename
         content = tmpl_file.read_text(encoding="utf-8")
 
-        # Resolve {{PLACEHOLDER}} tokens via partials
-        resolved = self.resolve_placeholders(content, self.load_partials())
+        # Resolve {{PLACEHOLDER}} tokens via partials (merged with per-template extras)
+        partials = {**self.load_partials(), **self.template_partials(tmpl_dir)}
+        resolved = self.resolve_placeholders(content, partials)
 
         # Split existing frontmatter from body
         parsed = FrontmatterParser.parse(resolved)

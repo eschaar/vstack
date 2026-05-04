@@ -29,11 +29,17 @@ handoffs:
       or update an RCA and, if stakeholder impact is significant, a
       post-mortem.
 artifacts:
-  target: issues
   input:
-    - docs/product/**/*.md
-    - docs/architecture/**/*.md
-    - docs/design/**/*.md
+    - product/**/*.md
+    - architecture/**/*.md
+    - design/**/*.md
+  output:
+    - path: ./src/**/*
+    - path: ./tests/**/*
+    - path: ./issues/{id}-{slug}-rca.md
+      notes: when working on an issue
+    - path: ./issues/{id}-{slug}-postmortem.md
+      notes: when stakeholder impact is significant
 target: vscode
 user-invocable: true
 
