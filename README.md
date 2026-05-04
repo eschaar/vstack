@@ -407,9 +407,10 @@ ______________________________________________________________________
 | `vstack manifest upgrade --target DIR` | Upgrade a legacy `.vstack/vstack.json` schema to current format                          |
 | `vstack verify --target DIR`           | Verify installed artifacts in DIR/.github                                                |
 | `vstack verify --global`               | Verify artifacts in your VS Code global profile                                          |
-| `vstack install --target DIR`          | Install vstack artifacts into a project, preserving existing unmanaged files             |
+| `vstack install --target DIR`          | First-run setup: seeds `.vstack/`, then generates `.github/` artifacts from templates    |
 | `vstack install --global`              | Install vstack artifacts into your VS Code profile, preserving local edits unless forced |
 | `vstack install --dry-run`             | Preview install actions without writing files                                            |
+| `vstack init --target DIR`             | Idempotent regeneration: reads `.vstack/config.yaml` and updates `.github/` artifacts    |
 | `vstack uninstall --target DIR`        | Uninstall tracked artifacts that still match the manifest                                |
 | `vstack uninstall --global`            | Uninstall vstack artifacts from your VS Code profile                                     |
 | `vstack uninstall`                     | Uninstall from the current directory default target                                      |
@@ -443,6 +444,46 @@ When multiple artifact types share the same name (e.g. an `agent` and a `skill` 
 When a legacy manifest schema is detected, verification/status/install paths now fail fast with an upgrade hint. Run `vstack manifest upgrade --target ...` once, then retry your normal commands.
 
 For smaller terminals, `vstack manifest status` (and `vstack status`) defaults to a compact issues-focused text view with color markers. For tooling or exports, use `--format json` or `--format yaml`. Add `--verbose` to include managed entries, and `--no-color` when plain text is preferred.
+
+### install vs init
+
+`vstack install` and `vstack init` are complementary:
+
+| Command          | When to use                                     | What it does                                                                      |
+| ---------------- | ----------------------------------------------- | --------------------------------------------------------------------------------- |
+| `vstack install` | Once per project (or when onboarding a machine) | Seeds `.vstack/config.yaml` if missing (never overwrites), then runs `init`       |
+| `vstack init`    | On every vstack upgrade, or in CI               | Idempotent regeneration — reads `.vstack/config.yaml` and applies it on every run |
+
+Both commands accept the same flags (`--only`, `--force`, `--update`, `--dry-run`, etc.).
+
+### `.vstack/config.yaml` — project configuration
+
+When you run `vstack install`, a `.vstack/config.yaml` file is seeded in your project. This file is yours: vstack never overwrites it. Commit it to version control — it expresses stable project preferences that apply on every future `vstack init` run.
+
+The two most useful settings:
+
+**Exclude specific artifacts** — skip artifact types or individual artifacts you do not need:
+
+```yaml
+exclude:
+  skills:
+    - terraform
+    - helm
+    - k8s
+  instructions: all   # skip the entire instructions type
+  prompts: all        # skip the entire prompts type
+```
+
+Type-level entries (`all`) remove the type from generation entirely. Name-level entries skip individual artifacts within a type while keeping the rest.
+
+**Override the docs root path** — change where agent artifact paths point (default: `docs`):
+
+```yaml
+artifacts:
+  root: documentation   # use a different path prefix in generated agent files
+```
+
+All fields are optional. An absent or commented-out block restores the default behaviour.
 
 ______________________________________________________________________
 

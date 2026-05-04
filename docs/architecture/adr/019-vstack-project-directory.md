@@ -68,8 +68,14 @@ This is analogous to `package-lock.json` (machine-generated) alongside
 ### `config.yaml` schema
 
 ```yaml
-# Selective install exclusions.
-# Remove or comment out to install everything (default).
+# vstack install  — first-run setup. Seeds this file if missing (never overwrites).
+#                   Then runs init to generate .github/ artifacts from templates.
+#                   Use once per project, or when onboarding a new machine.
+#
+# vstack init     — idempotent regeneration. Reads this file on every run.
+#                   Safe to re-run in CI after pip install --upgrade vstack.
+
+# Selective install exclusions — remove or comment out to install everything.
 #
 # exclude:
 #   skills:
@@ -79,11 +85,20 @@ This is analogous to `package-lock.json` (machine-generated) alongside
 #     - k8s
 #   instructions: all
 #   prompts: all
+
+# Root directory for generated agent artifact paths.
+# Default: docs
+#
+# artifacts:
+#   root: docs
 ```
 
 All fields are optional. An absent `exclude:` block means install everything.
 Artifact type values are either a list of names to skip, or `all` to skip
 the entire type. `agents` cannot be excluded — the 6-role chain is an atomic unit.
+
+The `artifacts: root:` key overrides the path prefix used in generated agent files
+(e.g. links to architecture docs). Default is `docs`.
 
 ### scope boundary
 
