@@ -13,4 +13,5 @@
 # Root directory for generated agent artifact paths.
 # Default: docs
 #
-# artifacts_root: docs
+# artifacts:
+#   root: docs
