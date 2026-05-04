@@ -170,27 +170,29 @@ class TestReadArtifactsRoot:
         assert CommandLineInterface._read_artifacts_root(install_dir) == ARTIFACTS_DOCS_ROOT
 
     def test_returns_value_from_config(self, tmp_path: Path) -> None:
-        """Returns the artifacts_root value from .vstack/config.yaml."""
+        """Returns the artifacts.root value from .vstack/config.yaml."""
         vstack_dir = tmp_path / ".vstack"
         vstack_dir.mkdir()
-        (vstack_dir / "config.yaml").write_text("artifacts_root: documentation\n", encoding="utf-8")
+        (vstack_dir / "config.yaml").write_text(
+            "artifacts:\n  root: documentation\n", encoding="utf-8"
+        )
 
         install_dir = tmp_path / ".github"
         assert CommandLineInterface._read_artifacts_root(install_dir) == "documentation"
 
     def test_returns_default_when_value_is_blank(self, tmp_path: Path) -> None:
-        """Returns ARTIFACTS_DOCS_ROOT when artifacts_root is present but blank."""
+        """Returns ARTIFACTS_DOCS_ROOT when artifacts.root is present but blank."""
         from vstack.constants import ARTIFACTS_DOCS_ROOT
 
         vstack_dir = tmp_path / ".vstack"
         vstack_dir.mkdir()
-        (vstack_dir / "config.yaml").write_text("artifacts_root: \n", encoding="utf-8")
+        (vstack_dir / "config.yaml").write_text("artifacts:\n  root:\n", encoding="utf-8")
 
         install_dir = tmp_path / ".github"
         assert CommandLineInterface._read_artifacts_root(install_dir) == ARTIFACTS_DOCS_ROOT
 
     def test_returns_default_when_key_absent_in_config(self, tmp_path: Path) -> None:
-        """Returns ARTIFACTS_DOCS_ROOT when config.yaml exists but has no artifacts_root key."""
+        """Returns ARTIFACTS_DOCS_ROOT when config.yaml exists but has no artifacts.root key."""
         from vstack.constants import ARTIFACTS_DOCS_ROOT
 
         vstack_dir = tmp_path / ".vstack"
@@ -203,10 +205,10 @@ class TestReadArtifactsRoot:
     def test_run_passes_artifacts_root_from_config_to_service(
         self, monkeypatch, tmp_path: Path
     ) -> None:
-        """run() reads artifacts_root from .vstack/config.yaml and passes it to the service."""
+        """run() reads artifacts.root from .vstack/config.yaml and passes it to the service."""
         vstack_dir = tmp_path / ".vstack"
         vstack_dir.mkdir()
-        (vstack_dir / "config.yaml").write_text("artifacts_root: custom\n", encoding="utf-8")
+        (vstack_dir / "config.yaml").write_text("artifacts:\n  root: custom\n", encoding="utf-8")
 
         install_dir = tmp_path / ".github"
         args = argparse.Namespace(command="install", only=None, use_global=False)

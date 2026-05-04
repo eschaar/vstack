@@ -73,7 +73,7 @@ class CommandLineInterface:
 
     @staticmethod
     def _read_artifacts_root(install_dir: Path | None) -> str:
-        """Read ``artifacts_root`` from ``.vstack/config.yaml`` when available.
+        """Read ``artifacts.root`` from ``.vstack/config.yaml`` when available.
 
         Returns :data:`~vstack.constants.ARTIFACTS_DOCS_ROOT` when *install_dir*
         is ``None``, when the config file does not exist, or when the key is
@@ -85,7 +85,17 @@ class CommandLineInterface:
         if not config_path.exists():
             return ARTIFACTS_DOCS_ROOT
         parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
-        value = parsed.get("artifacts_root", "")
+        artifacts = parsed.get("artifacts", "")
+        # The minimal YAML parser stores nested mappings as raw indented strings.
+        # Re-parse by stripping the 2-space indent to access sub-keys.
+        if isinstance(artifacts, str) and artifacts.strip():
+            dedented = "\n".join(
+                line[2:] if line.startswith("  ") else line for line in artifacts.split("\n")
+            )
+            artifacts = FrontmatterParser.parse_yaml(dedented) or {}
+        if not isinstance(artifacts, dict):
+            return ARTIFACTS_DOCS_ROOT
+        value = artifacts.get("root", "")
         if isinstance(value, str) and value.strip():
             return value.strip()
         return ARTIFACTS_DOCS_ROOT
