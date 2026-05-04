@@ -3,7 +3,7 @@
 > Maintained by: **architect** role
 
 **date:** 2026-05-02\
-**status:** accepted
+**status:** accepted — artifact paths made configurable via ADR-021
 
 ## context
 
@@ -12,8 +12,8 @@ sequencing that belongs to the agent layer, not the skill layer.
 
 Examples observed:
 
-- `release-notes` references `docs/releases/{date}.md`, `docs/test-report.md`,
-  `docs/security-report.md` as required inputs.
+- `release-notes` references `docs/releases/{date}.md`, `docs/reports/test-report.md`,
+  `docs/reports/security-report.md` as required inputs.
 - `pr` references `docs/releases/{date}.md` as the PR body source and enforces
   a vstack-specific release checklist.
 
@@ -41,7 +41,7 @@ This ADR extends that boundary to the skill vs agent layer.
 ### rules
 
 1. A skill must not reference named project artifact paths (e.g. `docs/releases/`,
-   `docs/test-report.md`). These belong in the agent template.
+   `docs/reports/test-report.md`). These belong in the agent template.
 1. A skill must not enforce a role-sequencing gate (e.g. "verify tester sign-off before
    proceeding"). Gates belong in the agent template.
 1. A skill may reference generic placeholders (e.g. `{release-notes-file}`,

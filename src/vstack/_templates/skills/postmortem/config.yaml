@@ -1,0 +1,16 @@
+name: postmortem
+version: 20260503001
+description: |
+  Blameless post-mortem writing for incidents. Produces a stakeholder-facing
+  post-mortem document linked to the triggering issue and RCA. Use when asked
+  to "write a post-mortem", "blameless post-mortem", or "incident post-mortem".
+  Called by the incident skill; the RCA should be available before invoking this.
+argument-hint: '[incident to write a post-mortem for]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

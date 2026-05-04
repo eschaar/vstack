@@ -204,6 +204,52 @@ class CommandLineParser:
             help="Show what would be installed without writing files",
         )
 
+    def _add_init_command(self, sub: SubparserFactory) -> None:
+        """Register the ``init`` subcommand."""
+        init_config = COMMAND_CATALOG["init"]
+        parser = self._add_scoped_only_command(sub, command_name="init", config=init_config)
+
+        mode = parser.add_mutually_exclusive_group()
+        mode.add_argument(
+            "--force",
+            action="store_true",
+            help="Overwrite existing artifacts unconditionally",
+        )
+        mode.add_argument(
+            "--update",
+            action="store_true",
+            help="Install only when a newer version is available",
+        )
+
+        parser.add_argument(
+            "--force-name",
+            dest="force_names",
+            action="append",
+            metavar="<name|type/name>",
+            help=(
+                "Force regenerate one named artifact without overwriting everything. "
+                "Accepts a plain name (e.g. engineer) or a type/name selector "
+                "(e.g. agent/engineer). Repeat to target multiple artifacts."
+            ),
+        )
+        parser.add_argument(
+            "--adopt-name",
+            action="append",
+            default=None,
+            metavar="<name|type/name>",
+            help=(
+                "Adopt only the named existing unmanaged artifact into the manifest without overwriting it. "
+                "Accepts a plain name (e.g. engineer) or a type/name selector "
+                "(e.g. agent/engineer). Repeat to target multiple artifacts."
+            ),
+        )
+        parser.add_argument(
+            "--dry-run",
+            dest="dry_run",
+            action="store_true",
+            help="Show what would be regenerated without writing files",
+        )
+
     def _add_uninstall_command(self, sub: SubparserFactory) -> None:
         """Register the ``uninstall`` subcommand."""
         uninstall_config = COMMAND_CATALOG["uninstall"]
@@ -291,6 +337,7 @@ class CommandLineParser:
             "status": self._add_status_command,
             "manifest": self._add_manifest_command,
             "install": self._add_install_command,
+            "init": self._add_init_command,
             "uninstall": self._add_uninstall_command,
         }
         for command_name in TOP_LEVEL_COMMAND_ORDER:

@@ -17,7 +17,7 @@ REQUIRED_HEADINGS_IN_ORDER = [
     "## workflow and handoffs",
     "## success criteria",
     "## failure and escalation rules",
-    "## artifacts you own",
+    "## artifacts you use",
     "## completion checklist",
     "## skills you use",
 ]

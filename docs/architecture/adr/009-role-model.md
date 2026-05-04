@@ -22,14 +22,32 @@ which artifacts they own.
 
 Define **6 fixed agent roles**:
 
-| Role        | Persona                                        | Primary artifacts                                                                   |
-| ----------- | ---------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `product`   | Initiates pipeline, owns vision + requirements | `docs/product/vision.md`, `docs/product/requirements.md`, `docs/product/roadmap.md` |
-| `architect` | Locks in technical plan, writes ADRs           | `docs/architecture/architecture.md`, `docs/architecture/adr/*.md`                   |
-| `designer`  | API design + DX; backend-mode skips UI/UX      | `docs/design/design.md`, API specs                                                  |
-| `engineer`  | Implements code + unit tests                   | source code, unit tests                                                             |
-| `tester`    | Verification, security, and performance audit  | `docs/test-report.md`, `docs/security-report.md`, `docs/performance-baseline.md`    |
-| `release`   | Release preparation and PR handoff             | `docs/releases/{date}.md`, `CHANGELOG.md`, release PR                               |
+- **`product`** — Initiates pipeline, owns vision + requirements
+
+  - Artifacts: vision, requirements, roadmap
+
+- **`architect`** — Locks in technical plan, writes ADRs
+
+  - Artifacts: architecture overview, ADRs
+
+- **`designer`** — API design + DX; backend-mode skips UI/UX
+
+  - Artifacts: design overview, API specs, UX artifacts (frontend scope only)
+
+- **`engineer`** — Implements code + unit tests
+
+  - Artifacts: source code, unit tests, RCA and post-mortem artifacts
+
+- **`tester`** — Verification, security, and performance audit
+
+  - Artifacts: test report, security report, performance baseline
+
+- **`release`** — Release preparation and PR handoff
+
+  - Artifacts: release document, changelog, release PR
+
+Default artifact paths for each role are defined in ADR-021 and configured per-project
+in each agent's `config.yaml`. Paths are overridable; the role ownership above is fixed.
 
 ## conceptual model
 

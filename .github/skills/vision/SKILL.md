@@ -57,8 +57,7 @@ during this review — that comes after the plan is approved.
 
 - Primary deliverable: `docs/product/vision.md`
 - Baseline-first default: write approved vision decisions directly to `docs/product/vision.md` on the feature branch.
-- Optional WIP area for complex/uncertain scope exploration: `docs/delta/{intake-id}/VISION_DELTA.md`
-- Before merge: consolidate any required content from optional delta notes back into `docs/product/vision.md`, then remove stale WIP notes.
+- Before merge: confirm the vision doc on the feature branch is complete and approved before merge.
 
 ## Review posture Envision the platform, not just the feature. Push scope UP. Ask "what would make this 10x better for 2x the effort?" Present each scope-expanding idea as a question. The user opts in or out.
 
@@ -206,4 +205,4 @@ For each finding: explain the tradeoff, give an opinionated recommendation, ask 
 Present as: "Overall assessment: [READY/NEEDS REVISION/SCOPE CHANGE] because [1-2 sentence reason]."
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"vision","artifact_type":"skill","artifact_version":"20260421027","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"vision","artifact_type":"skill","artifact_version":"20260421027","generator":"vstack","vstack_version":"2.2.0"} -->

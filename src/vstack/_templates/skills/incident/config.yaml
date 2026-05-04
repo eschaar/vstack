@@ -1,12 +1,12 @@
 name: incident
-version: 20260421017
+version: 20260503002
 description: |
-  Incident analysis and post-mortem writing. Guides a structured investigation
-  from timeline reconstruction through root cause identification to a blameless
-  post-mortem document with action items. Use when asked to "write a post-mortem",
-  "incident review", "root cause analysis for this outage", "what went wrong?",
-  or "blameless post-mortem". Produces a docs/postmortems/{date}-{slug}.md.
-argument-hint: '[incident or outage to analyse and document]'
+  Incident analysis and coordination. Guides timeline reconstruction, contributing
+  factor identification, and action item definition. Delegates technical root cause
+  analysis to `rca` and stakeholder documentation to `postmortem`. Use when asked
+  to "incident review", "analyse this outage", "what went wrong?", or to coordinate
+  a full incident response retrospective.
+argument-hint: '[incident or outage to analyse]'
 
 license: MIT
 compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.

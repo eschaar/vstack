@@ -20,8 +20,11 @@ ______________________________________________________________________
 | mypy type checking (v2.0.0)              | shipped     | Full mypy coverage enforced in CI; 100% test coverage gate                                              |
 | manifest schema versioning (v2.0.0)      | shipped     | `manifest_version: 2`; upgrade path via `manifest upgrade` (ADR-014)                                    |
 | checksum backfill (v2.0.0)               | shipped     | `manifest upgrade --backfill` adds SHA-256 for VSTACK-META-tagged files (ADR-017)                       |
-| conservative install (v2.0.0)            | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015)                                      |
+| conservative install (v2.0.0)            | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015, superseded by ADR-020)               |
 | dry-run install                          | shipped     | `vstack install --dry-run` previews actions; type/name selectors in summary                             |
+| project-scope directory (v3.0.0)         | planned     | `.vstack/` directory: `config.yaml`, manifest, delta templates (ADR-019)                                |
+| install/init command semantics (v3.0.0)  | planned     | `install` = first-run setup; `init` = idempotent CI regeneration (ADR-020, breaking change)             |
+| manifest relocation (v3.0.0)             | planned     | `vstack.json` moves from `.github/` to `.vstack/`; migration via `manifest upgrade` (ADR-014)           |
 | workflow contract source-of-truth        | candidate   | Defer until current template expansion is complete; then add machine-readable role workflow contract    |
 | agent hooks support                      | candidate   | Generate `.github/hooks/<name>.json` from vstack templates; enforce quality gates at session boundaries |
 | Copilot code review support              | candidate   | Add templates and policy defaults for requesting/configuring Copilot code review                        |
@@ -51,7 +54,7 @@ Legend: shipped = implemented and available; candidate = optional future feature
 
 - template-driven generation with source under `src/vstack/_templates/` and install output under `.github/`
 - 42 backend-oriented skills
-- generated install manifest (`.github/vstack.json`) tracking installed artifacts
+- generated install manifest (`.vstack/vstack.json`) tracking installed artifacts
 - VS Code prompt file (`.prompt.md`) support
 - global install workflow (`vstack install --global`)
 

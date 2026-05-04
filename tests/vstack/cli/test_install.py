@@ -1,4 +1,4 @@
-"""Tests for InstallCommand."""
+"""Tests for InstallCommand — first-run project setup wizard."""
 
 from __future__ import annotations
 
@@ -11,527 +11,289 @@ import pytest
 from vstack.cli.base import CommandContext
 from vstack.cli.install import InstallCommand
 from vstack.cli.service import CommandService
-from vstack.manifest import content_hash
 
 
 class TestInstallCommand:
-    """Test cases for InstallCommand."""
+    """Test cases for InstallCommand wizard behavior."""
 
     # ------------------------------------------------------------------
-    # _version_gt
+    # run (wizard behaviour)
     # ------------------------------------------------------------------
 
-    def test_version_gt_true_for_higher(self) -> None:
-        """Higher dotted numeric revision is strictly greater."""
-        assert InstallCommand._version_gt("1.2.0", "1.1.9")
-
-    def test_version_gt_false_for_equal(self) -> None:
-        """Equal versions are not greater."""
-        assert not InstallCommand._version_gt("1.2.0", "1.2.0")
-
-    def test_version_gt_handles_invalid(self) -> None:
-        """Non-numeric strings are treated as (0,) and not greater than a real revision."""
-        assert not InstallCommand._version_gt("abc", "1.0.0")
-
-    def test_version_gt_handles_none_existing(self) -> None:
-        """None for existing falls back to (0,) so any real version is greater."""
-        assert InstallCommand._version_gt("1.2.0", None) is True
-
-    def test_version_gt_true_for_date_revision(self) -> None:
-        """Higher date-based revision is strictly greater."""
-        assert InstallCommand._version_gt("20260502012", "20260502011")
-
-    def test_version_gt_false_for_same_date_revision(self) -> None:
-        """Equal date-based revisions are not greater."""
-        assert not InstallCommand._version_gt("20260502012", "20260502012")
-
-    def test_version_gt_date_revision_gt_legacy_dotted(self) -> None:
-        """YYYYMMDDNNN token is greater than a legacy dotted version from an existing manifest.
-
-        This is the real upgrade path: a freshly installed repo may have artifacts
-        versioned as e.g. 1.2.0 (legacy) and the new template uses 20260502012.
-        The comparison must return True so the artifact is upgraded, not skipped.
-        """
-        assert InstallCommand._version_gt("20260502012", "1.2.0")
-
-    def test_version_gt_date_revision_gt_legacy_dotted_high_patch(self) -> None:
-        """YYYYMMDDNNN token is greater than a legacy high-patch dotted version."""
-        assert InstallCommand._version_gt("20260421001", "9.99.999")
-
-    def test_version_gt_legacy_dotted_not_gt_date_revision(self) -> None:
-        """Legacy dotted version is never greater than a YYYYMMDDNNN token."""
-        assert not InstallCommand._version_gt("1.2.0", "20260502012")
-
-    # ------------------------------------------------------------------
-    # _installed_content_matches
-    # ------------------------------------------------------------------
-
-    def test_installed_content_matches_returns_none_for_unknown_algorithm(
-        self, tmp_path: Path
-    ) -> None:
-        """Unknown checksum algorithm is treated as indeterminate (None)."""
-        out_file = tmp_path / "artifact.txt"
-        out_file.write_text("content", encoding="utf-8")
-        entry = SimpleNamespace(checksum="x", checksum_algorithm="sha999")
-        assert (
-            InstallCommand._installed_content_matches(out_file=out_file, existing_entry=entry)
-            is None
-        )
-
-    # ------------------------------------------------------------------
-    # _install_decision
-    # ------------------------------------------------------------------
-
-    def test_decision_preserves_when_tracked_file_has_no_checksum(self, tmp_path: Path) -> None:
-        """Tracked file without stored checksum is always preserved."""
-        out_file = tmp_path / "artifact.txt"
-        out_file.write_text("content", encoding="utf-8")
-        entry = SimpleNamespace(checksum=None, checksum_algorithm="sha256", version="1.0.0")
-        action, reason = InstallCommand._install_decision(
-            force=False,
-            force_name=False,
-            adopt_name=False,
-            update=False,
-            out_file=out_file,
-            existing_entry=entry,
-            new_version="1.0.1",
-        )
-        assert action == "preserve"
-        assert reason == "tracked file has no stored checksum"
-
-    def test_decision_preserves_when_version_unknown_under_update(self, tmp_path: Path) -> None:
-        """Update mode preserves tracked files that have no stored version metadata."""
-        out_file = tmp_path / "artifact.txt"
-        out_file.write_text("content", encoding="utf-8")
-        entry = SimpleNamespace(
-            checksum=content_hash("content"),
-            checksum_algorithm="sha256",
-            version=None,
-        )
-        action, reason = InstallCommand._install_decision(
-            force=False,
-            force_name=False,
-            adopt_name=False,
-            update=True,
-            out_file=out_file,
-            existing_entry=entry,
-            new_version="1.0.1",
-        )
-        assert action == "preserve"
-        assert reason == "tracked file has no stored version"
-
-    # ------------------------------------------------------------------
-    # _load_existing_manifest
-    # ------------------------------------------------------------------
-
-    def test_load_existing_manifest_returns_none_tuple_on_read_error(
-        self,
-        capsys: pytest.CaptureFixture[str],
-    ) -> None:
-        """Returns a 4-tuple of None when the manifest file has a read error."""
-
-        class _ManifestFile:
-            read_error = "bad manifest"
-
-            def read(self):
-                return None
-
-        class _Service:
-            @staticmethod
-            def manifest_for(_install_dir: Path) -> _ManifestFile:
-                return _ManifestFile()
-
-        result = InstallCommand._load_existing_manifest(
-            service=cast(CommandService, _Service()),
-            install_dir=Path("/tmp/install"),
-            gens=[],
-        )
-        assert result == (None, None, None, None)
-        assert "ERROR: bad manifest" in capsys.readouterr().err
-
-    # ------------------------------------------------------------------
-    # execute
-    # ------------------------------------------------------------------
-
-    def test_execute_returns_nonzero_when_manifest_loading_fails(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        """execute returns non-zero immediately when manifest loading returns None tuple."""
-        monkeypatch.setattr(
-            "vstack.cli.install.InstallCommand._load_existing_manifest",
-            staticmethod(lambda **_kwargs: (None, None, None, None)),
-        )
-        service = cast(CommandService, SimpleNamespace(generators=[]))
-        assert InstallCommand.execute(service, Path("/tmp/install")) == 1
-
-    def test_adopt_records_version_from_disk_metadata(self, tmp_path: Path) -> None:
-        """Adopted files should use on-disk artifact_version metadata, not new template version."""
-
-        class _Gen:
-            config = SimpleNamespace(
-                type_name="skill",
-                manifest_key="skills",
-                output_subdir="skills",
-            )
-
-            @staticmethod
-            def output_path(name: str) -> Path:
-                return Path(name) / "SKILL.md"
-
-            @staticmethod
-            def install_relative_path(name: str) -> str:
-                return f"skills/{name}/SKILL.md"
-
-        existing_content = (
-            "# Skill\n"
-            "<!-- AUTO-GENERATED -->"
-            "<!-- VSTACK-META: "
-            '{"artifact_version":"1.2.3","artifact_name":"verify"}'
-            " -->\n"
-        )
-        out_dir = tmp_path / "skills"
-        out_file = out_dir / "verify" / "SKILL.md"
-        out_file.parent.mkdir(parents=True)
-        out_file.write_text(existing_content, encoding="utf-8")
-
-        new_entries: dict[str, list[Any]] = {}
-        InstallCommand._install_single_artifact(
-            service=cast(CommandService, SimpleNamespace(label=lambda path: str(path))),
-            gen=_Gen(),
-            artifact=SimpleNamespace(
-                name="verify",
-                frontmatter={"version": "9.9.9"},
-                unresolved=[],
-                content="new content",
-            ),
-            out_dir=out_dir,
-            colors=SimpleNamespace(
-                CYAN="",
-                RESET="",
-                DIM="",
-                YELLOW="",
-                GREEN="",
-                BOLD="",
-            ),
-            prefix="",
-            force=False,
-            update=False,
-            dry_run=True,
-            targeted_force_names=set(),
-            targeted_adopt_names={"verify"},
-            existing_entries={},
-            new_entries=new_entries,
-            checksum_algorithm="sha256",
-        )
-
-        adopted_entry = cast(Any, new_entries["skills"][0])
-        assert adopted_entry.version == "1.2.3"
-        assert adopted_entry.checksum == content_hash(existing_content)
-
-    def test_adopt_unreadable_file_preserves_without_crashing(
-        self,
-        monkeypatch: pytest.MonkeyPatch,
-        tmp_path: Path,
-        capsys: pytest.CaptureFixture[str],
-    ) -> None:
-        """Unreadable adopt targets should be preserved and not crash install."""
-
-        class _Gen:
-            config = SimpleNamespace(
-                type_name="skill",
-                manifest_key="skills",
-                output_subdir="skills",
-            )
-
-            @staticmethod
-            def output_path(name: str) -> Path:
-                return Path(name) / "SKILL.md"
-
-            @staticmethod
-            def install_relative_path(name: str) -> str:
-                return f"skills/{name}/SKILL.md"
-
-        out_dir = tmp_path / "skills"
-        out_file = out_dir / "verify" / "SKILL.md"
-        out_file.parent.mkdir(parents=True)
-        out_file.write_text("content", encoding="utf-8")
-
-        def _raise_oserror(self: Path, encoding: str = "utf-8") -> str:
-            del self, encoding
-            raise OSError("permission denied")
-
-        monkeypatch.setattr(Path, "read_text", _raise_oserror)
-
-        new_entries: dict[str, list[Any]] = {}
-        InstallCommand._install_single_artifact(
-            service=cast(CommandService, SimpleNamespace(label=lambda path: str(path))),
-            gen=_Gen(),
-            artifact=SimpleNamespace(
-                name="verify",
-                frontmatter={"version": "9.9.9"},
-                unresolved=[],
-                content="new content",
-            ),
-            out_dir=out_dir,
-            colors=SimpleNamespace(
-                CYAN="",
-                RESET="",
-                DIM="",
-                YELLOW="",
-                GREEN="",
-                BOLD="",
-            ),
-            prefix="",
-            force=False,
-            update=False,
-            dry_run=True,
-            targeted_force_names=set(),
-            targeted_adopt_names={"verify"},
-            existing_entries={},
-            new_entries=new_entries,
-            checksum_algorithm="sha256",
-        )
-
-        out = capsys.readouterr().out
-        assert (
-            "preserved — existing file is unreadable; could not adopt into vstack manifest" in out
-        )
-        assert "skills" not in new_entries
-
-    # ------------------------------------------------------------------
-    # run (context forwarding)
-    # ------------------------------------------------------------------
-
-    def test_run_forwards_context_to_execute(
+    def test_run_seeds_project_and_calls_init_execute_for_local(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:
-        """run() unpacks CommandContext args and forwards them to execute()."""
+        """run() seeds project files and calls InitCommand.execute() for local installs."""
+        seeded: list[dict[str, Any]] = []
+        executed: list[dict[str, Any]] = []
+
+        def _fake_seed(**kw: Any) -> None:
+            seeded.append(kw)
+
+        def _fake_execute(*_a: Any, **kw: Any) -> int:
+            executed.append(kw)
+            return 0
+
+        monkeypatch.setattr(
+            "vstack.cli.install.InstallCommand._seed_project",
+            staticmethod(_fake_seed),
+        )
+        monkeypatch.setattr(
+            "vstack.cli.init.InitCommand.execute",
+            staticmethod(_fake_execute),
+        )
+
+        from argparse import Namespace
+
+        install_dir = tmp_path / ".github"
+        fake_service = SimpleNamespace(root=tmp_path / "templates")
+        context = CommandContext(
+            args=Namespace(
+                force=True,
+                force_names=["a"],
+                adopt_name=["b"],
+                update=True,
+                dry_run=False,
+                use_global=False,
+            ),
+            install_dir=install_dir,
+            only=["skill"],
+        )
+        result = InstallCommand(service=cast(CommandService, fake_service)).run(context=context)
+        assert result == 0
+        assert len(seeded) == 1
+        assert seeded[0]["project_root"] == tmp_path
+        assert len(executed) == 1
+        assert executed[0]["force"] is True
+        assert executed[0]["adopt_names"] == ["b"]
+
+    def test_run_skips_seeding_for_global_install(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        """run() skips seeding when --global is active."""
+        seeded: list[dict[str, Any]] = []
+
+        monkeypatch.setattr(
+            "vstack.cli.install.InstallCommand._seed_project",
+            staticmethod(lambda **kw: seeded.append(kw)),
+        )
+        monkeypatch.setattr("vstack.cli.init.InitCommand.execute", staticmethod(lambda *a, **kw: 0))
+
+        from argparse import Namespace
+
+        context = CommandContext(
+            args=Namespace(
+                force=False,
+                force_names=None,
+                adopt_name=None,
+                update=False,
+                dry_run=False,
+                use_global=True,
+            ),
+            install_dir=tmp_path / ".github",
+            only=None,
+        )
+        InstallCommand(service=cast(CommandService, object())).run(context=context)
+        assert seeded == []
+
+    def test_run_forwards_execute_kwargs(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        """run() passes all context args through to InitCommand.execute()."""
         captured: dict[str, Any] = {}
+
+        monkeypatch.setattr(
+            "vstack.cli.install.InstallCommand._seed_project",
+            staticmethod(lambda **kw: None),
+        )
 
         def _fake_execute(*args, **kwargs):
             captured["args"] = args
             captured["kwargs"] = kwargs
             return 1
 
-        monkeypatch.setattr(
-            "vstack.cli.install.InstallCommand.execute", staticmethod(_fake_execute)
-        )
+        monkeypatch.setattr("vstack.cli.init.InitCommand.execute", staticmethod(_fake_execute))
 
         from argparse import Namespace
 
+        fake_service = SimpleNamespace(root=tmp_path / "templates")
         context = CommandContext(
             args=Namespace(
-                force=True, force_names=["a"], adopt_name=["b"], update=True, dry_run=True
+                force=True,
+                force_names=["a"],
+                adopt_name=["b"],
+                update=True,
+                dry_run=True,
+                use_global=False,
             ),
             install_dir=tmp_path,
             only=["skill"],
         )
-        assert InstallCommand(service=cast(CommandService, object())).run(context=context) == 1
+        assert InstallCommand(service=cast(CommandService, fake_service)).run(context=context) == 1
         assert captured["kwargs"]["adopt_names"] == ["b"]
         assert captured["kwargs"]["force"] is True
 
     # ------------------------------------------------------------------
-    # _print_summary
+    # _seed_project
     # ------------------------------------------------------------------
 
-    def test_print_summary_no_conflicts_shows_installed_count(
-        self,
-        capsys: pytest.CaptureFixture[str],
+    def test_seed_project_copies_new_files(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
-        """Summary without preserves shows heading, fixed counters, and no guidance."""
-        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="", CYAN="")
-        InstallCommand._print_summary(
+        """_seed_project writes files that do not yet exist in project_root."""
+        templates_root = tmp_path / "templates"
+        seed_dir = templates_root / "project" / ".vstack"
+        seed_dir.mkdir(parents=True)
+        (seed_dir / "config.yaml").write_text("project:\n  name: ''\n", encoding="utf-8")
+
+        project_root = tmp_path / "project"
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="")
+        InstallCommand._seed_project(
+            project_root=project_root,
+            templates_root=templates_root,
             colors=colors,
-            action_counts={"install": 7, "update": 1},
-            preserved_selectors=[],
             dry_run=False,
         )
-        out = capsys.readouterr().out
-        assert "Summary" in out
-        assert "total processed : 8" in out
-        assert "installed" in out and ": 7" in out
-        assert "updated" in out and ": 1" in out
-        assert "preserved" in out and ": 0" in out
-        assert "skipped" in out and ": 0" in out
-        assert "adopted" in out and ": 0" in out
-        assert "--force" not in out
 
-    def test_print_summary_with_conflicts_shows_guidance(
-        self,
-        capsys: pytest.CaptureFixture[str],
+        dst = project_root / ".vstack" / "config.yaml"
+        assert dst.exists()
+        assert dst.read_text(encoding="utf-8") == "project:\n  name: ''\n"
+        assert "seeded" in capsys.readouterr().out
+
+    def test_seed_project_skips_existing_files(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
-        """Summary with preserved files shows count, warning, and flag guidance."""
-        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="", CYAN="")
-        InstallCommand._print_summary(
+        """_seed_project does not overwrite files that already exist."""
+        templates_root = tmp_path / "templates"
+        seed_dir = templates_root / "project" / ".vstack"
+        seed_dir.mkdir(parents=True)
+        (seed_dir / "config.yaml").write_text("new content", encoding="utf-8")
+
+        project_root = tmp_path / "project"
+        (project_root / ".vstack").mkdir(parents=True)
+        (project_root / ".vstack" / "config.yaml").write_text("existing", encoding="utf-8")
+
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="")
+        InstallCommand._seed_project(
+            project_root=project_root,
+            templates_root=templates_root,
             colors=colors,
-            action_counts={"install": 3, "preserve": 2},
-            preserved_selectors=["agent/engineer", "skill/verify"],
             dry_run=False,
         )
-        out = capsys.readouterr().out
-        assert "Summary" in out
-        assert "⚠" in out
-        assert "preserved" in out and ": 2" in out
-        assert "2 files preserved" in out
-        assert "Preserved selectors:" in out
-        assert "Next steps:" in out
-        assert "--force" in out
-        assert "--force-name <name|type/name>" in out
-        assert "--adopt-name <name|type/name>" in out
-        assert "- agent/engineer" in out
-        assert "- skill/verify" in out
 
-    def test_print_summary_single_preserve_uses_singular_noun(
-        self,
-        capsys: pytest.CaptureFixture[str],
-    ) -> None:
-        """A single preserved file uses the singular 'file' noun."""
-        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="", CYAN="")
-        InstallCommand._print_summary(
-            colors=colors,
-            action_counts={"install": 1, "preserve": 1},
-            preserved_selectors=["agent/engineer"],
-            dry_run=False,
-        )
-        out = capsys.readouterr().out
-        assert "1 file preserved" in out
+        assert (project_root / ".vstack" / "config.yaml").read_text(encoding="utf-8") == "existing"
+        assert "skipped" in capsys.readouterr().out
 
-    def test_print_summary_dry_run_marks_header_and_keeps_installed_label(
-        self,
-        capsys: pytest.CaptureFixture[str],
-    ) -> None:
-        """Dry-run mode marks the summary header and keeps action labels consistent."""
-        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="", CYAN="")
-        InstallCommand._print_summary(
+    def test_seed_project_dry_run_does_not_write(self, tmp_path: Path) -> None:
+        """_seed_project in dry_run mode prints but does not write files."""
+        templates_root = tmp_path / "templates"
+        seed_dir = templates_root / "project" / ".vstack"
+        seed_dir.mkdir(parents=True)
+        (seed_dir / "config.yaml").write_text("content", encoding="utf-8")
+
+        project_root = tmp_path / "project"
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="")
+        InstallCommand._seed_project(
+            project_root=project_root,
+            templates_root=templates_root,
             colors=colors,
-            action_counts={"install": 10},
-            preserved_selectors=[],
             dry_run=True,
         )
-        out = capsys.readouterr().out
-        assert "Summary (dry-run)" in out
-        assert "installed" in out and ": 10" in out
-        assert "would install" not in out
 
-    def test_print_summary_shows_optional_counts_when_nonzero(
-        self,
-        capsys: pytest.CaptureFixture[str],
-    ) -> None:
-        """Skipped and adopted counters are rendered with their non-zero values."""
-        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="", CYAN="")
-        InstallCommand._print_summary(
+        assert not (project_root / ".vstack" / "config.yaml").exists()
+
+    def test_seed_project_noop_when_no_project_templates(self, tmp_path: Path) -> None:
+        """_seed_project does nothing when neither project/ nor agents/ dirs exist."""
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="")
+        project_root = tmp_path / "project"
+        InstallCommand._seed_project(
+            project_root=project_root,
+            templates_root=tmp_path / "nonexistent",
             colors=colors,
-            action_counts={"install": 2, "skip": 3, "adopt": 1},
-            preserved_selectors=[],
             dry_run=False,
         )
-        out = capsys.readouterr().out
-        assert "skipped" in out and ": 3" in out
-        assert "adopted" in out and ": 1" in out
+        assert not project_root.exists()
 
-    # ------------------------------------------------------------------
-    # _install_single_artifact — return value
-    # ------------------------------------------------------------------
-
-    def test_install_single_artifact_returns_preserve_for_untracked_file(
-        self,
-        tmp_path: Path,
-        capsys: pytest.CaptureFixture[str],
+    def test_seed_project_seeds_agent_artifacts_to_vstack_templates(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
-        """Returns 'preserve' when an existing untracked file blocks install."""
+        """_seed_project copies agent artifacts/ to .vstack/templates/{agent}/artifacts/."""
+        templates_root = tmp_path / "templates"
+        artifact = templates_root / "agents" / "tester" / "artifacts" / "test-report.md"
+        artifact.parent.mkdir(parents=True)
+        artifact.write_text("# Test Report\n", encoding="utf-8")
 
-        class _Gen:
-            config = SimpleNamespace(
-                type_name="agent",
-                manifest_key="agents",
-                output_subdir="agents",
-            )
-
-            @staticmethod
-            def output_path(name: str) -> Path:
-                return Path(f"{name}.agent.md")
-
-            @staticmethod
-            def install_relative_path(name: str) -> str:
-                return f"agents/{name}.agent.md"
-
-        out_dir = tmp_path / "agents"
-        out_dir.mkdir()
-        (out_dir / "engineer.agent.md").write_text("existing", encoding="utf-8")
-
-        colors = SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD="")
-        result = InstallCommand._install_single_artifact(
-            service=cast(CommandService, SimpleNamespace(label=lambda p: str(p))),
-            gen=_Gen(),
-            artifact=SimpleNamespace(
-                name="engineer",
-                frontmatter={"version": "1.0.0"},
-                unresolved=[],
-                content="new content",
-            ),
-            out_dir=out_dir,
+        project_root = tmp_path / "project"
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="")
+        InstallCommand._seed_project(
+            project_root=project_root,
+            templates_root=templates_root,
             colors=colors,
-            prefix="",
-            force=False,
-            update=False,
-            dry_run=True,
-            targeted_force_names=set(),
-            targeted_adopt_names=set(),
-            existing_entries={},
-            new_entries={},
-            checksum_algorithm="sha256",
+            dry_run=False,
         )
-        assert result == "preserve"
-        capsys.readouterr()
 
-    def test_install_single_artifact_returns_adopt_when_adopting(
-        self,
-        tmp_path: Path,
-        capsys: pytest.CaptureFixture[str],
+        dst = project_root / ".vstack" / "templates" / "tester" / "artifacts" / "test-report.md"
+        assert dst.exists()
+        assert dst.read_text(encoding="utf-8") == "# Test Report\n"
+        assert "seeded" in capsys.readouterr().out
+
+    def test_seed_project_skips_existing_agent_artifact(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
-        """Returns 'adopt' when taking ownership of an existing untracked file."""
+        """_seed_project does not overwrite existing agent artifact files."""
+        templates_root = tmp_path / "templates"
+        artifact = templates_root / "agents" / "tester" / "artifacts" / "test-report.md"
+        artifact.parent.mkdir(parents=True)
+        artifact.write_text("new content", encoding="utf-8")
 
-        class _Gen:
-            config = SimpleNamespace(
-                type_name="agent",
-                manifest_key="agents",
-                output_subdir="agents",
-            )
+        project_root = tmp_path / "project"
+        dst = project_root / ".vstack" / "templates" / "tester" / "artifacts" / "test-report.md"
+        dst.parent.mkdir(parents=True)
+        dst.write_text("existing", encoding="utf-8")
 
-            @staticmethod
-            def output_path(name: str) -> Path:
-                return Path(f"{name}.agent.md")
-
-            @staticmethod
-            def install_relative_path(name: str) -> str:
-                return f"agents/{name}.agent.md"
-
-        out_dir = tmp_path / "agents"
-        out_dir.mkdir()
-        (out_dir / "engineer.agent.md").write_text("existing", encoding="utf-8")
-
-        new_entries: dict[str, list[Any]] = {}
-        colors = SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD="")
-        result = InstallCommand._install_single_artifact(
-            service=cast(CommandService, SimpleNamespace(label=lambda p: str(p))),
-            gen=_Gen(),
-            artifact=SimpleNamespace(
-                name="engineer",
-                frontmatter={"version": "1.0.0"},
-                unresolved=[],
-                content="new content",
-            ),
-            out_dir=out_dir,
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="")
+        InstallCommand._seed_project(
+            project_root=project_root,
+            templates_root=templates_root,
             colors=colors,
-            prefix="",
-            force=False,
-            update=False,
-            dry_run=True,
-            targeted_force_names=set(),
-            targeted_adopt_names={"engineer"},
-            existing_entries={},
-            new_entries=new_entries,
-            checksum_algorithm="sha256",
+            dry_run=False,
         )
-        assert result == "adopt"
-        capsys.readouterr()
+
+        assert dst.read_text(encoding="utf-8") == "existing"
+        assert "skipped" in capsys.readouterr().out
+
+    def test_seed_project_skips_non_directory_entries_in_agents_root(self, tmp_path: Path) -> None:
+        """_seed_project ignores non-directory entries directly under agents/."""
+        templates_root = tmp_path / "templates"
+        agents_root = templates_root / "agents"
+        agents_root.mkdir(parents=True)
+        # A file directly in agents/ — not a directory, must be skipped
+        (agents_root / "README.md").write_text("ignore me", encoding="utf-8")
+
+        project_root = tmp_path / "project"
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="")
+        InstallCommand._seed_project(
+            project_root=project_root,
+            templates_root=templates_root,
+            colors=colors,
+            dry_run=False,
+        )
+        assert not project_root.exists()
+
+    def test_seed_project_skips_agent_dir_without_artifacts_subdir(self, tmp_path: Path) -> None:
+        """_seed_project skips agent directories that have no artifacts/ subdir."""
+        templates_root = tmp_path / "templates"
+        agent_dir = templates_root / "agents" / "engineer"
+        agent_dir.mkdir(parents=True)
+        # No artifacts/ subdir — nothing should be seeded
+        (agent_dir / "config.yaml").write_text("name: engineer\n", encoding="utf-8")
+
+        project_root = tmp_path / "project"
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="")
+        InstallCommand._seed_project(
+            project_root=project_root,
+            templates_root=templates_root,
+            colors=colors,
+            dry_run=False,
+        )
+        assert not project_root.exists()

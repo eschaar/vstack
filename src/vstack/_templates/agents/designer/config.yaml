@@ -1,12 +1,10 @@
 name: designer
-version: 20260502016
+version: 20260503024
 description: >
   Senior interaction designer. Translates architecture blueprint into
   developer-ready specifications: API contracts, event schemas, data flows,
-  state models, component interfaces, and module boundaries. Reads
-  docs/architecture/architecture.md; produces docs/design/design.md and (if
-  user-facing) docs/design/ux.md. Baseline-first on branch, optional
-  docs/delta/{id} for complex drafts.
+  state models, component interfaces, and module boundaries. Reads architecture
+  artifacts; produces design overview. Baseline-first on branch.
 argument-hint: "[write design | API contracts | event and data flows | state models | interaction review]"
 tools:
   - read
@@ -21,11 +19,22 @@ model:
   - GPT-5.3-Codex (copilot)
 agents: ["*"]
 handoffs:
-  - label: Continue to engineering
+  - label: "Go to next stage: Engineering"
     agent: engineer
     prompt: >
-      Implement docs/design/design.md and add/update tests for the defined
-      interfaces and flows.
+      Design outputs are approved. Assess the current state and implement
+      code and tests as needed. If your domain is not affected by this
+      change, assess and confirm that explicitly, then pass through to
+      engineering. If working on an issue, document findings in RCA or
+      post-mortem artifacts as relevant.
+artifacts:
+  target: docs/design
+  input:
+    - docs/architecture/**/*.md
+  output:
+    - overview.md
+    - ux.md
+    - "**/*.md"
 target: vscode
 user-invocable: true
 

@@ -18,7 +18,7 @@ Read existing ADRs and architecture docs:
 
 ```bash
 ls docs/architecture/adr/ 2>/dev/null | sort | head -20 || true
-cat docs/architecture/architecture.md 2>/dev/null | head -40 || true
+cat docs/architecture/overview.md 2>/dev/null | head -40 || true
 # Find highest existing ADR number
 ls docs/architecture/adr/*.md 2>/dev/null | grep -oE '[0-9]+' | sort -n | tail -1 || echo "0"
 ```

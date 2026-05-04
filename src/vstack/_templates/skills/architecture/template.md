@@ -15,11 +15,10 @@ recommendations, and produce a final verdict.
 
 ## Deliverable and artifact policy
 
-- Primary deliverable: `docs/architecture/architecture.md`
+- Primary deliverable: `docs/architecture/overview.md`
 - Additional deliverables when needed: `docs/architecture/adr/NNN-*.md` for significant structural decisions.
-- Baseline-first default: write final architecture decisions directly to `docs/architecture/architecture.md` on the feature branch.
-- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/ARCHITECTURE_DELTA.md`
-- Before merge: consolidate any required content from optional delta notes back into baseline architecture docs and keep ADRs in `docs/architecture/adr/`.
+- Baseline-first default: write final architecture decisions directly to `docs/architecture/overview.md` on the feature branch.
+- Before merge: confirm the architecture overview reflects final decisions and keep ADRs in `docs/architecture/adr/`.
 
 ## Review philosophy
 
@@ -208,4 +207,4 @@ For each significant structural decision made during this review (technology cho
 
 - Write an ADR via `@#adr`.
 - Cross-reference related ADRs.
-- Update `docs/architecture/architecture.md` to reflect the final decisions.
+- Update `docs/architecture/overview.md` to reflect the final decisions.

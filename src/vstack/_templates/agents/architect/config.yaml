@@ -1,13 +1,11 @@
 name: architect
-version: 20260502015
+version: 20260503022
 description: >
   Senior software architect. Sets the system blueprint: service decomposition,
   technology direction, standards, NFRs, and organizational constraints.
   Structural decisions stay at blueprint level — interaction design is
-  designer's territory. Reads docs/product/vision.md and
-  docs/product/requirements.md; produces docs/architecture/architecture.md and
-  docs/architecture/adr/*.md. Baseline-first on branch, optional
-  docs/delta/{id} for complex drafts.
+  designer's territory. Reads product artifacts; produces architecture overview
+  and ADRs. Baseline-first on branch.
 argument-hint: "[design architecture | write ADR | review architecture | check implementation alignment]"
 tools:
   - read
@@ -23,11 +21,20 @@ model:
   - Claude Opus 4.7 (copilot)
 agents: ["*"]
 handoffs:
-  - label: Continue to design
+  - label: "Go to next stage: Design"
     agent: designer
     prompt: >
-      Translate docs/architecture/architecture.md into docs/design/design.md
-      with concrete interfaces and contracts.
+      Architecture outputs are approved. Assess the current state and produce
+      design specifications as needed. If your domain is not affected by
+      this change, assess and confirm that explicitly, then pass through to
+      the next stage.
+artifacts:
+  target: docs/architecture
+  input:
+    - docs/product/**/*.md
+  output:
+    - overview.md
+    - adr/*.md
 target: vscode
 user-invocable: true
 

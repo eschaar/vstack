@@ -62,10 +62,9 @@ Use `inspect` for read-only auditing.
 
 ## Deliverable and artifact policy
 
-- Primary deliverable: `docs/test-report.md`
-- Additional deliverables when applicable: `docs/security-report.md`, `docs/performance-baseline.md`
+- Primary deliverable: `docs/reports/test-report.md`
+- Additional deliverables when applicable: `docs/reports/security-report.md`, `docs/reports/performance-baseline.md`
 - Baseline-first default: write final verification outcomes directly to baseline reports on the feature branch.
-- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/VERIFY_DELTA.md`
 - Before merge: consolidate final findings, severity, and ship-readiness verdict into baseline reports.
 
 ## Step 0: Route Mode
@@ -266,4 +265,4 @@ scope: [path/component/full]
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"verify","artifact_type":"skill","artifact_version":"20260421026","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"verify","artifact_type":"skill","artifact_version":"20260421026","generator":"vstack","vstack_version":"2.2.0"} -->

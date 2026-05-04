@@ -57,8 +57,7 @@ change source code.
 
 - Primary deliverables: updated baseline documentation artifacts (for example `README.md`, API docs, migration guides)
 - Baseline-first default: write final documentation updates directly to baseline docs on the feature branch.
-- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/DOCS_DELTA.md`
-- Before merge: consolidate any documentation delta notes into baseline docs.
+- Before merge: confirm documentation updates are complete and consistent before merge.
 
 ## Step 0: Scope the Release
 
@@ -151,4 +150,4 @@ Skipped (n/a):
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"docs","artifact_type":"skill","artifact_version":"20260421014","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"docs","artifact_type":"skill","artifact_version":"20260421014","generator":"vstack","vstack_version":"2.2.0"} -->

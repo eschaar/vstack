@@ -1,11 +1,9 @@
 name: tester
-version: 20260502020
+version: 20260503026
 description: >
   Senior QA, security, and reliability engineer. Runs functional, security,
-  and performance tests. Produces docs/test-report.md, docs/security-report.md,
-  and docs/performance-baseline.md based on docs/architecture/architecture.md
-  and requirements. Baseline-first on branch, optional docs/delta/{id} notes
-  for complex efforts only.
+  and performance tests. Produces verification reports based on the approved
+  architecture and requirements. Baseline-first on branch.
 argument-hint: "[verify changes | write tests | security review | performance review | smoke test service]"
 tools:
   - read
@@ -21,16 +19,19 @@ model:
   - GPT-5.3-Codex (copilot)
 agents: ["*"]
 handoffs:
-  - label: Send fixes to engineer
-    agent: engineer
-    prompt: >
-      Resolve blocking findings from tester reports and update tests where
-      needed.
-  - label: Continue to release
+  - label: "Go to next stage: Release readiness"
     agent: release
     prompt: >
-      If findings are resolved, run release readiness checks and prepare
-      release artifacts.
+      Verification outputs are approved. Assess the current state and prepare
+      the release as needed. Create and/or update the relevant artifacts if needed,
+      as well as any sign-offs.
+artifacts:
+  target: docs/reports
+  input:
+    - docs/architecture/**/*.md
+    - docs/design/**/*.md
+  output:
+    - "**/*.md"
 target: vscode
 user-invocable: true
 

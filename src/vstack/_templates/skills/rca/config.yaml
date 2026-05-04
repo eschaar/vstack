@@ -1,0 +1,17 @@
+name: rca
+version: 20260503001
+description: |
+  Root cause analysis for incidents and bugs. Guides a systematic technical
+  investigation and produces an RCA document linked to the triggering issue.
+  Use when asked to "write an RCA", "root cause this incident", or "document
+  what went wrong technically". Called by the incident skill; also invoked
+  directly by the engineer role.
+argument-hint: '[incident or issue to analyse]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

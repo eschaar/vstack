@@ -210,7 +210,7 @@ cp .env.example .env
 ## Architecture Overview
 
 \[2–4 sentences describing the main components and how they interact.
-Link to docs/architecture/architecture.md for details.\]
+Link to docs/architecture/overview.md for details.\]
 
 ## Good First Issues
 

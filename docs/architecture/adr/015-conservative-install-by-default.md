@@ -3,7 +3,7 @@
 > Maintained by: **architect** role
 
 **date:** 2026-04-26\
-**status:** accepted
+**status:** superseded by [ADR-020](020-install-init-command-semantics.md)
 
 ## context
 

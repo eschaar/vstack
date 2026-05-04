@@ -26,6 +26,7 @@ class TestTopLevelCommandConfig:
             "status",
             "manifest",
             "install",
+            "init",
             "uninstall",
         }
 

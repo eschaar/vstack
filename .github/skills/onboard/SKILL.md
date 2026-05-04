@@ -242,7 +242,7 @@ cp .env.example .env
 ## Architecture Overview
 
 \[2–4 sentences describing the main components and how they interact.
-Link to docs/architecture/architecture.md for details.\]
+Link to docs/architecture/overview.md for details.\]
 
 ## Good First Issues
 
@@ -301,4 +301,4 @@ Gaps remaining (if any):
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"onboard","artifact_type":"skill","artifact_version":"20260421020","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"onboard","artifact_type":"skill","artifact_version":"20260421020","generator":"vstack","vstack_version":"2.2.0"} -->

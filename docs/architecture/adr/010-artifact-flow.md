@@ -15,6 +15,12 @@ but persistent and inspectable) to an external message bus (complex and heavywei
 
 **Roles communicate exclusively through files on disk.**
 
+**Pipeline progression is stage-gated by explicit user approval.**
+
+**Handoff controls are reserved for happy-path continuation only.**
+
+**Release is the sign-off orchestrator and consolidates cross-role review outcomes.**
+
 Each role:
 
 1. Reads its required upstream artifacts (defined below)
@@ -26,25 +32,74 @@ and stops — it does not proceed with partial context.
 
 ### artifact hand-off table
 
-| Role      | Reads                                                                                                                       | Writes                                                                              |
-| --------- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| product   | (nothing — initiates)                                                                                                       | `docs/product/vision.md`, `docs/product/requirements.md`, `docs/product/roadmap.md` |
-| architect | `docs/product/vision.md`, `docs/product/requirements.md`                                                                    | `docs/architecture/architecture.md`, `docs/architecture/adr/*.md`                   |
-| designer  | `docs/product/vision.md`, `docs/product/requirements.md`, `docs/architecture/architecture.md`, `docs/architecture/adr/*.md` | `docs/design/design.md`, API specs                                                  |
-| engineer  | `docs/product/requirements.md`, `docs/design/design.md`, `docs/architecture/adr/*.md`                                       | code, unit tests                                                                    |
-| tester    | `docs/product/requirements.md`, source files, config                                                                        | `docs/test-report.md`, `docs/security-report.md`, `docs/performance-baseline.md`    |
-| release   | `docs/test-report.md`, `docs/security-report.md`, `docs/performance-baseline.md`, user sign-off                             | `docs/releases/{date}.md`, `CHANGELOG.md`, release PR                               |
+This table describes the conceptual read/write relationships between roles.
+Default artifact paths are defined in ADR-021 and configured per-project in each
+agent's `config.yaml`. Paths are overridable; the hand-off relationships below are fixed.
+
+- **`product`**
+
+  - Reads: *(nothing — initiates)*
+  - Writes: vision, requirements, roadmap
+
+- **`architect`**
+
+  - Reads: product artifacts
+  - Writes: architecture overview, ADRs
+
+- **`designer`**
+
+  - Reads: product artifacts, architecture artifacts
+  - Writes: design overview, API specs, UX artifacts (frontend scope only)
+
+- **`engineer`**
+
+  - Reads: product artifacts, architecture artifacts, design artifacts
+  - Writes: source code, unit tests, RCA and post-mortem artifacts
+
+- **`tester`**
+
+  - Reads: architecture artifacts, design artifacts, source files
+  - Writes: test report, security report, performance baseline
+
+- **`release`**
+
+  - Reads: product artifacts, architecture artifacts, design artifacts, tester reports, user sign-off
+  - Writes: release document, changelog, release PR
 
 ### user gate moments
 
-There are 4 explicit user gate moments:
+There are explicit user gate moments after each stage output and before merge:
 
-| Gate                         | Trigger                                              | Required                              |
-| ---------------------------- | ---------------------------------------------------- | ------------------------------------- |
-| **1. Requirements approval** | After `product` writes requirements.md               | User approves before architect starts |
-| **2. Design approval**       | After `architect` + `designer` write their artifacts | User approves before engineer starts  |
-| **3. Pre-prod sign-off**     | After `tester` reports are ready                     | User approves before release starts   |
-| **4. Merge approval**        | Before `release` creates PR                          | User approves final merge             |
+| Gate                             | Trigger                                 | Required                              |
+| -------------------------------- | --------------------------------------- | ------------------------------------- |
+| **1. Product approval**          | After `product` updates scope artifacts | User approves before architect starts |
+| **2. Architecture approval**     | After `architect` updates artifacts     | User approves before designer starts  |
+| **3. Design approval**           | After `designer` updates artifacts      | User approves before engineer starts  |
+| **4. Implementation checkpoint** | After `engineer` updates code/tests     | User approves before tester starts    |
+| **5. Verification approval**     | After `tester` reports are ready        | User approves before release starts   |
+| **6. Merge approval**            | Before `release` creates PR             | User approves final merge             |
+
+### handoff policy
+
+Handoffs are UI accelerators for the happy path, not orchestration logic.
+
+- Allowed pattern: `Go to next stage: <stage>` (single forward continuation)
+- Disallowed: back/side/escalation handoff buttons
+- For `NOK` or blockers, user explicitly chooses the recovery path
+
+### release sign-off consolidation
+
+Release gathers explicit `OK`/`NOK` reviews from upstream role perspectives
+(typically tester, architect, designer, and product) and records a unified
+decision matrix before PR creation.
+
+The sign-off payload is standardized:
+
+1. Verdict (`OK` or `NOK`)
+1. Reviewed scope
+1. Gaps or deviations
+1. Impact/risk summary
+1. Required next action and owner
 
 ## alternatives considered
 

@@ -56,12 +56,26 @@ Signal readiness before downstream work proceeds:
 Handoffs you own:
 
 - To designer: system style, boundaries, NFRs, failure modes, and constrained tradeoffs.
+- Pass-through: if the architecture is not affected by this change, confirm that explicitly before passing through.
 - Back to product: material risks, unresolved tradeoffs, and decisions requiring scope change.
+
+## assess current state
+
+Before producing any output, scan your configured input artifacts to determine
+what work is needed:
+
+1. Read your input artifacts.
+1. Identify artifacts that require action:
+   - Issues or change requests with status `open` or `draft` that touch architecture.
+   - Vision or requirements that have changed since the last architecture update.
+   - ADRs with status `proposed` that require a decision.
+1. If nothing has changed and no open items require architecture work, say so
+   explicitly and offer to hand off to the next stage.
 
 ## how you work
 
-1. Read `docs/product/vision.md` and `docs/product/requirements.md`. If either is missing, stop and request product clarification.
-1. **Declare system style** in `docs/architecture/architecture.md`:
+1. Assess current state (see above) before touching any output artifact.
+1. **Declare system style** in the architecture overview:
    - `backend-only` — API, service, library, CLI, data pipeline
    - `frontend-only` — UI, static site, design system
    - `fullstack` — API + UI tightly coupled
@@ -70,7 +84,7 @@ Handoffs you own:
 1. Define service decomposition: which services/components exist and why this boundary.
 1. Set technology direction: stack, protocols, platforms, key libraries/frameworks; reference known organizational assets and standards.
 1. Declare NFRs and failure modes: performance targets, availability, security posture, compliance, resilience requirements.
-1. Write or update `docs/architecture/architecture.md` via `@#architecture`.
+1. Write or update the architecture overview via `@#architecture`.
 1. Write ADRs via `@#adr` for each significant structural decision.
 1. Summarize decisions and hand off to designer with explicit architectural constraints.
 
@@ -85,12 +99,25 @@ Handoffs you own:
 - Conflicting constraints or unresolvable tradeoffs: escalate to user with options.
 - Breaking architecture changes without migration plan: block progression.
 
-## artifacts you own
+## artifacts you use
 
-| Artifact                            | Role    |
-| ----------------------------------- | ------- |
-| `docs/architecture/architecture.md` | creator |
-| `docs/architecture/adr/NNN-*.md`    | creator |
+<!-- This section will be generated from config.yaml artifacts block in a future release. -->
+
+### input
+
+| Artifact               |
+| ---------------------- |
+| `docs/product/**/*.md` |
+
+### output
+
+| Artifact                        |
+| ------------------------------- |
+| `docs/architecture/overview.md` |
+| `docs/architecture/adr/*.md`    |
+
+Agents do not write to artifacts owned by other roles. If you discover something
+that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
 
 ## completion checklist
 

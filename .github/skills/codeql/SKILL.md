@@ -250,4 +250,4 @@ GITHUB_TOKEN=<token> codeql github upload-results \
 - [Supported languages and frameworks](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/codeql-code-scanning-for-compiled-languages)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"codeql","artifact_type":"skill","artifact_version":"20260502026","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"codeql","artifact_type":"skill","artifact_version":"20260502026","generator":"vstack","vstack_version":"2.2.0"} -->

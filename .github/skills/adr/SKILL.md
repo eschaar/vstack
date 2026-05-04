@@ -50,7 +50,7 @@ Read existing ADRs and architecture docs:
 
 ```bash
 ls docs/architecture/adr/ 2>/dev/null | sort | head -20 || true
-cat docs/architecture/architecture.md 2>/dev/null | head -40 || true
+cat docs/architecture/overview.md 2>/dev/null | head -40 || true
 # Find highest existing ADR number
 ls docs/architecture/adr/*.md 2>/dev/null | grep -oE '[0-9]+' | sort -n | tail -1 || echo "0"
 ```
@@ -179,4 +179,4 @@ is a kebab-case title.
 After writing, state the file path and summary so the architect or product role can review.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"adr","artifact_type":"skill","artifact_version":"20260421003","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"adr","artifact_type":"skill","artifact_version":"20260421003","generator":"vstack","vstack_version":"2.2.0"} -->

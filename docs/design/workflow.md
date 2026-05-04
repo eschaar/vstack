@@ -1,18 +1,15 @@
 # vstack — workflow
 
 > Maintained by: **designer** role\
-> Last updated: 2026-04-21
+> Last updated: 2026-05-03
 
 ## overview
 
 This document describes how vstack workflows execute today (single-call execution)
-and a possible future orchestrated role pipeline.
+and the target operating model: a stage-gated role pipeline.
 
-For a precise GitHub Actions CI/CD and release pipeline specification, see
-`docs/design/cicd.md`.
-
-It also documents the repository-level GitHub Actions automation used for quality,
-security, commit policy, and releases.
+For the full GitHub Actions CI/CD and release pipeline specification, including the
+human and Dependabot sequences with step-by-step checklists, see `docs/design/cicd.md`.
 
 For authoring boundaries between reusable guidance mechanisms:
 
@@ -37,30 +34,8 @@ and easy to reason about.
 | `.github/workflows/release.yml`   | Push to `main`                                        | Run release-please to maintain release PRs and create tags/releases when merged. |
 | `.github/workflows/publish.yml`   | GitHub release published                              | Build package artifacts from the release tag and publish to PyPI.                |
 
-### commit policy enforcement model
-
-Commit policy is defined in `cchk.toml` and enforced by `commit-check`:
-
-1. `.github/workflows/commit.yml` runs `commit-check/commit-check-action@v2` on branch pushes and PRs.
-1. Local hooks in `.pre-commit-config.yaml` run the same checks at `commit-msg` and `pre-push` stages.
-
-Additional commit workflow policy:
-
-- Maximum commit subject length is 100 characters.
-- Branch names are validated against Conventional Branch format (`type/description`).
-- Allowed branch types: `feature`, `bugfix`, `hotfix`, `release`, `chore`, `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `ci`, `build`, `style`, `opt`, `patch`, `dependabot`.
-- Commit scopes are not hard-enforced by CI; scope naming is guidance-level in documentation.
-
-This keeps CI and local checks aligned through one policy source of truth.
-
-### release versioning model
-
-`release.yml` uses release-please as the source of truth for version calculation,
-CHANGELOG updates, and GitHub release notes based on conventional commits.
-
-`publish.yml` only builds and publishes artifacts for already created release tags.
-
-Repository tag policy remains strict `X.Y.Z` (no `v` prefix).
+For trigger conditions, execution sequences, commit policy details, and release versioning
+rules, see `docs/design/cicd.md`.
 
 ______________________________________________________________________
 
@@ -86,29 +61,44 @@ flowchart LR
 
 ______________________________________________________________________
 
-## possible future model — orchestrated role pipeline
+## stage-gated role pipeline (target operating model)
 
-Each role becomes a separate model call. Output artifacts from one role become
-the input context for the next.
+Each role is a separate model call. Output artifacts from one role become the
+input context for the next role, and progression only happens after explicit
+user approval.
 
 ```mermaid
 flowchart TD
-  P[product<br>vision.md<br>requirements.md<br>roadmap.md] --> A[architect<br>architecture.md<br>adr/*.md]
-  A --> D[designer<br>design.md]
-  D --> G1{User gate 1<br>requirements and design}
-  D -. backend-only path .-> G1
-  G1 --> E[engineer<br>code and unit tests]
-  E --> T[tester<br>test-report.md<br>security-report.md<br>performance-baseline.md]
-  T --> G2{User gate 2<br>pre-prod sign-off}
-  G2 --> G3{User gate 3<br>final merge approval}
-  G3 --> R[release<br>releases/{date}.md<br>CHANGELOG.md<br>PR]
+  P[product] --> GP{User approves Product output}
+  GP --> A[architect]
+  A --> GA{User approves Architecture output}
+  GA --> D[designer]
+  D --> GD{User approves Design output}
+  GD --> E[engineer]
+  E --> GE{User approves Implementation checkpoint}
+  GE --> T[tester]
+  T --> GT{User approves Verification output}
+  GT --> R[release]
+  R --> GR{User final merge approval}
+  GR --> PR[PR opened]
 ```
 
 **Characteristics:**
 
 - Each role is scoped to its domain
 - Each role reads its inputs from disk (artifacts from upstream roles)
-- User gates are explicit pauses for human review
+- User approval is required after each stage output
+- Handoffs are only for happy-path continuation
+
+### flow principles
+
+1. **User-gated progression:** every stage output is reviewed by the user before the next stage starts.
+1. **All roles in every pipeline:** every use case runs through all six roles. Roles that are not affected by a change assess impact and pass through explicitly rather than being skipped.
+1. **Happy-path handoffs only:** handoff buttons are limited to one forward action named `Go to next stage: <stage>`.
+1. **No automatic backtracking:** non-happy paths (`NOK`, blockers, missing artifacts) do not use handoff buttons; the user decides the next action.
+1. **Subagent delegation mid-role:** engineer may invoke architect or designer as subagents to clarify constraints or contracts during implementation without going back to a full gate cycle.
+1. **Release owns sign-off orchestration:** release remains the final orchestrator and gathers `OK`/`NOK` review outcomes from prior role perspectives.
+1. **Deterministic sign-off contract:** every sign-off review returns the same structure: verdict, reviewed scope, gaps, impact, and required next action.
 
 ______________________________________________________________________
 
@@ -125,31 +115,189 @@ If an upstream artifact is missing, the role reports what it needs before procee
 
 ### required reads per role
 
-| Role      | Must read before starting                                                                                                   |
-| --------- | --------------------------------------------------------------------------------------------------------------------------- |
-| product   | (none — initiates pipeline)                                                                                                 |
-| architect | `docs/product/vision.md`, `docs/product/requirements.md`                                                                    |
-| designer  | `docs/product/vision.md`, `docs/product/requirements.md`, `docs/architecture/architecture.md`, `docs/architecture/adr/*.md` |
-| engineer  | `docs/product/requirements.md`, `docs/design/design.md`, `docs/architecture/architecture.md`, `docs/architecture/adr/*.md`  |
-| tester    | `docs/product/requirements.md`, relevant source files                                                                       |
-| release   | `docs/test-report.md`, `docs/security-report.md`, user sign-off                                                             |
+Default artifact paths are defined in ADR-021 and configured per-project in each
+agent's `config.yaml`.
+
+- **`product`** — *(none — initiates pipeline)*
+- **`architect`** — product artifacts
+- **`designer`** — product artifacts, architecture artifacts
+- **`engineer`** — product artifacts, architecture artifacts, design artifacts
+- **`tester`** — architecture artifacts, design artifacts, relevant source files
+- **`release`** — product artifacts, architecture artifacts, design artifacts, tester reports, user sign-off
 
 ______________________________________________________________________
 
 ## user gate moments
 
-There are **4 explicit user gate moments** where the pipeline pauses for human input:
+There are **6 explicit user gate moments** where the pipeline pauses for human input:
 
-| Gate                         | When                                                         | Who signs off |
-| ---------------------------- | ------------------------------------------------------------ | ------------- |
-| **1. Requirements approval** | After product writes requirements.md                         | User          |
-| **2. Design approval**       | After architect writes architecture + designer writes design | User          |
-| **3. Pre-prod sign-off**     | After tester reports are ready                               | User          |
-| **4. Merge approval**        | Before release creates PR                                    | User          |
+| Gate                             | When                                  | Who signs off |
+| -------------------------------- | ------------------------------------- | ------------- |
+| **1. Product approval**          | After product updates scope artifacts | User          |
+| **2. Architecture approval**     | After architect updates architecture  | User          |
+| **3. Design approval**           | After designer updates design         | User          |
+| **4. Implementation checkpoint** | After engineer implements changes     | User          |
+| **5. Verification approval**     | After tester reports are ready        | User          |
+| **6. Final merge approval**      | After release readiness is complete   | User          |
 
 Gates prevent automated pipelines from deploying without human review.
 In the current model, the user implicitly gates by choosing which skill to invoke next.
 In the orchestrated model, the orchestrator pauses and waits for explicit confirmation.
+
+### handoff button convention
+
+For role UIs that expose handoffs, use exactly one continuation button per stage:
+
+- `Go to next stage: Architecture`
+- `Go to next stage: Design`
+- `Go to next stage: Engineering`
+- `Go to next stage: Verification`
+- `Go to next stage: Release readiness`
+
+Release is the final role stage; opening the PR is a release action, not a
+handoff to another role.
+
+Do not add back, side, or escalation handoff buttons. Those paths remain
+explicit user decisions.
+
+______________________________________________________________________
+
+## use-case flow examples
+
+The following examples apply the same stage-gated model to common scenarios.
+
+### use case 1 — new project
+
+```mermaid
+sequenceDiagram
+  participant U as User
+  participant P as Product
+  participant A as Architect
+  participant D as Designer
+  participant E as Engineer
+  participant T as Tester
+  participant R as Release
+
+  U->>P: Define vision, scope, success criteria
+  P-->>U: Product artifacts ready
+  U->>U: Gate 1 approve
+  U->>A: Go to next stage: Architecture
+  A-->>U: Architecture and ADR updates
+  U->>U: Gate 2 approve
+  U->>D: Go to next stage: Design
+  D-->>U: Design and contracts
+  U->>U: Gate 3 approve
+  U->>E: Go to next stage: Engineering
+  E-->>U: Implementation and tests
+  U->>U: Gate 4 approve
+  U->>T: Go to next stage: Verification
+  T-->>U: Test and security reports
+  U->>U: Gate 5 approve
+  U->>R: Go to next stage: Release readiness
+  R-->>U: Consolidated sign-off matrix + release artifacts
+  U->>U: Gate 6 final merge approval
+```
+
+### use case 2 — update existing project (change)
+
+```mermaid
+sequenceDiagram
+  participant U as User
+  participant P as Product
+  participant A as Architect
+  participant D as Designer
+  participant E as Engineer
+  participant T as Tester
+  participant R as Release
+
+  U->>P: Request change and impact boundaries
+  P-->>U: Updated requirements and scope changes
+  U->>U: Gate 1 approve
+  U->>A: Go to next stage: Architecture
+  A-->>U: Architecture constraints for this change
+  U->>U: Gate 2 approve
+  U->>D: Go to next stage: Design
+  D-->>U: Design contracts and edge cases for this change
+  U->>U: Gate 3 approve
+  U->>E: Go to next stage: Engineering
+  E-->>U: Incremental implementation
+  U->>U: Gate 4 approve
+  U->>T: Go to next stage: Verification
+  T-->>U: Regression + targeted verification verdict
+  U->>U: Gate 5 approve
+  U->>R: Go to next stage: Release readiness
+  R-->>U: Sign-off matrix based on changed scope
+  U->>U: Gate 6 final merge approval
+```
+
+### use case 3 — incident fix
+
+All roles remain in the pipeline. Architect and designer each assess whether
+their domain is affected and either contribute or pass through explicitly.
+Engineer can invoke architect or designer as subagents to clarify constraints
+or contracts mid-implementation.
+
+```mermaid
+sequenceDiagram
+  participant U as User
+  participant P as Product
+  participant A as Architect
+  participant D as Designer
+  participant E as Engineer
+  participant T as Tester
+  participant R as Release
+
+  U->>P: Declare incident scope and urgency
+  P-->>U: Incident acceptance criteria
+  U->>U: Gate 1 approve
+  U->>A: Go to next stage: Architecture
+  A-->>U: Architecture impact assessed — constraints or pass-through
+  U->>U: Gate 2 approve
+  U->>D: Go to next stage: Design
+  D-->>U: Design impact assessed — contract updates or pass-through
+  U->>U: Gate 3 approve
+  U->>E: Go to next stage: Engineering
+  E-->>U: Hotfix implementation (may invoke architect/designer as subagents)
+  U->>U: Gate 4 implementation checkpoint
+  U->>T: Go to next stage: Verification
+  T-->>U: Focused regression and safety verdict
+  U->>U: Gate 5 verification approval
+  U->>R: Go to next stage: Release readiness
+  R-->>U: Final sign-off matrix and PR readiness
+  U->>U: Gate 6 final merge approval
+```
+
+### use case 4 — reverse engineering and baseline reconstruction
+
+```mermaid
+sequenceDiagram
+  participant U as User
+  participant P as Product
+  participant A as Architect
+  participant D as Designer
+  participant E as Engineer
+  participant T as Tester
+  participant R as Release
+
+  U->>P: Define discovery goals and constraints
+  P-->>U: Discovery requirements
+  U->>U: Gate 1 approve
+  U->>A: Go to next stage: Architecture
+  A-->>U: As-is architecture map and risks
+  U->>U: Gate 2 approve
+  U->>D: Go to next stage: Design
+  D-->>U: As-is contracts and interaction model
+  U->>U: Gate 3 approve
+  U->>E: Go to next stage: Engineering
+  E-->>U: Instrumentation or documentation improvements
+  U->>U: Gate 4 approve
+  U->>T: Go to next stage: Verification
+  T-->>U: Evidence that reconstructed baseline matches behavior
+  U->>U: Gate 5 approve
+  U->>R: Go to next stage: Release readiness
+  R-->>U: Consolidated sign-off and publication readiness
+  U->>U: Gate 6 final merge approval
+```
 
 ______________________________________________________________________
 
