@@ -43,6 +43,7 @@ ______________________________________________________________________
 | cloud control plane dependency           | not planned | Keeps operation local/offline-capable                                                                   |
 | VS Code extension packaging              | not planned | Not required for current install model                                                                  |
 | browser automation as default dependency | not planned | Backend/microservice-first remains default                                                              |
+| install target directory override        | not planned | Won't implement unless a concrete tool incompatibility with `.github/` arises                           |
 
 ______________________________________________________________________
 
@@ -359,6 +360,12 @@ Not required for the current install model (`vstack install`) and kept out to re
 ### browser automation as default dependency [not planned]
 
 Kept optional; backend/microservice verification remains the default priority.
+
+### install target directory override [not planned]
+
+Configuring the output root (e.g. `.cursor/` instead of `.github/`) is not implemented.
+All mainstream AI editors read `.github/` without issue. This will only be reconsidered
+if a concrete tool incompatibility with `.github/` is reported.
 
 ______________________________________________________________________
 
