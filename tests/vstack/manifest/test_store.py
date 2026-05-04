@@ -487,7 +487,7 @@ class TestManifestFile:
     def test_manifest_contains_all_expected_canonical_names(self, installed_target) -> None:
         """Test that manifest contains all expected canonical names."""
         data = json.loads(
-            (installed_target / ".github" / "vstack.json").read_text(encoding="utf-8")
+            (installed_target / ".vstack" / "vstack.json").read_text(encoding="utf-8")
         )
         skill_names = [s["name"] for s in data["artifacts"]["skills"]]
         for name in EXPECTED_CANONICAL_NAMES:

@@ -35,6 +35,19 @@ class TestCommandService:
         svc = CommandService(templates_root=tmp_path)
         assert svc.validate() == 1
 
+    def test_manifest_for_dot_github_redirects_to_dot_vstack(self, tmp_path: Path) -> None:
+        """manifest_for() returns a ManifestFile in .vstack/ for .github install dirs."""
+        svc = CommandService(templates_root=tmp_path)
+        install_dir = tmp_path / ".github"
+        mf = svc.manifest_for(install_dir)
+        assert mf.path == tmp_path / ".vstack" / "vstack.json"
+
+    def test_manifest_for_non_github_dir_uses_install_dir(self, tmp_path: Path) -> None:
+        """manifest_for() places the manifest directly in install_dir for non-.github dirs."""
+        svc = CommandService(templates_root=tmp_path)
+        mf = svc.manifest_for(tmp_path)
+        assert mf.path == tmp_path / "vstack.json"
+
     def test_label_prefers_relative(self, tmp_path: Path) -> None:
         """label() returns a path relative to templates_root when possible."""
         svc = CommandService(templates_root=tmp_path)
@@ -64,8 +77,8 @@ class TestCommandService:
             ("validate", "vstack.cli.validate", "ValidateCommand", {"only": ["skill"]}, 10),
             (
                 "install",
-                "vstack.cli.install",
-                "InstallCommand",
+                "vstack.cli.init",
+                "InitCommand",
                 {
                     "install_dir": Path("/tmp/install"),
                     "only": ["skill"],
@@ -187,14 +200,15 @@ class TestCommandService:
                 ],
             },
         }
-        (install_dir / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
+        (tmp_path / ".vstack").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".vstack" / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
 
         svc = CommandService(templates_root=TEMPLATES_ROOT)
         rc = svc.install(install_dir, only=["instruction"])
         assert rc == 0
 
         updated: dict[str, Any] = json.loads(
-            (install_dir / "vstack.json").read_text(encoding="utf-8")
+            (tmp_path / ".vstack" / "vstack.json").read_text(encoding="utf-8")
         )
         assert "instructions" in updated["artifacts"]
         assert updated["artifacts"]["agents"] == manifest["artifacts"]["agents"]
@@ -220,7 +234,8 @@ class TestCommandService:
             },
         }
         install_dir.mkdir(parents=True)
-        (install_dir / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
+        (tmp_path / ".vstack").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".vstack" / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
         (install_dir / "skills" / "vision").mkdir(parents=True)
         (install_dir / "skills" / "vision" / "SKILL.md").write_text("old", encoding="utf-8")
 
@@ -241,7 +256,7 @@ class TestCommandService:
 
         assert rc == 0
         assert artifact_path.read_text(encoding="utf-8") == "user content"
-        manifest = json.loads((install_dir / "vstack.json").read_text(encoding="utf-8"))
+        manifest = json.loads((tmp_path / ".vstack" / "vstack.json").read_text(encoding="utf-8"))
         skill_entries = manifest["artifacts"]["skills"]
         assert all(entry["name"] != "vision" for entry in skill_entries)
 
@@ -257,7 +272,7 @@ class TestCommandService:
 
         assert rc == 0
         assert artifact_path.read_text(encoding="utf-8") == "user content"
-        manifest = json.loads((install_dir / "vstack.json").read_text(encoding="utf-8"))
+        manifest = json.loads((tmp_path / ".vstack" / "vstack.json").read_text(encoding="utf-8"))
         vision = next(
             entry for entry in manifest["artifacts"]["skills"] if entry["name"] == "vision"
         )
@@ -276,7 +291,7 @@ class TestCommandService:
 
         assert rc == 0
         assert artifact_path.read_text(encoding="utf-8") != "user content"
-        manifest = json.loads((install_dir / "vstack.json").read_text(encoding="utf-8"))
+        manifest = json.loads((tmp_path / ".vstack" / "vstack.json").read_text(encoding="utf-8"))
         vision = next(
             entry for entry in manifest["artifacts"]["skills"] if entry["name"] == "vision"
         )
@@ -293,7 +308,9 @@ class TestCommandService:
         original = artifact_path.read_text(encoding="utf-8")
         artifact_path.write_text(original + "\nlocal edit\n", encoding="utf-8")
 
-        manifest_before = json.loads((install_dir / "vstack.json").read_text(encoding="utf-8"))
+        manifest_before = json.loads(
+            (tmp_path / ".vstack" / "vstack.json").read_text(encoding="utf-8")
+        )
         vision_before = next(
             entry for entry in manifest_before["artifacts"]["skills"] if entry["name"] == "vision"
         )
@@ -301,7 +318,9 @@ class TestCommandService:
         assert svc.install(install_dir, only=["skill"], update=True) == 0
         assert artifact_path.read_text(encoding="utf-8").endswith("local edit\n")
 
-        manifest_after = json.loads((install_dir / "vstack.json").read_text(encoding="utf-8"))
+        manifest_after = json.loads(
+            (tmp_path / ".vstack" / "vstack.json").read_text(encoding="utf-8")
+        )
         vision_after = next(
             entry for entry in manifest_after["artifacts"]["skills"] if entry["name"] == "vision"
         )
@@ -400,7 +419,8 @@ class TestCommandService:
             },
         }
         install_dir.mkdir(parents=True)
-        (install_dir / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
+        (tmp_path / ".vstack").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".vstack" / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
         (install_dir / "skills" / "vision").mkdir(parents=True)
         artifact_path = install_dir / "skills" / "vision" / "SKILL.md"
         artifact_path.write_text(old_content, encoding="utf-8")
@@ -434,7 +454,8 @@ class TestCommandService:
             },
         }
         install_dir.mkdir(parents=True)
-        (install_dir / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
+        (tmp_path / ".vstack").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".vstack" / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
         (install_dir / "skills" / "vision").mkdir(parents=True)
         artifact_path = install_dir / "skills" / "vision" / "SKILL.md"
         artifact_path.write_text(old_content + "-local-edit", encoding="utf-8")
@@ -465,7 +486,8 @@ class TestCommandService:
             },
         }
         install_dir.mkdir(parents=True)
-        (install_dir / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
+        (tmp_path / ".vstack").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".vstack" / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
         (install_dir / "skills" / "vision").mkdir(parents=True)
         (install_dir / "skills" / "vision" / "SKILL.md").write_text(old_content, encoding="utf-8")
 
@@ -574,7 +596,8 @@ class TestCommandService:
             "artifacts": {"skill": [{"name": "custom", "file": "skills/custom/SKILL.md"}]},
         }
         install_dir.mkdir(parents=True, exist_ok=True)
-        (install_dir / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
+        (tmp_path / ".vstack").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".vstack" / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
 
         svc = CommandService(templates_root=TEMPLATES_ROOT)
         rc = svc.verify(install_dir=install_dir, source=False, output=True)
@@ -673,7 +696,8 @@ class TestCommandService:
         """status() returns 1 and prints guidance for a schema-v1 manifest."""
         install_dir = tmp_path / ".github"
         install_dir.mkdir(parents=True)
-        (install_dir / "vstack.json").write_text(
+        (tmp_path / ".vstack").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".vstack" / "vstack.json").write_text(
             json.dumps(
                 {
                     "vstack_version": "1.3.6",
@@ -693,7 +717,8 @@ class TestCommandService:
         artifact_path = install_dir / "skills" / "vision" / "SKILL.md"
         artifact_path.parent.mkdir(parents=True)
         artifact_path.write_text("user content", encoding="utf-8")
-        (install_dir / "vstack.json").write_text(
+        (tmp_path / ".vstack").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".vstack" / "vstack.json").write_text(
             json.dumps(
                 {
                     "manifest_version": 2,
@@ -732,7 +757,8 @@ class TestCommandService:
         instruction_file = install_dir / "instructions" / "python.instructions.md"
         instruction_file.parent.mkdir(parents=True)
         instruction_file.write_text("legacy content\n", encoding="utf-8")
-        (install_dir / "vstack.json").write_text(
+        (tmp_path / ".vstack").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".vstack" / "vstack.json").write_text(
             json.dumps(
                 {
                     "manifest_version": 2,
@@ -786,9 +812,9 @@ class TestCommandService:
         install_dir = tmp_path / ".github"
         svc = CommandService(templates_root=TEMPLATES_ROOT)
         assert svc.install(install_dir, only=["skill", "agent"]) == 0
-        assert (install_dir / "vstack.json").exists()
+        assert (tmp_path / ".vstack" / "vstack.json").exists()
         assert svc.uninstall(install_dir) == 0
-        assert not (install_dir / "vstack.json").exists()
+        assert not (tmp_path / ".vstack" / "vstack.json").exists()
 
     def test_uninstall_without_manifest_and_without_files(self, tmp_path: Path) -> None:
         """uninstall() returns 0 when there is no manifest and no tracked files."""
@@ -816,7 +842,8 @@ class TestCommandService:
                 ]
             },
         }
-        (install_dir / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
+        (tmp_path / ".vstack").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".vstack" / "vstack.json").write_text(json.dumps(manifest), encoding="utf-8")
 
         svc = CommandService(templates_root=TEMPLATES_ROOT)
         assert svc.uninstall(install_dir) == 0
@@ -834,7 +861,9 @@ class TestCommandService:
 
         assert svc.uninstall(install_dir, only=["instruction"]) == 0
         assert instruction_file.exists()
-        manifest_after = json.loads((install_dir / "vstack.json").read_text(encoding="utf-8"))
+        manifest_after = json.loads(
+            (tmp_path / ".vstack" / "vstack.json").read_text(encoding="utf-8")
+        )
         assert manifest_after["artifacts"].get("instructions")
 
     def test_uninstall_force_name_removes_locally_modified_tracked_file(
@@ -1100,7 +1129,8 @@ class TestCommandService:
         """manifest_upgrade() migrates schema-v1 manifest to current schema."""
         install_dir = tmp_path / ".github"
         install_dir.mkdir(parents=True)
-        (install_dir / "vstack.json").write_text(
+        (tmp_path / ".vstack").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".vstack" / "vstack.json").write_text(
             json.dumps(
                 {
                     "vstack_version": "1.3.6",
@@ -1114,7 +1144,7 @@ class TestCommandService:
         svc = CommandService(templates_root=TEMPLATES_ROOT)
         assert svc.manifest_upgrade(install_dir) == 0
 
-        upgraded = json.loads((install_dir / "vstack.json").read_text(encoding="utf-8"))
+        upgraded = json.loads((tmp_path / ".vstack" / "vstack.json").read_text(encoding="utf-8"))
         assert upgraded["manifest_version"] == 2
         assert upgraded["hash_algorithm"] == "sha256"
 
@@ -1134,7 +1164,8 @@ class TestCommandService:
             encoding="utf-8",
         )
 
-        (install_dir / "vstack.json").write_text(
+        (tmp_path / ".vstack").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".vstack" / "vstack.json").write_text(
             json.dumps(
                 {
                     "manifest_version": 2,
@@ -1158,7 +1189,7 @@ class TestCommandService:
         svc = CommandService(templates_root=TEMPLATES_ROOT)
         assert svc.manifest_upgrade(install_dir, backfill=True) == 0
 
-        upgraded = json.loads((install_dir / "vstack.json").read_text(encoding="utf-8"))
+        upgraded = json.loads((tmp_path / ".vstack" / "vstack.json").read_text(encoding="utf-8"))
         entry = upgraded["artifacts"]["skills"][0]
         assert entry["checksum_algorithm"] == "sha256"
         assert isinstance(entry["checksum"], str)

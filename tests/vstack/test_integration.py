@@ -69,9 +69,9 @@ class TestIntegrationVstack:
 
     def test_manifest_upgrade_migrates_legacy_schema(self, tmp_path: Path) -> None:
         """vstack manifest upgrade migrates schema-v1 manifest to current schema."""
-        install_dir = tmp_path / ".github"
-        install_dir.mkdir(parents=True)
-        (install_dir / "vstack.json").write_text(
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir(parents=True)
+        (vstack_dir / "vstack.json").write_text(
             json.dumps(
                 {
                     "vstack_version": "1.3.6",
@@ -87,7 +87,7 @@ class TestIntegrationVstack:
             f"vstack manifest upgrade failed:\n{upgrade.stdout}\n{upgrade.stderr}"
         )
 
-        upgraded = json.loads((install_dir / "vstack.json").read_text(encoding="utf-8"))
+        upgraded = json.loads((vstack_dir / "vstack.json").read_text(encoding="utf-8"))
         assert upgraded["manifest_version"] == 2
         assert upgraded["hash_algorithm"] == "sha256"
 
@@ -112,18 +112,18 @@ class TestIntegrationVstack:
         tmp_path: Path,
     ) -> None:
         """vstack manifest upgrade --backfill stores checksum for VSTACK-META-tagged entries."""
-        install_dir = tmp_path / ".github"
-        install_dir.mkdir(parents=True)
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir(parents=True)
 
         artifact_rel = "skills/vision/SKILL.md"
-        artifact_path = install_dir / artifact_rel
+        artifact_path = (tmp_path / ".github") / artifact_rel
         artifact_path.parent.mkdir(parents=True, exist_ok=True)
         artifact_path.write_text(
             '# Vision\n\n<!-- VSTACK-META: {"artifact_name":"vision"} -->\n',
             encoding="utf-8",
         )
 
-        (install_dir / "vstack.json").write_text(
+        (vstack_dir / "vstack.json").write_text(
             json.dumps(
                 {
                     "manifest_version": 2,
@@ -149,7 +149,7 @@ class TestIntegrationVstack:
             f"vstack manifest upgrade --backfill failed:\n{upgrade.stdout}\n{upgrade.stderr}"
         )
 
-        upgraded = json.loads((install_dir / "vstack.json").read_text(encoding="utf-8"))
+        upgraded = json.loads((vstack_dir / "vstack.json").read_text(encoding="utf-8"))
         entry = upgraded["artifacts"]["skills"][0]
         assert entry["checksum_algorithm"] == "sha256"
         assert isinstance(entry["checksum"], str)

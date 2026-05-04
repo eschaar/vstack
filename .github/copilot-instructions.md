@@ -30,12 +30,13 @@ src/vstack/_templates/
 └── prompts/<name>/
     ├── template.md             ← prompt file body
     └── config.yaml
-docs/            ← architecture.md, design.md, skills.md, workflow.md, roadmap.md, adr/
+docs/            ← overview.md, design.md, skills.md, workflow.md, roadmap.md, adr/
 .github/         ← generated output (never edit directly*)
 ├── skills/<name>/SKILL.md
 ├── agents/<name>.agent.md
 ├── instructions/<name>.instructions.md
-├── prompts/<name>.prompt.md
+└── prompts/<name>.prompt.md
+.vstack/         ← project-scope vstack state and config
 └── vstack.json                 ← install manifest (generated)
 ```
 
@@ -92,8 +93,8 @@ Update docs whenever a change affects system structure, skill definitions, execu
 
 | Change | File to update |
 |--------|---------------|
-| High-level structure | `docs/architecture/architecture.md` |
-| Generator, loaders, builders | `docs/design/design.md` |
+| High-level structure | `docs/architecture/overview.md` |
+| Generator, loaders, builders | `docs/design/overview.md` |
 | Execution flow / pipeline | `docs/design/workflow.md` |
 | Skill names and behavior | `docs/design/skills.md` |
 | Option B milestones | `docs/product/roadmap.md` |
