@@ -460,3 +460,28 @@ class TestGenericArtifactGenerator:
         assert any(
             "unresolved placeholders" in m.message for m in result.messages if m.level == "fail"
         )
+
+    def test_template_partials_returns_empty_dict_by_default(self, tmp_path: Path) -> None:
+        """Test that template_partials returns an empty dict in the base class."""
+        gen = self._make_skill_gen(tmp_path)
+        assert gen.template_partials(tmp_path / "any" / "dir") == {}
+
+    def test_render_merges_template_partials_into_resolution(self, tmp_path: Path) -> None:
+        """Test that render uses template_partials to resolve per-template tokens."""
+
+        class _CustomGen(GenericArtifactGenerator):
+            def template_partials(self, tmpl_dir: Path) -> dict[str, str]:
+                return {"CUSTOM_TOKEN": "injected-value"}
+
+        (tmp_path / "templates" / "skills" / "_partials").mkdir(parents=True)
+        tmpl_dir = tmp_path / "templates" / "skills" / "custom"
+        tmpl_dir.mkdir(parents=True)
+        (tmpl_dir / "template.md").write_text(
+            "---\nname: custom\nversion: 1.0.0\ndescription: x\n---\n{{CUSTOM_TOKEN}}\n",
+            encoding="utf-8",
+        )
+
+        gen = _CustomGen(SKILL_TYPE, tmp_path / "templates")
+        artifact = gen.render(tmpl_dir)
+        assert "injected-value" in artifact.content
+        assert artifact.unresolved == []

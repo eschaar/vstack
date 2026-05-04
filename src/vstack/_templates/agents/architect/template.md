@@ -101,20 +101,9 @@ what work is needed:
 
 ## artifacts you use
 
-<!-- This section will be generated from config.yaml artifacts block in a future release. -->
+{{AGENT_ARTIFACTS_INPUT}}
 
-### input
-
-| Artifact               |
-| ---------------------- |
-| `docs/product/**/*.md` |
-
-### output
-
-| Artifact                        |
-| ------------------------------- |
-| `docs/architecture/overview.md` |
-| `docs/architecture/adr/*.md`    |
+{{AGENT_ARTIFACTS_OUTPUT}}
 
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.

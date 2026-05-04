@@ -28,13 +28,15 @@ handoffs:
       engineering. If working on an issue, document findings in RCA or
       post-mortem artifacts as relevant.
 artifacts:
-  target: docs/design
+  dir: design
   input:
-    - docs/architecture/**/*.md
+    - architecture/**/*.md
   output:
-    - overview.md
-    - ux.md
-    - "**/*.md"
+    - path: overview.md
+    - path: ux.md
+      notes: frontend/fullstack scope only
+    - path: "**/*.md"
+      notes: additional detail docs per component, model, system, or domain (when scope warrants it)
 target: vscode
 user-invocable: true
 

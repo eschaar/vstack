@@ -1,6 +1,11 @@
-project:
-  name: ""
-  tracker: github
-  tracker-url: ""
-naming:
-  change-prefix: RFC
+# Selective install exclusions.
+# Remove or comment out to install everything (default).
+#
+# exclude:
+#   skills:
+#     - terraform
+#     - terragrunt
+#     - helm
+#     - k8s
+#   instructions: all
+#   prompts: all

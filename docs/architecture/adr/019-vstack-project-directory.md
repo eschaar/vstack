@@ -9,15 +9,15 @@
 
 vstack installs Copilot artifacts into `.github/` and tracks them via a manifest.
 However, there was no designated location for project-level configuration, doc
-baseline stubs, or delta workflow templates that belong to the consuming project
+baseline stubs, or role-scoped doc templates that belong to the consuming project
 rather than to vstack's generated output.
 
 Previously, `vstack.json` lived at `.github/vstack.json`, mixing machine-generated
 tracking state with Copilot artifacts. There was also no place for:
 
-- Project configuration (tracker, naming conventions, change-prefix).
+- Install configuration (e.g. which artifact types to exclude).
 - Doc structure stubs seeded once and then owned by the project.
-- Delta workflow templates for RFCs and issue investigations.
+- Role-scoped doc templates for architecture, design, and release artifacts.
 
 The question was: where should project-scoped, vstack-related state and
 configuration live, and how should it be separated from generated Copilot artifacts?
@@ -29,14 +29,15 @@ and configuration that belongs to the project, not to the generated Copilot outp
 
 ```
 .vstack/
-├── config.yaml          ← human-authored project configuration (YAML)
+├── config.yaml          ← human-authored install configuration (YAML)
 ├── vstack.json          ← machine-generated manifest (JSON, moved from .github/)
-├── templates/           ← doc workflow templates, seeded once then project-owned
-│   ├── changes/
-│   │   └── RFC-template.md
-│   └── issues/
-│       ├── overview-template.md
-│       └── root-cause-template.md
+├── templates/           ← doc templates, seeded once then project-owned
+│   ├── architect/
+│   ├── designer/
+│   ├── engineer/
+│   ├── product/
+│   ├── release/
+│   └── tester/
 └── tmp/                 ← scratch space, listed in .gitignore
 ```
 
@@ -67,15 +68,22 @@ This is analogous to `package-lock.json` (machine-generated) alongside
 ### `config.yaml` schema
 
 ```yaml
-project:
-  name: my-service
-  tracker: github          # github | jira | linear | none
-  tracker-url: https://github.com/org/repo/issues
-naming:
-  change-prefix: RFC       # prefix for change proposal files
+# Selective install exclusions.
+# Remove or comment out to install everything (default).
+#
+# exclude:
+#   skills:
+#     - terraform
+#     - terragrunt
+#     - helm
+#     - k8s
+#   instructions: all
+#   prompts: all
 ```
 
-All fields are optional; vstack applies defaults when absent.
+All fields are optional. An absent `exclude:` block means install everything.
+Artifact type values are either a list of names to skip, or `all` to skip
+the entire type. `agents` cannot be excluded — the 6-role chain is an atomic unit.
 
 ### scope boundary
 
@@ -126,6 +134,8 @@ requiring documentation.
 
 ## impact on future orchestrated pipeline
 
-The `.vstack/config.yaml` file provides project metadata (tracker, naming) that a
-future orchestration layer can read to configure pipeline behaviour without
-hardcoding project-specific values in templates.
+The `.vstack/config.yaml` file provides install configuration that `vstack init`
+reads to determine which artifact types to generate. Additional configuration
+concepts (model preferences, artifact path overrides, template overlays) may be
+added to this schema as they are implemented — only fields with an active code
+afnemer are documented here.

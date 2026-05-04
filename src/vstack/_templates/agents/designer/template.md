@@ -117,21 +117,9 @@ what work is needed:
 
 ## artifacts you use
 
-<!-- This section will be generated from config.yaml artifacts block in a future release. -->
+{{AGENT_ARTIFACTS_INPUT}}
 
-### input
-
-| Artifact                    |
-| --------------------------- |
-| `docs/architecture/**/*.md` |
-
-### output
-
-| Artifact                  | Notes                                                                                   |
-| ------------------------- | --------------------------------------------------------------------------------------- |
-| `docs/design/overview.md` |                                                                                         |
-| `docs/design/ux.md`       | frontend/fullstack scope only                                                           |
-| `docs/design/**/*.md`     | additional detail docs per component, model, system, or domain (when scope warrants it) |
+{{AGENT_ARTIFACTS_OUTPUT}}
 
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.

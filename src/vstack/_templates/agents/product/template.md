@@ -86,17 +86,9 @@ Handoffs you own:
 
 ## artifacts you use
 
-<!-- This section will be generated from config.yaml artifacts block in a future release. -->
+{{AGENT_ARTIFACTS_INPUT}}
 
-### output
-
-| Artifact                       |
-| ------------------------------ |
-| `docs/product/vision.md`       |
-| `docs/product/requirements.md` |
-| `docs/product/roadmap.md`      |
-| `docs/product/changes/*.md`    |
-| `docs/product/issues/*.md`     |
+{{AGENT_ARTIFACTS_OUTPUT}}
 
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.

@@ -108,24 +108,9 @@ what work is needed:
 
 ## artifacts you use
 
-<!-- This section will be generated from config.yaml artifacts block in a future release. -->
+{{AGENT_ARTIFACTS_INPUT}}
 
-### input
-
-| Artifact                    |
-| --------------------------- |
-| `docs/product/**/*.md`      |
-| `docs/architecture/**/*.md` |
-| `docs/design/**/*.md`       |
-
-### output
-
-| Artifact                           | Notes                                  |
-| ---------------------------------- | -------------------------------------- |
-| `src/**/*`                         |                                        |
-| `tests/**/*`                       |                                        |
-| `issues/{id}-{slug}-rca.md`        | when working on an issue               |
-| `issues/{id}-{slug}-postmortem.md` | when stakeholder impact is significant |
+{{AGENT_ARTIFACTS_OUTPUT}}
 
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
