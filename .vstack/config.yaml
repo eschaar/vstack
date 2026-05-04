@@ -9,3 +9,8 @@
 #     - k8s
 #   instructions: all
 #   prompts: all
+
+# Root directory for generated agent artifact paths.
+# Default: docs
+#
+# artifacts_root: docs

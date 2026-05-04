@@ -49,16 +49,27 @@ from vstack.constants import ARTIFACTS_DOCS_ROOT, TEMPLATES_ROOT
 class AgentGenerator(GenericArtifactGenerator):
     """Generate agent artifacts using the built-in agent type configuration."""
 
-    def __init__(self, templates_root: Path | None = None) -> None:
+    def __init__(
+        self,
+        templates_root: Path | None = None,
+        *,
+        artifacts_root: str = ARTIFACTS_DOCS_ROOT,
+    ) -> None:
         """Create an agent generator bound to *templates_root*.
 
         Args:
             templates_root: Root directory containing the source templates.
                 When ``None``, the built-in package template root is used.
+            artifacts_root: Root directory for all agent artifacts.  Defaults
+                to :data:`~vstack.constants.ARTIFACTS_DOCS_ROOT`.  Override
+                via ``.vstack/config.yaml`` ``artifacts_root:`` to relocate
+                generated artifact paths (e.g. ``"documentation"`` instead of
+                ``"docs"``).
         """
         super().__init__(
             AGENT_TYPE, templates_root if templates_root is not None else TEMPLATES_ROOT
         )
+        self.artifacts_root = artifacts_root
 
     def template_partials(self, tmpl_dir: Path) -> dict[str, str]:
         """Inject per-template artifact placeholder tokens.
@@ -83,7 +94,7 @@ class AgentGenerator(GenericArtifactGenerator):
         if not isinstance(artifacts, dict):
             artifacts = {}
 
-        doc_root = ARTIFACTS_DOCS_ROOT
+        doc_root = self.artifacts_root
         agent_dir: str = str(artifacts.get("dir", "")).strip()
 
         raw_inputs: list = artifacts.get("input", [])

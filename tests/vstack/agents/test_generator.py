@@ -172,6 +172,23 @@ class TestAgentGenerator:
         assert result["AGENT_ARTIFACTS_INPUT"] == ""
         assert "### output" in result["AGENT_ARTIFACTS_OUTPUT"]
 
+    def test_template_partials_uses_custom_artifacts_root(self, tmp_path: Path) -> None:
+        """Test that a custom artifacts_root replaces the default 'docs' prefix."""
+        tmpl_dir = tmp_path / "architect"
+        tmpl_dir.mkdir()
+        (tmpl_dir / "config.yaml").write_text(
+            "name: architect\nartifacts:\n  dir: architecture\n  input:\n    - product/**/*.md\n"
+            "  output:\n    - overview.md\n",
+            encoding="utf-8",
+        )
+
+        result = AgentGenerator(artifacts_root="documentation").template_partials(tmpl_dir)
+
+        assert "`documentation/product/**/*.md`" in result["AGENT_ARTIFACTS_INPUT"]
+        assert "`documentation/architecture/overview.md`" in result["AGENT_ARTIFACTS_OUTPUT"]
+        assert "docs/" not in result["AGENT_ARTIFACTS_INPUT"]
+        assert "docs/" not in result["AGENT_ARTIFACTS_OUTPUT"]
+
 
 class TestResolveOutputEntries:
     """Unit tests for AgentGenerator._resolve_output_entries."""

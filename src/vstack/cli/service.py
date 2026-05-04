@@ -23,7 +23,7 @@ from vstack.agents.config import AGENT_TYPE
 from vstack.agents.generator import AgentGenerator
 from vstack.artifacts.generator import GenericArtifactGenerator
 from vstack.cli.constants import KNOWN_TYPES, ArtifactState
-from vstack.constants import VSTACK_DIR_NAME
+from vstack.constants import ARTIFACTS_DOCS_ROOT, VSTACK_DIR_NAME
 from vstack.manifest import CURRENT_MANIFEST_VERSION, ManifestFile, hash_with_algorithm
 
 
@@ -34,7 +34,7 @@ class CommandService:
     while keeping per-type behavior in ``ArtifactTypeConfig`` definitions.
     """
 
-    def __init__(self, templates_root: Path) -> None:
+    def __init__(self, templates_root: Path, *, artifacts_root: str = ARTIFACTS_DOCS_ROOT) -> None:
         """Create generators for all known artifact families.
 
         Per-type generator subclasses are used when available so that
@@ -44,10 +44,14 @@ class CommandService:
 
         Args:
             templates_root: Root directory containing the source templates.
+            artifacts_root: Root directory for agent artifact paths.  Passed
+                through to :class:`~vstack.agents.generator.AgentGenerator`.
+                Defaults to :data:`~vstack.constants.ARTIFACTS_DOCS_ROOT`;
+                override from ``.vstack/config.yaml`` ``artifacts_root:``.
         """
         self.root = templates_root
         self.generators: list[GenericArtifactGenerator] = [
-            AgentGenerator(templates_root)
+            AgentGenerator(templates_root, artifacts_root=artifacts_root)
             if tc is AGENT_TYPE
             else GenericArtifactGenerator(tc, templates_root)
             for tc in KNOWN_TYPES
