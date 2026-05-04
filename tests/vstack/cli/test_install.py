@@ -297,3 +297,107 @@ class TestInstallCommand:
             dry_run=False,
         )
         assert not project_root.exists()
+
+    # ------------------------------------------------------------------
+    # _write_vstack_gitignore
+    # ------------------------------------------------------------------
+
+    def test_write_vstack_gitignore_creates_file(self, tmp_path: Path) -> None:
+        """_write_vstack_gitignore writes .vstack/.gitignore with correct content."""
+        InstallCommand._write_vstack_gitignore(project_root=tmp_path, dry_run=False)
+
+        gitignore = tmp_path / ".vstack" / ".gitignore"
+        assert gitignore.exists()
+        content = gitignore.read_text(encoding="utf-8")
+        assert "*\n" in content
+        assert "!.gitignore\n" in content
+        assert "!config.yaml\n" in content
+        assert "!vstack.json\n" in content
+
+    def test_write_vstack_gitignore_overwrites_existing(self, tmp_path: Path) -> None:
+        """_write_vstack_gitignore replaces any existing .vstack/.gitignore."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / ".gitignore").write_text("old content", encoding="utf-8")
+
+        InstallCommand._write_vstack_gitignore(project_root=tmp_path, dry_run=False)
+
+        assert (vstack_dir / ".gitignore").read_text(encoding="utf-8") != "old content"
+
+    def test_write_vstack_gitignore_dry_run_does_not_write(self, tmp_path: Path) -> None:
+        """_write_vstack_gitignore in dry_run mode does not create the file."""
+        InstallCommand._write_vstack_gitignore(project_root=tmp_path, dry_run=True)
+
+        assert not (tmp_path / ".vstack" / ".gitignore").exists()
+
+    def test_write_vstack_gitignore_creates_parent_dirs(self, tmp_path: Path) -> None:
+        """_write_vstack_gitignore creates .vstack/ if it does not exist."""
+        project_root = tmp_path / "new_project"
+        InstallCommand._write_vstack_gitignore(project_root=project_root, dry_run=False)
+
+        assert (project_root / ".vstack" / ".gitignore").exists()
+
+    def test_run_calls_write_vstack_gitignore_for_local(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        """run() calls _write_vstack_gitignore for local (non-global) installs."""
+        written: list[dict] = []
+
+        monkeypatch.setattr(
+            "vstack.cli.install.InstallCommand._seed_project",
+            staticmethod(lambda **kw: None),
+        )
+        monkeypatch.setattr(
+            "vstack.cli.install.InstallCommand._write_vstack_gitignore",
+            staticmethod(lambda **kw: written.append(kw)),
+        )
+        monkeypatch.setattr("vstack.cli.init.InitCommand.execute", staticmethod(lambda *a, **kw: 0))
+
+        from argparse import Namespace
+
+        fake_service = SimpleNamespace(root=tmp_path / "templates")
+        context = CommandContext(
+            args=Namespace(
+                force=False,
+                force_names=None,
+                adopt_name=None,
+                update=False,
+                dry_run=False,
+                use_global=False,
+            ),
+            install_dir=tmp_path / ".github",
+            only=None,
+        )
+        InstallCommand(service=cast(CommandService, fake_service)).run(context=context)
+        assert len(written) == 1
+        assert written[0]["project_root"] == tmp_path
+        assert written[0]["dry_run"] is False
+
+    def test_run_skips_write_vstack_gitignore_for_global(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        """run() does not call _write_vstack_gitignore for global installs."""
+        written: list[dict] = []
+
+        monkeypatch.setattr(
+            "vstack.cli.install.InstallCommand._write_vstack_gitignore",
+            staticmethod(lambda **kw: written.append(kw)),
+        )
+        monkeypatch.setattr("vstack.cli.init.InitCommand.execute", staticmethod(lambda *a, **kw: 0))
+
+        from argparse import Namespace
+
+        context = CommandContext(
+            args=Namespace(
+                force=False,
+                force_names=None,
+                adopt_name=None,
+                update=False,
+                dry_run=False,
+                use_global=True,
+            ),
+            install_dir=tmp_path / ".github",
+            only=None,
+        )
+        InstallCommand(service=cast(CommandService, object())).run(context=context)
+        assert written == []
