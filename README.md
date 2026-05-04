@@ -401,10 +401,10 @@ ______________________________________________________________________
 | `vstack --version`                     | Show vstack version                                                                      |
 | `vstack validate`                      | Validate source templates only                                                           |
 | `vstack verify`                        | Verify source templates and installed output, including checksum drift                   |
-| `vstack status --target DIR`           | Report which installed artifacts still match `vstack.json`                               |
+| `vstack status --target DIR`           | Report which installed artifacts still match `.vstack/vstack.json`                       |
 | `vstack manifest status --target DIR`  | Manifest-scoped status for installed output and ownership                                |
 | `vstack manifest verify --target DIR`  | Manifest-scoped verify for installed output only                                         |
-| `vstack manifest upgrade --target DIR` | Upgrade a legacy `vstack.json` schema to current format                                  |
+| `vstack manifest upgrade --target DIR` | Upgrade a legacy `.vstack/vstack.json` schema to current format                          |
 | `vstack verify --target DIR`           | Verify installed artifacts in DIR/.github                                                |
 | `vstack verify --global`               | Verify artifacts in your VS Code global profile                                          |
 | `vstack install --target DIR`          | Install vstack artifacts into a project, preserving existing unmanaged files             |
@@ -414,7 +414,7 @@ ______________________________________________________________________
 | `vstack uninstall --global`            | Uninstall vstack artifacts from your VS Code profile                                     |
 | `vstack uninstall`                     | Uninstall from the current directory default target                                      |
 
-By default, `vstack install` is conservative: if a target file already exists but is not tracked by `vstack`, it is left in place. For tracked files, `--update` only rewrites artifacts whose on-disk content still matches the SHA-256 checksum of the last installed version recorded in `vstack.json`. Use `--force` to overwrite everything, `--force-name <name>` to overwrite one specific managed artifact, or `--adopt-name <name>` to start tracking one existing unmanaged file without overwriting it.
+By default, `vstack install` is conservative: if a target file already exists but is not tracked by `vstack`, it is left in place. For tracked files, `--update` only rewrites artifacts whose on-disk content still matches the SHA-256 checksum of the last installed version recorded in `.vstack/vstack.json`. Use `--force` to overwrite everything, `--force-name <name>` to overwrite one specific managed artifact, or `--adopt-name <name>` to start tracking one existing unmanaged file without overwriting it.
 
 If you already have agents, skills, or other files in `.github/`, run a dry-run first to see what would be preserved before committing:
 
@@ -646,7 +646,7 @@ use `normal` regardless of active mode.
 
 ______________________________________________________________________
 
-More info: [docs/product/roadmap.md](docs/product/roadmap.md), [docs/architecture/architecture.md](docs/architecture/architecture.md)
+More info: [docs/product/roadmap.md](docs/product/roadmap.md), [docs/architecture/overview.md](docs/architecture/overview.md)
 
 ______________________________________________________________________
 
@@ -761,8 +761,8 @@ ______________________________________________________________________
 
 ## 📚 Further Reading
 
-- [docs/architecture/architecture.md](docs/architecture/architecture.md)
-- [docs/design/design.md](docs/design/design.md)
+- [docs/architecture/overview.md](docs/architecture/overview.md)
+- [docs/design/overview.md](docs/design/overview.md)
 - [docs/design/cicd.md](docs/design/cicd.md)
 - [docs/design/workflow.md](docs/design/workflow.md)
 - [docs/design/skills.md](docs/design/skills.md)

@@ -21,6 +21,7 @@ from pathlib import Path
 
 from vstack.artifacts.generator import GenericArtifactGenerator
 from vstack.cli.constants import KNOWN_TYPES, ArtifactState
+from vstack.constants import VSTACK_DIR_NAME
 from vstack.manifest import CURRENT_MANIFEST_VERSION, ManifestFile, hash_with_algorithm
 
 
@@ -51,8 +52,16 @@ class CommandService:
         except ValueError:
             return str(path)
 
-    def manifest_for(self, install_dir: Path):
-        """Build the manifest accessor for a given install directory."""
+    def manifest_for(self, install_dir: Path) -> ManifestFile:
+        """Build the manifest accessor for a given install directory.
+
+        For project installs (``install_dir`` named ``.github``), the manifest
+        lives in the sibling ``.vstack/`` directory.  For global installs and
+        test fixtures that pass arbitrary directories, it falls back to
+        ``install_dir`` directly.
+        """
+        if install_dir.name == ".github":
+            return ManifestFile(parent_dir=install_dir.parent / VSTACK_DIR_NAME)
         return ManifestFile(parent_dir=install_dir)
 
     def gen_for(self, type_name: str) -> GenericArtifactGenerator | None:
@@ -139,9 +148,9 @@ class CommandService:
             update:      Install only when a newer version is available.
             dry_run:     Print what would happen without writing any files.
         """
-        from vstack.cli.install import InstallCommand
+        from vstack.cli.init import InitCommand
 
-        return InstallCommand.execute(
+        return InitCommand.execute(
             self,
             install_dir,
             only=only,

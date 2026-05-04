@@ -54,7 +54,7 @@ class StatusCommand(BaseCommand):
             return StatusReport.render_missing_manifest(
                 output_format=output_format,
                 install_dir=install_dir,
-                error="vstack.json not found; run vstack install before using status",
+                error=".vstack/vstack.json not found; run vstack install before using status",
                 color=color,
             )
 

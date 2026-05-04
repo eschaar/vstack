@@ -82,3 +82,4 @@ def _resolve_version() -> str:
 VERSION = _resolve_version()
 
 MANIFEST_FILENAME = "vstack.json"
+VSTACK_DIR_NAME = ".vstack"
