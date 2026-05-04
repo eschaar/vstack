@@ -147,6 +147,7 @@ class InstallCommand(BaseCommand):
             self._service,
             install_dir,
             only=context.only,
+            excluded_names=context.excluded_names,
             force=getattr(context.args, "force", False),
             force_names=getattr(context.args, "force_names", None),
             adopt_names=getattr(context.args, "adopt_name", None),

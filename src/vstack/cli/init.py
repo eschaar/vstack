@@ -427,8 +427,17 @@ class InitCommand(BaseCommand):
         adopt_names: list[str] | None = None,
         update: bool = False,
         dry_run: bool = False,
+        excluded_names: dict[str, list[str]] | None = None,
     ) -> int:
-        """Generate and install artifacts idempotently into *install_dir*."""
+        """Generate and install artifacts idempotently into *install_dir*.
+
+        :param excluded_names: Optional mapping of singular type name
+            (e.g. ``"skill"``) to a list of artifact names to skip for that
+            type.  Populated from the ``exclude:`` block in
+            ``.vstack/config.yaml`` and applied before any install action.
+            Excluded artifacts are reported on screen but not written to disk
+            and not recorded in the manifest.
+        """
         colors = Colors
         checksum_algorithm = CURRENT_HASH_ALGORITHM
 
@@ -454,6 +463,14 @@ class InitCommand(BaseCommand):
             artifacts = gen.render_all()
 
             for artifact in artifacts:
+                if excluded_names and artifact.name in excluded_names.get(gen.config.type_name, []):
+                    out_file = out_dir / gen.install_relative_path(artifact.name)
+                    rel = service.label(out_file)
+                    print(
+                        f"  {prefix}{colors.DIM}↷{colors.RESET}  {rel}"
+                        f"  {colors.DIM}excluded by config{colors.RESET}"
+                    )
+                    continue
                 artifact_action = InitCommand._install_single_artifact(
                     service=service,
                     gen=gen,
@@ -511,6 +528,7 @@ class InitCommand(BaseCommand):
             self._service,
             install_dir,
             only=context.only,
+            excluded_names=context.excluded_names,
             force=getattr(context.args, "force", False),
             force_names=getattr(context.args, "force_names", None),
             adopt_names=getattr(context.args, "adopt_name", None),

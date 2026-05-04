@@ -133,6 +133,48 @@ class TestInstallCommand:
         assert captured["kwargs"]["adopt_names"] == ["b"]
         assert captured["kwargs"]["force"] is True
 
+    def test_run_forwards_excluded_names_to_execute(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        """run() passes context.excluded_names through to InitCommand.execute()."""
+        captured: dict[str, Any] = {}
+
+        monkeypatch.setattr(
+            "vstack.cli.install.InstallCommand._seed_project",
+            staticmethod(lambda **kw: None),
+        )
+        monkeypatch.setattr(
+            "vstack.cli.install.InstallCommand._write_vstack_gitignore",
+            staticmethod(lambda **kw: None),
+        )
+
+        def _fake_execute(*args, **kwargs):
+            captured["kwargs"] = kwargs
+            return 0
+
+        monkeypatch.setattr("vstack.cli.init.InitCommand.execute", staticmethod(_fake_execute))
+
+        from argparse import Namespace
+
+        fake_service = SimpleNamespace(root=tmp_path / "templates")
+        context = CommandContext(
+            args=Namespace(
+                force=False,
+                force_names=None,
+                adopt_name=None,
+                update=False,
+                dry_run=False,
+                use_global=False,
+            ),
+            install_dir=tmp_path / ".github",
+            only=None,
+            excluded_names={"skill": ["helm", "terraform"]},
+        )
+        result = InstallCommand(service=cast(CommandService, fake_service)).run(context=context)
+
+        assert result == 0
+        assert captured["kwargs"]["excluded_names"] == {"skill": ["helm", "terraform"]}
+
     # ------------------------------------------------------------------
     # _seed_project
     # ------------------------------------------------------------------

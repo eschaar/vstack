@@ -4,75 +4,67 @@
 
 ## [2.2.0](https://github.com/eschaar/vstack/compare/2.1.0...2.2.0) (2026-05-02)
 
-
 ### Features
 
-* **instructions:** add markdown authoring conventions instruction ([b4cf606](https://github.com/eschaar/vstack/commit/b4cf606ded0fc0cdd367d01a385be237803ebdd0))
-* **instructions:** add security policy instruction ([612d37f](https://github.com/eschaar/vstack/commit/612d37f06efdccc776f75421de6fa96a585136c3))
-* **instructions:** add terraform and terragrunt coding conventions ([6b82d4b](https://github.com/eschaar/vstack/commit/6b82d4b7576828a9ad85c4de980a324332de700d))
-* **instructions:** add typescript and java coding conventions ([62f99b3](https://github.com/eschaar/vstack/commit/62f99b3ee25696688932fc76f365a09d02143375))
-* **instructions:** add universal testing conventions instruction ([ec12899](https://github.com/eschaar/vstack/commit/ec128999616a562467b1930f10540dd35bc31e82))
-* **prompts:** add api-design-review, dependency-audit; improve existing prompts ([e4630b7](https://github.com/eschaar/vstack/commit/e4630b7b0fadfb49bc1aed423d9369d8c5f74972))
-* **prompts:** add architecture-risk, incident-timeline, migration-safety, release-readiness prompts ([7823539](https://github.com/eschaar/vstack/commit/7823539170e9c2299a657711818018de170a812d))
-* **skills:** add conventional-commit skill ([cba3f84](https://github.com/eschaar/vstack/commit/cba3f84ac60c8de1b8594ddee4c1cce44bce20ca))
-* **skills:** add gdpr, terraform, terragrunt, cloudformation, and aws-cli skills ([8b9e0eb](https://github.com/eschaar/vstack/commit/8b9e0eb7c327401f766c888154940b04461c94ba))
-* **skills:** add gh-issues, codeql, dependabot, and secret-scan skills ([1909578](https://github.com/eschaar/vstack/commit/190957835a78c1999944c058c8f441bbfb009bcf))
-* **skills:** add gh-release skill with hardened gh release workflow ([bcac399](https://github.com/eschaar/vstack/commit/bcac399b226e5765b9d065407af9111515aaf07e))
-* **skills:** add k8s, helm, and rancher skills and instructions ([169005a](https://github.com/eschaar/vstack/commit/169005a42748dfaf93bcdf6b4a8b476de64db1f7))
-* **skills:** add threat-model skill and optimize template token usage ([057168c](https://github.com/eschaar/vstack/commit/057168c33e414376b0c2fff9d76542b12ce8d477))
-* **skills:** audit and harden all skill templates ([ff968ff](https://github.com/eschaar/vstack/commit/ff968ffefde28ff649d4bbb3a84e45db42668d0a))
-
+- **instructions:** add markdown authoring conventions instruction ([b4cf606](https://github.com/eschaar/vstack/commit/b4cf606ded0fc0cdd367d01a385be237803ebdd0))
+- **instructions:** add security policy instruction ([612d37f](https://github.com/eschaar/vstack/commit/612d37f06efdccc776f75421de6fa96a585136c3))
+- **instructions:** add terraform and terragrunt coding conventions ([6b82d4b](https://github.com/eschaar/vstack/commit/6b82d4b7576828a9ad85c4de980a324332de700d))
+- **instructions:** add typescript and java coding conventions ([62f99b3](https://github.com/eschaar/vstack/commit/62f99b3ee25696688932fc76f365a09d02143375))
+- **instructions:** add universal testing conventions instruction ([ec12899](https://github.com/eschaar/vstack/commit/ec128999616a562467b1930f10540dd35bc31e82))
+- **prompts:** add api-design-review, dependency-audit; improve existing prompts ([e4630b7](https://github.com/eschaar/vstack/commit/e4630b7b0fadfb49bc1aed423d9369d8c5f74972))
+- **prompts:** add architecture-risk, incident-timeline, migration-safety, release-readiness prompts ([7823539](https://github.com/eschaar/vstack/commit/7823539170e9c2299a657711818018de170a812d))
+- **skills:** add conventional-commit skill ([cba3f84](https://github.com/eschaar/vstack/commit/cba3f84ac60c8de1b8594ddee4c1cce44bce20ca))
+- **skills:** add gdpr, terraform, terragrunt, cloudformation, and aws-cli skills ([8b9e0eb](https://github.com/eschaar/vstack/commit/8b9e0eb7c327401f766c888154940b04461c94ba))
+- **skills:** add gh-issues, codeql, dependabot, and secret-scan skills ([1909578](https://github.com/eschaar/vstack/commit/190957835a78c1999944c058c8f441bbfb009bcf))
+- **skills:** add gh-release skill with hardened gh release workflow ([bcac399](https://github.com/eschaar/vstack/commit/bcac399b226e5765b9d065407af9111515aaf07e))
+- **skills:** add k8s, helm, and rancher skills and instructions ([169005a](https://github.com/eschaar/vstack/commit/169005a42748dfaf93bcdf6b4a8b476de64db1f7))
+- **skills:** add threat-model skill and optimize template token usage ([057168c](https://github.com/eschaar/vstack/commit/057168c33e414376b0c2fff9d76542b12ce8d477))
+- **skills:** audit and harden all skill templates ([ff968ff](https://github.com/eschaar/vstack/commit/ff968ffefde28ff649d4bbb3a84e45db42668d0a))
 
 ### Refactoring
 
-* **agents:** enforce canonical template structure ([8c54d8a](https://github.com/eschaar/vstack/commit/8c54d8a9f122f7fdea5458d467598ba83d247bd4))
-* **skills:** make pr and release-notes skills generic; add ADR-018 skill-agent boundary ([b0b8956](https://github.com/eschaar/vstack/commit/b0b895684dbdbae271138c09bbe602f897d50d94))
-* **skills:** optimise 7 new skills for token efficiency ([6fe6ed2](https://github.com/eschaar/vstack/commit/6fe6ed276ab49bbdc1a66a72d9d4709b0be342fb))
-* **templates:** migrate template versions to YYYYMMDDNNN ([5cd239f](https://github.com/eschaar/vstack/commit/5cd239f30cb1bdf999480297fc0cc197474dde20))
-
+- **agents:** enforce canonical template structure ([8c54d8a](https://github.com/eschaar/vstack/commit/8c54d8a9f122f7fdea5458d467598ba83d247bd4))
+- **skills:** make pr and release-notes skills generic; add ADR-018 skill-agent boundary ([b0b8956](https://github.com/eschaar/vstack/commit/b0b895684dbdbae271138c09bbe602f897d50d94))
+- **skills:** optimise 7 new skills for token efficiency ([6fe6ed2](https://github.com/eschaar/vstack/commit/6fe6ed276ab49bbdc1a66a72d9d4709b0be342fb))
+- **templates:** migrate template versions to YYYYMMDDNNN ([5cd239f](https://github.com/eschaar/vstack/commit/5cd239f30cb1bdf999480297fc0cc197474dde20))
 
 ### Documentation
 
-* **design:** update skills and instructions tables; add new skills to agent mappings ([0947bc7](https://github.com/eschaar/vstack/commit/0947bc7fa97b2b567bd50fb4bbb491b8ce73b57e))
-* **instructions:** add instruction catalog to design doc and README ([f9889ff](https://github.com/eschaar/vstack/commit/f9889ff0dfa3a66f95a4b13a1d9589f7907e8410))
-* **product:** expand copilot roadmap and customization strategy ([de2a364](https://github.com/eschaar/vstack/commit/de2a364f8e3faad33956f6f5e55c350f05f9733d))
-* **skills:** add official documentation references to all tool-specific skills and instructions ([7fb7b3e](https://github.com/eschaar/vstack/commit/7fb7b3edd032fc4a32a6c7064021adfad6962991))
-
+- **design:** update skills and instructions tables; add new skills to agent mappings ([0947bc7](https://github.com/eschaar/vstack/commit/0947bc7fa97b2b567bd50fb4bbb491b8ce73b57e))
+- **instructions:** add instruction catalog to design doc and README ([f9889ff](https://github.com/eschaar/vstack/commit/f9889ff0dfa3a66f95a4b13a1d9589f7907e8410))
+- **product:** expand copilot roadmap and customization strategy ([de2a364](https://github.com/eschaar/vstack/commit/de2a364f8e3faad33956f6f5e55c350f05f9733d))
+- **skills:** add official documentation references to all tool-specific skills and instructions ([7fb7b3e](https://github.com/eschaar/vstack/commit/7fb7b3edd032fc4a32a6c7064021adfad6962991))
 
 ### Maintenance
 
-* **review:** quote applyTo glob in generated frontmatter; add test/tests commit types ([aa579ba](https://github.com/eschaar/vstack/commit/aa579bab74745cdfc1c8e33931a0a851ccfbe851))
-* **templates:** bump code-review, architecture-risk, release-readiness prompt versions to 0.1.1 ([0d1da60](https://github.com/eschaar/vstack/commit/0d1da60e9f6ef1602345ee333dc05c6e4bcc8e55))
-* **templates:** bump pr and release-notes skill versions to 1.1.0 ([e4f0923](https://github.com/eschaar/vstack/commit/e4f09231b594153c4f1508cf9544652b002108c5))
-
+- **review:** quote applyTo glob in generated frontmatter; add test/tests commit types ([aa579ba](https://github.com/eschaar/vstack/commit/aa579bab74745cdfc1c8e33931a0a851ccfbe851))
+- **templates:** bump code-review, architecture-risk, release-readiness prompt versions to 0.1.1 ([0d1da60](https://github.com/eschaar/vstack/commit/0d1da60e9f6ef1602345ee333dc05c6e4bcc8e55))
+- **templates:** bump pr and release-notes skill versions to 1.1.0 ([e4f0923](https://github.com/eschaar/vstack/commit/e4f09231b594153c4f1508cf9544652b002108c5))
 
 ### Tests
 
-* **agents:** fold artifacts-section order into canonical lint rule ([a435bc5](https://github.com/eschaar/vstack/commit/a435bc5419cb4ece9257d14697b917bcd6d3b8fa))
-* **frontmatter:** add regression tests for applyTo quoting and version comparison ([20943e9](https://github.com/eschaar/vstack/commit/20943e97be459e7d3ac16870409aad9522f95992))
+- **agents:** fold artifacts-section order into canonical lint rule ([a435bc5](https://github.com/eschaar/vstack/commit/a435bc5419cb4ece9257d14697b917bcd6d3b8fa))
+- **frontmatter:** add regression tests for applyTo quoting and version comparison ([20943e9](https://github.com/eschaar/vstack/commit/20943e97be459e7d3ac16870409aad9522f95992))
 
 ## [2.1.0](https://github.com/eschaar/vstack/compare/2.0.4...2.1.0) (2026-05-02)
 
-
 ### Features
 
-* **cli:** add dry-run install with type/name selector summary and conflict resolution hints ([c783552](https://github.com/eschaar/vstack/commit/c7835526eddabea99b0642acf645ec14d2518eae))
-
+- **cli:** add dry-run install with type/name selector summary and conflict resolution hints ([c783552](https://github.com/eschaar/vstack/commit/c7835526eddabea99b0642acf645ec14d2518eae))
 
 ### Fixes
 
-* **ci:** use job-scoped PyPI fallback token checks ([267417a](https://github.com/eschaar/vstack/commit/267417a2fd6899d9d3c4ecd7bbdfab5ba602d84f))
-* **cli:** align dry-run summary guidance and tests ([c11b67d](https://github.com/eschaar/vstack/commit/c11b67d53da9e9b706b187278f88ad9d87fcad93))
-
+- **ci:** use job-scoped PyPI fallback token checks ([267417a](https://github.com/eschaar/vstack/commit/267417a2fd6899d9d3c4ecd7bbdfab5ba602d84f))
+- **cli:** align dry-run summary guidance and tests ([c11b67d](https://github.com/eschaar/vstack/commit/c11b67d53da9e9b706b187278f88ad9d87fcad93))
 
 ### Maintenance
 
-* **ci:** add trusted publishing fallback and publish concurrency group ([ef4702d](https://github.com/eschaar/vstack/commit/ef4702d04839aa1f16c4343f8e27b517c90508f2))
-* **deps:** bump cachetools to 7.1.0 and tox to 4.53.1 ([5d60804](https://github.com/eschaar/vstack/commit/5d60804b72d111ca7444e79b233aa57325c08754))
-* **docs:** add Development Commands and CLI Architecture to copilot-instructions ([5bf4c24](https://github.com/eschaar/vstack/commit/5bf4c244df64f2adacf9a020e76828423222baab))
-* **docs:** add first-install dry-run workflow and preserved-file conflict resolution ([fa8ef18](https://github.com/eschaar/vstack/commit/fa8ef18230c5f43c0c4439e5c74cb15839c8fc04))
-* **docs:** fix BaseCommand signature, model type, role assignments, and contributor workflow ([45a19be](https://github.com/eschaar/vstack/commit/45a19be8f17459a158915bfda8a6d9508af16b7c))
-* **docs:** fix maintainer role, stale paths, gate count, and tool names in ADRs 001-012 ([dcf596a](https://github.com/eschaar/vstack/commit/dcf596a2b145c1ae31e7c3a326edd5fae728f11a))
+- **ci:** add trusted publishing fallback and publish concurrency group ([ef4702d](https://github.com/eschaar/vstack/commit/ef4702d04839aa1f16c4343f8e27b517c90508f2))
+- **deps:** bump cachetools to 7.1.0 and tox to 4.53.1 ([5d60804](https://github.com/eschaar/vstack/commit/5d60804b72d111ca7444e79b233aa57325c08754))
+- **docs:** add Development Commands and CLI Architecture to copilot-instructions ([5bf4c24](https://github.com/eschaar/vstack/commit/5bf4c244df64f2adacf9a020e76828423222baab))
+- **docs:** add first-install dry-run workflow and preserved-file conflict resolution ([fa8ef18](https://github.com/eschaar/vstack/commit/fa8ef18230c5f43c0c4439e5c74cb15839c8fc04))
+- **docs:** fix BaseCommand signature, model type, role assignments, and contributor workflow ([45a19be](https://github.com/eschaar/vstack/commit/45a19be8f17459a158915bfda8a6d9508af16b7c))
+- **docs:** fix maintainer role, stale paths, gate count, and tool names in ADRs 001-012 ([dcf596a](https://github.com/eschaar/vstack/commit/dcf596a2b145c1ae31e7c3a326edd5fae728f11a))
 
 ## [2.0.4](https://github.com/eschaar/vstack/compare/2.0.3...2.0.4) (2026-04-28)
 

@@ -547,3 +547,97 @@ class TestInitCommand:
         )
         with pytest.raises(ValueError, match="init requires install_dir"):
             InitCommand(service=cast(CommandService, object())).run(context=context)
+
+    def test_run_forwards_excluded_names_to_execute(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        """run() passes context.excluded_names through to execute()."""
+        captured: dict[str, Any] = {}
+
+        def _fake_execute(*args, **kwargs):
+            captured["kwargs"] = kwargs
+            return 0
+
+        monkeypatch.setattr("vstack.cli.init.InitCommand.execute", staticmethod(_fake_execute))
+
+        context = CommandContext(
+            args=Namespace(
+                force=False, force_names=None, adopt_name=None, update=False, dry_run=False
+            ),
+            install_dir=tmp_path,
+            only=None,
+            excluded_names={"skill": ["terraform"]},
+        )
+        InitCommand(service=cast(CommandService, object())).run(context=context)
+
+        assert captured["kwargs"]["excluded_names"] == {"skill": ["terraform"]}
+
+    def test_execute_skips_artifact_in_excluded_names(
+        self, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
+    ) -> None:
+        """execute() skips artifacts whose name is in excluded_names, prints message."""
+        install_single_calls: list[str] = []
+
+        def _fake_install_single(**kwargs):
+            install_single_calls.append(kwargs["artifact"].name)
+            return "install"
+
+        monkeypatch.setattr(
+            "vstack.cli.init.InitCommand._install_single_artifact",
+            staticmethod(_fake_install_single),
+        )
+        monkeypatch.setattr(
+            "vstack.cli.init.InitCommand._write_manifest",
+            staticmethod(lambda **_kwargs: None),
+        )
+        monkeypatch.setattr(
+            "vstack.cli.init.InitCommand._print_summary",
+            staticmethod(lambda **_kwargs: None),
+        )
+
+        class _FakeGen:
+            config = SimpleNamespace(
+                type_name="skill",
+                manifest_key="skills",
+                output_subdir="skills",
+            )
+
+            @staticmethod
+            def render_all():
+                return [
+                    SimpleNamespace(name="terraform", frontmatter={}, unresolved=[], content=""),
+                    SimpleNamespace(name="k8s", frontmatter={}, unresolved=[], content=""),
+                ]
+
+            @staticmethod
+            def install_relative_path(name: str) -> str:
+                return f"skills/{name}/SKILL.md"
+
+            @staticmethod
+            def verify_input():
+                return SimpleNamespace(messages=[])
+
+        service = cast(
+            CommandService,
+            SimpleNamespace(
+                generators=[_FakeGen()],
+                label=lambda path: str(path),
+                manifest_for=lambda _: SimpleNamespace(read=lambda: None, read_error=None),
+            ),
+        )
+        monkeypatch.setattr(
+            "vstack.cli.init.InitCommand._load_existing_manifest",
+            staticmethod(lambda **_kwargs: (object(), object(), {}, {})),
+        )
+
+        result = InitCommand.execute(
+            service,
+            tmp_path,
+            excluded_names={"skill": ["terraform"]},
+        )
+
+        assert result == 0
+        assert "terraform" not in install_single_calls
+        assert "k8s" in install_single_calls
+        out = capsys.readouterr().out
+        assert "excluded by config" in out

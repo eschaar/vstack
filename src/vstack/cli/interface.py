@@ -7,12 +7,20 @@ from pathlib import Path
 
 from vstack.cli.base import CommandContext
 from vstack.cli.catalog import COMMAND_CATALOG
-from vstack.cli.constants import GLOBAL_SUPPORTED_TYPE_NAMES
+from vstack.cli.constants import GLOBAL_SUPPORTED_TYPE_NAMES, KNOWN_TYPE_NAMES
 from vstack.cli.parser import CommandLineParser
 from vstack.cli.registry import build_command_registry
 from vstack.cli.service import CommandService
 from vstack.constants import ARTIFACTS_DOCS_ROOT
 from vstack.frontmatter import FrontmatterParser
+
+# Maps plural config.yaml keys to singular internal type names.
+_CONFIG_TYPE_ALIAS: dict[str, str] = {
+    "agents": "agent",
+    "instructions": "instruction",
+    "prompts": "prompt",
+    "skills": "skill",
+}
 
 
 class CommandLineInterface:
@@ -72,6 +80,52 @@ class CommandLineInterface:
         return getattr(args, "only", None)
 
     @staticmethod
+    def _read_exclude(
+        install_dir: Path | None,
+    ) -> tuple[frozenset[str], dict[str, list[str]]]:
+        """Read ``exclude:`` from ``.vstack/config.yaml`` when available.
+
+        Returns a pair:
+
+        - *excluded_types*: set of singular type names to skip entirely
+          (from ``type: all``).
+        - *excluded_names*: mapping of singular type name → artifact names
+          to skip within that type (from ``type: [name, …]``).
+
+        Both are empty when *install_dir* is ``None``, when the config file
+        does not exist, or when the ``exclude:`` key is absent.
+        """
+        if install_dir is None:
+            return frozenset(), {}
+        config_path = install_dir.parent / ".vstack" / "config.yaml"
+        if not config_path.exists():
+            return frozenset(), {}
+        parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
+        raw_exclude = parsed.get("exclude", "")
+        # The minimal YAML parser stores nested mappings as raw indented strings.
+        # Re-parse by stripping the 2-space indent to access sub-keys.
+        if isinstance(raw_exclude, str) and raw_exclude.strip():
+            dedented = "\n".join(
+                line[2:] if line.startswith("  ") else line for line in raw_exclude.split("\n")
+            )
+            raw_exclude = FrontmatterParser.parse_yaml(dedented) or {}
+        if not isinstance(raw_exclude, dict):
+            return frozenset(), {}
+        excluded_types: set[str] = set()
+        excluded_names: dict[str, list[str]] = {}
+        for config_key, value in raw_exclude.items():
+            type_name = _CONFIG_TYPE_ALIAS.get(config_key)
+            if type_name is None:
+                continue  # unknown key, ignore gracefully
+            if isinstance(value, str) and value.strip().lower() == "all":
+                excluded_types.add(type_name)
+            elif isinstance(value, list):
+                names = [str(n) for n in value if isinstance(n, str)]
+                if names:
+                    excluded_names[type_name] = names
+        return frozenset(excluded_types), excluded_names
+
+    @staticmethod
     def _read_artifacts_root(install_dir: Path | None) -> str:
         """Read ``artifacts.root`` from ``.vstack/config.yaml`` when available.
 
@@ -121,7 +175,16 @@ class CommandLineInterface:
             args=args,
             resolve_only_for_scope=command_config.resolve_only_for_scope,
         )
+        excluded_types, excluded_names = self._read_exclude(resolved_install_dir)
+        if excluded_types:
+            base = effective_only if effective_only is not None else list(KNOWN_TYPE_NAMES)
+            effective_only = [t for t in base if t not in excluded_types]
 
         command = commands[args.command]
-        context = CommandContext(args=args, install_dir=resolved_install_dir, only=effective_only)
+        context = CommandContext(
+            args=args,
+            install_dir=resolved_install_dir,
+            only=effective_only,
+            excluded_names=excluded_names or None,
+        )
         return command.run(context=context)

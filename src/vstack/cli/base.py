@@ -15,6 +15,7 @@ class CommandContext:
     args: Namespace
     install_dir: Path | None
     only: list[str] | None
+    excluded_names: dict[str, list[str]] | None = None
 
     def require_install_dir(self, command_name: str) -> Path:
         """Return install_dir or raise when the command requires one."""
