@@ -153,7 +153,7 @@ Adapt the deploy trigger to match the target platform (Fly.io, Render, Railway, 
 
 ## Step 5: Branch protection (document, don't automate)
 
-Record in `docs/architecture/architecture.md` or a README section:
+Record in `docs/architecture/overview.md` or a README section:
 
 ```text
 Branch protection rules for `main`:

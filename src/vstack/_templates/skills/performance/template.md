@@ -16,9 +16,8 @@ optimizations. Measure first; never optimize without evidence.
 
 ## Deliverable and artifact policy
 
-- Primary deliverable: `docs/performance-baseline.md`
-- Baseline-first default: write benchmark outcomes and regression verdicts directly to `docs/performance-baseline.md` on the feature branch.
-- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/PERFORMANCE_DELTA.md`
+- Primary deliverable: `docs/reports/performance-baseline.md`
+- Baseline-first default: write benchmark outcomes and regression verdicts directly to `docs/reports/performance-baseline.md` on the feature branch.
 - Before merge: consolidate thresholds, measurements, and recommendations into the baseline performance report.
 
 ## Setup

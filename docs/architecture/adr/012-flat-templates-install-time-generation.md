@@ -30,9 +30,26 @@ src/vstack/_templates/
 ├── skills/<name>/
 │   ├── config.yaml
 │   └── template.md
-└── agents/<name>/
-   ├── config.yaml
-   └── template.md
+├── agents/<name>/
+│   ├── config.yaml
+│   └── template.md
+├── instructions/<name>/
+│   ├── config.yaml
+│   └── template.md
+├── prompts/<name>/
+│   ├── config.yaml
+│   └── template.md
+├── docs/                        ← baseline doc stubs, seeded by vstack install
+│   ├── product/
+│   ├── architecture/
+│   ├── design/
+│   ├── tests/
+│   └── releases/
+└── project/                     ← .vstack/ project config templates, seeded by vstack install
+    ├── config.yaml
+    └── templates/
+        ├── changes/RFC-template.md
+        └── issues/overview-template.md
 ```
 
 ### 2. no direct edits to generated output
@@ -40,23 +57,27 @@ src/vstack/_templates/
 In the vstack source repo, generated output under `.github/` is install-time output
 and should not be edited directly.
 
-### 3. install-time generation with `vstack install`
+### 3. two-command generation model
 
-At install time (`vstack install` or `vstack install --target <project-dir>`), the
-installer generates artifacts into `.github/`, including:
+vstack uses two distinct commands with different lifecycles:
 
-- `.github/skills/<name>/SKILL.md`
-- `.github/agents/<name>.agent.md`
-- `.github/prompts/*.prompt.md`
-- `.github/instructions/*.instructions.md`
+**`vstack install`** — first-run project setup (run once per project):
 
-The installer is conservative by default:
+- Creates `.vstack/` with `config.yaml` and `templates/`
+- Seeds `docs/` baseline stubs (product, architecture, design, tests, releases)
+- Calls `vstack init` internally to generate `.github/` artifacts
+- All seeded files are project-owned and never overwritten by vstack after initial creation
 
-- existing files that are not tracked in `vstack.json` are preserved
-- tracked files are updated only when their content still matches the last installed SHA-256 checksum
-- `--adopt-name <artifact-name>` allows explicitly adopting one unmanaged file into tracking without overwriting it
-- `--force-name <artifact-name>` can override preservation for one artifact
-- `--force` is the explicit opt-in for overwriting local changes
+**`vstack init`** — idempotent artifact regeneration (run in CI and after vstack upgrades):
+
+- Generates `.github/` artifacts from current templates:
+  - `.github/skills/<name>/SKILL.md`
+  - `.github/agents/<name>.agent.md`
+  - `.github/prompts/*.prompt.md`
+  - `.github/instructions/*.instructions.md`
+- Conservative by default (see ADR-020)
+- Adds new `.vstack/templates/` files from newer vstack versions, never overwrites existing ones
+- Manifest (`vstack.json`) tracks only `.github/` artifacts, not project-owned files
 
 The same manifest checksum is also used for safe uninstall and status reporting:
 

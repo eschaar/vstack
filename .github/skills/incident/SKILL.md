@@ -1,12 +1,12 @@
 ---
 name: incident
-description: 'Incident analysis and post-mortem writing. Guides a structured investigation from timeline reconstruction through root cause identification to a blameless post-mortem document with action items. Use when asked to "write a post-mortem", "incident review", "root cause analysis for this outage", "what went wrong?", or "blameless post-mortem". Produces a docs/postmortems/{date}-{slug}.md.'
+description: 'Incident analysis and coordination. Guides timeline reconstruction, contributing factor identification, and action item definition. Delegates technical root cause analysis to `rca` and stakeholder documentation to `postmortem`. Use when asked to "incident review", "analyse this outage", "what went wrong?", or to coordinate a full incident response retrospective.'
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
   owner: vstack
   maturity: stable
-argument-hint: '[incident or outage to analyse and document]'
+argument-hint: '[incident or outage to analyse]'
 user-invocable: true
 disable-model-invocation: false
 ---
@@ -32,13 +32,16 @@ the format is supported and improves clarity. Use ASCII as a fallback when
 Mermaid is unsupported or would be less readable. Keep ASCII/text trees for
 directory structures and other scan-friendly hierarchies.
 
-# incident — Incident Analysis & Post-Mortem
+# incident — Incident Analysis & Coordination
 
-Guide a structured incident investigation and produce a blameless post-mortem
-document. The goal is learning and prevention — not blame.
+Guide a structured incident retrospective: reconstruct the timeline, identify
+contributing factors, define action items, then delegate to `rca` and `postmortem`
+for the written artifacts. The goal is learning and prevention — not blame.
 
 ## Out of scope
 
+- Technical root cause write-up (use `rca`)
+- Post-mortem document (use `postmortem`)
 - Live incident response / on-call triage (this skill is for retrospective analysis)
 - Root-cause debugging of code bugs (use `debug`)
 - Security audit of vulnerabilities (use `security`)
@@ -217,78 +220,17 @@ Process (improve how we handle incidents):
   [ ] [specific action] — owner: [name/team] — due: [date/sprint]
 ```
 
-## Step 6: Produce the Post-Mortem Document
+## Step 6: Produce Artifacts
 
-Write the post-mortem to `docs/postmortems/YYYY-MM-DD-<slug>.md`:
+With the analysis complete, delegate writing to the dedicated skills:
 
-```markdown
-# Post-Mortem: [Short Title]
+1. Invoke `@#rca` to produce the technical root cause document.
+   The engineer role owns this artifact. Pass: incident ID, issue reference (if known),
+   and the confirmed output path.
 
-**Date:** YYYY-MM-DD
-**Severity:** [P0 | P1 | P2]
-**Duration:** N hours N minutes
-**Status:** [Draft | In Review | Closed]
-**Author(s):** [names]
-
----
-
-## Summary
-
-[2–3 sentences: what happened, what was the impact, how was it resolved.
-Written for a non-technical audience.]
-
-## Impact
-
-| Dimension | Details |
-|---|---|
-| Duration | N hours N minutes (HH:MM–HH:MM UTC) |
-| Users affected | [N users / N% of traffic] |
-| Error rate | [N%] |
-| SLA breach | [yes / no] |
-| Data loss | [none / description] |
-
-## Timeline
-
-| Time (UTC) | Event |
-|---|---|
-| HH:MM | [event] |
-| HH:MM | [event] |
-| ... | ... |
-
-## Root Cause
-
-[One paragraph. Specific, systemic, blameless.]
-
-## Contributing Factors
-
-- [factor 1]
-- [factor 2]
-- [factor 3]
-
-## What Went Well
-
-- [thing 1 — e.g. alert fired within 2 minutes]
-- [thing 2 — e.g. rollback completed in 4 minutes]
-- [thing 3]
-
-## What Went Poorly
-
-- [thing 1 — e.g. no runbook for this failure mode]
-- [thing 2]
-
-## Action Items
-
-| # | Action | Category | Owner | Due |
-|---|---|---|---|---|
-| 1 | [action] | Prevention | [owner] | [date] |
-| 2 | [action] | Detection | [owner] | [date] |
-| 3 | [action] | Response | [owner] | [date] |
-
-## Lessons Learned
-
-[2–4 sentences summarizing the key takeaways for the team and organization.
-What does this incident teach us about our system, processes, or culture?]
-```
+2. Invoke `@#postmortem` to produce the stakeholder-facing post-mortem.
+   Pass: incident ID, RCA path, and the confirmed output path
+   (default: `docs/postmortems/{id}-{slug}-postmortem.md`).
 
 ## Output
 
@@ -304,9 +246,8 @@ Root cause: [one-line summary]
 Contributing factors: [N identified]
 Action items:         [N total — N prevention, N detection, N response]
 
-Post-mortem written:  docs/postmortems/YYYY-MM-DD-<slug>.md
-Status:               [Draft — ready for team review]
+Next: invoke @#rca and @#postmortem to produce written artifacts.
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"incident","artifact_type":"skill","artifact_version":"20260421017","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"incident","artifact_type":"skill","artifact_version":"20260503002","generator":"vstack","vstack_version":"2.2.0"} -->

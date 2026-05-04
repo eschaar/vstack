@@ -185,7 +185,7 @@ Adapt the deploy trigger to match the target platform (Fly.io, Render, Railway, 
 
 ## Step 5: Branch protection (document, don't automate)
 
-Record in `docs/architecture/architecture.md` or a README section:
+Record in `docs/architecture/overview.md` or a README section:
 
 ```text
 Branch protection rules for `main`:
@@ -220,4 +220,4 @@ Configure these in GitHub → Settings → Branches.
 - [GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"cicd","artifact_type":"skill","artifact_version":"20260421006","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"cicd","artifact_type":"skill","artifact_version":"20260421006","generator":"vstack","vstack_version":"2.2.0"} -->

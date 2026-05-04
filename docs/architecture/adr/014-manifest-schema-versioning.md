@@ -80,6 +80,28 @@ side-effect-free (NFR alignment).
 The `allow_legacy=True` parameter on `ManifestFile.read` is the single code-level
 bypass, used only by the upgrade command itself.
 
+### manifest file location
+
+`vstack.json` lives at `.vstack/vstack.json`. This separates machine-generated
+state (`.vstack/vstack.json`) from Copilot artifacts (`.github/`), and aligns with
+the principle that `.vstack/` is the vstack project-scope directory (see ADR-019).
+
+The format distinction is intentional: `vstack.json` uses JSON (machine-generated,
+not hand-edited), while `.vstack/config.yaml` uses YAML (human-authored). The
+format difference signals ownership — JSON files are vstack-owned, YAML files are
+project-owned.
+
+`vstack manifest upgrade` handles two migration paths:
+
+1. **Schema migration**: increments `manifest_version` and backfills missing fields
+   (existing behaviour, ADR-017).
+1. **Location migration** (new in 3.0): moves `.github/vstack.json` to
+   `.vstack/vstack.json` when the old path is detected and the new path does not
+   yet exist.
+
+Older manifests at `.github/vstack.json` are detected and rejected with a clear
+message pointing to `vstack manifest upgrade`.
+
 ## consequences
 
 ### positive

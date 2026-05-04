@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from vstack.cli.base import BaseCommand
+from vstack.cli.init import InitCommand
 from vstack.cli.install import InstallCommand
 from vstack.cli.manifest import ManifestCommand
 from vstack.cli.status import StatusCommand
@@ -50,6 +51,7 @@ TOP_LEVEL_COMMAND_ORDER: tuple[str, ...] = (
     "status",
     "manifest",
     "install",
+    "init",
     "uninstall",
 )
 
@@ -95,13 +97,23 @@ COMMAND_CATALOG: dict[str, TopLevelCommandConfig] = {
     ),
     "install": TopLevelCommandConfig(
         command_factory=InstallCommand,
-        help_text="Generate and install artifacts (--only to filter types)",
+        help_text="First-run project setup: create .vstack/, seed docs/, then run init",
         requires_install_dir=True,
         resolve_only_for_scope=True,
         include_scope_group=True,
         include_only_option=True,
         scope_help="Install into <dir>/.github/",
         only_help="Install only these artifact types, e.g. --only skill agent",
+    ),
+    "init": TopLevelCommandConfig(
+        command_factory=InitCommand,
+        help_text="Regenerate and install artifacts idempotently (CI and day-to-day use)",
+        requires_install_dir=True,
+        resolve_only_for_scope=True,
+        include_scope_group=True,
+        include_only_option=True,
+        scope_help="Regenerate into <dir>/.github/",
+        only_help="Regenerate only these artifact types, e.g. --only skill agent",
     ),
     "uninstall": TopLevelCommandConfig(
         command_factory=UninstallCommand,

@@ -1,0 +1,6 @@
+project:
+  name: ""
+  tracker: github
+  tracker-url: ""
+naming:
+  change-prefix: RFC

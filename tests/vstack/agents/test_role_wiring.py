@@ -49,14 +49,17 @@ def test_all_role_templates_reference_concise() -> None:
         assert "@#concise" in content
 
 
-def test_all_role_configs_define_handoffs_block() -> None:
-    """Each role config should include at least one handoff entry."""
-    roles = ["product", "architect", "designer", "engineer", "tester", "release"]
-    for role in roles:
+def test_role_configs_follow_stage_handoff_policy() -> None:
+    """Non-release roles expose forward handoffs, release remains terminal."""
+    roles_with_forward_handoff = ["product", "architect", "designer", "engineer", "tester"]
+    for role in roles_with_forward_handoff:
         config = _read(f"{role}/config.yaml")
         assert "handoffs:" in config
         assert "label:" in config
         assert "agent:" in config
+
+    release_config = _read("release/config.yaml")
+    assert "handoffs:" not in release_config
 
 
 def test_all_role_handoff_targets_are_known_roles() -> None:

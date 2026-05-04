@@ -14,8 +14,8 @@ ______________________________________________________________________
 | Lint / Style  | **PASS** — ruff clean                       |
 | Type checking | **PASS** — mypy clean (106 files, 0 errors) |
 | Coverage      | **PASS** — 100.00% (fail-under=100)         |
-| Security      | See `docs/security-report.md`               |
-| Performance   | See `docs/performance-baseline.md`          |
+| Security      | See `docs/reports/security-report.md`       |
+| Performance   | See `docs/reports/performance-baseline.md`  |
 
 > **Ship readiness: READY** — all verification gates currently pass.
 

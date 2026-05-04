@@ -56,12 +56,20 @@ the release notes. This skill describes the procedure, not the file paths.
 Verify that the evidence the invoking agent has designated as required is present
 and not empty. Report any missing items and stop if blockers exist.
 
-Typical evidence to check (agent-defined):
+Check each artifact the invoking agent listed as required. For each file:
 
+```bash
+[ -f "<path>" ] && echo "✓ <path>" || echo "✗ MISSING: <path>"
+```
+
+Typically this includes:
+
+- Requirements or scope artifact
+- Architecture or design overview
 - Test results or verification report
 - Security findings or sign-off
 - Change summary (git log, diff stat, or agent-provided summary)
-- Acceptance criteria from requirements
+- `CHANGELOG.md`
 
 If any required evidence is missing: **STOP and report to the invoking agent**.
 
@@ -72,7 +80,7 @@ Review what changed on this branch vs the base branch:
 ```bash
 git log origin/main..HEAD --oneline
 git diff origin/main --stat | head -30
-```
+````
 
 Identify:
 
@@ -106,7 +114,10 @@ Use this structure:
 ## Evidence reviewed
 | evidence | status |
 |----------|--------|
-| [evidence item] | ✓ / ✗ MISSING |
+| [requirements artifact] | ✓ |
+| [architecture artifact] | ✓ |
+| [test report] | ✓ |
+| [security report] | ✓ |
 ```
 
 Rules:
@@ -135,4 +146,4 @@ Prepend a new entry at the top of `CHANGELOG.md`:
 Keep existing entries intact.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"release-notes","artifact_type":"skill","artifact_version":"20260502014","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"release-notes","artifact_type":"skill","artifact_version":"20260502014","generator":"vstack","vstack_version":"2.2.0"} -->

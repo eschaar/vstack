@@ -18,8 +18,7 @@ change source code.
 
 - Primary deliverables: updated baseline documentation artifacts (for example `README.md`, API docs, migration guides)
 - Baseline-first default: write final documentation updates directly to baseline docs on the feature branch.
-- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/DOCS_DELTA.md`
-- Before merge: consolidate any documentation delta notes into baseline docs.
+- Before merge: confirm documentation updates are complete and consistent before merge.
 
 ## Step 0: Scope the Release
 

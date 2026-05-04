@@ -1,7 +1,7 @@
 # vstack — agents
 
 > Maintained by: **designer** role\
-> Last updated: 2026-04-01\
+> Last updated: 2026-05-03\
 > VS Code docs: [custom agents](https://code.visualstudio.com/docs/copilot/customization/custom-agents) · [agents overview](https://code.visualstudio.com/docs/copilot/agents/overview)
 
 ## what are agents?
@@ -61,11 +61,39 @@ Style rule: long `description` and `handoffs.prompt` values should use YAML bloc
 
 ### vstack-internal only (not emitted)
 
-| Field     | Notes                                                                          |
-| --------- | ------------------------------------------------------------------------------ |
-| `version` | Semantic version for vstack change tracking — never reaches the generated file |
+| Field       | Notes                                                                          |
+| ----------- | ------------------------------------------------------------------------------ |
+| `version`   | Semantic version for vstack change tracking — never reaches the generated file |
+| `artifacts` | Declares artifact ownership for this agent — see [artifacts](#artifacts) below |
 
 Frontmatter multiline rendering is configured in generator code (`ArtifactTypeConfig.preserve_multiline_frontmatter`), not per-agent `config.yaml`.
+
+______________________________________________________________________
+
+## artifacts
+
+The optional `artifacts:` block declares which paths an agent reads and writes.
+This field is **vstack-internal** — it is not emitted to the generated `.agent.md`.
+See [ADR-021](../architecture/adr/021-config-driven-artifact-paths.md) for rationale.
+
+```yaml
+artifacts:
+  target: docs/architecture       # directory this agent writes to
+  input:                          # paths this agent reads (glob patterns, repo-relative)
+    - docs/product/*.md
+  output:                         # files this agent produces (relative to target)
+    - overview.md
+    - adr/*.md
+```
+
+| Field    | Required | Notes                                                   |
+| -------- | -------- | ------------------------------------------------------- |
+| `target` | no       | Canonical write root; required when `output` is present |
+| `input`  | no       | Glob patterns for files the agent reads as context      |
+| `output` | no       | Paths relative to `target` that the agent produces      |
+
+All paths use forward slashes and are relative to the repository root (`target`)
+or to `target` (`output`).
 
 ______________________________________________________________________
 
@@ -94,13 +122,23 @@ Handoffs create guided sequential workflows. After a response completes, VS Code
 
 `handoffs` is fully supported in `AGENT_SCHEMA` and is emitted by the generator. Define handoffs in `config.yaml` and they will appear in the generated `.agent.md` frontmatter.
 
+### handoff policy
+
+Handoffs are UI accelerators for the happy path only, not orchestration logic:
+
+- Each non-terminal role defines **exactly one** forward handoff with label `Go to next stage: <stage>`.
+- The `release` role is terminal — it has **no handoffs**. Opening a PR is a release action, not a handoff.
+- Back, side, and escalation handoff buttons are not allowed. Non-happy paths remain explicit user decisions.
+
+See [workflow.md](./workflow.md#handoff-button-convention) for the full stage-gated model and gate moment definitions.
+
 Structure:
 
 ```yaml
 handoffs:
   - label: Start implementation
     agent: engineer
-    prompt: Design is complete in docs/design/design.md. Please implement.
+    prompt: Design is complete in docs/design/overview.md. Please implement.
     send: false        # true = auto-submit the prompt
     model: ""          # optional override; use only a verified model ID
 ```
@@ -125,7 +163,6 @@ All role templates in `src/vstack/_templates/agents/<name>/template.md` must fol
 1. `## communication style`
 1. `## workflow and handoffs`
 1. Role-specific deep-dive sections (e.g. `how you work`, `scope detection`, `artifact checklist`, `verification tracks`)
-1. `## baseline and optional delta` (if applicable)
 1. `## success criteria`
 1. `## failure and escalation rules`
 1. `## artifacts you own` or `## artifacts you touch`
@@ -137,7 +174,6 @@ Rules:
 - Keep the canonical sections present and in this order for every role.
 - Role-specific sections are allowed, but they must not replace canonical sections.
 - Keep role boundaries explicit; do not let one role absorb another role's ownership.
-- Prefer baseline-first language and treat `docs/delta/{id}/` as temporary.
 
 Minimal shape:
 
@@ -229,6 +265,13 @@ tools:
   - todo
   - agent
 agents: ["*"]
+artifacts:
+  target: docs/architecture
+  input:
+    - docs/product/*.md
+  output:
+    - overview.md
+    - adr/*.md
 target: vscode
 user-invocable: true
 ```

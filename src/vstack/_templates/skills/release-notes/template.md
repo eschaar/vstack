@@ -24,12 +24,20 @@ the release notes. This skill describes the procedure, not the file paths.
 Verify that the evidence the invoking agent has designated as required is present
 and not empty. Report any missing items and stop if blockers exist.
 
-Typical evidence to check (agent-defined):
+Check each artifact the invoking agent listed as required. For each file:
 
+```bash
+[ -f "<path>" ] && echo "✓ <path>" || echo "✗ MISSING: <path>"
+```
+
+Typically this includes:
+
+- Requirements or scope artifact
+- Architecture or design overview
 - Test results or verification report
 - Security findings or sign-off
 - Change summary (git log, diff stat, or agent-provided summary)
-- Acceptance criteria from requirements
+- `CHANGELOG.md`
 
 If any required evidence is missing: **STOP and report to the invoking agent**.
 
@@ -74,7 +82,10 @@ Use this structure:
 ## Evidence reviewed
 | evidence | status |
 |----------|--------|
-| [evidence item] | ✓ / ✗ MISSING |
+| [requirements artifact] | ✓ |
+| [architecture artifact] | ✓ |
+| [test report] | ✓ |
+| [security report] | ✓ |
 ```
 
 Rules:

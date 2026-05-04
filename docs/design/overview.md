@@ -1,7 +1,7 @@
 # vstack — design
 
 > Maintained by: **designer** role\
-> Last updated: 2026-04-26
+> Last updated: 2026-05-03
 
 ## overview
 
@@ -9,7 +9,7 @@ This document is the concrete design baseline for vstack — a `platform` artifa
 standalone CLI tool and SDK that installs structured role artifacts into a project's
 `.github/` directory for use with GitHub Copilot Agent Mode.
 
-It translates the architecture blueprint in `docs/architecture/architecture.md` into
+It translates the architecture blueprint in `docs/architecture/overview.md` into
 implementable interfaces, data schemas, state models, validation rules, and error
 contracts. Implementation follows this document; architecture decisions are recorded in
 `docs/architecture/adr/`.
@@ -321,6 +321,13 @@ def build_command_registry(service: CommandService) -> dict[str, BaseCommand]: .
 ______________________________________________________________________
 
 ## 3. frontmatter schemas
+
+The tables below are the authoritative quick-reference for implementers. For full authoring
+guidance, field semantics, examples, and template structure, see the dedicated docs:
+
+- Agents → [agents.md](./agents.md)
+- Skills → [skills.md](./skills.md)
+- Instructions → [instructions.md](./instructions.md)
 
 ### 3.1 skill frontmatter (`config.yaml`)
 

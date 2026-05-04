@@ -46,11 +46,10 @@ becomes the source of truth for implementation.
 
 ## Deliverable and artifact policy
 
-- Primary deliverable: `docs/design/design.md`
+- Primary deliverable: `docs/design/overview.md`
 - Additional deliverable when user-facing scope: `docs/design/ux.md`
 - Baseline-first default: write final design decisions directly to `docs/design/*.md` on the feature branch.
-- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/DESIGN_DELTA.md`
-- Before merge: consolidate any delta draft into baseline design docs.
+- Before merge: confirm design docs on the feature branch are complete before merge.
 
 ## Step 0: Understand the Domain
 
@@ -215,7 +214,7 @@ Authorization model: RBAC with per-resource checks
 
 ## Step 7: Produce the Design Document
 
-Output a complete design document to `docs/design/design.md` or `openapi.yaml`:
+Output a complete design document to `docs/design/overview.md` or `openapi.yaml`:
 
 ```markdown
 # API Design — [Service Name]
@@ -243,4 +242,4 @@ Output a complete design document to `docs/design/design.md` or `openapi.yaml`:
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"design","artifact_type":"skill","artifact_version":"20260421013","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"design","artifact_type":"skill","artifact_version":"20260421013","generator":"vstack","vstack_version":"2.2.0"} -->

@@ -18,10 +18,9 @@ Use `verify` when a fix loop is required.
 
 ## Deliverable and artifact policy
 
-- Primary deliverable: `docs/test-report.md`
-- Baseline-first default: write final findings directly to `docs/test-report.md` on the feature branch.
-- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/TESTING_DELTA.md`
-- Before merge: consolidate any blocking findings and final verdict into baseline reports.
+- Primary deliverable: `docs/reports/test-report.md`
+- Baseline-first default: write final findings directly to `docs/reports/test-report.md` on the feature branch.
+- Before merge: confirm blocking findings and final verdict are written to baseline reports.
 
 ## Step 0: Scope
 

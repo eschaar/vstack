@@ -61,10 +61,10 @@ This skill uses a practical framework selection model:
 
 ## Deliverable and artifact policy
 
-- Primary deliverable: `docs/architecture/threat-model.md`
-- Baseline-first default: write final threat model directly to `docs/architecture/threat-model.md` on the feature branch.
-- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/THREAT_MODEL_DELTA.md`
-- Before merge: consolidate delta notes into the baseline threat model.
+- Primary deliverable: a threat model document owned by the `architect` role.
+- The invoking agent determines the output path. Default (architect role): `docs/architecture/threat-model.md`.
+- Baseline-first default: write the final threat model directly to the designated output path on the feature branch.
+- Before merge: confirm the threat model on the feature branch is complete before merge.
 
 ## Framework selection guide
 
@@ -96,7 +96,7 @@ Collect architecture evidence first:
 
 ```bash
 find docs -maxdepth 3 -type f \
-  \( -name 'architecture.md' -o -name 'design.md' -o -name 'requirements.md' -o -name 'openapi*.yaml' -o -name '*.proto' \) \
+  \( -name 'overview.md' -o -name 'requirements.md' -o -name 'openapi*.yaml' -o -name '*.proto' \) \
   2>/dev/null | sort
 ```
 
@@ -244,4 +244,4 @@ For each high-priority threat include:
 - Final report is written to `docs/architecture/threat-model.md`.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"threat-model","artifact_type":"skill","artifact_version":"20260502021","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"threat-model","artifact_type":"skill","artifact_version":"20260502021","generator":"vstack","vstack_version":"2.2.0"} -->

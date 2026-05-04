@@ -49,8 +49,7 @@ work from.
 
 - Primary deliverable: `docs/product/requirements.md`
 - Baseline-first default: write final requirements directly to `docs/product/requirements.md` on the feature branch.
-- Optional WIP area for complex/uncertain intake: `docs/delta/{intake-id}/REQUIREMENTS_DELTA.md`
-- Before merge: consolidate any required content from optional delta notes back into `docs/product/requirements.md`, then remove stale WIP notes.
+- Before merge: confirm requirements are complete and consistent before merge.
 
 ## Step 0: Context
 
@@ -199,4 +198,4 @@ Write all findings to `docs/product/requirements.md`:
 After writing, summarize what was decided so the architect role can start.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"requirements","artifact_type":"skill","artifact_version":"20260421024","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"requirements","artifact_type":"skill","artifact_version":"20260421024","generator":"vstack","vstack_version":"2.2.0"} -->

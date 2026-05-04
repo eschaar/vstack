@@ -38,6 +38,8 @@ EXPECTED_CANONICAL_NAMES = [
     "onboard",
     "dependency",
     "incident",
+    "rca",
+    "postmortem",
     "gh-issues",
     "codeql",
     "dependabot",

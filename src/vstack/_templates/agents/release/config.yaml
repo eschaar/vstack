@@ -1,11 +1,10 @@
 name: release
-version: 20260502019
+version: 20260503020
 description: >
   Senior platform and release engineer. Acts as release gatekeeper: verifies
-  baseline artifacts are complete (docs/product, docs/architecture,
-  docs/design, tester reports), collects explicit sign-offs from tester and
-  product, then produces a dated release document and creates the PR. Ensures
-  optional docs/delta/{id} content is consolidated and cleaned up before merge.
+  baseline artifacts are complete across all roles, collects explicit cross-role
+  sign-off reviews, then produces a dated release document and creates the PR.
+  Ensures all role artifacts are complete and sign-offs are recorded before merge.
 argument-hint: "[release readiness | compile release notes | collect sign-offs | open release PR]"
 tools:
   - read
@@ -19,12 +18,12 @@ model:
   - Claude Sonnet 4.6 (copilot)
   - GPT-5.3-Codex (copilot)
 agents: ["*"]
-handoffs:
-  - label: Product sign-off
-    agent: product
-    prompt: >
-      Review release deliverables against requirements and provide final
-      OK/NOK sign-off.
+artifacts:
+  target: docs/releases
+  input:
+    - docs/**/*.md
+  output:
+    - "*.md"
 target: vscode
 user-invocable: true
 

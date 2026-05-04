@@ -82,7 +82,15 @@ class TestBuildParser:
         )
         assert subcommands_action is not None
         subcommands = set(cast(Any, subcommands_action).choices.keys())
-        assert subcommands == {"validate", "verify", "status", "manifest", "install", "uninstall"}
+        assert subcommands == {
+            "validate",
+            "verify",
+            "status",
+            "manifest",
+            "install",
+            "init",
+            "uninstall",
+        }
 
     def test_verify_accepts_only_filter(self) -> None:
         """Test that verify command supports --only type filters."""

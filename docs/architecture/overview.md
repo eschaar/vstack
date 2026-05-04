@@ -29,18 +29,24 @@ vstack/
 │   ├── manifest/                ← Manifest, ManifestFile, ArtifactEntry, checksums
 │   ├── cli/                     ← interface, registry, service, per-command handlers, helpers
 │   └── _templates/              ← source templates for all artifact types
+│       ├── skills/, agents/, instructions/, prompts/
+│       ├── docs/                ← baseline doc stubs (seeded by vstack install)
+│       └── project/             ← .vstack/ config and artifact starter templates
 ├── docs/
 │   ├── architecture/            ← architecture docs + ADRs
 │   ├── design/                  ← design, workflow, skills, instructions
 │   └── product/                 ← roadmap, requirements, vision
 ├── tests/
 │   └── vstack/
-├── .github/                     ← generated output (never edit directly)
+├── .vstack/                     ← project-scope vstack state (committed)
+│   ├── config.yaml              ← human-authored project config (YAML)
+│   ├── vstack.json              ← machine-generated manifest (JSON)
+│   └── templates/               ← project-owned artifact starter templates (seeded by vstack install)
+├── .github/                     ← generated Copilot artifacts (never edit directly)
 │   ├── skills/<name>/SKILL.md
 │   ├── agents/<name>.agent.md
 │   ├── instructions/<name>.instructions.md
-│   ├── prompts/<name>.prompt.md
-│   └── vstack.json
+│   └── prompts/<name>.prompt.md
 └── README.md
 ```
 
@@ -84,29 +90,33 @@ Key resolvers defined inline in the generator:
 vstack uses 6 fixed agent roles. Each role has defined skill access and artifact ownership.
 See `docs/architecture/adr/009-role-model.md` for the decision record.
 
-| Role      | Artifact ownership                                                                  |
-| --------- | ----------------------------------------------------------------------------------- |
-| product   | `docs/product/vision.md`, `docs/product/requirements.md`, `docs/product/roadmap.md` |
-| architect | `docs/architecture/architecture.md`, `docs/architecture/adr/*.md`                   |
-| designer  | `docs/design/design.md`, `docs/design/ux.md` (frontend scope), API specs            |
-| engineer  | code, unit tests                                                                    |
-| tester    | `docs/test-report.md`, `docs/security-report.md`, `docs/performance-baseline.md`    |
-| release   | `docs/releases/{date}.md`, `CHANGELOG.md`, release PR                               |
+| Role      | Artifact ownership                                                                                       |
+| --------- | -------------------------------------------------------------------------------------------------------- |
+| product   | `docs/product/vision.md`, `docs/product/requirements.md`, `docs/product/roadmap.md`                      |
+| architect | `docs/architecture/overview.md`, `docs/architecture/adr/*.md`                                            |
+| designer  | `docs/design/` (overview.md, ux.md, agents.md, skills.md, instructions.md, workflow.md, cicd.md)         |
+| engineer  | code, unit tests                                                                                         |
+| tester    | `docs/reports/test-report.md`, `docs/reports/security-report.md`, `docs/reports/performance-baseline.md` |
+| release   | `docs/releases/YYYYMMDDNN.md`, `CHANGELOG.md`, release PR                                                |
 
-### 5. manifest (`vstack.json`)
+### 5. manifest (`.vstack/vstack.json`)
 
-Generated at install time in the target directory. Tracks every artifact installed
-by `vstack install` (skills, agents, instructions, and prompts), including a per-file
-SHA-256 checksum, version, and algorithm so that:
+Generated at install time at `.vstack/vstack.json`. Tracks every `.github/` artifact
+installed by `vstack init` (skills, agents, instructions, and prompts), including a
+per-file SHA-256 checksum, version, and algorithm so that:
 
 - `vstack uninstall` removes exactly the files it installed.
-- `install --update` detects local modifications before rewriting.
+- `init --update` detects local modifications before rewriting.
 - `verify` / `status` report checksum drift and ownership state.
-- `manifest upgrade` migrates legacy schema to the current version.
+- `manifest upgrade` migrates legacy schema and file location to the current version.
+
+The manifest uses JSON format (machine-generated, not hand-edited). Project
+configuration uses YAML (`config.yaml`). The format difference signals ownership.
+See ADR-019.
 
 The manifest schema is versioned (`manifest_version` field). Operations that require
 the current schema fail fast with an upgrade hint rather than silently misbehaving.
-See ADR-014 and ADR-015.
+See ADR-014 and ADR-020.
 
 Writes are atomic: content is staged to a sibling `.tmp` file and promoted with
 `os.replace` so a crash or `KeyboardInterrupt` cannot produce a partially-written
@@ -144,14 +154,14 @@ The CLI layer translates argparse input into domain operations through a small s
 focused components. See `docs/design/design.md` for the full component table and
 dispatch flow.
 
-| Component                | Responsibility                                                                      |
-| ------------------------ | ----------------------------------------------------------------------------------- |
-| `CommandLineInterface`   | Facade: parser construction, service creation, target/scope resolution, dispatch    |
-| `CommandService`         | Shared coordinator: generators, path labelling, manifest access, artifact state     |
-| `build_command_registry` | Maps command names to `BaseCommand` instances                                       |
-| `BaseCommand`            | ABC contract: all handlers implement `run(*, context: CommandContext) → int`        |
-| Per-command modules      | `install`, `verify`, `status`, `uninstall`, `validate`, `manifest` — one class each |
-| `helpers.py`             | Shared install/uninstall utilities (name normalization, manifest preservation)      |
+| Component                | Responsibility                                                                              |
+| ------------------------ | ------------------------------------------------------------------------------------------- |
+| `CommandLineInterface`   | Facade: parser construction, service creation, target/scope resolution, dispatch            |
+| `CommandService`         | Shared coordinator: generators, path labelling, manifest access, artifact state             |
+| `build_command_registry` | Maps command names to `BaseCommand` instances                                               |
+| `BaseCommand`            | ABC contract: all handlers implement `run(*, context: CommandContext) → int`                |
+| Per-command modules      | `install`, `init`, `verify`, `status`, `uninstall`, `validate`, `manifest` — one class each |
+| `helpers.py`             | Shared install/uninstall utilities (name normalization, manifest preservation)              |
 
 ______________________________________________________________________
 
@@ -184,23 +194,29 @@ flowchart LR
   C --> D[Writes docs, code, or reports to disk]
 ```
 
-### possible future model — orchestrated role pipeline
+### target operating model — stage-gated role pipeline
 
-Each role makes its own model call. Output artifacts are passed to the next role.
+Each role is a separate model call. Output artifacts from one role become the input context
+for the next, and progression only happens after explicit user approval at each stage gate.
 
 ```mermaid
 flowchart TD
-  U[User request] --> P[product]
-  P --> A[architect]
-  A --> D[designer]
-  D --> E[engineer]
-  E --> T[tester]
-  T --> G{User sign-off}
-  G --> R[release]
-  D -. backend-only path can skip designer .-> E
+  P[product] --> GP{User approves Product output}
+  GP --> A[architect]
+  A --> GA{User approves Architecture output}
+  GA --> D[designer]
+  D --> GD{User approves Design output}
+  GD --> E[engineer]
+  E --> GE{User approves Implementation checkpoint}
+  GE --> T[tester]
+  T --> GT{User approves Verification output}
+  GT --> R[release]
+  R --> GR{User final merge approval}
+  GR --> PR[PR opened]
 ```
 
-See `docs/architecture/adr/004-option-a-to-b-pipeline.md` and `docs/design/workflow.md` for pipeline detail.
+See `docs/architecture/adr/004-option-a-to-b-pipeline.md`, `docs/architecture/adr/010-artifact-flow.md`,
+and `docs/design/workflow.md` for pipeline and gate detail.
 
 ______________________________________________________________________
 
@@ -209,21 +225,25 @@ ______________________________________________________________________
 All significant architectural decisions are recorded in `docs/architecture/adr/`.
 See individual files for context, decision, alternatives, and rationale.
 
-| ADR | Title                                                | Status   |
-| --- | ---------------------------------------------------- | -------- |
-| 001 | VS Code-native variant                               | accepted |
-| 002 | Artifact naming and compatibility policy             | accepted |
-| 003 | Backend-first verify                                 | accepted |
-| 004 | Option A to B pipeline                               | accepted |
-| 005 | VS Code prompt format                                | accepted |
-| 006 | No runtime dependency on external binaries           | accepted |
-| 007 | Python runtime                                       | accepted |
-| 008 | Agents over prompts                                  | accepted |
-| 009 | 6-role agent model                                   | accepted |
-| 010 | Artifact flow                                        | accepted |
-| 011 | Skill restructure                                    | accepted |
-| 012 | Flat templates and install-time generation           | accepted |
-| 013 | Policy vs procedure boundary for instructions/skills | accepted |
-| 014 | Manifest schema versioning and explicit upgrade gate | accepted |
-| 015 | Conservative install-by-default                      | accepted |
-| 016 | Atomic manifest writes                               | accepted |
+| ADR | Title                                                | Status                |
+| --- | ---------------------------------------------------- | --------------------- |
+| 001 | VS Code-native variant                               | accepted              |
+| 002 | Artifact naming and compatibility policy             | accepted              |
+| 003 | Backend-first verify                                 | accepted              |
+| 004 | Option A to B pipeline                               | accepted              |
+| 005 | VS Code prompt format                                | accepted              |
+| 006 | No runtime dependency on external binaries           | accepted              |
+| 007 | Python runtime                                       | accepted              |
+| 008 | Agents over prompts                                  | accepted              |
+| 009 | 6-role agent model                                   | accepted              |
+| 010 | Artifact flow                                        | accepted              |
+| 011 | Skill restructure                                    | accepted              |
+| 012 | Flat templates and install-time generation           | accepted              |
+| 013 | Policy vs procedure boundary for instructions/skills | accepted              |
+| 014 | Manifest schema versioning and explicit upgrade gate | accepted              |
+| 015 | Conservative install-by-default                      | superseded by ADR-020 |
+| 016 | Atomic manifest writes                               | accepted              |
+| 017 | Checksum backfill on upgrade                         | accepted              |
+| 018 | Skill genericity boundary                            | accepted              |
+| 019 | `.vstack/` project-scope directory                   | accepted              |
+| 020 | `install` and `init` command semantics               | accepted              |

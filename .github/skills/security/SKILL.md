@@ -55,9 +55,8 @@ with severity, evidence, and specific remediation.
 
 ## Deliverable and artifact policy
 
-- Primary deliverable: `docs/security-report.md`
-- Baseline-first default: write final findings directly to `docs/security-report.md` on the feature branch.
-- Optional WIP area for complex/uncertain efforts: `docs/delta/{id}/SECURITY_DELTA.md`
+- Primary deliverable: `docs/reports/security-report.md`
+- Baseline-first default: write final findings directly to `docs/reports/security-report.md` on the feature branch.
 - Before merge: consolidate severity-ranked findings and mitigations into baseline security reports.
 
 ## Audit Scope
@@ -295,4 +294,4 @@ Scope: [full/diff/dependency/config]
 - [STRIDE threat modeling (Microsoft)](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"security","artifact_type":"skill","artifact_version":"20260421025","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"security","artifact_type":"skill","artifact_version":"20260421025","generator":"vstack","vstack_version":"2.2.0"} -->
