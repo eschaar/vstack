@@ -33,38 +33,52 @@ Agent `config.yaml` files gain an optional `artifacts:` block:
 
 ```yaml
 artifacts:
-  target: docs/architecture          # directory this agent writes to
-  input:                             # paths this agent reads as context
-    - docs/product/*.md
-  output:                            # files this agent produces within target
-    - overview.md
-    - adr/*.md
+  dir: architecture              # subdirectory within the global docs root (no root prefix)
+  input:                         # paths this agent reads as context
+    - product/**/*.md
+  output:                        # files this agent produces
+    - overview.md                # string: resolved as <docs_root>/<dir>/<path>
+    - path: ux.md                # dict: allows an optional notes annotation
+      notes: frontend/fullstack scope only
+    - path: ./src/**/*           # ./ prefix: verbatim path, dir prefix not applied
 ```
 
 Rules:
 
-- `target` is the canonical root directory this agent writes to. Required when
-  `output` is present; optional otherwise.
-- `input` is a list of glob patterns for files this agent reads. Optional.
-- `output` is a list of paths relative to `target`. Optional.
-- All paths use forward slashes and are relative to the repository root
-  (`target`) or to `target` (`output`).
-- The `artifacts:` block is **vstack-internal only** — it is not emitted to
-  the generated `.agent.md` frontmatter.
+- `dir` is the subdirectory within the global `ARTIFACTS_DOCS_ROOT` (`docs`) that
+  this agent writes to. It is a subdirectory name only — no root prefix. Required
+  when `output` items are relative paths without a `./` prefix; optional otherwise.
+- `input` is a list of glob patterns for files this agent reads. Paths are resolved
+  as `<ARTIFACTS_DOCS_ROOT>/<item>` (e.g. `product/**/*.md` → `docs/product/**/*.md`).
+- `output` is a list of items, each either a plain string or a dict with `path` and
+  an optional `notes` field. Path resolution:
+  - No `./` prefix, `dir` set → `<ARTIFACTS_DOCS_ROOT>/<dir>/<path>`
+  - No `./` prefix, no `dir` → `<path>` verbatim
+  - `./` prefix → strip `./`, use remainder verbatim (`./src/**/*` → `src/**/*`)
+- `ARTIFACTS_DOCS_ROOT` is a global constant (`src/vstack/constants.py`, default
+  `docs`). It is applied at render time. Individual agents must not embed the root
+  prefix; only the subdirectory is set in `dir`.
+- The `artifacts:` block is **vstack-internal only** — it is not emitted to the
+  generated `.agent.md` frontmatter.
+- At install time, `AgentGenerator` resolves the block into four placeholder tokens
+  (`{{AGENT_ARTIFACTS_INPUT}}`, `{{AGENT_ARTIFACTS_OUTPUT}}`,
+  `{{AGENT_ARTIFACTS_INPUT_COMMENTS}}`, `{{AGENT_ARTIFACTS_OUTPUT_COMMENTS}}`)
+  that are substituted into the template body.
 
 ### per-role values
 
-| Agent       | target              | input                                                                      | output                                                            |
-| ----------- | ------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `product`   | `docs/product`      | —                                                                          | `vision.md`, `requirements.md`, `roadmap.md`                      |
-| `architect` | `docs/architecture` | `docs/product/**/*.md`                                                     | `overview.md`, `adr/*.md`                                         |
-| `designer`  | `docs/design`       | `docs/architecture/**/*.md`                                                | `overview.md`                                                     |
-| `engineer`  | `issues`            | `docs/product/**/*.md`, `docs/architecture/**/*.md`, `docs/design/**/*.md` | —                                                                 |
-| `tester`    | `docs/reports`      | `docs/architecture/**/*.md`, `docs/design/**/*.md`                         | `test-report.md`, `security-report.md`, `performance-baseline.md` |
-| `release`   | `docs/releases`     | `docs/**/*.md`                                                             | `*.md`                                                            |
+| Agent       | dir            | input                                                       | output                                                                                            |
+| ----------- | -------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `product`   | `product`      | —                                                           | `vision.md`, `requirements.md`, `roadmap.md`, `changes/*.md`, `issues/*.md`                       |
+| `architect` | `architecture` | `product/**/*.md`                                           | `overview.md`, `adr/*.md`                                                                         |
+| `designer`  | `design`       | `architecture/**/*.md`                                      | `overview.md`, `ux.md` *(frontend/fullstack)*, `**/*.md` *(when scope warrants)*                  |
+| `engineer`  | —              | `product/**/*.md`, `architecture/**/*.md`, `design/**/*.md` | `./src/**/*`, `./tests/**/*`, `./issues/{id}-{slug}-rca.md`, `./issues/{id}-{slug}-postmortem.md` |
+| `tester`    | `reports`      | `architecture/**/*.md`, `design/**/*.md`                    | `**/*.md`, `./tests/**/*`                                                                         |
+| `release`   | `releases`     | `**/*.md`                                                   | `*.md` *(release notes and sign-off record)*                                                      |
 
-`engineer` has no `output` entries because it writes code, not documentation
-artifacts. Its `input` captures what it reads to perform work.
+`engineer` has no `dir` because its outputs are code files under `src/` and
+`tests/`, addressed with `./` verbatim paths rather than documentation
+subdirectories.
 
 ## alternatives considered
 
@@ -106,7 +120,8 @@ output feeds the next. The `artifacts:` schema directly enables this:
 
 - A pipeline orchestrator can read `input` to know what context to inject.
 - It can read `output` to know which files to collect and pass to the next stage.
-- `target` provides the base path for file resolution without parsing agent prose.
+- `dir` and `ARTIFACTS_DOCS_ROOT` together provide the base path for file
+  resolution without parsing agent prose.
 
 No changes to Option B design are needed; this ADR makes `config.yaml` the
 structured input source that Option B pipeline tooling will consume.

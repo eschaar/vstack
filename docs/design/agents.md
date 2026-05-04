@@ -73,27 +73,61 @@ ______________________________________________________________________
 ## artifacts
 
 The optional `artifacts:` block declares which paths an agent reads and writes.
-This field is **vstack-internal** — it is not emitted to the generated `.agent.md`.
+This field is **vstack-internal** — it is not emitted to the generated `.agent.md`
+frontmatter; instead it drives the rendered `## artifacts you use` section in the
+template body.
 See [ADR-021](../architecture/adr/021-config-driven-artifact-paths.md) for rationale.
 
 ```yaml
 artifacts:
-  target: docs/architecture       # directory this agent writes to
-  input:                          # paths this agent reads (glob patterns, repo-relative)
-    - docs/product/*.md
-  output:                         # files this agent produces (relative to target)
-    - overview.md
-    - adr/*.md
+  dir: architecture               # subdirectory within the global docs root (no root prefix)
+  input:                          # paths this agent reads (glob patterns, relative to docs root)
+    - product/**/*.md
+  output:                         # files this agent produces
+    - overview.md                 # simple string: resolved as <docs_root>/<dir>/<path>
+    - path: ux.md                 # dict form: required for entries with notes
+      notes: frontend/fullstack scope only
+    - path: ./src/**/*            # ./ prefix: verbatim path, dir prefix not applied
 ```
 
-| Field    | Required | Notes                                                   |
-| -------- | -------- | ------------------------------------------------------- |
-| `target` | no       | Canonical write root; required when `output` is present |
-| `input`  | no       | Glob patterns for files the agent reads as context      |
-| `output` | no       | Paths relative to `target` that the agent produces      |
+### path resolution rules
 
-All paths use forward slashes and are relative to the repository root (`target`)
-or to `target` (`output`).
+| Form                                                  | Resolution                                                          |
+| ----------------------------------------------------- | ------------------------------------------------------------------- |
+| `input` item                                          | `<ARTIFACTS_DOCS_ROOT>/<item>` (e.g. `docs/product/**/*.md`)        |
+| `output` string or `path` — no `./` prefix, `dir` set | `<ARTIFACTS_DOCS_ROOT>/<dir>/<path>`                                |
+| `output` string or `path` — no `./` prefix, no `dir`  | `<path>` verbatim                                                   |
+| `output` `path` with `./` prefix                      | strip `./`, use remainder verbatim (e.g. `./src/**/*` → `src/**/*`) |
+
+`ARTIFACTS_DOCS_ROOT` defaults to `docs`. It is a global constant in
+`src/vstack/constants.py` and will be overridable via `.vstack/config.yaml` in a
+future release. Individual agent configs must never embed the root prefix; set
+only the subdirectory in `dir`.
+
+### field reference
+
+| Field             | Required | Type                     | Notes                                                                |
+| ----------------- | -------- | ------------------------ | -------------------------------------------------------------------- |
+| `dir`             | no       | string                   | Subdirectory this agent writes to, relative to `ARTIFACTS_DOCS_ROOT` |
+| `input`           | no       | list of strings          | Glob patterns for files the agent reads as context                   |
+| `output`          | no       | list of strings or dicts | Paths the agent produces; use dict form to add `notes`               |
+| `input_comments`  | no       | string                   | Optional free-text appended below the input table                    |
+| `output_comments` | no       | string                   | Optional free-text appended below the output table                   |
+
+### generated template tokens
+
+The `## artifacts you use` section in each `template.md` uses four placeholder
+tokens that are resolved by `AgentGenerator` at install time:
+
+| Token                                 | Rendered as                                         |
+| ------------------------------------- | --------------------------------------------------- |
+| `{{AGENT_ARTIFACTS_INPUT}}`           | Markdown table of input artifacts, or empty string  |
+| `{{AGENT_ARTIFACTS_OUTPUT}}`          | Markdown table of output artifacts, or empty string |
+| `{{AGENT_ARTIFACTS_INPUT_COMMENTS}}`  | Value of `input_comments`, or empty string          |
+| `{{AGENT_ARTIFACTS_OUTPUT_COMMENTS}}` | Value of `output_comments`, or empty string         |
+
+Tables use a single `Artifact` column when no entry has notes, and two columns
+(`Artifact`, `Notes`) when any entry has a non-empty `notes` value.
 
 ______________________________________________________________________
 
@@ -165,7 +199,7 @@ All role templates in `src/vstack/_templates/agents/<name>/template.md` must fol
 1. Role-specific deep-dive sections (e.g. `how you work`, `scope detection`, `artifact checklist`, `verification tracks`)
 1. `## success criteria`
 1. `## failure and escalation rules`
-1. `## artifacts you own` or `## artifacts you touch`
+1. `## artifacts you use`
 1. `## completion checklist`
 1. `## skills you use`
 
@@ -220,11 +254,14 @@ You are a **<title>** acting as the **<role> role**. <one-line purpose>.
 
 - …
 
-## artifacts you own
+## artifacts you use
 
-| artifact | purpose |
-|----------|---------|
-| ... | ... |
+{{AGENT_ARTIFACTS_INPUT}}
+
+{{AGENT_ARTIFACTS_OUTPUT}}
+
+Agents do not write to artifacts owned by other roles. If you discover something
+that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
 
 ## completion checklist
 
