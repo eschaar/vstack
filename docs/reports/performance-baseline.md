@@ -1,8 +1,8 @@
 # Performance Baseline
 
-**Branch:** `feat/improved_cli`\
-**Date:** 2026-04-26\
-**Scope:** CLI hot-path operations — parser build, target resolution, registry build; post-backfill feature addition\
+**Branch:** `feat/workflow_update`\
+**Date:** 2026-05-06\
+**Scope:** CLI hot-path operations — parser build, target resolution, registry build; `.vstack/` project-scope directory (ADR-019); `vstack install`/`vstack init` command semantics (ADR-020); manifest relocation (ADR-021); selective install with `exclude:` filter (ADR-022); `artifacts.root` config override; `.vstack/.gitignore` seeding; agent `artifacts:` section generation; ADR terminology update (Option A/B → direct execution/orchestrated pipeline); roadmap cleanup and gh-issues skill MCP-first guidance\
 **Method:** `timeit.repeat` micro-benchmarks (Python 3.13.12, Linux)
 
 ______________________________________________________________________
@@ -71,7 +71,7 @@ ______________________________________________________________________
 ## Test Suite Wall Time
 
 ```
-342 tests passed in 4.24s (pytest, with coverage)
+428 tests passed in 5.90s (pytest, with coverage)
 ```
 
 Acceptable. No slow test outliers observed.
