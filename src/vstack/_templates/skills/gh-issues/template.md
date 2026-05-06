@@ -2,7 +2,10 @@
 
 # gh-issues — GitHub Issue Management
 
-Create, update, and manage GitHub issues using the `gh` CLI.
+Create, update, and manage GitHub issues. Prefer the GitHub MCP server tools when
+available in the current agent session (`create_issue`, `update_issue`, `list_issues`,
+etc.). Fall back to `gh` CLI when MCP tools are unavailable or when a required
+operation is not exposed by the MCP server.
 
 ## Out of scope
 
