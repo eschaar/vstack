@@ -291,6 +291,14 @@ class TestReadExclude:
         assert excluded_types == frozenset()
         assert excluded_names == {}
 
+    def test_raises_when_agents_excluded(self, tmp_path: Path) -> None:
+        """Configuring exclude: agents raises ValueError referencing ADR-022."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text("exclude:\n  agents: all\n", encoding="utf-8")
+        with pytest.raises(ValueError, match="ADR-022"):
+            CommandLineInterface._read_exclude(tmp_path / ".github")
+
     def test_returns_empty_when_exclude_key_absent(self, tmp_path: Path) -> None:
         """Returns empty sets when config.yaml has no exclude key."""
         vstack_dir = tmp_path / ".vstack"

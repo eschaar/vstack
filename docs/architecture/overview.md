@@ -225,25 +225,27 @@ ______________________________________________________________________
 All significant architectural decisions are recorded in `docs/architecture/adr/`.
 See individual files for context, decision, alternatives, and rationale.
 
-| ADR | Title                                                | Status                |
-| --- | ---------------------------------------------------- | --------------------- |
-| 001 | VS Code-native variant                               | accepted              |
-| 002 | Artifact naming and compatibility policy             | accepted              |
-| 003 | Backend-first verify                                 | accepted              |
-| 004 | Direct execution and orchestrated pipeline           | accepted              |
-| 005 | VS Code prompt format                                | accepted              |
-| 006 | No runtime dependency on external binaries           | accepted              |
-| 007 | Python runtime                                       | accepted              |
-| 008 | Agents over prompts                                  | accepted              |
-| 009 | 6-role agent model                                   | accepted              |
-| 010 | Artifact flow                                        | accepted              |
-| 011 | Skill restructure                                    | accepted              |
-| 012 | Flat templates and install-time generation           | accepted              |
-| 013 | Policy vs procedure boundary for instructions/skills | accepted              |
-| 014 | Manifest schema versioning and explicit upgrade gate | accepted              |
-| 015 | Conservative install-by-default                      | superseded by ADR-020 |
-| 016 | Atomic manifest writes                               | accepted              |
-| 017 | Checksum backfill on upgrade                         | accepted              |
-| 018 | Skill genericity boundary                            | accepted              |
-| 019 | `.vstack/` project-scope directory                   | accepted              |
-| 020 | `install` and `init` command semantics               | accepted              |
+| ADR | Title                                                | Status     | Notes                                   |
+| --- | ---------------------------------------------------- | ---------- | --------------------------------------- |
+| 001 | VS Code-native variant                               | accepted   |                                         |
+| 002 | Artifact naming and compatibility policy             | accepted   |                                         |
+| 003 | Backend-first verify                                 | accepted   |                                         |
+| 004 | Direct execution and orchestrated pipeline           | accepted   |                                         |
+| 005 | VS Code prompt format                                | accepted   |                                         |
+| 006 | No runtime dependency on external binaries           | accepted   |                                         |
+| 007 | Python runtime                                       | accepted   |                                         |
+| 008 | Agents over prompts                                  | accepted   |                                         |
+| 009 | 6-role agent model                                   | accepted   |                                         |
+| 010 | Artifact flow                                        | accepted   |                                         |
+| 011 | Skill restructure                                    | accepted   |                                         |
+| 012 | Flat templates and install-time generation           | accepted   |                                         |
+| 013 | Policy vs procedure boundary for instructions/skills | accepted   |                                         |
+| 014 | Manifest schema versioning and explicit upgrade gate | accepted   |                                         |
+| 015 | Conservative install-by-default                      | superseded | Superseded by ADR-020                   |
+| 016 | Atomic manifest writes                               | accepted   |                                         |
+| 017 | Checksum backfill on upgrade                         | accepted   |                                         |
+| 018 | Skill genericity boundary                            | accepted   |                                         |
+| 019 | `.vstack/` project-scope directory                   | accepted   | Introduced `.vstack/` directory         |
+| 020 | `install` and `init` command semantics               | accepted   | Breaking change; supersedes ADR-015     |
+| 021 | Config-driven artifact paths in agent config         | accepted   | Machine-readable artifact ownership     |
+| 022 | Selective exclude filter in `.vstack/config.yaml`    | accepted   | Agents cannot be excluded (atomic unit) |

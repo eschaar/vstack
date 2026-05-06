@@ -117,6 +117,12 @@ class CommandLineInterface:
             type_name = _CONFIG_TYPE_ALIAS.get(config_key)
             if type_name is None:
                 continue  # unknown key, ignore gracefully
+            if type_name == "agent":
+                raise ValueError(
+                    "exclude: agents is not supported. "
+                    "The six-role agent chain is an atomic unit and cannot be partially "
+                    "excluded. See ADR-022."
+                )
             if isinstance(value, str) and value.strip().lower() == "all":
                 excluded_types.add(type_name)
             elif isinstance(value, list):
