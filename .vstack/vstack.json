@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-05-06T19:10:51.465944+00:00",
+  "installed_at": "2026-05-06T20:17:15.747015+00:00",
   "artifacts": {
     "skills": [
       {
@@ -142,7 +142,7 @@
         "name": "gh-issues",
         "file": "skills/gh-issues/SKILL.md",
         "version": "20260502025",
-        "checksum": "36d07b676604a4f698369f8bf6b65b43f5256f676fd56664717ff2007da126f0",
+        "checksum": "7a2b9b7463a40436fe77c77d066dd455ddb4abef877726ba041b89cbaf030280",
         "checksum_algorithm": "sha256"
       },
       {

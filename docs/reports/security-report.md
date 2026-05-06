@@ -1,8 +1,8 @@
 # Security Report
 
-**Branch:** `feat/improved_cli`\
-**Date:** 2026-04-26\
-**Scope:** Full source tree — static analysis (bandit) + dependency audit (pip-audit); security fixes for S-001 (assert guards) and S-002 (subprocess nosec)\
+**Branch:** `feat/workflow_update`\
+**Date:** 2026-05-06\
+**Scope:** Full source tree — `.vstack/` project-scope directory (ADR-019); `vstack install`/`vstack init` command semantics (ADR-020); manifest relocation from `.github/` to `.vstack/` (ADR-021); selective install with `exclude:` filter (ADR-022); `artifacts.root` config override; `.vstack/.gitignore` seeding; agent `artifacts:` section generation; ADR terminology update (Option A/B → direct execution/orchestrated pipeline); roadmap cleanup and gh-issues skill MCP-first guidance. Static analysis (bandit) + dependency audit (pip-audit); security fixes for S-001 (assert guards) and S-002 (subprocess nosec)\
 **Method:** OWASP Top 10 + STRIDE (static analysis on a local CLI tool; no network surface, no auth surface, no DB)
 
 ______________________________________________________________________
