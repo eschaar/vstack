@@ -73,7 +73,7 @@ owns the artifact hand-off contract per ADR-010.
 1. **Use a templating mechanism to inject artifact paths at install time** — considered:
    would allow per-consumer customisation. Not adopted now because it adds generator
    complexity. Revisit if consumer customisation becomes a first-class requirement
-   (see Option B pipeline roadmap item).
+   (see orchestrated pipeline roadmap item).
 
 ## rationale
 
@@ -85,16 +85,16 @@ Agents are already the correct place for workflow-specific context: they declare
 scope, artifact contracts, and gate moments. Moving project-specific paths there makes the
 coupling explicit, inspectable, and maintainable in one place.
 
-## impact on Option B pipeline
+## impact on orchestrated pipeline
 
-In Option B, each pipeline stage has declared input and output artifacts. This decision
-aligns the current Option A model with that design: agents declare artifact contracts,
-skills are stateless procedures. When Option B is implemented, the agent artifact
-declarations become the pipeline stage contracts without requiring skill changes.
+In the orchestrated pipeline, each pipeline stage has declared input and output artifacts.
+This decision aligns direct execution with that design: agents declare artifact contracts,
+skills are stateless procedures. When the orchestrated pipeline is implemented, the agent
+artifact declarations become the pipeline stage contracts without requiring skill changes.
 
 ## references
 
 - [ADR-009: Role model](009-role-model.md)
 - [ADR-010: Artifact hand-off pipeline](010-artifact-flow.md)
 - [ADR-013: Policy vs procedure boundary](013-instructions-vs-skills-boundary.md)
-- [ADR-004: Option A to B pipeline](004-option-a-to-b-pipeline.md)
+- [ADR-004: Direct execution and orchestrated pipeline](004-option-a-to-b-pipeline.md)

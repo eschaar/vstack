@@ -121,17 +121,17 @@ Handoffs you own:
 
 ## artifacts you use
 
-<!-- This section will be generated from config.yaml artifacts block in a future release. -->
+
 
 ### output
 
-| Artifact |
-| --- |
-| `docs/product/vision.md` |
+| Artifact                       |
+| ------------------------------ |
+| `docs/product/vision.md`       |
 | `docs/product/requirements.md` |
-| `docs/product/roadmap.md` |
-| `docs/product/changes/*.md` |
-| `docs/product/issues/*.md` |
+| `docs/product/roadmap.md`      |
+| `docs/product/changes/*.md`    |
+| `docs/product/issues/*.md`     |
 
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
@@ -155,4 +155,4 @@ that requires changes to upstream artifacts, flag it and trigger a reverse hando
 - `@#gh-issues` — create and manage GitHub Issues for requirements, tasks, and user stories
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"product","artifact_type":"agent","artifact_version":"20260503021","generator":"vstack","vstack_version":"2.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"product","artifact_type":"agent","artifact_version":"20260503021","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

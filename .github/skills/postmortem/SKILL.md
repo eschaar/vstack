@@ -58,7 +58,7 @@ Before writing, confirm inputs are available:
 > - Severity and duration
 > - RCA document path (or summary if RCA is not yet written)
 > - Linked issue file path (optional)
-
+>
 > **Output path:** Where should the post-mortem be written?
 >
 > Default: `docs/postmortems/{id}-{slug}-postmortem.md`
@@ -124,11 +124,11 @@ See [RCA document]({id}-{slug}-rca.md) for the full technical analysis.
 
 Carry over action items from the RCA, categorised and owned:
 
-| Item | Category | Owner | Due | Status |
-| --- | --- | --- | --- | --- |
-| | Prevention | | | |
-| | Detection | | | |
-| | Response | | | |
+| Item | Category   | Owner | Due | Status |
+| ---- | ---------- | ----- | --- | ------ |
+|      | Prevention |       |     |        |
+|      | Detection  |       |     |        |
+|      | Response   |       |     |        |
 
 ## Step 6: Write the Post-Mortem Document
 
@@ -183,4 +183,4 @@ Status:       Draft — ready for team review
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"postmortem","artifact_type":"skill","artifact_version":"20260503001","generator":"vstack","vstack_version":"2.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"postmortem","artifact_type":"skill","artifact_version":"20260503001","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

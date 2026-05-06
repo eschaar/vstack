@@ -111,18 +111,16 @@ and wait for explicit user routing decisions.
 
 ## artifacts you use
 
-<!-- This section will be generated from config.yaml artifacts block in a future release. -->
-
 ### input
 
-| Artifact |
-| --- |
+| Artifact       |
+| -------------- |
 | `docs/**/*.md` |
 
 ### output
 
-| Artifact | Notes |
-| --- | --- |
+| Artifact             | Notes                                      |
+| -------------------- | ------------------------------------------ |
 | `docs/releases/*.md` | includes release notes and sign-off record |
 
 Agents do not write to artifacts owned by other roles. If you discover something
@@ -148,4 +146,4 @@ that requires changes to upstream artifacts, flag it and trigger a reverse hando
 - `@#gh-issues` — create and manage GitHub Issues for tracking work and bug reports
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"release","artifact_type":"agent","artifact_version":"20260503020","generator":"vstack","vstack_version":"2.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"release","artifact_type":"agent","artifact_version":"20260503020","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

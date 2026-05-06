@@ -151,21 +151,19 @@ what work is needed:
 
 ## artifacts you use
 
-<!-- This section will be generated from config.yaml artifacts block in a future release. -->
-
 ### input
 
-| Artifact |
-| --- |
+| Artifact                    |
+| --------------------------- |
 | `docs/architecture/**/*.md` |
 
 ### output
 
-| Artifact | Notes |
-| --- | --- |
-| `docs/design/overview.md` | |
-| `docs/design/ux.md` | frontend/fullstack scope only |
-| `docs/design/**/*.md` | additional detail docs per component, model, system, or domain (when scope warrants it) |
+| Artifact                  | Notes                                                                                   |
+| ------------------------- | --------------------------------------------------------------------------------------- |
+| `docs/design/overview.md` |                                                                                         |
+| `docs/design/ux.md`       | frontend/fullstack scope only                                                           |
+| `docs/design/**/*.md`     | additional detail docs per component, model, system, or domain (when scope warrants it) |
 
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
@@ -187,4 +185,4 @@ that requires changes to upstream artifacts, flag it and trigger a reverse hando
 - `@#openapi` — OpenAPI 3.1 spec writing and review
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"designer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"2.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"designer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

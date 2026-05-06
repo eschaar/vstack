@@ -127,6 +127,6 @@ clearly communicates "regenerate artifacts".
 
 ## impact on future orchestrated pipeline
 
-The orchestrated pipeline (Option B, ADR-004) would invoke `vstack init` to ensure
+The orchestrated pipeline (ADR-004) would invoke `vstack init` to ensure
 Copilot artifacts are current before executing role stages, not `vstack install`.
 This is consistent with the idempotent, side-effect-free intent of `init`.

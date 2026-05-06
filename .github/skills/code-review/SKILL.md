@@ -217,4 +217,4 @@ Confidence: [HIGH/MEDIUM/LOW — explain if not HIGH]
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"code-review","artifact_type":"skill","artifact_version":"20260421007","generator":"vstack","vstack_version":"2.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"code-review","artifact_type":"skill","artifact_version":"20260421007","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

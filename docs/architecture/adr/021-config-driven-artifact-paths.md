@@ -16,7 +16,7 @@ instructions and the design documentation.
 This created two problems:
 
 1. **No machine-readable source of truth.** Tooling, validators, and future
-   pipeline stages (ADR-004, Option B) had no structured way to discover which
+   orchestrated pipeline stages (ADR-004) had no structured way to discover which
    agent produces or consumes which paths without parsing Markdown.
 
 1. **Drift risk.** When an artifact path changes, the update had to be applied
@@ -87,7 +87,7 @@ subdirectories.
 Paths remain in `template.md` prose. No schema change required.
 
 Rejected: paths stay human-only, untestable, and invisible to any future
-automation or Option B pipeline tooling.
+automation or orchestrated pipeline tooling.
 
 ### 2. Separate paths manifest file
 
@@ -110,10 +110,9 @@ vstack-internal.
 Placing `artifacts:` in `config.yaml` is consistent with the existing pattern:
 `version`, `handoffs`, and other vstack-internal fields already live in
 `config.yaml` without being emitted. The field is co-located with the agent it
-describes, machine-readable, and immediately useful for future Option B pipeline
-validation without requiring a separate registry file.
+describes, machine-readable, and immediately useful for orchestrated pipeline validation without requiring a separate registry file.
 
-## impact on Option B pipeline
+## impact on orchestrated pipeline
 
 ADR-004 describes a future sequential multi-agent pipeline where each stage's
 output feeds the next. The `artifacts:` schema directly enables this:
@@ -123,5 +122,5 @@ output feeds the next. The `artifacts:` schema directly enables this:
 - `dir` and `ARTIFACTS_DOCS_ROOT` together provide the base path for file
   resolution without parsing agent prose.
 
-No changes to Option B design are needed; this ADR makes `config.yaml` the
-structured input source that Option B pipeline tooling will consume.
+No changes to the orchestrated pipeline design are needed; this ADR makes `config.yaml` the
+structured input source that orchestrated pipeline tooling will consume.

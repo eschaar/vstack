@@ -146,4 +146,4 @@ Current mode unchanged: <mode>
 - [ ] User confirmation/status returned in deterministic format
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"concise","artifact_type":"skill","artifact_version":"20260421008","generator":"vstack","vstack_version":"2.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"concise","artifact_type":"skill","artifact_version":"20260421008","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

@@ -80,7 +80,7 @@ Review what changed on this branch vs the base branch:
 ```bash
 git log origin/main..HEAD --oneline
 git diff origin/main --stat | head -30
-````
+```
 
 Identify:
 
@@ -146,4 +146,4 @@ Prepend a new entry at the top of `CHANGELOG.md`:
 Keep existing entries intact.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"release-notes","artifact_type":"skill","artifact_version":"20260502014","generator":"vstack","vstack_version":"2.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"release-notes","artifact_type":"skill","artifact_version":"20260502014","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

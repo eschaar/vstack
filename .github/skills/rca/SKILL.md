@@ -120,14 +120,14 @@ Evidence:
 
 List all conditions that made this possible — not just the trigger:
 
-| Category | Factor |
-| --- | --- |
-| Code / logic | |
-| Configuration | |
-| Deployment | |
-| Monitoring | |
-| Process | |
-| External | |
+| Category      | Factor |
+| ------------- | ------ |
+| Code / logic  |        |
+| Configuration |        |
+| Deployment    |        |
+| Monitoring    |        |
+| Process       |        |
+| External      |        |
 
 ## Step 4: Detection
 
@@ -152,11 +152,11 @@ Time to resolve:   [N minutes after detection]
 
 Action items must be specific, owned, and time-bound:
 
-| Item | Category | Owner | Due |
-| --- | --- | --- | --- |
-| | Prevention | | |
-| | Detection | | |
-| | Response | | |
+| Item | Category   | Owner | Due |
+| ---- | ---------- | ----- | --- |
+|      | Prevention |       |     |
+|      | Detection  |       |     |
+|      | Response   |       |     |
 
 ## Step 7: Write the RCA Document
 
@@ -206,4 +206,4 @@ Status:      Draft — ready for review
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"rca","artifact_type":"skill","artifact_version":"20260503001","generator":"vstack","vstack_version":"2.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"rca","artifact_type":"skill","artifact_version":"20260503001","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

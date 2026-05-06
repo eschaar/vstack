@@ -143,23 +143,21 @@ what work is needed:
 
 ## artifacts you use
 
-<!-- This section will be generated from config.yaml artifacts block in a future release. -->
-
 ### input
 
-| Artifact |
-| --- |
-| `docs/product/**/*.md` |
+| Artifact                    |
+| --------------------------- |
+| `docs/product/**/*.md`      |
 | `docs/architecture/**/*.md` |
-| `docs/design/**/*.md` |
+| `docs/design/**/*.md`       |
 
 ### output
 
-| Artifact | Notes |
-| --- | --- |
-| `src/**/*` | |
-| `tests/**/*` | |
-| `issues/{id}-{slug}-rca.md` | when working on an issue |
+| Artifact                           | Notes                                  |
+| ---------------------------------- | -------------------------------------- |
+| `src/**/*`                         |                                        |
+| `tests/**/*`                       |                                        |
+| `issues/{id}-{slug}-rca.md`        | when working on an issue               |
 | `issues/{id}-{slug}-postmortem.md` | when stakeholder impact is significant |
 
 Agents do not write to artifacts owned by other roles. If you discover something
@@ -204,4 +202,4 @@ that requires changes to upstream artifacts, flag it and trigger a reverse hando
 - `@#rancher` — Rancher and Fleet multi-cluster operations and governance
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"engineer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"2.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"engineer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
