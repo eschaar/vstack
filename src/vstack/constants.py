@@ -16,7 +16,7 @@ TEMPLATES_ROOT = Path(str(_PACKAGE_ROOT / "_templates"))
 
 # Default root directory for all role artifacts. Individual agent configs specify
 # only the subdirectory via ``artifacts.dir``; this root is applied at render time.
-# Override via ``.vstack/config.yaml`` once global config support is added.
+# Override per project via ``artifacts.root`` in ``.vstack/config.yaml``.
 ARTIFACTS_DOCS_ROOT = "docs"
 
 _SEMVER_TAG_RE = re.compile(r"^\d+\.\d+\.\d+$")

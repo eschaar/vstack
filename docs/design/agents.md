@@ -100,9 +100,9 @@ artifacts:
 | `output` `path` with `./` prefix                      | strip `./`, use remainder verbatim (e.g. `./src/**/*` → `src/**/*`) |
 
 `ARTIFACTS_DOCS_ROOT` defaults to `docs`. It is a global constant in
-`src/vstack/constants.py` and will be overridable via `.vstack/config.yaml` in a
-future release. Individual agent configs must never embed the root prefix; set
-only the subdirectory in `dir`.
+`src/vstack/constants.py` and can be overridden per project via `artifacts.root`
+in `.vstack/config.yaml`. Individual agent configs must never embed the root
+prefix; set only the subdirectory in `dir`.
 
 ### field reference
 

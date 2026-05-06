@@ -351,10 +351,8 @@ class TestInstallCommand:
         gitignore = tmp_path / ".vstack" / ".gitignore"
         assert gitignore.exists()
         content = gitignore.read_text(encoding="utf-8")
-        assert "*\n" in content
-        assert "!.gitignore\n" in content
-        assert "!config.yaml\n" in content
-        assert "!vstack.json\n" in content
+        assert "tmp/\n" in content
+        assert "*\n" not in content
 
     def test_write_vstack_gitignore_overwrites_existing(self, tmp_path: Path) -> None:
         """_write_vstack_gitignore replaces any existing .vstack/.gitignore."""
