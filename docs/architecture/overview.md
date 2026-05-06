@@ -230,7 +230,7 @@ See individual files for context, decision, alternatives, and rationale.
 | 001 | VS Code-native variant                               | accepted              |
 | 002 | Artifact naming and compatibility policy             | accepted              |
 | 003 | Backend-first verify                                 | accepted              |
-| 004 | Option A to B pipeline                               | accepted              |
+| 004 | Direct execution and orchestrated pipeline           | accepted              |
 | 005 | VS Code prompt format                                | accepted              |
 | 006 | No runtime dependency on external binaries           | accepted              |
 | 007 | Python runtime                                       | accepted              |

@@ -1,49 +1,50 @@
 # vstack — roadmap
 
 > Maintained by: **product** role\
-> Last updated: 2026-05-02
+> Last updated: 2026-05-06
 
 ______________________________________________________________________
 
 ## feature status table
 
-| Feature                                  | Status      | Notes                                                                                                   |
-| ---------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------- |
-| foundation                               | shipped     | Core template-driven install model is in place                                                          |
-| backend-first verification               | shipped     | Verify/inspect focus on contracts, observability, security                                              |
-| VS Code agent migration                  | shipped     | Native agent output format implemented                                                                  |
-| role model + doc restructure             | shipped     | 6-role model and docs baseline established                                                              |
-| new skill scaffolding                    | shipped     | 42-skill set with canonical naming                                                                      |
-| agent skill wiring                       | shipped     | Role-to-skill mapping and handoffs are present                                                          |
-| CLI modularisation (v2.0.0)              | shipped     | 12 focused CLI modules; BaseCommand + CommandContext contract                                           |
-| manifest package (v2.0.0)                | shipped     | Dedicated `manifest/` package; atomic writes (ADR-016)                                                  |
-| mypy type checking (v2.0.0)              | shipped     | Full mypy coverage enforced in CI; 100% test coverage gate                                              |
-| manifest schema versioning (v2.0.0)      | shipped     | `manifest_version: 2`; upgrade path via `manifest upgrade` (ADR-014)                                    |
-| checksum backfill (v2.0.0)               | shipped     | `manifest upgrade --backfill` adds SHA-256 for VSTACK-META-tagged files (ADR-017)                       |
-| conservative install (v2.0.0)            | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015, superseded by ADR-020)               |
-| dry-run install                          | shipped     | `vstack install --dry-run` previews actions; type/name selectors in summary                             |
-| project-scope directory (v3.0.0)         | shipped     | `.vstack/` directory: `config.yaml`, manifest, delta templates (ADR-019)                                |
-| install/init command semantics (v3.0.0)  | shipped     | `install` = first-run setup; `init` = idempotent CI regeneration (ADR-020, breaking change)             |
-| manifest relocation (v3.0.0)             | shipped     | `vstack.json` moves from `.github/` to `.vstack/`; migration via `manifest upgrade` (ADR-014)           |
-| workflow contract source-of-truth        | candidate   | Defer until current template expansion is complete; then add machine-readable role workflow contract    |
-| agent hooks support                      | candidate   | Generate `.github/hooks/<name>.json` from vstack templates; enforce quality gates at session boundaries |
-| Copilot code review support              | candidate   | Add templates and policy defaults for requesting/configuring Copilot code review                        |
-| GitHub tasks MCP-first mode              | candidate   | Add task profile for issues/PR/branch operations with MCP-first execution and safe fallback             |
-| Copilot Spaces context pack              | candidate   | Add structured context packaging and refresh workflow for Copilot Spaces                                |
-| content exclusion baseline               | candidate   | Ship policy templates/checklists for Copilot content exclusion at repo/org/enterprise scope             |
-| MCP governance baseline                  | candidate   | Standardize MCP registry allowlist and server-access policy defaults                                    |
-| Copilot Memory governance                | candidate   | Add memory enablement, review, and curation policy guidance for teams                                   |
-| usage-based billing guardrails           | candidate   | Add budget/allowance/monitoring playbooks for Copilot metered usage                                     |
-| Copilot admin observability pack         | candidate   | Define operational KPI and reporting cadence for adoption and usage dashboards                          |
-| VS Code customization starter pack       | candidate   | Add installable templates for custom agents, instructions, prompts, and agent customization workflow    |
-| template overlays + selective install    | candidate   | Combine upstream and company templates with source-priority rules and install by artifact type          |
-| optional orchestrated role pipeline      | candidate   | Optional future model, only if coordination bottlenecks appear                                          |
-| multi-IDE support (IntelliJ first)       | candidate   | Not planned before v1 stabilization                                                                     |
-| heavy agent runtime framework            | not planned | Keeps runtime lightweight and transparent                                                               |
-| cloud control plane dependency           | not planned | Keeps operation local/offline-capable                                                                   |
-| VS Code extension packaging              | not planned | Not required for current install model                                                                  |
-| browser automation as default dependency | not planned | Backend/microservice-first remains default                                                              |
-| install target directory override        | not planned | Won't implement unless a concrete tool incompatibility with `.github/` arises                           |
+| Feature                                  | Status      | Notes                                                                                                       |
+| ---------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------- |
+| foundation                               | shipped     | Core template-driven install model is in place                                                              |
+| backend-first verification               | shipped     | Verify/inspect focus on contracts, observability, security                                                  |
+| VS Code agent migration                  | shipped     | Native agent output format implemented                                                                      |
+| role model + doc restructure             | shipped     | 6-role model and docs baseline established                                                                  |
+| new skill scaffolding                    | shipped     | 42-skill set with canonical naming                                                                          |
+| agent skill wiring                       | shipped     | Role-to-skill mapping and handoffs are present                                                              |
+| CLI modularisation (v2.0.0)              | shipped     | 12 focused CLI modules; BaseCommand + CommandContext contract                                               |
+| manifest package (v2.0.0)                | shipped     | Dedicated `manifest/` package; atomic writes (ADR-016)                                                      |
+| mypy type checking (v2.0.0)              | shipped     | Full mypy coverage enforced in CI; 100% test coverage gate                                                  |
+| manifest schema versioning (v2.0.0)      | shipped     | `manifest_version: 2`; upgrade path via `manifest upgrade` (ADR-014)                                        |
+| checksum backfill (v2.0.0)               | shipped     | `manifest upgrade --backfill` adds SHA-256 for VSTACK-META-tagged files (ADR-017)                           |
+| conservative install (v2.0.0)            | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015, superseded by ADR-020)                   |
+| dry-run install                          | shipped     | `vstack install --dry-run` previews actions; type/name selectors in summary                                 |
+| project-scope directory (v3.0.0)         | shipped     | `.vstack/` directory: `config.yaml`, manifest, delta templates (ADR-019)                                    |
+| install/init command semantics (v3.0.0)  | shipped     | `install` = first-run setup; `init` = idempotent CI regeneration (ADR-020, breaking change)                 |
+| manifest relocation (v3.0.0)             | shipped     | `vstack.json` moves from `.github/` to `.vstack/`; migration via `manifest upgrade` (ADR-014)               |
+| workflow contract source-of-truth        | candidate   | Defer until current template expansion is complete; then add machine-readable role workflow contract        |
+| agent hooks support                      | candidate   | Generate `.github/hooks/<name>.json` from vstack templates; enforce quality gates at session boundaries     |
+| Copilot code review support              | candidate   | Add templates and policy defaults for requesting/configuring Copilot code review                            |
+| GitHub tasks MCP-first mode              | candidate   | Add task profile for issues/PR/branch operations with MCP-first execution and safe fallback                 |
+| Copilot Spaces context pack              | candidate   | Add structured context packaging and refresh workflow for Copilot Spaces                                    |
+| content exclusion baseline               | candidate   | Ship policy templates/checklists for Copilot content exclusion at repo/org/enterprise scope                 |
+| MCP governance baseline                  | candidate   | Standardize MCP registry allowlist and server-access policy defaults                                        |
+| Copilot Memory governance                | candidate   | Add memory enablement, review, and curation policy guidance for teams                                       |
+| usage-based billing guardrails           | candidate   | Add budget/allowance/monitoring playbooks for Copilot metered usage                                         |
+| Copilot admin observability pack         | candidate   | Define operational KPI and reporting cadence for adoption and usage dashboards                              |
+| VS Code customization starter pack       | candidate   | Add installable templates for custom agents, instructions, prompts, and agent customization workflow        |
+| selective install (v3.0.0)               | shipped     | Per-type and per-name exclusions via `exclude:` in `.vstack/config.yaml`; agents always installed (ADR-022) |
+| template overlays                        | candidate   | Combine upstream and company templates with source-priority rules and install by artifact type              |
+| optional orchestrated role pipeline      | candidate   | Optional future model, only if coordination bottlenecks appear                                              |
+| multi-IDE support (IntelliJ first)       | candidate   | Not planned before v1 stabilization                                                                         |
+| heavy agent runtime framework            | not planned | Keeps runtime lightweight and transparent                                                                   |
+| cloud control plane dependency           | not planned | Keeps operation local/offline-capable                                                                       |
+| VS Code extension packaging              | not planned | Not required for current install model                                                                      |
+| browser automation as default dependency | not planned | Backend/microservice-first remains default                                                                  |
+| install target directory override        | not planned | Won't implement unless a concrete tool incompatibility with `.github/` arises                               |
 
 ______________________________________________________________________
 
@@ -323,26 +324,32 @@ Planned direction:
 
 Ref: [GitHub — Customize Copilot for your project](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-copilot-overview)
 
-### template overlays + selective install [candidate]
+### selective install [shipped — v3.0.0]
+
+- Per-type exclusion via `exclude: <type>: all` in `.vstack/config.yaml` removes an entire artifact type from every install and init run.
+- Per-name exclusion via `exclude: <type>: [name, …]` installs all artifacts of that type except the listed names.
+- Agents are always installed; the six-role chain is treated as an atomic unit (ADR-022).
+- The filter composes with `--only`: type exclusions subtract from the effective install set without overriding an explicit inclusion.
+- Config is read once per run and requires no CLI flag repetition in CI.
+
+### template overlays [candidate]
 
 Relevance:
 
 - Teams often need a company-specific Copilot stack rather than the default vstack set.
 - A practical model is: keep upstream vstack as baseline, then layer private templates and extensions on top.
-- Adoption is blocked when teams cannot control which artifact types are installed (`agents`, `skills`, `prompts`, `instructions`) or which source wins on conflicts.
+- Adoption is blocked when teams cannot control which source wins on conflicts between upstream and company-specific artifacts.
 
 Planned direction:
 
 - Add support for multiple template sources in priority order (for example: upstream vstack first, company repo second).
 - Define deterministic conflict resolution rules: `prefer-local`, `prefer-upstream`, and explicit `replace`/`extend` behavior per artifact.
-- Add install selectors for coarse-grained artifact types (`--types agents,skills,prompts,instructions`) and optional fine-grained name selectors.
 - Add install profiles in config/manifest (for example: `baseline`, `company`, `minimal`) to make repeat installs deterministic.
 - Keep checksum/manifests source-aware so updates can be applied safely per origin.
 
 Initial UX target:
 
 - `vstack install --source upstream=... --source company=... --prefer company`
-- `vstack install --types agents,skills`
 - `vstack install --profile company`
 
 ### heavy agent runtime framework [not planned]

@@ -228,7 +228,7 @@ With the analysis complete, delegate writing to the dedicated skills:
    The engineer role owns this artifact. Pass: incident ID, issue reference (if known),
    and the confirmed output path.
 
-2. Invoke `@#postmortem` to produce the stakeholder-facing post-mortem.
+1. Invoke `@#postmortem` to produce the stakeholder-facing post-mortem.
    Pass: incident ID, RCA path, and the confirmed output path
    (default: `docs/postmortems/{id}-{slug}-postmortem.md`).
 
@@ -250,4 +250,4 @@ Next: invoke @#rca and @#postmortem to produce written artifacts.
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"incident","artifact_type":"skill","artifact_version":"20260503002","generator":"vstack","vstack_version":"2.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"incident","artifact_type":"skill","artifact_version":"20260503002","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

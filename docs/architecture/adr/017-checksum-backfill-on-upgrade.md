@@ -186,7 +186,7 @@ entries.
 ## impact on future orchestrated pipeline
 
 No direct impact. Checksum backfill is a manifest-maintenance operation. It would not
-change if a multi-role orchestration layer is introduced in Option B.
+change if a multi-role orchestration layer is introduced.
 
 ______________________________________________________________________
 

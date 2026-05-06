@@ -131,21 +131,19 @@ what work is needed:
 
 ## artifacts you use
 
-<!-- This section will be generated from config.yaml artifacts block in a future release. -->
-
 ### input
 
-| Artifact |
-| --- |
+| Artifact                    |
+| --------------------------- |
 | `docs/architecture/**/*.md` |
-| `docs/design/**/*.md` |
+| `docs/design/**/*.md`       |
 
 ### output
 
-| Artifact |
-| --- |
+| Artifact               |
+| ---------------------- |
 | `docs/reports/**/*.md` |
-| `tests/**/*` |
+| `tests/**/*`           |
 
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
@@ -181,4 +179,4 @@ that requires changes to upstream artifacts, flag it and trigger a reverse hando
 - `@#rancher` — Rancher/Fleet configuration and multi-cluster governance review
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"tester","artifact_type":"agent","artifact_version":"20260503026","generator":"vstack","vstack_version":"2.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"tester","artifact_type":"agent","artifact_version":"20260503026","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

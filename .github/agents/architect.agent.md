@@ -137,20 +137,18 @@ what work is needed:
 
 ## artifacts you use
 
-<!-- This section will be generated from config.yaml artifacts block in a future release. -->
-
 ### input
 
-| Artifact |
-| --- |
+| Artifact               |
+| ---------------------- |
 | `docs/product/**/*.md` |
 
 ### output
 
-| Artifact |
-| --- |
+| Artifact                        |
+| ------------------------------- |
 | `docs/architecture/overview.md` |
-| `docs/architecture/adr/*.md` |
+| `docs/architecture/adr/*.md`    |
 
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
@@ -174,4 +172,4 @@ that requires changes to upstream artifacts, flag it and trigger a reverse hando
 - `@#gdpr` — privacy by design and data processing architecture review
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"architect","artifact_type":"agent","artifact_version":"20260503022","generator":"vstack","vstack_version":"2.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"architect","artifact_type":"agent","artifact_version":"20260503022","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
