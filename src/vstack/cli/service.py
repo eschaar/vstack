@@ -47,7 +47,7 @@ class CommandService:
             artifacts_root: Root directory for agent artifact paths.  Passed
                 through to :class:`~vstack.agents.generator.AgentGenerator`.
                 Defaults to :data:`~vstack.constants.ARTIFACTS_DOCS_ROOT`;
-                override from ``.vstack/config.yaml`` ``artifacts_root:``.
+                override via ``artifacts.root`` in ``.vstack/config.yaml``.
         """
         self.root = templates_root
         self.generators: list[GenericArtifactGenerator] = [

@@ -107,7 +107,7 @@ vstack install --global
 
 `vstack install` is the first-run command: it seeds `.vstack/config.yaml` in your project (never overwrites), then generates `.github/` artifacts from templates. `vstack init` re-runs generation idempotently — safe to use in CI after upgrading vstack.
 
-By default, `vstack install` preserves existing unmanaged files and local edits to tracked files by comparing the current file contents with the SHA-256 checksum recorded in `vstack.json`. Use `--adopt-name <name>` to start tracking one existing unmanaged file without overwriting it. `vstack uninstall` also preserves locally modified tracked files unless you explicitly pass `--force` or `--force-name <name>`. Use `vstack manifest status --target ...` (or `vstack status --target ...`) to see what still matches the manifest. If a legacy manifest schema is detected, run `vstack manifest upgrade --target ...` first.
+By default, `vstack install` preserves existing unmanaged files and local edits to tracked files by comparing the current file contents with the SHA-256 checksum recorded in `.vstack/vstack.json`. Use `--adopt-name <name>` to start tracking one existing unmanaged file without overwriting it. `vstack uninstall` also preserves locally modified tracked files unless you explicitly pass `--force` or `--force-name <name>`. Use `vstack manifest status --target ...` (or `vstack status --target ...`) to see what still matches the manifest. If a legacy manifest schema is detected, run `vstack manifest upgrade --target ...` first.
 
 To skip artifact types or individual artifacts you do not need, edit `.vstack/config.yaml`:
 

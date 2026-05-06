@@ -62,7 +62,7 @@ class AgentGenerator(GenericArtifactGenerator):
                 When ``None``, the built-in package template root is used.
             artifacts_root: Root directory for all agent artifacts.  Defaults
                 to :data:`~vstack.constants.ARTIFACTS_DOCS_ROOT`.  Override
-                via ``.vstack/config.yaml`` ``artifacts_root:`` to relocate
+                via ``artifacts.root`` in ``.vstack/config.yaml`` to relocate
                 generated artifact paths (e.g. ``"documentation"`` instead of
                 ``"docs"``).
         """
