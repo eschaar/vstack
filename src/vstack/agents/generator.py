@@ -54,6 +54,7 @@ class AgentGenerator(GenericArtifactGenerator):
         templates_root: Path | None = None,
         *,
         artifacts_root: str = ARTIFACTS_DOCS_ROOT,
+        workflow_stages: list[dict] | None = None,
     ) -> None:
         """Create an agent generator bound to *templates_root*.
 
@@ -65,18 +66,25 @@ class AgentGenerator(GenericArtifactGenerator):
                 via ``artifacts.root`` in ``.vstack/config.yaml`` to relocate
                 generated artifact paths (e.g. ``"documentation"`` instead of
                 ``"docs"``).
+            workflow_stages: Ordered list of pipeline stage dicts read from
+                ``workflow.stages`` in ``.vstack/config.yaml``.  Each dict has
+                ``role``, ``gate``, and ``handoff_prompt`` keys.  When ``None``
+                or empty the generator falls back to v3 behaviour: a generic
+                handoff label without an explicit ``agent:`` target.
         """
         super().__init__(
             AGENT_TYPE, templates_root if templates_root is not None else TEMPLATES_ROOT
         )
         self.artifacts_root = artifacts_root
+        self.workflow_stages: list[dict] = workflow_stages or []
 
     def template_partials(self, tmpl_dir: Path) -> dict[str, str]:
         """Inject per-template artifact placeholder tokens.
 
-        Returns a dict with four keys:
+        Returns a dict with five keys:
         ``AGENT_ARTIFACTS_INPUT``, ``AGENT_ARTIFACTS_OUTPUT``,
-        ``AGENT_ARTIFACTS_INPUT_COMMENTS``, ``AGENT_ARTIFACTS_OUTPUT_COMMENTS``.
+        ``AGENT_ARTIFACTS_INPUT_COMMENTS``, ``AGENT_ARTIFACTS_OUTPUT_COMMENTS``,
+        and ``AGENT_ARTIFACTS_BASELINE``.
         """
         from vstack.frontmatter import FrontmatterParser
 
@@ -104,38 +112,168 @@ class AgentGenerator(GenericArtifactGenerator):
         if not isinstance(raw_outputs, list):
             raw_outputs = []
 
-        input_entries = [
-            {"path": f"{doc_root}/{item}", "notes": ""}
+        input_entries: list[dict[str, str | bool]] = [
+            {"path": f"{doc_root}/{item}", "notes": "", "baseline": False}
             for item in raw_inputs
             if isinstance(item, str)
         ]
-        output_entries = self._resolve_output_entries(raw_outputs, doc_root, agent_dir)
+        output_entries = self._resolve_output_entries(raw_outputs, agent_dir)
+        baseline_entries = [e for e in output_entries if e.get("baseline")]
 
         return {
             "AGENT_ARTIFACTS_INPUT": self._build_section("input", input_entries),
             "AGENT_ARTIFACTS_OUTPUT": self._build_section("output", output_entries),
             "AGENT_ARTIFACTS_INPUT_COMMENTS": str(artifacts.get("input_comments", "") or ""),
             "AGENT_ARTIFACTS_OUTPUT_COMMENTS": str(artifacts.get("output_comments", "") or ""),
+            "AGENT_ARTIFACTS_BASELINE": self._build_baseline_section(baseline_entries),
         }
 
-    @staticmethod
+    def _extract_defaults(self, config: dict) -> dict:
+        """Return the parsed ``defaults:`` block from *config*, or an empty dict.
+
+        The ``defaults:`` value may be stored as a raw indented YAML string by
+        the minimal frontmatter parser.  This helper re-parses it when needed
+        and always returns a plain dict.
+
+        :param config: Raw config dict as returned by ``load_artifact_config``.
+        :returns: Parsed ``defaults`` dict, or ``{}`` when absent or unparseable.
+        """
+        from vstack.frontmatter import FrontmatterParser
+
+        defaults = config.get("defaults") or {}
+        if isinstance(defaults, str) and defaults.strip():
+            dedented = "\n".join(
+                line[2:] if line.startswith("  ") else line for line in defaults.split("\n")
+            )
+            defaults = FrontmatterParser.parse_yaml(dedented) or {}
+        return defaults if isinstance(defaults, dict) else {}
+
+    def load_artifact_config(self, tmpl_dir: Path) -> dict:
+        """Load agent config and inject workflow-derived ``handoffs`` into the result.
+
+        Extends :meth:`~vstack.artifacts.generator.GenericArtifactGenerator.load_artifact_config`
+        by extracting the ``defaults:`` block from the agent's ``config.yaml``,
+        resolving the handoff prompt from ``defaults.handoffs.prompt``, and
+        injecting a fully resolved ``handoffs`` list that the frontmatter
+        serializer can emit directly.  The ``defaults:`` key is removed from the
+        config so it never appears in the generated ``agent.md`` frontmatter.
+
+        When no workflow stages are configured the fallback ``handoffs`` list
+        uses the agent's own prompt without an explicit ``agent:`` target,
+        preserving v3 behaviour.
+        """
+        config = super().load_artifact_config(tmpl_dir)
+        agent_role = tmpl_dir.name
+        defaults = self._extract_defaults(config)
+        config.pop("defaults", None)
+        # Re-expose artifacts at top level so template_partials can read them
+        # via the standard artifact_config.get("artifacts") path.
+        if "artifacts" not in config:
+            artifacts_from_defaults = defaults.get("artifacts")
+            if artifacts_from_defaults:
+                config["artifacts"] = artifacts_from_defaults
+        handoffs_block = defaults.get("handoffs") or {}
+        if isinstance(handoffs_block, str) and handoffs_block.strip():
+            from vstack.frontmatter import FrontmatterParser
+
+            dedented = "\n".join(
+                line[2:] if line.startswith("  ") else line for line in handoffs_block.split("\n")
+            )
+            handoffs_block = FrontmatterParser.parse_yaml(dedented) or {}
+        if isinstance(handoffs_block, dict):
+            handoff_prompt: str = str(handoffs_block.get("prompt", "") or "")
+        else:
+            handoff_prompt = ""
+        handoffs = self._resolve_handoffs(agent_role, handoff_prompt)
+        if handoffs:
+            config["handoffs"] = handoffs
+        return config
+
+    def _resolve_handoffs(self, agent_role: str, handoff_prompt: str) -> list[dict[str, str]]:
+        """Resolve the handoffs list for *agent_role* from workflow stages.
+
+        Each workflow stage may define one or more handoffs under
+        ``workflow.stages[].handoffs``.  Each handoff dict has ``prompt``
+        (required), and optional ``agent`` and ``label`` overrides.
+
+        When no explicit ``agent`` is set on a handoff, it defaults to the
+        next stage in the workflow sequence.  When no explicit ``label`` is
+        set, it defaults to ``"Go to next stage: {Agent}"``.
+
+        The *handoff_prompt* argument (from the agent template's own
+        ``defaults.handoffs.prompt``) overrides the ``prompt`` of the first
+        handoff that targets the natural next stage (no ``agent`` override),
+        allowing per-template prompt customisation without editing the central
+        config.
+
+        :param agent_role: Role name (template directory name).
+        :param handoff_prompt: Raw prompt text from the agent's ``config.yaml``.
+        :returns: List of handoff dicts suitable for frontmatter serialization,
+            or an empty list when this is the last stage or no prompts exist.
+        """
+        if not self.workflow_stages:
+            # No workflow configured — cannot emit valid ``agent:`` targets.
+            return []
+
+        roles = [s["role"] for s in self.workflow_stages]
+        try:
+            idx = roles.index(agent_role)
+        except ValueError:
+            return []
+        if idx >= len(roles) - 1:
+            return []
+        next_role = roles[idx + 1]
+
+        stage_handoffs: list[dict[str, str]] = self.workflow_stages[idx].get("handoffs", [])
+        if not isinstance(stage_handoffs, list):
+            stage_handoffs = []
+
+        result: list[dict[str, str]] = []
+        agent_override_applied = False
+
+        for h in stage_handoffs:
+            if not isinstance(h, dict):
+                continue
+            h_agent = str(h.get("agent", "") or "").strip()
+            target_agent = h_agent or next_role
+
+            # Apply per-agent handoff_prompt override to the first handoff that
+            # targets the natural next stage (no explicit agent override).
+            if handoff_prompt.strip() and not h_agent and not agent_override_applied:
+                prompt = handoff_prompt.strip()
+                agent_override_applied = True
+            else:
+                prompt = str(h.get("prompt", "") or "").strip()
+
+            if not prompt:
+                continue
+
+            label = str(h.get("label", "") or "").strip() or (
+                f"Go to next stage: {target_agent.capitalize()}"
+            )
+            result.append({"label": label, "agent": target_agent, "prompt": prompt})
+
+        return result
+
     def _resolve_output_entries(
-        raw_outputs: list, doc_root: str, agent_dir: str
-    ) -> list[dict[str, str]]:
+        self, raw_outputs: list, agent_dir: str
+    ) -> list[dict[str, str | bool]]:
         """Resolve raw output config items to display-path dicts.
 
         :param raw_outputs: List of strings or dicts from ``artifacts.output``.
-        :param doc_root: Global artifacts root directory (e.g. ``"docs"``).
         :param agent_dir: Subdirectory for this agent (e.g. ``"architecture"``).
             When empty, output paths are used verbatim.
-        :returns: List of ``{"path": ..., "notes": ...}`` dicts.
+        :returns: List of ``{"path": ..., "notes": ..., "baseline": ...}`` dicts.
         """
-        result: list[dict[str, str]] = []
+        doc_root = self.artifacts_root
+        result: list[dict[str, str | bool]] = []
         for item in raw_outputs:
             if isinstance(item, str):
-                path, notes = item, ""
+                path, notes, baseline = item, "", False
             elif isinstance(item, dict):
-                path, notes = str(item.get("path", "")), str(item.get("notes", ""))
+                path = str(item.get("path", ""))
+                notes = str(item.get("notes", ""))
+                baseline = bool(item.get("baseline", False))
             else:
                 continue
 
@@ -147,11 +285,10 @@ class AgentGenerator(GenericArtifactGenerator):
             else:
                 display = path
 
-            result.append({"path": display, "notes": notes})
+            result.append({"path": display, "notes": notes, "baseline": baseline})
         return result
 
-    @staticmethod
-    def _build_table(entries: list[dict[str, str]]) -> str:
+    def _build_table(self, entries: list[dict[str, str | bool]]) -> str:
         """Build a Markdown table from normalised artifact entry dicts.
 
         Produces a single-column ``Artifact`` table when no entry has notes,
@@ -159,7 +296,7 @@ class AgentGenerator(GenericArtifactGenerator):
         All rows are padded to equal column widths.
         """
         cells = [f"`{e['path']}`" for e in entries]
-        notes_cells = [e.get("notes", "") for e in entries]
+        notes_cells = [str(e.get("notes", "")) for e in entries]
         has_notes = any(notes_cells)
 
         if has_notes:
@@ -183,12 +320,47 @@ class AgentGenerator(GenericArtifactGenerator):
 
         return "\n".join(lines)
 
-    @staticmethod
-    def _build_section(heading: str, entries: list[dict[str, str]]) -> str:
+    def _build_section(self, heading: str, entries: list[dict[str, str | bool]]) -> str:
         """Build a ``### {heading}`` Markdown subsection with a table.
 
         Returns an empty string when *entries* is empty.
         """
         if not entries:
             return ""
-        return f"### {heading}\n\n{AgentGenerator._build_table(entries)}"
+        return f"### {heading}\n\n{self._build_table(entries)}"
+
+    def _build_baseline_section(self, entries: list[dict[str, str | bool]]) -> str:
+        """Build the ``### baseline docs you maintain`` subsection.
+
+        Renders a table of output artifacts flagged with ``baseline: true``.
+        Returns an empty string when no baseline entries are present.
+
+        :param entries: Resolved output entries where ``baseline`` is ``True``.
+        :returns: Markdown subsection string, or empty string.
+        """
+        if not entries:
+            return ""
+        return (
+            "### baseline docs you maintain\n\n"
+            "Keep these files current. Update them whenever the relevant scope, "
+            "design, or implementation changes — do not let them go stale.\n\n"
+            f"{self._build_table(entries)}"
+        )
+
+    def _build_handoffs(self, agent_role: str, handoff_prompt: str) -> str:
+        """Build the ``handoffs:`` frontmatter block for this agent.
+
+        .. deprecated::
+            Use :meth:`_resolve_handoffs` instead.  This method is retained
+            only for backward compatibility with any direct call sites in tests.
+        """
+        entries = self._resolve_handoffs(agent_role, handoff_prompt)
+        if not entries:
+            return ""
+        entry = entries[0]
+        lines = [f'handoffs:\n  - label: "{entry["label"]}"']
+        if "agent" in entry:
+            lines.append(f"    agent: {entry['agent']}")
+        lines.append("    prompt: >")
+        lines.extend(f"      {line}" for line in entry["prompt"].splitlines())
+        return "\n".join(lines)

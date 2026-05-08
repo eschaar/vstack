@@ -121,6 +121,8 @@ what work is needed:
 
 {{AGENT_ARTIFACTS_OUTPUT}}
 
+{{AGENT_ARTIFACTS_BASELINE}}
+
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
 

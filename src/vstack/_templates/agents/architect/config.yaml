@@ -20,22 +20,23 @@ model:
   - GPT-5.3-Codex (copilot)
   - Claude Opus 4.7 (copilot)
 agents: ["*"]
-handoffs:
-  - label: "Go to next stage: Design"
-    agent: designer
+target: vscode
+defaults:
+  handoffs:
     prompt: >
       Architecture outputs are approved. Assess the current state and produce
       design specifications as needed. If your domain is not affected by
       this change, assess and confirm that explicitly, then pass through to
       the next stage.
-artifacts:
-  dir: architecture
-  input:
-    - product/**/*.md
-  output:
-    - overview.md
-    - adr/*.md
-target: vscode
+  artifacts:
+    dir: architecture
+    input:
+      - product/**/*.md
+    output:
+      - path: overview.md
+        baseline: true
+      - path: adr/*.md
+        baseline: true
 user-invocable: true
 
 # Optional when needed:
