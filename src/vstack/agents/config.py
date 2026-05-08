@@ -17,7 +17,7 @@ from vstack.frontmatter import FieldSpec, FrontmatterSchema
 HANDOFF_ITEM_SCHEMA = FrontmatterSchema(
     [
         FieldSpec("label", required=True),
-        FieldSpec("agent", required=True, quoted=False),
+        FieldSpec("agent", required=False, quoted=False),
         FieldSpec("prompt", required=True),
         FieldSpec("send", type="bool"),
         FieldSpec("model"),

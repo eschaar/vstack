@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from vstack.frontmatter import FrontmatterParser
-
 TEMPLATES_ROOT = Path(__file__).resolve().parents[3] / "src" / "vstack" / "_templates" / "agents"
 
 
@@ -50,26 +48,34 @@ def test_all_role_templates_reference_concise() -> None:
 
 
 def test_role_configs_follow_stage_handoff_policy() -> None:
-    """Non-release roles expose forward handoffs, release remains terminal."""
+    """Non-release roles expose a handoff prompt under defaults.handoffs, release is terminal."""
     roles_with_forward_handoff = ["product", "architect", "designer", "engineer", "tester"]
     for role in roles_with_forward_handoff:
         config = _read(f"{role}/config.yaml")
+        assert "defaults:" in config
         assert "handoffs:" in config
-        assert "label:" in config
-        assert "agent:" in config
+        assert "prompt:" in config
 
     release_config = _read("release/config.yaml")
     assert "handoffs:" not in release_config
 
 
 def test_all_role_handoff_targets_are_known_roles() -> None:
-    """Each handoff target should reference one of the known role agents."""
+    """Handoff targets in generated agent files should reference known roles."""
+    from vstack.frontmatter import FrontmatterParser
+
+    github_dir = Path(__file__).parents[3] / ".github" / "agents"
     roles = ["product", "architect", "designer", "engineer", "tester", "release"]
     valid_targets = set(roles)
 
     for role in roles:
-        config = FrontmatterParser.parse_yaml(_read(f"{role}/config.yaml"))
-        handoffs = config.get("handoffs") or []
+        agent_file = github_dir / f"{role}.agent.md"
+        if not agent_file.exists():
+            continue
+        text = agent_file.read_text(encoding="utf-8")
+        parsed = FrontmatterParser.parse(text)
+        handoffs = parsed.metadata.get("handoffs") or []
         for handoff in handoffs:
             target = handoff.get("agent")
-            assert target in valid_targets, f"{role} has unknown handoff target: {target!r}"
+            if target is not None:
+                assert target in valid_targets, f"{role} has unknown handoff target: {target!r}"

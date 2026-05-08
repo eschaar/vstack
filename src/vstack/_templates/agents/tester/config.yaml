@@ -18,22 +18,21 @@ model:
   - Claude Sonnet 4.6 (copilot)
   - GPT-5.3-Codex (copilot)
 agents: ["*"]
-handoffs:
-  - label: "Go to next stage: Release readiness"
-    agent: release
+target: vscode
+defaults:
+  handoffs:
     prompt: >
       Verification outputs are approved. Assess the current state and prepare
       the release as needed. Create and/or update the relevant artifacts if needed,
       as well as any sign-offs.
-artifacts:
-  dir: reports
-  input:
-    - architecture/**/*.md
-    - design/**/*.md
-  output:
-    - "**/*.md"
-    - ./tests/**/*
-target: vscode
+  artifacts:
+    dir: reports
+    input:
+      - architecture/**/*.md
+      - design/**/*.md
+    output:
+      - path: "**/*.md"
+      - path: ./tests/**/*
 user-invocable: true
 
 # Optional when needed:

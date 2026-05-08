@@ -18,26 +18,27 @@ model:
   - Claude Sonnet 4.6 (copilot)
   - GPT-5.3-Codex (copilot)
 agents: ["*"]
-handoffs:
-  - label: "Go to next stage: Engineering"
-    agent: engineer
+target: vscode
+defaults:
+  handoffs:
     prompt: >
       Design outputs are approved. Assess the current state and implement
       code and tests as needed. If your domain is not affected by this
       change, assess and confirm that explicitly, then pass through to
       engineering. If working on an issue, document findings in RCA or
       post-mortem artifacts as relevant.
-artifacts:
-  dir: design
-  input:
-    - architecture/**/*.md
-  output:
-    - path: overview.md
-    - path: ux.md
-      notes: frontend/fullstack scope only
-    - path: "**/*.md"
-      notes: additional detail docs per component, model, system, or domain (when scope warrants it)
-target: vscode
+  artifacts:
+    dir: design
+    input:
+      - architecture/**/*.md
+    output:
+      - path: overview.md
+        baseline: true
+      - path: ux.md
+        baseline: true
+        notes: frontend/fullstack scope only
+      - path: "**/*.md"
+        notes: additional detail docs per component, model, system, or domain (when scope warrants it)
 user-invocable: true
 
 # Optional when needed:

@@ -19,28 +19,27 @@ model:
   - GPT-5.3-Codex (copilot)
   - Claude Sonnet 4.6 (copilot)
 agents: ["*"]
-handoffs:
-  - label: "Go to next stage: Verification"
-    agent: tester
+target: vscode
+defaults:
+  handoffs:
     prompt: >
       Implementation is approved. Assess the current state and verify the
       implementation as needed — run tests, security checks, and performance
       analysis. If this is an issue (bug, problem, or incident), also produce
       or update an RCA and, if stakeholder impact is significant, a
       post-mortem.
-artifacts:
-  input:
-    - product/**/*.md
-    - architecture/**/*.md
-    - design/**/*.md
-  output:
-    - path: ./src/**/*
-    - path: ./tests/**/*
-    - path: ./issues/{id}-{slug}-rca.md
-      notes: when working on an issue
-    - path: ./issues/{id}-{slug}-postmortem.md
-      notes: when stakeholder impact is significant
-target: vscode
+  artifacts:
+    input:
+      - product/**/*.md
+      - architecture/**/*.md
+      - design/**/*.md
+    output:
+      - path: ./src/**/*
+      - path: ./tests/**/*
+      - path: ./issues/{id}-{slug}-rca.md
+        notes: when working on an issue
+      - path: ./issues/{id}-{slug}-postmortem.md
+        notes: when stakeholder impact is significant
 user-invocable: true
 
 # Optional when needed:

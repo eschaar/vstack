@@ -18,14 +18,16 @@ model:
   - Claude Sonnet 4.6 (copilot)
   - GPT-5.3-Codex (copilot)
 agents: ["*"]
-artifacts:
-  dir: releases
-  input:
-    - "**/*.md"
-  output:
-    - path: "*.md"
-      notes: includes release notes and sign-off record
 target: vscode
+defaults:
+  artifacts:
+    dir: releases
+    input:
+      - "**/*.md"
+    output:
+      - path: "*.md"
+        notes: includes release notes and sign-off record
+        baseline: false
 user-invocable: true
 
 # Optional when needed:
