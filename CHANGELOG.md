@@ -4,51 +4,46 @@
 
 ## [3.0.0](https://github.com/eschaar/vstack/compare/2.2.0...3.0.0) (2026-05-06)
 
-
 ### ⚠ BREAKING CHANGES
 
-* **manifest:** vstack.json moves from .github/vstack.json to .vstack/vstack.json; run `vstack manifest upgrade` to migrate existing projects
+- **manifest:** vstack.json moves from .github/vstack.json to .vstack/vstack.json; run `vstack manifest upgrade` to migrate existing projects
 
 ### Features
 
-* **agents:** generate artifacts section from config.yaml ([b47f410](https://github.com/eschaar/vstack/commit/b47f4108f2c6165f0f2d37913774fd46061af65c))
-* **config:** implement exclude filter in .vstack/config.yaml ([036b9ae](https://github.com/eschaar/vstack/commit/036b9ae51d322da0aa27ef2056a06ee011792480))
-* **config:** support artifacts_root override in .vstack/config.yaml ([2a7de61](https://github.com/eschaar/vstack/commit/2a7de61df40317109a80f0857ddc3106d84192f2))
-* **install:** write .vstack/.gitignore on every install ([526c6c7](https://github.com/eschaar/vstack/commit/526c6c7dfdecb233eed3e057b6b02c5842c1ef16))
-* **manifest:** move install manifest from .github to .vstack ([3a11063](https://github.com/eschaar/vstack/commit/3a11063f537bc307e70675d94421029791d30ad3))
-* **workflow:** update skill templates, ADRs, and agent configs for genericity ([db0b2f1](https://github.com/eschaar/vstack/commit/db0b2f124019464140545f7a1c2eeeda3388c3cf))
-
+- **agents:** generate artifacts section from config.yaml ([b47f410](https://github.com/eschaar/vstack/commit/b47f4108f2c6165f0f2d37913774fd46061af65c))
+- **config:** implement exclude filter in .vstack/config.yaml ([036b9ae](https://github.com/eschaar/vstack/commit/036b9ae51d322da0aa27ef2056a06ee011792480))
+- **config:** support artifacts_root override in .vstack/config.yaml ([2a7de61](https://github.com/eschaar/vstack/commit/2a7de61df40317109a80f0857ddc3106d84192f2))
+- **install:** write .vstack/.gitignore on every install ([526c6c7](https://github.com/eschaar/vstack/commit/526c6c7dfdecb233eed3e057b6b02c5842c1ef16))
+- **manifest:** move install manifest from .github to .vstack ([3a11063](https://github.com/eschaar/vstack/commit/3a11063f537bc307e70675d94421029791d30ad3))
+- **workflow:** update skill templates, ADRs, and agent configs for genericity ([db0b2f1](https://github.com/eschaar/vstack/commit/db0b2f124019464140545f7a1c2eeeda3388c3cf))
 
 ### Fixes
 
-* **exclude:** raise ValueError when agents excluded; add ADR-021/022 to overview ([3298340](https://github.com/eschaar/vstack/commit/3298340b4f5af7ac4d82b3f13a5b36f8cd2a502a))
-* **review:** address PR review comments ([771ab31](https://github.com/eschaar/vstack/commit/771ab31dff70178cde83d27edfb0145e9ff7ff66))
-
+- **exclude:** raise ValueError when agents excluded; add ADR-021/022 to overview ([3298340](https://github.com/eschaar/vstack/commit/3298340b4f5af7ac4d82b3f13a5b36f8cd2a502a))
+- **review:** address PR review comments ([771ab31](https://github.com/eschaar/vstack/commit/771ab31dff70178cde83d27edfb0145e9ff7ff66))
 
 ### Refactoring
 
-* **config:** rename artifacts_root to artifacts.root in config.yaml ([e9c14b4](https://github.com/eschaar/vstack/commit/e9c14b449fe7179333e96eca7fccf8165a9440a0))
-
+- **config:** rename artifacts_root to artifacts.root in config.yaml ([e9c14b4](https://github.com/eschaar/vstack/commit/e9c14b449fe7179333e96eca7fccf8165a9440a0))
 
 ### Documentation
 
-* ADR-022 selective exclude filter ([56771d3](https://github.com/eschaar/vstack/commit/56771d3d50bafada8751f790b442026a05e4d513))
-* **agents:** update artifacts schema docs to reflect dir/ARTIFACTS_DOCS_ROOT design ([a408468](https://github.com/eschaar/vstack/commit/a4084684e7449ce55f569d11d0dccbd535f2f141))
-* document exclude filter, install vs init flow, and config.yaml schema ([3296020](https://github.com/eschaar/vstack/commit/3296020229a950ce6932a5a8322e9e81959587f7))
-* **readme:** add no-target variants for install and init to CLI table ([9c06f5a](https://github.com/eschaar/vstack/commit/9c06f5ab10e79eab5bd110cf9bdf756ba617257f))
-* rename Option A/B to direct execution / orchestrated pipeline in ADRs 017, 018, 020, 021, 022 ([56771d3](https://github.com/eschaar/vstack/commit/56771d3d50bafada8751f790b442026a05e4d513))
-* **roadmap:** rationalise candidate items and restructure roadmap ([831e3e0](https://github.com/eschaar/vstack/commit/831e3e02f87d61c279d62ad5726474fb06217f59))
-* **roadmap:** record install target override as not planned ([168f499](https://github.com/eschaar/vstack/commit/168f499c9081b6b4620683c4d5c8c611f1e3634e))
-* split roadmap row into selective install (shipped) and template overlays (candidate) ([56771d3](https://github.com/eschaar/vstack/commit/56771d3d50bafada8751f790b442026a05e4d513))
-
+- ADR-022 selective exclude filter ([56771d3](https://github.com/eschaar/vstack/commit/56771d3d50bafada8751f790b442026a05e4d513))
+- **agents:** update artifacts schema docs to reflect dir/ARTIFACTS_DOCS_ROOT design ([a408468](https://github.com/eschaar/vstack/commit/a4084684e7449ce55f569d11d0dccbd535f2f141))
+- document exclude filter, install vs init flow, and config.yaml schema ([3296020](https://github.com/eschaar/vstack/commit/3296020229a950ce6932a5a8322e9e81959587f7))
+- **readme:** add no-target variants for install and init to CLI table ([9c06f5a](https://github.com/eschaar/vstack/commit/9c06f5ab10e79eab5bd110cf9bdf756ba617257f))
+- rename Option A/B to direct execution / orchestrated pipeline in ADRs 017, 018, 020, 021, 022 ([56771d3](https://github.com/eschaar/vstack/commit/56771d3d50bafada8751f790b442026a05e4d513))
+- **roadmap:** rationalise candidate items and restructure roadmap ([831e3e0](https://github.com/eschaar/vstack/commit/831e3e02f87d61c279d62ad5726474fb06217f59))
+- **roadmap:** record install target override as not planned ([168f499](https://github.com/eschaar/vstack/commit/168f499c9081b6b4620683c4d5c8c611f1e3634e))
+- split roadmap row into selective install (shipped) and template overlays (candidate) ([56771d3](https://github.com/eschaar/vstack/commit/56771d3d50bafada8751f790b442026a05e4d513))
 
 ### Maintenance
 
-* **cleanup:** remove stale .github/vstack.json and add missing init command ([99ded6b](https://github.com/eschaar/vstack/commit/99ded6b428a661a184b73d592da0df27dfd5f9ee))
-* **install:** regenerate artifacts and populate manifest ([56771d3](https://github.com/eschaar/vstack/commit/56771d3d50bafada8751f790b442026a05e4d513))
-* **lint:** disable MD012 for release-please CHANGELOG double blank lines ([5044cd7](https://github.com/eschaar/vstack/commit/5044cd73e248be3a0dc53a50adde3e39ec968f55))
-* **release:** add v3.0.0 release notes and mark roadmap rows as shipped ([55bfb69](https://github.com/eschaar/vstack/commit/55bfb6956758b3f4703905d4e337ce20f2a64cd1))
-* **release:** update reports, finalise v3.0.0 release notes for 2026-05-06 ([ad641f0](https://github.com/eschaar/vstack/commit/ad641f091324a1f9428e0cace67dca61acd41ce1))
+- **cleanup:** remove stale .github/vstack.json and add missing init command ([99ded6b](https://github.com/eschaar/vstack/commit/99ded6b428a661a184b73d592da0df27dfd5f9ee))
+- **install:** regenerate artifacts and populate manifest ([56771d3](https://github.com/eschaar/vstack/commit/56771d3d50bafada8751f790b442026a05e4d513))
+- **lint:** disable MD012 for release-please CHANGELOG double blank lines ([5044cd7](https://github.com/eschaar/vstack/commit/5044cd73e248be3a0dc53a50adde3e39ec968f55))
+- **release:** add v3.0.0 release notes and mark roadmap rows as shipped ([55bfb69](https://github.com/eschaar/vstack/commit/55bfb6956758b3f4703905d4e337ce20f2a64cd1))
+- **release:** update reports, finalise v3.0.0 release notes for 2026-05-06 ([ad641f0](https://github.com/eschaar/vstack/commit/ad641f091324a1f9428e0cace67dca61acd41ce1))
 
 ## [2.2.0](https://github.com/eschaar/vstack/compare/2.1.0...2.2.0) (2026-05-02)
 

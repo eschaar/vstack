@@ -21,7 +21,7 @@ model:
 user-invocable: true
 target: vscode
 handoffs:
-  - label: 'Go to next stage: Engineering'
+  - label: 'Go to next stage: Engineer'
     agent: engineer
     prompt: >-
       Design outputs are approved. Assess the current state and implement code and tests as needed. If
@@ -165,6 +165,15 @@ what work is needed:
 | `docs/design/ux.md`       | frontend/fullstack scope only                                                           |
 | `docs/design/**/*.md`     | additional detail docs per component, model, system, or domain (when scope warrants it) |
 
+### baseline docs you maintain
+
+Keep these files current. Update them whenever the relevant scope, design, or implementation changes — do not let them go stale.
+
+| Artifact                  | Notes                         |
+| ------------------------- | ----------------------------- |
+| `docs/design/overview.md` |                               |
+| `docs/design/ux.md`       | frontend/fullstack scope only |
+
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
 
@@ -185,4 +194,4 @@ that requires changes to upstream artifacts, flag it and trigger a reverse hando
 - `@#openapi` — OpenAPI 3.1 spec writing and review
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"designer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"designer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"3.0.0"} -->

@@ -23,7 +23,7 @@ model:
 user-invocable: true
 target: vscode
 handoffs:
-  - label: 'Go to next stage: Design'
+  - label: 'Go to next stage: Designer'
     agent: designer
     prompt: >-
       Architecture outputs are approved. Assess the current state and produce design specifications as
@@ -150,6 +150,15 @@ what work is needed:
 | `docs/architecture/overview.md` |
 | `docs/architecture/adr/*.md`    |
 
+### baseline docs you maintain
+
+Keep these files current. Update them whenever the relevant scope, design, or implementation changes — do not let them go stale.
+
+| Artifact                        |
+| ------------------------------- |
+| `docs/architecture/overview.md` |
+| `docs/architecture/adr/*.md`    |
+
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
 
@@ -172,4 +181,4 @@ that requires changes to upstream artifacts, flag it and trigger a reverse hando
 - `@#gdpr` — privacy by design and data processing architecture review
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"architect","artifact_type":"agent","artifact_version":"20260503022","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"architect","artifact_type":"agent","artifact_version":"20260503022","generator":"vstack","vstack_version":"3.0.0"} -->

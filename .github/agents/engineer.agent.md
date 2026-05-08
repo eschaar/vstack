@@ -22,7 +22,7 @@ model:
 user-invocable: true
 target: vscode
 handoffs:
-  - label: 'Go to next stage: Verification'
+  - label: 'Go to next stage: Tester'
     agent: tester
     prompt: >-
       Implementation is approved. Assess the current state and verify the implementation as needed — run
@@ -160,6 +160,8 @@ what work is needed:
 | `issues/{id}-{slug}-rca.md`        | when working on an issue               |
 | `issues/{id}-{slug}-postmortem.md` | when stakeholder impact is significant |
 
+
+
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
 
@@ -202,4 +204,4 @@ that requires changes to upstream artifacts, flag it and trigger a reverse hando
 - `@#rancher` — Rancher and Fleet multi-cluster operations and governance
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"engineer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"engineer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"3.0.0"} -->
