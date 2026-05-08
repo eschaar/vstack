@@ -125,9 +125,12 @@ class FrontmatterParser:
         Supports: string values, inline lists ``[a, b]``,
         block lists ``\n  - item``, block scalars ``|``,
         block sequences of mappings (object-lists):
-        ``\n  - key: val\n    key2: val2``, and
+        ``\n  - key: val\n    key2: val2``,
         raw mapping blocks where the value is indented non-list YAML content:
-        ``\n  server:\n    type: local`` (used for ``mcp-servers``, ``hooks``, etc.).
+        ``\n  server:\n    type: local`` (used for ``mcp-servers``, ``hooks``, etc.), and
+        nested blocks inside object-list items: an empty-value 4-space key
+        (``    key:``) accumulates subsequent 6-space lines as a stripped raw
+        string that callers can re-parse (e.g. ``workflow.stages[].handoffs``).
         """
         meta: dict = {}
         current_key = ""
@@ -138,10 +141,30 @@ class FrontmatterParser:
         in_object_block_scalar = False
         object_scalar_field = ""
         object_block_lines: list[str] = []
+        in_object_nested_block = False
+        object_nested_key = ""
+        object_nested_lines: list[str] = []
 
         for line in raw.split("\n"):
             if line.strip().startswith("#"):
                 continue
+
+            # ── Nested block inside object-list item ─────────────────────────
+            if in_object_nested_block:
+                if line.startswith("      ") or line == "":
+                    # Strip 6 leading spaces so the stored content is parseable
+                    # as top-level YAML (for dict) or as a 0-indent list.
+                    object_nested_lines.append(line[6:] if len(line) > 6 else "")
+                    continue
+                else:
+                    # Non-6-space line closes the nested block.
+                    meta[current_key][-1][object_nested_key] = "\n".join(
+                        object_nested_lines
+                    ).rstrip()
+                    in_object_nested_block = False
+                    object_nested_key = ""
+                    object_nested_lines = []
+                    # Fall through to process current line.
 
             if in_object_block_scalar:
                 if line.startswith("      ") or line == "":
@@ -196,8 +219,15 @@ class FrontmatterParser:
                     object_scalar_field = obj_key
                     object_block_lines = []
                     meta[current_key][-1][obj_key] = ""
-                else:
+                elif obj_val:
                     meta[current_key][-1][obj_key] = FrontmatterParser._parse_scalar(obj_val)
+                else:
+                    # Empty value in an object-list item: start nested block
+                    # accumulation for any following 6-space-indented content.
+                    in_object_nested_block = True
+                    object_nested_key = obj_key
+                    object_nested_lines = []
+                    meta[current_key][-1][obj_key] = ""
                 continue
 
             # Raw block trigger: 2-space non-list indented line when the current key
@@ -256,6 +286,8 @@ class FrontmatterParser:
                     object_scalar_field=object_scalar_field,
                     object_block_lines=object_block_lines,
                 )
+        if in_object_nested_block:
+            meta[current_key][-1][object_nested_key] = "\n".join(object_nested_lines).rstrip()
         if in_raw_block and raw_lines:
             FrontmatterParser._flush_raw_block(
                 meta=meta,
