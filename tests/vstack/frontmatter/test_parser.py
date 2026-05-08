@@ -125,3 +125,54 @@ class TestFrontmatterParser:
         meta = FrontmatterParser.parse_yaml(raw)
         assert isinstance(meta["tools"], list)
         assert meta["tools"] == ["read"]
+
+    def test_parse_yaml_object_list_nested_block_dict(self) -> None:
+        """Nested dict block inside an object-list item is accumulated and stored as a string."""
+        raw = (
+            "stages:\n"
+            "  - role: architect\n"
+            "    gate: required\n"
+            "    handoffs:\n"
+            "      prompt: Architecture done.\n"
+            "      agent: designer\n"
+        )
+        meta = FrontmatterParser.parse_yaml(raw)
+        assert isinstance(meta["stages"], list)
+        stage = meta["stages"][0]
+        assert stage["role"] == "architect"
+        assert stage["gate"] == "required"
+        # handoffs is stored as a raw string stripped of 6-space indent
+        assert isinstance(stage["handoffs"], str)
+        assert "prompt: Architecture done." in stage["handoffs"]
+        assert "agent: designer" in stage["handoffs"]
+
+    def test_parse_yaml_object_list_nested_block_with_block_scalar(self) -> None:
+        """Nested block inside an object-list item handles block scalar prompts."""
+        raw = (
+            "stages:\n"
+            "  - role: architect\n"
+            "    gate: required\n"
+            "    handoffs:\n"
+            "      prompt: >\n"
+            "        Line one\n"
+            "        Line two\n"
+            "    other: value\n"
+        )
+        meta = FrontmatterParser.parse_yaml(raw)
+        stage = meta["stages"][0]
+        assert isinstance(stage["handoffs"], str)
+        # Re-parsing the stored raw string should yield the folded prompt
+        from vstack.frontmatter import FrontmatterParser as FP
+
+        reparsed = FP.parse_yaml(stage["handoffs"])
+        assert "Line one" in reparsed["prompt"]
+        assert "Line two" in reparsed["prompt"]
+        # The key after handoffs block is parsed correctly
+        assert stage["other"] == "value"
+
+    def test_parse_yaml_object_list_empty_nested_block_is_empty_string(self) -> None:
+        """An empty-value nested key in an object-list item stores an empty string."""
+        raw = "stages:\n  - role: release\n    gate: required\n    handoffs:\n"
+        meta = FrontmatterParser.parse_yaml(raw)
+        stage = meta["stages"][0]
+        assert stage["handoffs"] == ""
