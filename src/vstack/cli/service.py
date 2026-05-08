@@ -34,7 +34,13 @@ class CommandService:
     while keeping per-type behavior in ``ArtifactTypeConfig`` definitions.
     """
 
-    def __init__(self, templates_root: Path, *, artifacts_root: str = ARTIFACTS_DOCS_ROOT) -> None:
+    def __init__(
+        self,
+        templates_root: Path,
+        *,
+        artifacts_root: str = ARTIFACTS_DOCS_ROOT,
+        workflow_stages: list[dict[str, str]] | None = None,
+    ) -> None:
         """Create generators for all known artifact families.
 
         Per-type generator subclasses are used when available so that
@@ -48,10 +54,18 @@ class CommandService:
                 through to :class:`~vstack.agents.generator.AgentGenerator`.
                 Defaults to :data:`~vstack.constants.ARTIFACTS_DOCS_ROOT`;
                 override via ``artifacts.root`` in ``.vstack/config.yaml``.
+            workflow_stages: Ordered list of pipeline stage dicts read from
+                the ``workflow.stages`` block in ``.vstack/config.yaml``.
+                Each dict has ``role``, ``gate``, and ``handoff_prompt`` keys.
+                When ``None`` or empty the generator falls back to v3 behaviour.
         """
         self.root = templates_root
         self.generators: list[GenericArtifactGenerator] = [
-            AgentGenerator(templates_root, artifacts_root=artifacts_root)
+            AgentGenerator(
+                templates_root,
+                artifacts_root=artifacts_root,
+                workflow_stages=workflow_stages or [],
+            )
             if tc is AGENT_TYPE
             else GenericArtifactGenerator(tc, templates_root)
             for tc in KNOWN_TYPES

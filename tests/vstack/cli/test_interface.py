@@ -56,9 +56,18 @@ class _Command:
 class _Service:
     """Service construction test double."""
 
-    def __init__(self, *, templates_root, artifacts_root: str = "docs") -> None:
+    def __init__(
+        self,
+        *,
+        templates_root,
+        artifacts_root: str = "docs",
+        workflow_stages=None,
+        excluded_names=None,
+    ) -> None:
         self.templates_root = templates_root
         self.artifacts_root = artifacts_root
+        self.workflow_stages = workflow_stages
+        self.excluded_names = excluded_names
 
 
 class TestCommandLineInterface:
@@ -217,7 +226,14 @@ class TestReadArtifactsRoot:
         captured: list[str] = []
 
         class _CapturingService:
-            def __init__(self, *, templates_root, artifacts_root: str = "docs") -> None:
+            def __init__(
+                self,
+                *,
+                templates_root,
+                artifacts_root: str = "docs",
+                workflow_stages=None,
+                excluded_names=None,
+            ) -> None:
                 captured.append(artifacts_root)
 
         monkeypatch.setattr(
@@ -233,6 +249,153 @@ class TestReadArtifactsRoot:
         interface.run()
 
         assert captured == ["custom"]
+
+
+class TestReadWorkflowStages:
+    """Tests for CommandLineInterface._read_workflow_stages."""
+
+    def test_returns_empty_when_install_dir_is_none(self) -> None:
+        """Returns empty list when install_dir is None."""
+        assert CommandLineInterface._read_workflow_stages(None) == []
+
+    def test_returns_empty_when_config_absent(self, tmp_path: Path) -> None:
+        """Returns empty list when .vstack/config.yaml does not exist."""
+        assert CommandLineInterface._read_workflow_stages(tmp_path / ".github") == []
+
+    def test_returns_empty_when_workflow_block_absent(self, tmp_path: Path) -> None:
+        """Returns empty list when config.yaml has no workflow block."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text("exclude:\n  prompts: all\n", encoding="utf-8")
+        assert CommandLineInterface._read_workflow_stages(tmp_path / ".github") == []
+
+    def test_returns_stages_from_config(self, tmp_path: Path) -> None:
+        """Returns parsed stage list from workflow.stages block."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  version: 1\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "      gate: required\n"
+            "      handoffs:\n"
+            "        prompt: Product done.\n"
+            "    - role: architect\n"
+            "      gate: optional\n"
+            "      handoffs:\n"
+            "        prompt: Arch done.\n",
+            encoding="utf-8",
+        )
+        result = CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+        assert result == [
+            {
+                "role": "product",
+                "gate": "required",
+                "handoffs": [{"prompt": "Product done.", "agent": "", "label": ""}],
+            },
+            {
+                "role": "architect",
+                "gate": "optional",
+                "handoffs": [{"prompt": "Arch done.", "agent": "", "label": ""}],
+            },
+        ]
+
+    def test_preserves_hitl_field(self, tmp_path: Path) -> None:
+        """hitl field is preserved in the parsed stage dict."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  version: 1\n"
+            "  stages:\n"
+            "    - role: engineer\n"
+            "      gate: required\n"
+            "      hitl: always\n"
+            "      handoffs:\n"
+            "        prompt: Impl done.\n"
+            "    - role: designer\n"
+            "      gate: optional\n"
+            "      hitl: on-change\n"
+            "      handoffs:\n"
+            "        prompt: Design done.\n",
+            encoding="utf-8",
+        )
+        result = CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+        assert result == [
+            {
+                "role": "engineer",
+                "gate": "required",
+                "hitl": "always",
+                "handoffs": [{"prompt": "Impl done.", "agent": "", "label": ""}],
+            },
+            {
+                "role": "designer",
+                "gate": "optional",
+                "hitl": "on-change",
+                "handoffs": [{"prompt": "Design done.", "agent": "", "label": ""}],
+            },
+        ]
+
+    def test_skips_items_without_role(self, tmp_path: Path) -> None:
+        """Items lacking a string 'role' key are silently skipped."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n  stages:\n    - gate: required\n    - role: engineer\n",
+            encoding="utf-8",
+        )
+        result = CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+        assert result == [{"role": "engineer", "gate": "required", "handoffs": []}]
+
+    def test_returns_empty_when_stages_not_a_list(self, tmp_path: Path) -> None:
+        """Returns empty list when workflow.stages is not a list."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n  stages: not-a-list\n",
+            encoding="utf-8",
+        )
+        result = CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+        assert result == []
+
+
+class TestParseStageHandoffs:
+    """Tests for CommandLineInterface._parse_stage_handoffs."""
+
+    def test_dict_handoffs_returns_single_entry(self) -> None:
+        """A dict handoffs value is returned as a single-entry list."""
+        item = {
+            "role": "architect",
+            "handoffs": {"prompt": "Arch done.", "agent": "designer", "label": "Go"},
+        }
+        result = CommandLineInterface._parse_stage_handoffs(item)
+        assert result == [{"prompt": "Arch done.", "agent": "designer", "label": "Go"}]
+
+    def test_list_handoffs_returns_multiple_entries(self) -> None:
+        """A list handoffs value returns multiple normalized entries."""
+        item = {
+            "role": "architect",
+            "handoffs": [
+                {"prompt": "Go to designer.", "agent": "", "label": ""},
+                {"prompt": "Skip to engineer.", "agent": "engineer", "label": "Skip design"},
+            ],
+        }
+        result = CommandLineInterface._parse_stage_handoffs(item)
+        assert len(result) == 2
+        assert result[0]["prompt"] == "Go to designer."
+        assert result[1]["agent"] == "engineer"
+
+    def test_backward_compat_handoff_prompt_key(self) -> None:
+        """Legacy flat handoff_prompt key is wrapped as single-entry handoffs."""
+        item = {"role": "architect", "handoff_prompt": "Legacy prompt."}
+        result = CommandLineInterface._parse_stage_handoffs(item)
+        assert result == [{"prompt": "Legacy prompt.", "agent": "", "label": ""}]
+
+    def test_no_handoffs_returns_empty(self) -> None:
+        """Returns empty list when no handoffs or handoff_prompt key is present."""
+        result = CommandLineInterface._parse_stage_handoffs({"role": "architect"})
+        assert result == []
 
 
 class TestReadExclude:

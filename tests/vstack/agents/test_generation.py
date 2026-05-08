@@ -13,6 +13,28 @@ class TestAgentGeneration:
 
     def test_architect_agent_includes_model_and_handoffs(self, tmp_path: Path) -> None:
         """Test that architect agent includes model and handoffs."""
+        # Seed a minimal workflow config so handoffs include agent targets.
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir(parents=True, exist_ok=True)
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  version: 1\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "      gate: required\n"
+            "      handoffs:\n"
+            "        prompt: Product done.\n"
+            "    - role: architect\n"
+            "      gate: required\n"
+            "      handoffs:\n"
+            "        prompt: Architecture done.\n"
+            "    - role: designer\n"
+            "      gate: optional\n"
+            "      handoffs:\n"
+            "        prompt: Design done.\n",
+            encoding="utf-8",
+        )
+
         result = run_vstack(["install", "--only", "agent", "--target", str(tmp_path)], timeout=60)
         assert result.returncode == 0, (
             f"vstack install --only agent failed:\n{result.stdout}\n{result.stderr}"

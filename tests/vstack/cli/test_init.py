@@ -641,3 +641,75 @@ class TestInitCommand:
         assert "k8s" in install_single_calls
         out = capsys.readouterr().out
         assert "excluded by config" in out
+
+
+class TestWarnUnknownWorkflowRoles:
+    """Tests for InitCommand._warn_unknown_workflow_roles."""
+
+    def test_no_output_when_all_roles_known(self, capsys) -> None:
+        """No warning is emitted when all roles match known agent names."""
+        from vstack.cli.constants import Colors
+
+        stages = [{"role": "product"}, {"role": "architect"}]
+        known = {"product", "architect", "designer"}
+        InitCommand._warn_unknown_workflow_roles(
+            workflow_stages=stages,
+            known_agent_names=known,
+            colors=Colors,
+        )
+        assert capsys.readouterr().err == ""
+
+    def test_warning_emitted_for_unknown_role(self, capsys) -> None:
+        """A warning is printed to stderr for each unknown role in workflow stages."""
+        from vstack.cli.constants import Colors
+
+        stages = [{"role": "product"}, {"role": "custom-role"}]
+        known = {"product", "architect"}
+        InitCommand._warn_unknown_workflow_roles(
+            workflow_stages=stages,
+            known_agent_names=known,
+            colors=Colors,
+        )
+        err = capsys.readouterr().err
+        assert "custom-role" in err
+
+    def test_empty_role_is_skipped(self, capsys) -> None:
+        """Stages with empty or missing role key are silently skipped."""
+        from vstack.cli.constants import Colors
+
+        stages = [{"role": ""}, {"gate": "required"}]
+        known: set[str] = set()
+        InitCommand._warn_unknown_workflow_roles(
+            workflow_stages=stages,
+            known_agent_names=known,
+            colors=Colors,
+        )
+        assert capsys.readouterr().err == ""
+
+    def test_execute_calls_warn_for_unknown_workflow_role(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys
+    ) -> None:
+        """execute() emits a warning when a workflow stage references an unknown agent."""
+        from vstack.agents.generator import AgentGenerator
+
+        # Patch manifest loading so execute() terminates quickly.
+        monkeypatch.setattr(
+            "vstack.cli.init.InitCommand._load_existing_manifest",
+            staticmethod(lambda **_kwargs: (None, None, None, None)),
+        )
+
+        stages = [
+            {
+                "role": "unknown-role",
+                "gate": "required",
+                "handoffs": [{"prompt": "x", "agent": "", "label": ""}],
+            }
+        ]
+        gen = AgentGenerator(workflow_stages=stages)
+        monkeypatch.setattr(AgentGenerator, "find_templates", lambda self: [])
+
+        service = cast(Any, SimpleNamespace(generators=[gen]))
+        InitCommand.execute(service, tmp_path)
+
+        err = capsys.readouterr().err
+        assert "unknown-role" in err
