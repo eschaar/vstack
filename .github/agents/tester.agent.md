@@ -22,7 +22,7 @@ model:
 user-invocable: true
 target: vscode
 handoffs:
-  - label: 'Go to next stage: Release readiness'
+  - label: 'Go to next stage: Release'
     agent: release
     prompt: >-
       Verification outputs are approved. Assess the current state and prepare the release as needed.
@@ -145,6 +145,8 @@ what work is needed:
 | `docs/reports/**/*.md` |
 | `tests/**/*`           |
 
+
+
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
 
@@ -179,4 +181,4 @@ that requires changes to upstream artifacts, flag it and trigger a reverse hando
 - `@#rancher` — Rancher/Fleet configuration and multi-cluster governance review
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"tester","artifact_type":"agent","artifact_version":"20260503026","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"tester","artifact_type":"agent","artifact_version":"20260503026","generator":"vstack","vstack_version":"3.0.0"} -->

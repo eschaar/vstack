@@ -22,7 +22,7 @@ model:
 user-invocable: true
 target: vscode
 handoffs:
-  - label: 'Go to next stage: Architecture'
+  - label: 'Go to next stage: Architect'
     agent: architect
     prompt: >-
       Product outputs are approved. Assess the current state and produce or update the architecture as
@@ -133,6 +133,16 @@ Handoffs you own:
 | `docs/product/changes/*.md`    |
 | `docs/product/issues/*.md`     |
 
+### baseline docs you maintain
+
+Keep these files current. Update them whenever the relevant scope, design, or implementation changes — do not let them go stale.
+
+| Artifact                       |
+| ------------------------------ |
+| `docs/product/vision.md`       |
+| `docs/product/requirements.md` |
+| `docs/product/roadmap.md`      |
+
 Agents do not write to artifacts owned by other roles. If you discover something
 that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
 
@@ -155,4 +165,4 @@ that requires changes to upstream artifacts, flag it and trigger a reverse hando
 - `@#gh-issues` — create and manage GitHub Issues for requirements, tasks, and user stories
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"product","artifact_type":"agent","artifact_version":"20260503021","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"product","artifact_type":"agent","artifact_version":"20260503021","generator":"vstack","vstack_version":"3.0.0"} -->
