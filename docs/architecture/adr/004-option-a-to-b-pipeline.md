@@ -3,7 +3,7 @@
 > Maintained by: **architect** role
 
 **date:** 2026-03-27\
-**status:** accepted
+**status:** superseded by [ADR-024](024-subagent-orchestration.md)
 
 ## context
 
@@ -51,3 +51,11 @@ is a runner addition, not a skill rewrite.
 ## impact on future orchestrated pipeline
 
 This is the foundational decision. See also `docs/design/workflow.md`.
+
+## amendment — 2026-05-09
+
+The assumption that VS Code lacked native subagent support was invalidated when
+Microsoft shipped the `runSubagent` tool and `agents:` frontmatter in VS Code
+Copilot (documented 2026-05-06). The `scripts/runner.py` approach in the
+"Refactoring required" section above is therefore not needed. See
+[ADR-024](024-subagent-orchestration.md) for the updated decision.

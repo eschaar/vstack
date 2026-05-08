@@ -215,8 +215,8 @@ flowchart TD
   GR --> PR[PR opened]
 ```
 
-See `docs/architecture/adr/004-option-a-to-b-pipeline.md`, `docs/architecture/adr/010-artifact-flow.md`,
-and `docs/design/workflow.md` for pipeline and gate detail.
+See `docs/architecture/adr/023-workflow-contract.md`, `docs/architecture/adr/024-subagent-orchestration.md`,
+`docs/architecture/adr/010-artifact-flow.md`, and `docs/design/workflow.md` for pipeline and gate detail.
 
 ______________________________________________________________________
 
@@ -230,7 +230,7 @@ See individual files for context, decision, alternatives, and rationale.
 | 001 | VS Code-native variant                               | accepted   |                                         |
 | 002 | Artifact naming and compatibility policy             | accepted   |                                         |
 | 003 | Backend-first verify                                 | accepted   |                                         |
-| 004 | Direct execution and orchestrated pipeline           | accepted   |                                         |
+| 004 | Direct execution and orchestrated pipeline           | superseded | Superseded by ADR-024                   |
 | 005 | VS Code prompt format                                | accepted   |                                         |
 | 006 | No runtime dependency on external binaries           | accepted   |                                         |
 | 007 | Python runtime                                       | accepted   |                                         |
@@ -249,3 +249,5 @@ See individual files for context, decision, alternatives, and rationale.
 | 020 | `install` and `init` command semantics               | accepted   | Breaking change; supersedes ADR-015     |
 | 021 | Config-driven artifact paths in agent config         | accepted   | Machine-readable artifact ownership     |
 | 022 | Selective exclude filter in `.vstack/config.yaml`    | accepted   | Agents cannot be excluded (atomic unit) |
+| 023 | Workflow contract in `.vstack/config.yaml`           | accepted   | Pipeline order, gate, hitl, handoffs    |
+| 024 | Subagent orchestration via VS Code native subagents  | accepted   | Supersedes ADR-004; planner coordinator |

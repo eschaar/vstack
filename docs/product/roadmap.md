@@ -29,8 +29,8 @@ ______________________________________________________________________
 | agent hooks support                      | t.b.d.  | candidate   | Generate `.github/hooks/<name>.json` from vstack templates; enforce quality gates at session boundaries     |
 | new skills (next batch)                  | t.b.d.  | candidate   | `spaces`: set up Copilot Spaces; `copilot-admin`: manage Copilot settings via `gh api`                      |
 | team customization layer                 | t.b.d.  | candidate   | Custompacks on top of vstack defaults; agents non-removable, skills fully overridable; overlay merge model  |
-| workflow contract source-of-truth        | t.b.d.  | candidate   | Central contract file + generator validation of role I/O chains; prereq for orchestrated pipeline           |
-| optional orchestrated role pipeline      | t.b.d.  | candidate   | Optional future model, only if coordination bottlenecks appear                                              |
+| workflow contract source-of-truth        | t.b.d.  | in progress | Central contract file in `.vstack/config.yaml`; `gate`, `hitl`, `handoffs` schema (ADR-023)                 |
+| optional orchestrated role pipeline      | t.b.d.  | in progress | `planner` coordinator agent using VS Code native subagents (ADR-024); supersedes ADR-004                    |
 | multi-IDE support (IntelliJ first)       | t.b.d.  | candidate   | Not planned before current model stabilizes                                                                 |
 | heavy agent runtime framework            | —       | not planned | Keeps runtime lightweight and transparent                                                                   |
 | cloud control plane dependency           | —       | not planned | Keeps operation local/offline-capable                                                                       |
