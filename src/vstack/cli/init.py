@@ -417,6 +417,31 @@ class InitCommand(BaseCommand):
             )
 
     @staticmethod
+    def _warn_unknown_workflow_roles(
+        *,
+        workflow_stages: list[dict[str, str]],
+        known_agent_names: set[str],
+        colors,
+    ) -> None:
+        """Emit a warning for any workflow stage that references an unknown agent.
+
+        Unknown roles are not fatal — a project may define custom agents.
+        The warning is informational only and does not affect the exit code.
+
+        :param workflow_stages: Parsed stage list from ``workflow.stages``.
+        :param known_agent_names: Agent names available in the current template root.
+        :param colors: CLI colours helper.
+        """
+        for stage in workflow_stages:
+            role = stage.get("role", "")
+            if role and role not in known_agent_names:
+                print(
+                    f"  {colors.YELLOW}⚠{colors.RESET}  workflow: unknown role "
+                    f"{colors.BOLD}{role!r}{colors.RESET} — no matching agent template found",
+                    file=sys.stderr,
+                )
+
+    @staticmethod
     def execute(
         service: CommandService,
         install_dir: Path,
@@ -444,6 +469,19 @@ class InitCommand(BaseCommand):
         gens = [g for g in service.generators if only is None or g.config.type_name in only]
         targeted_force_names = normalize_targeted_names(force_names)
         targeted_adopt_names = normalize_targeted_names(adopt_names)
+
+        # Validate workflow stages against known agent names (warning only).
+        from vstack.agents.generator import AgentGenerator
+
+        for gen in service.generators:
+            if isinstance(gen, AgentGenerator) and gen.workflow_stages:
+                known_names = {p.name for p in gen.find_templates()}
+                InitCommand._warn_unknown_workflow_roles(
+                    workflow_stages=gen.workflow_stages,
+                    known_agent_names=known_names,
+                    colors=colors,
+                )
+                break
 
         manifest_file, _, existing_entries, new_entries = InitCommand._load_existing_manifest(
             service=service,

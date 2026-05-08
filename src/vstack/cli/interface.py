@@ -160,6 +160,99 @@ class CommandLineInterface:
             return value.strip()
         return ARTIFACTS_DOCS_ROOT
 
+    @staticmethod
+    def _read_workflow_stages(install_dir: Path | None) -> list[dict]:
+        """Read ``workflow.stages`` from ``.vstack/config.yaml`` when available.
+
+        Returns an empty list when *install_dir* is ``None``, when the config
+        file does not exist, or when the ``workflow:`` block is absent or
+        contains no valid stages.
+
+        Each returned dict has at minimum a ``role`` key.  Optional keys are
+        ``gate``, ``hitl``, and ``handoffs`` (a list of handoff dicts, each with
+        at minimum a ``prompt`` key and optionally ``agent`` and ``label``
+        overrides).  Unknown extra keys in the stage dict are silently ignored.
+        """
+        if install_dir is None:
+            return []
+        config_path = install_dir.parent / ".vstack" / "config.yaml"
+        if not config_path.exists():
+            return []
+        parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
+        workflow = parsed.get("workflow", "")
+        if isinstance(workflow, str) and workflow.strip():
+            dedented = "\n".join(
+                line[2:] if line.startswith("  ") else line for line in workflow.split("\n")
+            )
+            workflow = FrontmatterParser.parse_yaml(dedented) or {}
+        if not isinstance(workflow, dict):
+            return []
+        stages_raw = workflow.get("stages", [])
+        if not isinstance(stages_raw, list):
+            return []
+        result: list[dict] = []
+        for item in stages_raw:
+            if isinstance(item, dict) and isinstance(item.get("role"), str):
+                handoffs = CommandLineInterface._parse_stage_handoffs(item)
+                stage: dict = {
+                    "role": item["role"],
+                    "gate": str(item.get("gate", "required")),
+                    "handoffs": handoffs,
+                }
+                if "hitl" in item:
+                    stage["hitl"] = str(item["hitl"])
+                result.append(stage)
+        return result
+
+    @staticmethod
+    def _parse_stage_handoffs(item: dict) -> list[dict[str, str]]:
+        """Parse the ``handoffs`` entry from a workflow stage dict.
+
+        Supports the nested block form (``handoffs: {prompt: ...}``) and
+        the nested list form (``handoffs: [{prompt: ...}, ...]``).  Falls
+        back to the legacy ``handoff_prompt`` flat key for backward
+        compatibility with pre-3.x configs.
+
+        Each returned dict has ``prompt``, ``agent``, and ``label`` keys
+        (empty string when absent).
+        """
+        raw = item.get("handoffs", "")
+        parsed_block: dict | list | None = None
+
+        if isinstance(raw, str) and raw.strip():
+            parsed_block = FrontmatterParser.parse_yaml(raw.strip())
+        elif isinstance(raw, (dict, list)):
+            parsed_block = raw
+
+        if isinstance(parsed_block, dict):
+            # Single-handoff dict form: {prompt: ..., agent?: ..., label?: ...}
+            return [
+                {
+                    "prompt": str(parsed_block.get("prompt", "") or ""),
+                    "agent": str(parsed_block.get("agent", "") or ""),
+                    "label": str(parsed_block.get("label", "") or ""),
+                }
+            ]
+        if isinstance(parsed_block, list):
+            # Multi-handoff list form: [{prompt: ..., agent?: ..., label?: ...}, ...]
+            result = []
+            for h in parsed_block:
+                if isinstance(h, dict):
+                    result.append(
+                        {
+                            "prompt": str(h.get("prompt", "") or ""),
+                            "agent": str(h.get("agent", "") or ""),
+                            "label": str(h.get("label", "") or ""),
+                        }
+                    )
+            return result
+
+        # Backward compat: legacy flat ``handoff_prompt`` key.
+        legacy = str(item.get("handoff_prompt", "") or "")
+        if legacy:
+            return [{"prompt": legacy, "agent": "", "label": ""}]
+        return []
+
     def run(self) -> int:
         """Run one CLI invocation and return a process-style status code."""
         cli_parser = self._parser_cls()
@@ -173,8 +266,11 @@ class CommandLineInterface:
             requires_install_dir=command_config.requires_install_dir,
         )
         artifacts_root = self._read_artifacts_root(resolved_install_dir)
+        workflow_stages = self._read_workflow_stages(resolved_install_dir)
         service = self._service_cls(
-            templates_root=self._templates_root, artifacts_root=artifacts_root
+            templates_root=self._templates_root,
+            artifacts_root=artifacts_root,
+            workflow_stages=workflow_stages,
         )
         commands = build_command_registry(service)
         effective_only = self._resolve_only_filter(

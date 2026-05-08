@@ -26,3 +26,65 @@
 #
 # artifacts:
 #   root: docs
+
+# Pipeline workflow — seeded by vstack install, owned by this project.
+#
+# gate: required   — stage always runs
+# gate: optional   — stage may be skipped when its domain is unaffected
+# gate: skip        — stage is never executed (explicit opt-out)
+#
+# hitl: always     — pipeline pauses for human approval before handoff (default for required)
+# hitl: on-change  — pipeline pauses only when the stage made changes (default for optional)
+# hitl: never      — pipeline continues without human approval (explicit opt-out)
+#
+workflow:
+  version: 1
+  stages:
+    - role: product
+      gate: required
+      hitl: always
+      handoffs:
+        prompt: >
+          Product outputs are approved. Assess the current state and produce or
+          update the architecture as needed. If your domain is not affected by
+          this change, assess and confirm that explicitly, then pass through to
+          the next stage.
+    - role: architect
+      gate: required
+      hitl: always
+      handoffs:
+        prompt: >
+          Architecture outputs are approved. Assess the current state and produce
+          design specifications as needed. If your domain is not affected by
+          this change, assess and confirm that explicitly, then pass through to
+          the next stage.
+    - role: designer
+      gate: optional
+      hitl: on-change
+      handoffs:
+        prompt: >
+          Design outputs are approved. Assess the current state and implement
+          code and tests as needed. If your domain is not affected by this
+          change, assess and confirm that explicitly, then pass through to
+          engineering.
+    - role: engineer
+      gate: required
+      hitl: always
+      handoffs:
+        prompt: >
+          Implementation is approved. Assess the current state and verify the
+          implementation as needed — run tests, security checks, and performance
+          analysis.
+    - role: tester
+      gate: required
+      hitl: always
+      handoffs:
+        prompt: >
+          Verification outputs are approved. Assess the current state and prepare
+          the release as needed. Create and/or update the relevant artifacts if
+          needed, as well as any sign-offs.
+    - role: release
+      gate: required
+      hitl: always
+      handoffs:
+        prompt: ""
