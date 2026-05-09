@@ -4,8 +4,7 @@ description: 'DX triage and focused review. First classifies whether the request
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[API, tool, or workflow to consult]'
 user-invocable: true
 disable-model-invocation: false
@@ -217,4 +216,4 @@ reason: [one sentence]
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"consult","artifact_type":"skill","artifact_version":"20260421009","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"consult","artifact_type":"skill","artifact_version":"20260421009","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

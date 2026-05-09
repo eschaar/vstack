@@ -4,8 +4,7 @@ description: 'Verification fix-loop skill. Routes by mode (quick/standard/exhaus
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[component or feature to verify]'
 user-invocable: true
 disable-model-invocation: false
@@ -265,4 +264,4 @@ scope: [path/component/full]
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"verify","artifact_type":"skill","artifact_version":"20260421026","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"verify","artifact_type":"skill","artifact_version":"20260421026","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

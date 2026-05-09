@@ -4,8 +4,7 @@ description: 'Cross-cutting technical analysis. Investigates impact, tradeoffs, 
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[topic, change, or question to analyse]'
 user-invocable: true
 disable-model-invocation: false
@@ -213,4 +212,4 @@ State conclusions with confidence level:
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"analyse","artifact_type":"skill","artifact_version":"20260421004","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"analyse","artifact_type":"skill","artifact_version":"20260421004","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

@@ -4,8 +4,7 @@ description: 'GDPR-compliant engineering practices for APIs, data models, authen
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[component or feature: data model | API | logging | retention | erasure | infra | PR review]'
 user-invocable: true
 disable-model-invocation: false
@@ -245,4 +244,4 @@ Use `@example.com` for all test email addresses.
 - [EDPB guidelines](https://www.edpb.europa.eu/our-work-tools/general-guidance/guidelines-recommendations-best-practices_en)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"gdpr","artifact_type":"skill","artifact_version":"20260502029","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"gdpr","artifact_type":"skill","artifact_version":"20260502029","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

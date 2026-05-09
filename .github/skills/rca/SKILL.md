@@ -4,8 +4,7 @@ description: 'Root cause analysis for incidents and bugs. Guides a systematic te
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[incident or issue to analyse]'
 user-invocable: true
 disable-model-invocation: false
@@ -206,4 +205,4 @@ Status:      Draft — ready for review
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"rca","artifact_type":"skill","artifact_version":"20260503001","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"rca","artifact_type":"skill","artifact_version":"20260503001","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

@@ -4,8 +4,7 @@ description: 'AWS CLI command reference and workflow patterns for backend engine
 license: 'MIT'
 compatibility: 'Requires AWS CLI v2 installed and configured (aws configure or environment variables). IAM permissions vary by operation — principle of least privilege applies.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[service: iam | ec2 | s3 | rds | ecs | lambda | cloudwatch | ssm | secrets]'
 user-invocable: true
 disable-model-invocation: false
@@ -373,4 +372,4 @@ aws ce get-cost-and-usage \
 - [AWS CLI named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"aws-cli","artifact_type":"skill","artifact_version":"20260502033","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"aws-cli","artifact_type":"skill","artifact_version":"20260502033","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

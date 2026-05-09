@@ -4,8 +4,7 @@ description: 'Engineering-lead plan review. Lock in the execution plan — servi
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[plan or system to review]'
 user-invocable: true
 disable-model-invocation: false
@@ -277,4 +276,4 @@ For each significant structural decision made during this review (technology cho
 - Update `docs/architecture/overview.md` to reflect the final decisions.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"architecture","artifact_type":"skill","artifact_version":"20260421005","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"architecture","artifact_type":"skill","artifact_version":"20260421005","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

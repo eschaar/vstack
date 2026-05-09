@@ -4,8 +4,7 @@ description: 'Create or update a GitHub Release using the gh CLI from prepared r
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access, terminal command execution, and GitHub CLI authentication (`gh auth status`).'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[version/tag and release notes source]'
 user-invocable: true
 disable-model-invocation: false
@@ -213,4 +212,4 @@ If blocked, report exact blocker and required user action.
 - [GitHub Releases documentation](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"gh-release","artifact_type":"skill","artifact_version":"20260502023","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"gh-release","artifact_type":"skill","artifact_version":"20260502023","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

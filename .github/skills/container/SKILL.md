@@ -4,8 +4,7 @@ description: 'Write and review Dockerfile, docker-compose, and container configu
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[service to containerise]'
 user-invocable: true
 disable-model-invocation: false
@@ -152,4 +151,4 @@ For production-like local testing, write a separate `docker-compose.prod.yml` wi
 - [Docker official images](https://hub.docker.com/search?image_filter=official)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"container","artifact_type":"skill","artifact_version":"20260421010","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"container","artifact_type":"skill","artifact_version":"20260421010","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

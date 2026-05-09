@@ -4,8 +4,7 @@ description: 'Blameless post-mortem writing for incidents. Produces a stakeholde
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[incident to write a post-mortem for]'
 user-invocable: true
 disable-model-invocation: false
@@ -183,4 +182,4 @@ Status:       Draft — ready for team review
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"postmortem","artifact_type":"skill","artifact_version":"20260503001","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"postmortem","artifact_type":"skill","artifact_version":"20260503001","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

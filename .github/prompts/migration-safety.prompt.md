@@ -52,4 +52,4 @@ List missing migration tests (forward, backward, data invariants, load-sensitive
 - biggest remaining risk in one sentence
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"migration-safety","artifact_type":"prompt","artifact_version":"20260502011","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"migration-safety","artifact_type":"prompt","artifact_version":"20260502011","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

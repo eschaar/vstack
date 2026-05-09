@@ -4,8 +4,7 @@ description: 'Write, review, and refactor Terraform infrastructure-as-code. Cove
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access. Requires Terraform CLI installed for plan/apply operations.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[provider: aws | azure | gcp | generic, and scope: new resource | module | state migration | security review]'
 user-invocable: true
 disable-model-invocation: false
@@ -334,4 +333,4 @@ Run `terraform plan` after every state operation to verify the outcome.
 - [tfsec rules](https://aquasecurity.github.io/tfsec/latest/checks/aws/) · [checkov checks](https://www.checkov.io/5.Policy%20Index/terraform.html)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"terraform","artifact_type":"skill","artifact_version":"20260502030","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"terraform","artifact_type":"skill","artifact_version":"20260502030","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
