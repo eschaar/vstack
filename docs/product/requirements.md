@@ -10,8 +10,8 @@ ______________________________________________________________________
 vstack is a VS Code-native AI engineering workflow system. It installs structured
 agents, skills, instructions, and prompts into `.github/` so GitHub Copilot Agent
 Mode has a clear operating model. vstack is distributed as a standalone Python CLI
-tool (`pipx install vstack`) with no runtime dependencies beyond the Python standard
-library.
+tool (`pipx install vstack`) with a single runtime dependency (`pyyaml>=6.0`)
+for YAML frontmatter parsing (see ADR-025).
 
 ______________________________________________________________________
 

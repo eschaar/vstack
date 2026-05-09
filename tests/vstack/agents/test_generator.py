@@ -211,12 +211,17 @@ class TestAgentGenerator:
             """Returns empty dict when defaults is neither a string nor a dict."""
             assert AgentGenerator()._extract_defaults({"defaults": 42}) == {}
 
-        def test_reparses_raw_indented_string(self) -> None:
-            """Re-parses a raw indented YAML string produced by the minimal parser."""
-            raw_defaults = "  artifacts:\n    dir: design\n"
-            result = AgentGenerator()._extract_defaults({"defaults": raw_defaults})
-            assert isinstance(result, dict)
-            assert "artifacts" in result
+        def test_returns_empty_dict_for_non_dict_string(self) -> None:
+            """Non-dict values (including strings) return an empty dict.
+
+            PyYAML always produces a dict for a ``defaults:`` mapping block, so
+            a string value is not produced in normal operation.  The method still
+            handles it defensively and returns ``{}``.
+            """
+            assert (
+                AgentGenerator()._extract_defaults({"defaults": "  artifacts:\n    dir: design\n"})
+                == {}
+            )
 
     class TestLoadArtifactConfig:
         """Tests for AgentGenerator.load_artifact_config."""
