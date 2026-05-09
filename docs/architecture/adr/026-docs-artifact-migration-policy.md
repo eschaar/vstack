@@ -4,6 +4,7 @@
 
 **date:** 2026-05-09\
 **status:** accepted\
+**updated:** 2026-05-10 — `vstack migrate` shipped in this version\
 **depends on:** ADR-014 (manifest schema versioning), ADR-019 (vstack project directory), ADR-021 (config-driven artifact paths)
 
 ## context
@@ -84,21 +85,31 @@ Two migration mechanisms exist, each scoped to its artifact class:
 `vstack manifest upgrade` already handles schema migrations and file relocation for `.github/`
 artifacts (ADR-017). Docs artifact migration is a separate concern with a separate command.
 
-### 4. `vstack migrate` — deferred implementation, defined convention now
+### 4. `vstack migrate` — implemented
 
-The `vstack migrate` command is **not implemented** in this decision. The convention for
-how it will work is defined here so that migration records can be authored now and executed
-when the command ships.
+The `vstack migrate` command is shipped as of this decision. Run it from the project root
+after upgrading vstack to a new major version:
+
+```
+vstack migrate [--target <dir>] [--from <major>] [--to <major>] [--dry-run]
+```
+
+| Flag             | Description                                                     |
+| ---------------- | --------------------------------------------------------------- |
+| `--target <dir>` | Project root to migrate (default: current directory)            |
+| `--from <major>` | Source major version (default: read from `.vstack/vstack.json`) |
+| `--to <major>`   | Target major version (default: current vstack package major)    |
+| `--dry-run`      | Print planned moves without touching the filesystem             |
 
 Migration records live in `src/vstack/_migrations/` within the package source. Each file
 covers one major version transition:
 
 ```
 src/vstack/_migrations/
-└── v3_to_v4.yaml          # applied when upgrading from any 3.x to 4.x
+└── v2_to_v3.yaml          # applied when upgrading from any 2.x to 3.x
 ```
 
-A migration record lists path moves by artifact class:
+A migration record lists path moves:
 
 ```yaml
 from_version: "3.x"
@@ -113,17 +124,13 @@ moves:
       migration.
 ```
 
-When `vstack migrate` ships, it will:
+For each `type: docs` move, the command checks whether the old path exists; if so, it moves
+the file to the new path (creating parent directories as needed) and reports the result.
+Chained moves across multiple major versions are applied in order (e.g. v1→v2→v3 when
+upgrading from major 1 to major 3). The command exits non-zero if any move fails.
 
-1. Read the applicable migration record for the installed-to-installed version range.
-1. For each `type: docs` move: check if the old path exists; if so, move it to the
-   new path (creating parent directories as needed), and report what was moved.
-1. Print a summary and exit non-zero if any move failed.
-1. Support `--dry-run` to preview moves without writing.
-
-Until the command ships, the migration record files serve as the canonical reference for
-what a user must do manually when upgrading across major versions. `CHANGELOG.md` entries
-for major releases must include a "Migration" section that lists the same moves in prose.
+`CHANGELOG.md` entries for major releases must include a "Migration" section that restates
+the same moves in prose for users who prefer to migrate manually.
 
 ### 5. Skill prose references are resolved at LLM runtime, not install time
 

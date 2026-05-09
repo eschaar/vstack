@@ -6,12 +6,29 @@ changes across major vstack version boundaries.
 Each file covers one major version transition and is named `v{M}_to_v{N}.yaml` where
 `M` is the source major version and `N` is the target major version.
 
-These files are read by `vstack migrate` (not yet implemented — see ADR-026) to relocate
-agent-owned docs files when their paths change between major versions.
+These files are read by `vstack migrate` to relocate agent-owned docs files when their
+paths change between major versions.
 
-Until `vstack migrate` ships, use the moves listed here as the canonical reference for
-manual migration steps. `CHANGELOG.md` for each major release must include a "Migration"
-section that restates these moves in prose.
+## Usage
+
+```
+vstack migrate [--target <dir>] [--from <major>] [--to <major>] [--dry-run]
+```
+
+Run from the project root (or pass `--target`) after upgrading vstack to a new major
+version. The command chains all necessary migration steps between the installed major
+and the current package major.
+
+| Flag             | Description                                                     |
+| ---------------- | --------------------------------------------------------------- |
+| `--target <dir>` | Project root to migrate (default: current directory)            |
+| `--from <major>` | Source major version (default: read from `.vstack/vstack.json`) |
+| `--to <major>`   | Target major version (default: current vstack package major)    |
+| `--dry-run`      | Print moves without touching the filesystem                     |
+
+`vstack migrate` only moves files that exist at the old path; absent files are silently
+skipped. It reads `artifacts.root` from `.vstack/config.yaml` and adjusts destination
+paths when the project uses a custom docs root.
 
 ## Schema
 
