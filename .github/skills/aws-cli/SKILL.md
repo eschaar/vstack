@@ -4,7 +4,8 @@ description: 'AWS CLI command reference and workflow patterns for backend engine
 license: 'MIT'
 compatibility: 'Requires AWS CLI v2 installed and configured (aws configure or environment variables). IAM permissions vary by operation — principle of least privilege applies.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[service: iam | ec2 | s3 | rds | ecs | lambda | cloudwatch | ssm | secrets]'
 user-invocable: true
 disable-model-invocation: false

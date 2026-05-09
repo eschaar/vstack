@@ -4,7 +4,8 @@ description: 'Pre-landing code review. Finds bugs that pass CI but break in prod
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[files, PR, or change to review]'
 user-invocable: true
 disable-model-invocation: false

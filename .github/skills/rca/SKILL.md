@@ -4,7 +4,8 @@ description: 'Root cause analysis for incidents and bugs. Guides a systematic te
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[incident or issue to analyse]'
 user-invocable: true
 disable-model-invocation: false

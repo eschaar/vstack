@@ -4,7 +4,8 @@ description: 'Write and review Dockerfile, docker-compose, and container configu
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[service to containerise]'
 user-invocable: true
 disable-model-invocation: false

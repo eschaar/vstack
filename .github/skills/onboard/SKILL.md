@@ -4,7 +4,8 @@ description: 'Generate a contributor onboarding guide for a repository. Covers p
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[repository or service to document]'
 user-invocable: true
 disable-model-invocation: false

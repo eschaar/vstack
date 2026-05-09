@@ -4,7 +4,8 @@ description: 'Write and review OpenAPI 3.1 specifications. Covers resource namin
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[API or spec file to write or review]'
 user-invocable: true
 disable-model-invocation: false

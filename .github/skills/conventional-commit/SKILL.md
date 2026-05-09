@@ -4,7 +4,8 @@ description: 'Prepare high-quality Conventional Commit messages from current sta
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[changes to commit and desired release intent]'
 user-invocable: true
 disable-model-invocation: false

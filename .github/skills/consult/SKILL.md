@@ -4,7 +4,8 @@ description: 'DX triage and focused review. First classifies whether the request
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[API, tool, or workflow to consult]'
 user-invocable: true
 disable-model-invocation: false

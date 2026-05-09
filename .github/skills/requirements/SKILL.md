@@ -4,7 +4,8 @@ description: 'Collaborative requirements gathering and documentation. Clarifies 
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[feature or system to document]'
 user-invocable: true
 disable-model-invocation: false

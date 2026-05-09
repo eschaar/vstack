@@ -4,7 +4,8 @@ description: 'Verification fix-loop skill. Routes by mode (quick/standard/exhaus
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[component or feature to verify]'
 user-invocable: true
 disable-model-invocation: false

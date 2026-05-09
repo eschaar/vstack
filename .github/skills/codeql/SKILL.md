@@ -4,7 +4,8 @@ description: 'Set up and configure CodeQL code scanning via GitHub Actions or th
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution. GitHub Advanced Security or public repository required for alert upload.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[languages and setup type: default or advanced]'
 user-invocable: true
 disable-model-invocation: false

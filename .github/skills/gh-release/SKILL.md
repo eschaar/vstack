@@ -4,7 +4,8 @@ description: 'Create or update a GitHub Release using the gh CLI from prepared r
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access, terminal command execution, and GitHub CLI authentication (`gh auth status`).'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[version/tag and release notes source]'
 user-invocable: true
 disable-model-invocation: false
