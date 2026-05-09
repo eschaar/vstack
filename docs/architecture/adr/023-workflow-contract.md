@@ -114,10 +114,24 @@ by the agent and confirmed by the human — never inferred automatically.
 
 ### 2. Handoffs generated from workflow config
 
-Agent `config.yaml` files drop the `handoffs:` block. In its place, each agent carries a single
-`handoff_prompt:` string — the text to send to the next stage. The generator reads the workflow
-config to determine the next stage's role name and combines it with the agent's `handoff_prompt`
-to produce the full handoff block in the generated `.agent.md`.
+Agent `config.yaml` files drop the top-level `handoffs:` block. In its place, each agent carries
+a `defaults.handoffs.prompt` string — the text to send to the next stage. The generator reads the
+workflow config to determine the next stage's role name and combines it with the agent's
+`defaults.handoffs.prompt` to produce the full handoff block in the generated `.agent.md`.
+
+```yaml
+# agent config.yaml
+defaults:
+  handoffs:
+    prompt: >
+      Product outputs are approved. Assess the current state and produce or
+      update the architecture as needed.
+```
+
+When the workflow config has a `handoffs:` list for a stage, those entries drive the generated
+handoffs directly; the agent's `defaults.handoffs.prompt` overrides the prompt of the first
+workflow-level handoff that has no explicit `agent:` override, allowing per-template
+customisation without editing the central config.
 
 When no workflow config is present (absent or empty `workflow:` block), the generator falls back
 to a generic label ("Continue to next stage") and omits the `agent:` field, preserving v3 behavior
@@ -132,24 +146,13 @@ artifacts section. Agents are explicitly instructed to keep these files current.
 Artifacts without the flag are treated as deliverables — produced per session, not maintained
 indefinitely.
 
-### 4. Project-level artifact overrides (overlay model)
+### 4. Project-level artifact overrides — deferred
 
-An `agents:` block may be added to `.vstack/config.yaml` to override per-agent artifact
-configuration. Only delta entries need to be specified; omitting an agent means the template
-default applies. The generator merges project overrides on top of template defaults at `init`
-time.
-
-```yaml
-agents:
-  product:
-    artifacts:
-      output:
-        - path: vision.md
-          baseline: true
-```
-
-This allows project teams to promote deliverables to baseline status without forking agent
-templates.
+An `agents:` overlay block in `.vstack/config.yaml` (allowing teams to promote deliverables to
+baseline status or adjust artifact paths without forking templates) is **not implemented** in
+this decision. It is reserved as a follow-on change once the workflow contract proves stable
+in practice. Until then, teams that need per-project artifact customisation should fork the
+relevant agent template.
 
 ## alternatives considered
 
