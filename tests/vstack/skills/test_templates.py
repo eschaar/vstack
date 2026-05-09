@@ -42,7 +42,7 @@ class TestSkillTemplates:
             name = _skill_name(tmpl)
             cfg = _skill_config(tmpl)
             assert cfg.exists(), f"{name}: missing config.yaml"
-            meta = FrontmatterParser().parse_yaml(cfg.read_text(encoding="utf-8"))
+            meta = FrontmatterParser.parse_yaml(cfg.read_text(encoding="utf-8"))
             assert meta.get("name"), f"{name}: missing name"
             assert meta.get("version"), f"{name}: missing version"
             assert meta.get("description"), f"{name}: missing description"
@@ -51,7 +51,7 @@ class TestSkillTemplates:
         """Test that config name matches directory."""
         for tmpl in _skill_templates():
             name = _skill_name(tmpl)
-            meta = FrontmatterParser().parse_yaml(_skill_config(tmpl).read_text(encoding="utf-8"))
+            meta = FrontmatterParser.parse_yaml(_skill_config(tmpl).read_text(encoding="utf-8"))
             assert str(meta.get("name")) == name
 
 

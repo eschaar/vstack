@@ -73,7 +73,7 @@ def test_all_role_handoff_targets_are_known_roles() -> None:
         if not agent_file.exists():
             continue
         text = agent_file.read_text(encoding="utf-8")
-        parsed = FrontmatterParser().parse(text)
+        parsed = FrontmatterParser.parse(text)
         handoffs = parsed.metadata.get("handoffs") or []
         for handoff in handoffs:
             target = handoff.get("agent")
