@@ -21,19 +21,18 @@ from vstack.frontmatter.schema import FieldSpec, FrontmatterSchema
 _YAML_SPECIAL_LEADING = frozenset("*&!")
 
 
-def _quote_list_item(item: str) -> str:
-    """Return *item* single-quoted when it starts with a YAML-special character."""
-    if item and item[0] in _YAML_SPECIAL_LEADING:
-        return "'" + item.replace("'", "''") + "'"
-    return item
-
-
 class FrontmatterSerializer:
     """Frontmatter serializer — converts metadata dict to YAML.
 
     Instantiate once, then call :meth:`serialize` to render frontmatter.
     No mutable instance state is retained between calls.
     """
+
+    def _quote_list_item(self, item: str) -> str:
+        """Return *item* single-quoted when it starts with a YAML-special character."""
+        if item and item[0] in _YAML_SPECIAL_LEADING:
+            return "'" + item.replace("'", "''") + "'"
+        return item
 
     def _serialize_scalar(self, spec: FieldSpec, value: object) -> str:
         """Serialize a single ``"str"`` value according to *spec* options."""
@@ -102,7 +101,7 @@ class FrontmatterSerializer:
         if spec.type == "list":
             if isinstance(value, list) and value:
                 lines = [f"{spec.name}:"]
-                lines.extend(f"  - {_quote_list_item(str(item_v))}" for item_v in value)
+                lines.extend(f"  - {self._quote_list_item(str(item_v))}" for item_v in value)
                 return lines
             return []
         if self._should_emit_multiline(value, preserve_multiline):
@@ -172,7 +171,7 @@ class FrontmatterSerializer:
             if isinstance(value, list) and value:
                 lines.append(f"{spec.name}:")
                 for item in value:
-                    lines.append(f"  - {_quote_list_item(str(item))}")
+                    lines.append(f"  - {self._quote_list_item(str(item))}")
             return
         if spec.type == "object-list":
             if isinstance(value, list) and value:

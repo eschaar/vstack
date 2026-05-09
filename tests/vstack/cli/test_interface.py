@@ -80,8 +80,9 @@ class TestCommandLineInterface:
         command = _Command(exit_code=5)
 
         monkeypatch.setattr(
-            "vstack.cli.interface.build_command_registry",
-            lambda service: {"validate": command},
+            CommandLineInterface,
+            "_build_command_registry",
+            lambda self, service: {"validate": command},
         )
 
         interface = CommandLineInterface(
@@ -103,8 +104,9 @@ class TestCommandLineInterface:
         command = _Command(exit_code=9)
 
         monkeypatch.setattr(
-            "vstack.cli.interface.build_command_registry",
-            lambda service: {"install": command},
+            CommandLineInterface,
+            "_build_command_registry",
+            lambda self, service: {"install": command},
         )
 
         interface = CommandLineInterface(
@@ -237,8 +239,9 @@ class TestReadArtifactsRoot:
                 captured.append(artifacts_root)
 
         monkeypatch.setattr(
-            "vstack.cli.interface.build_command_registry",
-            lambda service: {"install": command},
+            CommandLineInterface,
+            "_build_command_registry",
+            lambda self, service: {"install": command},
         )
 
         interface = CommandLineInterface(
@@ -484,8 +487,9 @@ class TestReadExclude:
         command = _Command(exit_code=0)
 
         monkeypatch.setattr(
-            "vstack.cli.interface.build_command_registry",
-            lambda service: {"install": command},
+            CommandLineInterface,
+            "_build_command_registry",
+            lambda self, service: {"install": command},
         )
         interface = CommandLineInterface(
             parser_cls=cast(Any, lambda: parser),
@@ -513,8 +517,9 @@ class TestReadExclude:
         command = _Command(exit_code=0)
 
         monkeypatch.setattr(
-            "vstack.cli.interface.build_command_registry",
-            lambda service: {"install": command},
+            CommandLineInterface,
+            "_build_command_registry",
+            lambda self, service: {"install": command},
         )
         interface = CommandLineInterface(
             parser_cls=cast(Any, lambda: parser),

@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING
 
 from vstack.cli.base import BaseCommand, CommandContext
 from vstack.cli.constants import Colors
-from vstack.cli.helpers import normalize_targeted_names
 from vstack.constants import VERSION
 from vstack.manifest import (
     CURRENT_HASH_ALGORITHM,
@@ -17,8 +16,6 @@ from vstack.manifest import (
     Manifest,
     content_hash,
     hash_with_algorithm,
-    preserve_existing_entry,
-    preserved_manifest_entries,
 )
 
 if TYPE_CHECKING:
@@ -231,9 +228,10 @@ class InitCommand(BaseCommand):
 
         selected_manifest_keys = {gen.config.manifest_key for gen in gens}
         existing_entries = InitCommand._existing_entries_for_init(gens, existing_manifest)
-        new_entries = preserved_manifest_entries(
-            existing_manifest,
-            selected_manifest_keys,
+        new_entries = (
+            existing_manifest.preserved_entries(selected_manifest_keys)
+            if existing_manifest is not None
+            else {}
         )
         return manifest_file, existing_manifest, existing_entries, new_entries
 
@@ -338,7 +336,7 @@ class InitCommand(BaseCommand):
             return action
 
         if existing_entry is not None:
-            preserve_existing_entry(
+            Manifest.preserve_existing_entry(
                 new_entries=new_entries,
                 manifest_key=gen.config.manifest_key,
                 existing_entry=existing_entry,
@@ -467,8 +465,8 @@ class InitCommand(BaseCommand):
         checksum_algorithm = CURRENT_HASH_ALGORITHM
 
         gens = [g for g in service.generators if only is None or g.config.type_name in only]
-        targeted_force_names = normalize_targeted_names(force_names)
-        targeted_adopt_names = normalize_targeted_names(adopt_names)
+        targeted_force_names = InitCommand._normalize_targeted_names(force_names)
+        targeted_adopt_names = InitCommand._normalize_targeted_names(adopt_names)
 
         # Validate workflow stages against known agent names (warning only).
         from vstack.agents.generator import AgentGenerator

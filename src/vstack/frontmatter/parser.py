@@ -51,8 +51,7 @@ class FrontmatterContent:
 class FrontmatterParser:
     """Parse YAML frontmatter using :func:`yaml.safe_load`."""
 
-    @staticmethod
-    def parse(content: str) -> FrontmatterContent:
+    def parse(self, content: str) -> FrontmatterContent:
         """Split YAML frontmatter from body content.
 
         Returns a :class:`FrontmatterContent` instance.  When no frontmatter
@@ -62,11 +61,10 @@ class FrontmatterParser:
         match = _FRONTMATTER_RE.match(content)
         if not match:
             return FrontmatterContent(metadata={}, content=content)
-        meta = FrontmatterParser._parse_yaml_block(match.group(1))
+        meta = self._parse_yaml_block(match.group(1))
         return FrontmatterContent(metadata=meta, content=match.group(2))
 
-    @staticmethod
-    def parse_yaml(raw: str) -> dict:
+    def parse_yaml(self, raw: str) -> dict:
         """Parse a raw YAML string without frontmatter delimiters.
 
         Args:
@@ -75,12 +73,11 @@ class FrontmatterParser:
         Returns:
             A parsed metadata dictionary.
         """
-        return FrontmatterParser._parse_yaml_block(raw)
+        return self._parse_yaml_block(raw)
 
     # ── Internal ──────────────────────────────────────────────────────────────
 
-    @staticmethod
-    def _parse_yaml_block(raw: str) -> dict:
+    def _parse_yaml_block(self, raw: str) -> dict:
         """Delegate YAML parsing to :func:`yaml.safe_load`.
 
         Pre-processes ``- *`` (VS Code wildcard list items) into quoted form

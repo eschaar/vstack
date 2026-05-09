@@ -6,11 +6,8 @@ from vstack.manifest.store import (
     ArtifactEntry,
     Manifest,
     ManifestFile,
-    content_hash,
-    hash_with_algorithm,
-    preserve_existing_entry,
-    preserved_manifest_entries,
 )
+from vstack.utils import content_hash, hash_with_algorithm
 
 __all__ = [
     "CURRENT_HASH_ALGORITHM",
@@ -20,6 +17,4 @@ __all__ = [
     "ManifestFile",
     "content_hash",
     "hash_with_algorithm",
-    "preserve_existing_entry",
-    "preserved_manifest_entries",
 ]
