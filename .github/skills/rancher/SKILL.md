@@ -6,6 +6,7 @@ compatibility: 'Requires a skills-compatible agent with repository file access. 
 metadata:
   owner: vstack
   maturity: stable
+allowed-tools: 'execute read search edit'
 argument-hint: '[rancher server/context, cluster/project, and scope: deploy | governance | fleet | troubleshooting]'
 user-invocable: true
 disable-model-invocation: false

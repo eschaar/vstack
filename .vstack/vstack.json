@@ -2,315 +2,315 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "0.0.0.post3.dev0+df3fe6e",
-  "installed_at": "2026-05-09T21:42:06.107627+00:00",
+  "installed_at": "2026-05-09T22:36:50.257153+00:00",
   "artifacts": {
     "skills": [
       {
         "name": "adr",
         "file": "skills/adr/SKILL.md",
         "version": "20260421003",
-        "checksum": "0838ffc14c5b86ea8b3df93cf6ce76c9bcd27b6c55c4ba47a3d01cc000fd7ee0",
+        "checksum": "871263fddee0b3ae8e2c2e2243aad4f2b3aa9e0dea0d2519c7d21c3e98430a83",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "analyse",
         "file": "skills/analyse/SKILL.md",
         "version": "20260421004",
-        "checksum": "8ff12f1d1f12ac9c46a2cb36981b85aeea97a8bc0876bbef37300511ea0eb7b3",
+        "checksum": "79ced25692671a5286a26cbcd0e59ed4d641ac7493fd8e2b58b232f97e467224",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "architecture",
         "file": "skills/architecture/SKILL.md",
         "version": "20260421005",
-        "checksum": "4ed22957e392aa89cf4949d2a88e707bf913948c2805a257039f5376810af754",
+        "checksum": "e2d0342184829c888a70ece6f82ad6a7450ad5d8c958ff6e028d7f245f1e5960",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "aws-cli",
         "file": "skills/aws-cli/SKILL.md",
         "version": "20260502033",
-        "checksum": "e5b2688de029ab0cc6d3e3862237c5bdb7f3ad4aab9baa4e1bceac433d699b79",
+        "checksum": "4868a5adc17b6ac52839c85f3a09986991c2498501913ef48a8f85a6291e1b21",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "cicd",
         "file": "skills/cicd/SKILL.md",
         "version": "20260421006",
-        "checksum": "ffe0df7fe8c425844e9fc1a20976a9d6c116d828af96c1a568317728bfdefdcf",
+        "checksum": "ba6c0cf0e644e24b1290c1b78969bad86dd7d5b39030edc7bd430d4d1832cfd7",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "cloudformation",
         "file": "skills/cloudformation/SKILL.md",
         "version": "20260502032",
-        "checksum": "d172ffc2b30c75986446a72b625baecae123d1cc3882b20ca803c60b46dcd75d",
+        "checksum": "0e61163cfc356105a309bbecf89ee26a5b10b9b5db58c331d76efa4a508e760e",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "code-review",
         "file": "skills/code-review/SKILL.md",
         "version": "20260421007",
-        "checksum": "5bcdddc03ce0a54997037210b38e7b4ed22828cfba6a76153afaa94cf616527a",
+        "checksum": "58b7caa9dd3a5da6bef8d8d4d1f7b6d513740d33ad16731a06b1b2a907d93a13",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "codeql",
         "file": "skills/codeql/SKILL.md",
         "version": "20260502026",
-        "checksum": "1b1b5800be204cc0e5dc6b4a8fcb9a7b916cfba2f96d5f99dbb6d7e213b8e95c",
+        "checksum": "95f29c975e5850307620c21a68df174b90ecaafd5b1e36659bb3c34d0027b5df",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "concise",
         "file": "skills/concise/SKILL.md",
         "version": "20260421008",
-        "checksum": "3a07860ba6c83a97c9ad5496e124be4e5277fc0b811fe25dcd5bfdb7d8252b98",
+        "checksum": "9555de7da6a925e76992b6f5e51ddccd6b4de3887ea31ed2ceb9113c9fe9bc7e",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "consult",
         "file": "skills/consult/SKILL.md",
         "version": "20260421009",
-        "checksum": "90e1b0d0ff757c8e5879832c5ac6c41ec4054e9bff5b12a14531d427c09bcbad",
+        "checksum": "a340883900309261213ec0ea0d4e9e5b72ca83fb25c7cd6c3506e1f95f40cf76",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "container",
         "file": "skills/container/SKILL.md",
         "version": "20260421010",
-        "checksum": "e135b18cb972d30b77de4492db0437853ff1f49bad60a9113a034e39154d30e1",
+        "checksum": "f0a4408a756195faca9a58dca76e56f950df227415d77af293bf55280191abd4",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "conventional-commit",
         "file": "skills/conventional-commit/SKILL.md",
         "version": "20260502024",
-        "checksum": "76477b42b17c9f6eec92baa36dc172e7ee98b20a86399eabdd2b7d2a90923509",
+        "checksum": "8f1ce569106b5210a8d4ffe5bc9123eb0dec6b24ff56cf680922eccdd9891012",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "debug",
         "file": "skills/debug/SKILL.md",
         "version": "20260421011",
-        "checksum": "8e46a2723004bc86f6aee50f492b73045acdab66c964787c58a988c98684750b",
+        "checksum": "b4c1c6de7142b7b74326d1c19a5cc27f3957d1faa48aa48bd6b1fc45832edf3b",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "dependabot",
         "file": "skills/dependabot/SKILL.md",
         "version": "20260502027",
-        "checksum": "3ce5836bf870f73805800f672d379aa10f5aff5a522017a77875d9339bb99984",
+        "checksum": "fa3f595740faa0b8093ffe4f32fb8e4b85f5834ea10817752ee9c94be8f38c2d",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "dependency",
         "file": "skills/dependency/SKILL.md",
         "version": "20260421012",
-        "checksum": "46e75e8a28b1af5a60da7d9b3d1e46f0914b2f10d8733b37e6577e62b0074724",
+        "checksum": "2cbbecca8e6697b8523301325a889a5ca88c520f6d35a3b98807b6c3449239f5",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "design",
         "file": "skills/design/SKILL.md",
         "version": "20260421013",
-        "checksum": "e21a674324244412f7b4a5bc010da4a7b9dfcf3522d54281bc9cf69f0b1126bd",
+        "checksum": "2d56e34aca8d3cf5a3f327e3b69ab15707393ffc47607c91ec91dd5be86cd65b",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "docs",
         "file": "skills/docs/SKILL.md",
         "version": "20260421014",
-        "checksum": "7d34421800bf04fe5a0782abfc5702a421419d31a5c66fd495d7dc8a6e2c64e3",
+        "checksum": "d6ebf7d270eac7911aea09a34cb7ec4006c70064b7e6f58dfa84a405e6620d18",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "explore",
         "file": "skills/explore/SKILL.md",
         "version": "20260421015",
-        "checksum": "a257941d7b577f782b5d41703b1fbd25c5ab13f664e696d83cc3a9fd91a5565f",
+        "checksum": "914323f796ac95a0f73d404f1b7eb38d94ba8950ed1a4acc5d80600ba03fae8f",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "gdpr",
         "file": "skills/gdpr/SKILL.md",
         "version": "20260502029",
-        "checksum": "94207650498b56f246392449f57b4af4659bdfe511e7a6c2f23022ff2f68b08d",
+        "checksum": "dfe60c4c59b7ae4dc66e98a885ec42b0e60eccc61fa1cb6fd269cd7eb3e0a94d",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "gh-issues",
         "file": "skills/gh-issues/SKILL.md",
         "version": "20260502025",
-        "checksum": "7a2b9b7463a40436fe77c77d066dd455ddb4abef877726ba041b89cbaf030280",
+        "checksum": "bc1f595283e7643de63c7519e994500b9434a0343154bfc404b842ce8e7028a8",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "gh-release",
         "file": "skills/gh-release/SKILL.md",
         "version": "20260502023",
-        "checksum": "beed7f98cb52222f688fed5a83d376acea1215c6654c570487412792bb577462",
+        "checksum": "10abe52f681d261588608418a546580e7798e883179888061ed6d2285050d870",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "guardrails",
         "file": "skills/guardrails/SKILL.md",
         "version": "20260421016",
-        "checksum": "8ec7213e1f8c85b4975ebb032d897e84e372c0279e3265da1098fc86cf98695f",
+        "checksum": "1c1a44c95461eb4eeef7ad64b5846a1efbb202cf1b75186421c5d0b8f9fd03f1",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "helm",
         "file": "skills/helm/SKILL.md",
         "version": "20260502037",
-        "checksum": "13600308860723f683802431ac7a8c2c3834c40e521055854cdf3d3290570689",
+        "checksum": "6e6579ede2dadb6dbe895d07c362d208e62414338445bd035f47bd1404be501b",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "incident",
         "file": "skills/incident/SKILL.md",
         "version": "20260503002",
-        "checksum": "d337c4f145c09af856f4a05f41b11f2e46f3822f77e067e1a6e39de5f2af1fe8",
+        "checksum": "546229fe91121dae2192aceb0b215096cc8cf5ba0cfb3d1300e30c73ff3f6276",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "inspect",
         "file": "skills/inspect/SKILL.md",
         "version": "20260421018",
-        "checksum": "7997cb4477f9b1a8a6753082a4f3ea0c9b5a1a77520a3f20527f8c153c968a27",
+        "checksum": "3a4aee3620bbd669602001c041cf81788da5fac9dc055a9f1b0c155e50e88b46",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "k8s",
         "file": "skills/k8s/SKILL.md",
         "version": "20260502036",
-        "checksum": "d178a4d86f6ca5f4144cd8212eaf09979bb48afa55cb482409609aa50c5f0f88",
+        "checksum": "2bfbe14c187809211a7296578644262e2e47c89b4a2fc28fc3a30a79fdaeb580",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "migrate",
         "file": "skills/migrate/SKILL.md",
         "version": "20260421019",
-        "checksum": "c6c18c750319c0feb14526d637cb591f51ffde341b1385b4063aeb1edf12fd8b",
+        "checksum": "eecc00aae2c58c573000a434fbf7ae891a3e85dcc99a42fec0e8bcadc3047b7d",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "onboard",
         "file": "skills/onboard/SKILL.md",
         "version": "20260421020",
-        "checksum": "b96fb4067121eabbdf686641b55d32f253282e0b734fa4b2df6e4a9e85938cde",
+        "checksum": "f16f2d78002e3be8e7d1d9e2bf376c1b37eb181d821f3cd113e0d5aecf5236ae",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "openapi",
         "file": "skills/openapi/SKILL.md",
         "version": "20260421021",
-        "checksum": "75d7cab59b1cde6dc91490867eb8537821059960957ba21ebd24d922e9fe7a91",
+        "checksum": "a3dbcded8e1a8b268a1976b9185f41de74ad0ad6e7aae98c399d6135de920529",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "performance",
         "file": "skills/performance/SKILL.md",
         "version": "20260421022",
-        "checksum": "e8cf2eba2a3fdc162d03afeaba260bd0c2f0aac47121c26dc9d63614bff971ec",
+        "checksum": "fa4062c77381facacedac289b54a3ce7e6cf242dfa2b36f55401aebfe5fb8ae1",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "postmortem",
         "file": "skills/postmortem/SKILL.md",
         "version": "20260503001",
-        "checksum": "ead97f2a5b28672f4ac483e467eec5b0d2a7e3b96eceaaa2017c918972c2d827",
+        "checksum": "fc70f26420e705e0979ff76476ea8176386258f2315fcb57f5ac9049a37f6c90",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "pr",
         "file": "skills/pr/SKILL.md",
         "version": "20260502013",
-        "checksum": "ed4b13b69b325b21d9abf17ae9be34c2b2fa6ff1dd78cc6ee04af73d428438b8",
+        "checksum": "fc7b2b08696982afd48033a3cc29b9fa4ac8b590fc61c828b84135585c88b345",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "rancher",
         "file": "skills/rancher/SKILL.md",
         "version": "20260502038",
-        "checksum": "c86759f257553554f2069cb6d0eda93bd98fd5c2fb251b1c8cc423302f33b01d",
+        "checksum": "3000f24c2ee2f99fdb363f30d6075993ed26533663d081089b7800098a28e648",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "rca",
         "file": "skills/rca/SKILL.md",
         "version": "20260503001",
-        "checksum": "4d2347e1bab1d0717669b78160a5703ba4d1bb3486a9499924ca569e6f049f0e",
+        "checksum": "8bebb57c166c153d89e4589097ea419266b249df871a79e24c840112b5f8ad0c",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "refactor",
         "file": "skills/refactor/SKILL.md",
         "version": "20260421023",
-        "checksum": "7559d9148ee0ed7434162f672fe47329a417fd332af92a3637c47030e6b8f271",
+        "checksum": "aa7fb995b6ac649b24b61066f15a6fe7fddab81bdcec8af27eba65092b957d68",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "release-notes",
         "file": "skills/release-notes/SKILL.md",
         "version": "20260502014",
-        "checksum": "81fd326b93789aad264e1ad27a73d00efd76c4486b5a20935bafcb18ebd43758",
+        "checksum": "589f001bcbf0e27c4da6ff9c530371a1f183b7936e3a7fc421879282bd7f9af3",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "requirements",
         "file": "skills/requirements/SKILL.md",
         "version": "20260421024",
-        "checksum": "312e1c24bc43828798e86b881204196ebcad4f90ff5cfa63d099b8836e4f1e49",
+        "checksum": "7d3338f0b7c5d493ab714a90b7d1732de56467503a3fe4dacdd40031bfea356c",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "secret-scan",
         "file": "skills/secret-scan/SKILL.md",
         "version": "20260502028",
-        "checksum": "7a83d376b062bcf497ea89dd1e44a8f9fb945349d6b66513018ce1abe265e277",
+        "checksum": "95df047af89a93a8fa3716899b8fe703b270d7f40b93fe65915f7d1bdb849370",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "security",
         "file": "skills/security/SKILL.md",
         "version": "20260421025",
-        "checksum": "f58a629804bec6f6b5839eea1e7754458bf85cceb7403b9470f80513119a306d",
+        "checksum": "e9bcd451ee25b1c752239e76e20ca67302061356b59214fae7b134a180022df8",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "terraform",
         "file": "skills/terraform/SKILL.md",
         "version": "20260502030",
-        "checksum": "b24b008c171aafbf81902b3f52661b4acc09e8980e42ebf579ac3566dc138de5",
+        "checksum": "2bb933512f72b61dae3a3b632a7afd43c62aad066de003ee0a565fc8f1895215",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "terragrunt",
         "file": "skills/terragrunt/SKILL.md",
         "version": "20260502031",
-        "checksum": "33a208ccc4dfff01b59110445e0fd851e5c9d5e094711456c1cd1efdc68d440d",
+        "checksum": "e0d3dc0feefeafb9cd41d8d6885d8b4d53baed52ba70df7dc8d33bfc7410bae8",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "threat-model",
         "file": "skills/threat-model/SKILL.md",
         "version": "20260502021",
-        "checksum": "11504d508ddfc6e9e2ded8dfac8fe6fb7af691c7ef27fdc539c5f8f870fc06bb",
+        "checksum": "7fdf69113167e9bb8c866681a86f4b4d6416145bb9def0ebe18ceba690c8fbe9",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "verify",
         "file": "skills/verify/SKILL.md",
         "version": "20260421026",
-        "checksum": "b8f80fda903c0d55c556374626e308dcc61787d59e2e642f9c9513d06b0ac2b9",
+        "checksum": "aa56d1a674ed827606af34b8e7c5bd9c2de61a6cb6f92f5fd9bdce28e46bcb30",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "vision",
         "file": "skills/vision/SKILL.md",
         "version": "20260421027",
-        "checksum": "a74271c10816e3cee75fc1489d0b2defb391035b22f8d3da0cc951ae1afb7ef2",
+        "checksum": "c0058202130905d8495a3e565b5db546ad2d0ff6d654596358a0b12c484ce310",
         "checksum_algorithm": "sha256"
       }
     ],
@@ -319,14 +319,14 @@
         "name": "architect",
         "file": "agents/architect.agent.md",
         "version": "20260503022",
-        "checksum": "e02b3c3f71c5081f70556971672aef2ddbc52c855185cf1a58a5357c847cafdc",
+        "checksum": "95f6d8b98e8cbd8e6309b1708ff58462791959868b4052b44199c62dea4e0960",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "designer",
         "file": "agents/designer.agent.md",
         "version": "20260503024",
-        "checksum": "186f51a4f10003bc220a95c2d9d89c33546e19a970150e536c90822714c634d6",
+        "checksum": "2d593399bcf4c16475e0139d255bff80e4180856720e5bbc0735e226349c2727",
         "checksum_algorithm": "sha256"
       },
       {
@@ -340,14 +340,14 @@
         "name": "product",
         "file": "agents/product.agent.md",
         "version": "20260503021",
-        "checksum": "e1928713b16fa07ca769dd62457a42d7415be6e531ae529af5a9e46e4c639518",
+        "checksum": "4bc343ed7b912988016aad7572da280a3824e46b00c86fa305fb334499a973b2",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "release",
         "file": "agents/release.agent.md",
         "version": "20260503020",
-        "checksum": "fa76f7fea418f40ffd3a18ba02f645a196e603ceda293e629ee41ce31e27dc6f",
+        "checksum": "f8496412e799033356ac67eeaaeb5addf29981d7f22235bf72971a533f6efc04",
         "checksum_algorithm": "sha256"
       },
       {

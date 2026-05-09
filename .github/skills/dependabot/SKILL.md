@@ -6,6 +6,7 @@ compatibility: 'Requires a skills-compatible agent with repository file access. 
 metadata:
   owner: vstack
   maturity: stable
+allowed-tools: 'execute read search edit'
 argument-hint: '[repository type: library | service | monorepo, and ecosystems to cover]'
 user-invocable: true
 disable-model-invocation: false

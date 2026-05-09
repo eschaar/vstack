@@ -6,6 +6,7 @@ compatibility: 'Requires a skills-compatible agent with repository file access. 
 metadata:
   owner: vstack
   maturity: stable
+allowed-tools: 'execute read search edit'
 argument-hint: '[chart path, release name, namespace, and scope: chart review | install | upgrade | rollback]'
 user-invocable: true
 disable-model-invocation: false

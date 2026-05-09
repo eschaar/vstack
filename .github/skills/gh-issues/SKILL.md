@@ -6,6 +6,7 @@ compatibility: 'Requires a skills-compatible agent with terminal command executi
 metadata:
   owner: vstack
   maturity: stable
+allowed-tools: 'execute read search edit web'
 argument-hint: '[what to create or which issue number to update]'
 user-invocable: true
 disable-model-invocation: false
