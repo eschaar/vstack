@@ -5,6 +5,7 @@ description: |
   produces severity-ranked findings, and makes no code or commit changes.
   Use when asked to "inspect", "assess", "check without fixing", or
   "what's wrong with this" before deciding whether to run verify fix loops.
+allowed-tools: 'execute read search'
 argument-hint: '[component or service to inspect]'
 
 license: MIT

@@ -7,6 +7,7 @@ description: |
   security hardening. Use when asked to "write Terraform", "review this Terraform",
   "refactor IaC", "add a Terraform module", "plan state migration", or
   "harden Terraform configuration".
+allowed-tools: 'execute read search edit'
 argument-hint: '[provider: aws | azure | gcp | generic, and scope: new resource | module | state migration | security review]'
 
 license: MIT

@@ -6,6 +6,7 @@ description: |
   Use when asked to "write a migration", "review this migration", "is this
   migration safe?", or "zero-downtime schema change". Proactively suggest before
   any DDL change ships to production.
+allowed-tools: 'execute read search edit'
 argument-hint: '[migration file or schema change to review]'
 
 license: MIT

@@ -5,6 +5,7 @@ description: |
   race conditions, missing error handling, API contract violations, observability
   gaps, security issues, and performance landmines. Use when asked to "review",
   "code review", "review this PR", or before merging.
+allowed-tools: 'execute read search'
 argument-hint: '[files, PR, or change to review]'
 
 license: MIT

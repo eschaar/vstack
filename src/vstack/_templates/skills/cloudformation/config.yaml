@@ -7,6 +7,7 @@ description: |
   configuration, and security hardening. Use when asked to "write a
   CloudFormation template", "review this CFN stack", "create a SAM template",
   "add a CloudFormation resource", or "migrate from CDK to CloudFormation".
+allowed-tools: 'execute read search edit'
 argument-hint: '[resource type or stack name, e.g. VPC | RDS | ECS service | Lambda function]'
 
 license: MIT

@@ -6,6 +6,7 @@ description: |
   RBAC, namespace isolation, and kubectl-based diagnostics. Use when asked to
   "deploy to Kubernetes", "review Kubernetes manifests", "debug Kubernetes rollout",
   "harden Kubernetes config", or "operate a workload on a cluster".
+allowed-tools: 'execute read search edit'
 argument-hint: '[cluster/context, namespace, and scope: manifest review | deploy | rollout debug | hardening]'
 
 license: MIT

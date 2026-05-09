@@ -5,6 +5,7 @@ description: |
   structure, values layering, lint/template validation, install/upgrade/rollback,
   dependency handling, and release troubleshooting. Use when asked to "create a Helm chart",
   "review Helm values", "upgrade Helm release", or "debug Helm deployment".
+allowed-tools: 'execute read search edit'
 argument-hint: '[chart path, release name, namespace, and scope: chart review | install | upgrade | rollback]'
 
 license: MIT

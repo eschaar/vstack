@@ -6,6 +6,7 @@ description: |
   security schemes, and schema validation. Use when asked to "write an OpenAPI
   spec", "review this API spec", "add an endpoint to the spec", or "validate
   this OpenAPI file".
+allowed-tools: 'execute read search edit'
 argument-hint: '[API or spec file to write or review]'
 
 license: MIT

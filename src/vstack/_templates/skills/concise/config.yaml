@@ -5,6 +5,7 @@ description: |
   normal, compact, and ultra output density without regenerating agents. Use
   when asked for shorter responses, token efficiency, or to check active style
   mode.
+allowed-tools: 'execute read search'
 argument-hint: '[normal|compact|ultra|status|on|off]'
 
 license: MIT

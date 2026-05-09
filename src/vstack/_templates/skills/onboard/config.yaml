@@ -7,6 +7,7 @@ description: |
   guide", "create a contributor guide", "help new devs get started", or
   "document how to contribute". Produces or updates CONTRIBUTING.md and
   supplements README with a dev setup section.
+allowed-tools: 'execute read search edit'
 argument-hint: '[repository or service to document]'
 
 license: MIT

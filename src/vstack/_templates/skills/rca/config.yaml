@@ -6,6 +6,7 @@ description: |
   Use when asked to "write an RCA", "root cause this incident", or "document
   what went wrong technically". Called by the incident skill; also invoked
   directly by the engineer role.
+allowed-tools: 'execute read search edit'
 argument-hint: '[incident or issue to analyse]'
 
 license: MIT

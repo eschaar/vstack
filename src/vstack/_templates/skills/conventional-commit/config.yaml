@@ -7,6 +7,7 @@ description: |
   non-compliant messages before commit.
   Use when asked to "write a commit message", "make a conventional commit", or
   "prepare commits before PR".
+allowed-tools: 'execute read search edit'
 argument-hint: '[changes to commit and desired release intent]'
 
 license: MIT

@@ -6,6 +6,7 @@ description: |
   of exposed credentials. Use when asked to "set up secret scanning", "configure
   push protection", "define custom secret patterns", "triage a secret alert", or
   "fix a leaked credential".
+allowed-tools: 'execute read search edit web'
 argument-hint: '[scope: enable | configure push-protection | custom-pattern | triage alerts | remediate]'
 
 license: MIT

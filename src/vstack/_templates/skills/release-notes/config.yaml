@@ -5,6 +5,7 @@ description: |
   own CHANGELOG.md updates, and produce docs/releases/{date}.md.
   Use when asked to "write release notes", "update the changelog", or
   "prepare release artifacts".
+allowed-tools: 'execute read search edit'
 argument-hint: '[version or changes to release]'
 
 license: MIT

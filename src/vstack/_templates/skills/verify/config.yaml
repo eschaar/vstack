@@ -6,6 +6,7 @@ description: |
   Routes report-only requests to inspect and escalates deep security/performance
   concerns to specialized skills. Use when asked to "verify", "fix failing checks",
   "run QA with fixes", or "re-verify before shipping".
+allowed-tools: 'execute read search edit'
 argument-hint: '[component or feature to verify]'
 
 license: MIT

@@ -7,6 +7,7 @@ description: |
   run-all workflows. Use when asked to "write Terragrunt", "set up Terragrunt",
   "DRY Terraform across environments", "configure Terragrunt dependencies",
   or "migrate from plain Terraform to Terragrunt".
+allowed-tools: 'execute read search edit'
 argument-hint: '[scope: new layout | dependency graph | state migration | run-all workflow | security review]'
 
 license: MIT

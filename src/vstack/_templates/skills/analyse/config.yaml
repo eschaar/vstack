@@ -5,6 +5,7 @@ description: |
   or feasibility without implementing changes. Use when asked to "analyse this",
   "investigate the impact", "what are the tradeoffs", "root cause analysis",
   "is this feasible?", or "compare these approaches". Produces an analysis report.
+allowed-tools: 'execute read search'
 argument-hint: '[topic, change, or question to analyse]'
 
 license: MIT

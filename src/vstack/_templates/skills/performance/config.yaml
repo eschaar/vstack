@@ -4,6 +4,7 @@ description: |
   Performance profiling and regression detection. Establishes baselines, detects
   regressions, profiles bottlenecks, and recommends optimizations. Use when asked
   to "profile", "benchmark", "performance test", or "is this faster?".
+allowed-tools: 'execute read search edit'
 argument-hint: '[endpoint or function to profile]'
 
 license: MIT

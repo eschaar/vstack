@@ -6,6 +6,7 @@ description: |
   SSM Parameter Store, and cross-account operations. Use when asked to
   "query AWS", "list resources", "rotate secrets", "check CloudWatch logs",
   "scale ECS", "run an SSM command", or "script an AWS operation".
+allowed-tools: 'execute read search edit web'
 argument-hint: '[service: iam | ec2 | s3 | rds | ecs | lambda | cloudwatch | ssm | secrets]'
 
 license: MIT
