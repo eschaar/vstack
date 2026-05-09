@@ -6,6 +6,7 @@ compatibility: 'Requires a skills-compatible agent with repository file access. 
 metadata:
   owner: vstack
   maturity: stable
+allowed-tools: 'execute read search edit'
 argument-hint: '[provider: aws | azure | gcp | generic, and scope: new resource | module | state migration | security review]'
 user-invocable: true
 disable-model-invocation: false

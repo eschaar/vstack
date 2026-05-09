@@ -6,6 +6,7 @@ compatibility: 'Requires a skills-compatible agent with repository file access. 
 metadata:
   owner: vstack
   maturity: stable
+allowed-tools: 'execute read search edit'
 argument-hint: '[cluster/context, namespace, and scope: manifest review | deploy | rollout debug | hardening]'
 user-invocable: true
 disable-model-invocation: false

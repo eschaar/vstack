@@ -6,6 +6,7 @@ compatibility: 'Requires repository access and GitHub Advanced Security (private
 metadata:
   owner: vstack
   maturity: stable
+allowed-tools: 'execute read search edit web'
 argument-hint: '[scope: enable | configure push-protection | custom-pattern | triage alerts | remediate]'
 user-invocable: true
 disable-model-invocation: false

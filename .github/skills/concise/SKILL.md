@@ -6,6 +6,7 @@ compatibility: 'Requires a skills-compatible agent with session memory and repos
 metadata:
   owner: vstack
   maturity: stable
+allowed-tools: 'execute read search'
 argument-hint: '[normal|compact|ultra|status|on|off]'
 user-invocable: true
 disable-model-invocation: false

@@ -11,6 +11,7 @@ tools:
   - search
   - edit
   - execute
+  - web
   - vscode
   - todo
   - agent

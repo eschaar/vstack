@@ -6,6 +6,7 @@ compatibility: 'Requires AWS CLI v2 installed and configured (aws configure or e
 metadata:
   owner: vstack
   maturity: stable
+allowed-tools: 'execute read search edit web'
 argument-hint: '[service: iam | ec2 | s3 | rds | ecs | lambda | cloudwatch | ssm | secrets]'
 user-invocable: true
 disable-model-invocation: false
