@@ -10,6 +10,7 @@ from vstack.cli.base import BaseCommand
 from vstack.cli.init import InitCommand
 from vstack.cli.install import InstallCommand
 from vstack.cli.manifest import ManifestCommand
+from vstack.cli.migrate import MigrateCommand
 from vstack.cli.status import StatusCommand
 from vstack.cli.uninstall import UninstallCommand
 from vstack.cli.validate import ValidateCommand
@@ -53,6 +54,7 @@ TOP_LEVEL_COMMAND_ORDER: tuple[str, ...] = (
     "install",
     "init",
     "uninstall",
+    "migrate",
 )
 
 
@@ -124,6 +126,14 @@ COMMAND_CATALOG: dict[str, TopLevelCommandConfig] = {
         include_only_option=True,
         scope_help="Uninstall from <dir>/.github/",
         only_help="Uninstall only these artifact types, e.g. --only skill agent",
+    ),
+    "migrate": TopLevelCommandConfig(
+        command_factory=MigrateCommand,
+        help_text="Migrate docs artifact paths between major vstack versions",
+        requires_install_dir=False,
+        resolve_only_for_scope=False,
+        include_scope_group=False,
+        include_only_option=False,
     ),
 }
 

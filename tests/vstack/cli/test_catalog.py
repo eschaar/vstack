@@ -28,6 +28,7 @@ class TestTopLevelCommandConfig:
             "install",
             "init",
             "uninstall",
+            "migrate",
         }
 
     def test_command_order_matches_catalog_keys(self) -> None:

@@ -67,6 +67,7 @@ vstack = "vstack:main"
 packages = [{include = "vstack", from = "src"}]
 include = [
     { path = "src/vstack/_templates", format = ["sdist", "wheel"] },
+    { path = "src/vstack/_migrations", format = ["sdist", "wheel"] },
 ]
 # Keep the placeholder version last because the plugin may remove/re-add it in
 # PEP 621 mode, which otherwise causes noisy key reordering.

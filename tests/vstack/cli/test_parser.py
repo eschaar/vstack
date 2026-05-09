@@ -90,6 +90,7 @@ class TestBuildParser:
             "install",
             "init",
             "uninstall",
+            "migrate",
         }
 
     def test_verify_accepts_only_filter(self) -> None:

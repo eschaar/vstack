@@ -1,0 +1,39 @@
+from_version: "2.x"
+to_version: "3.0"
+moves:
+  - old: docs/architecture/architecture.md
+    new: docs/architecture/overview.md
+    type: docs
+    notes: >
+      architect role primary output renamed from architecture.md to overview.md
+      in v3 to align with the generic overview.md convention used by all roles.
+      Content is the same — only the filename changed.
+
+  - old: docs/design/design.md
+    new: docs/design/overview.md
+    type: docs
+    notes: >
+      designer role primary output renamed from design.md to overview.md in v3
+      to align with the generic overview.md convention used by all roles.
+      Content is the same — only the filename changed.
+
+  - old: docs/test-report.md
+    new: docs/reports/test-report.md
+    type: docs
+    notes: >
+      tester role reports moved from the docs/ root into docs/reports/ in v3.
+      This groups all tester outputs under a single subdirectory.
+
+  - old: docs/security-report.md
+    new: docs/reports/security-report.md
+    type: docs
+    notes: >
+      tester role reports moved from the docs/ root into docs/reports/ in v3.
+      This groups all tester outputs under a single subdirectory.
+
+  - old: docs/performance-baseline.md
+    new: docs/reports/performance-baseline.md
+    type: docs
+    notes: >
+      tester role reports moved from the docs/ root into docs/reports/ in v3.
+      This groups all tester outputs under a single subdirectory.
