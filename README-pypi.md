@@ -53,15 +53,22 @@ VS Code command palette (`Chat: Run Prompt File`) or the Copilot Chat attach but
 | `migration-safety`  | Review DB migration safety, rollback, and zero-downtime   |
 | `release-readiness` | Evaluate release readiness from reports and open blockers |
 
-## Quick start
+## Quickstart — fresh install
 
 Install with `pipx`, then install vstack artifacts into your repository:
 
 ```bash
+# Install the CLI once, globally
 pipx install vstack
-vstack install --target /path/to/your/project
-vstack validate
+
+# Move to your repository root and run install — no --target needed
+cd /path/to/your/project
+vstack install        # seeds .vstack/config.yaml and generates .github/ in the current directory
+vstack validate       # confirm no errors
 ```
+
+When you omit `--target`, vstack uses the current working directory. The equivalent
+explicit form is `vstack install --target /path/to/your/project`.
 
 Run a first task in Copilot Agent Mode:
 
@@ -74,6 +81,57 @@ Expected result:
 - `vstack validate` reports no unresolved template tokens
 - Agent command returns a concrete verification summary for your repository
 
+## Quick upgrade
+
+### Patch or minor version (e.g. v3.1 → v3.2, same major)
+
+Docs paths never change within a major version. Only `.github/` artifacts are updated.
+
+```bash
+pipx upgrade vstack
+
+cd /path/to/your/project
+vstack init           # idempotent — safe to run in CI
+```
+
+### Major version (e.g. v2 → v3)
+
+Docs paths may change on a major version bump. Run `vstack migrate` before `vstack init`.
+
+```bash
+pipx upgrade vstack
+
+cd /path/to/your/project
+vstack migrate        # moves docs files to their new paths (auto-detects installed version)
+vstack init           # regenerates .github/ artifacts
+
+# Only if you see "Legacy manifest schema detected" in the output above:
+vstack manifest upgrade
+vstack init
+```
+
+Preview the docs moves without touching any files:
+
+```bash
+vstack migrate --dry-run
+```
+
+For upgrades spanning multiple major versions (e.g. v1 → v3), `vstack migrate` chains
+all intermediate steps automatically. Use `--from` and `--to` to specify the range
+explicitly if auto-detection from the manifest fails:
+
+```bash
+vstack migrate --from 1 --to 3
+vstack init
+```
+
+### Force reinstall (overwrite local edits)
+
+```bash
+vstack install --force                       # overwrite all managed artifacts
+vstack install --force-name agent/engineer   # overwrite one specific artifact
+```
+
 ## Why this helps
 
 - Consistent role boundaries for planning, implementation, validation, and release
@@ -85,10 +143,17 @@ Expected result:
 ```bash
 vstack --version
 vstack validate
+
+# Run from your repository root (--target defaults to the current directory)
+vstack install
+vstack init
+vstack migrate
+vstack manifest verify
+vstack manifest status
+vstack manifest upgrade
+
+# Or specify a path explicitly
 vstack install --target /path/to/your/project
-vstack manifest verify --target /path/to/your/project
-vstack manifest status --target /path/to/your/project
-vstack manifest upgrade --target /path/to/your/project
 ```
 
 ## Common usage patterns
@@ -96,6 +161,11 @@ vstack manifest upgrade --target /path/to/your/project
 Repository-scoped install (recommended for teams):
 
 ```bash
+# Move to your repository root and install there
+cd /path/to/your/project
+vstack install
+
+# Or specify a path explicitly from any directory
 vstack install --target /path/to/your/project
 ```
 
@@ -122,7 +192,8 @@ exclude:
 If you already have agents, skills, or other files in `.github/`, run a dry-run first to see what would be preserved before committing:
 
 ```bash
-vstack install --dry-run --target /path/to/your/project
+# Run from your repository root
+vstack install --dry-run
 ```
 
 The summary lists preserved files as `type/name` selectors (e.g. `agent/engineer`). Resolve each conflict with `--force-name type/name` to overwrite, `--adopt-name type/name` to take ownership without overwriting, or `--force` to overwrite everything.
@@ -130,7 +201,7 @@ The summary lists preserved files as `type/name` selectors (e.g. `agent/engineer
 ## Fast troubleshooting
 
 - Command not found after install: ensure your `pipx` binary path is in `PATH`
-- Validation error: rerun `vstack install --target ...` and then `vstack validate`
+- Validation error: rerun `vstack install` from your repository root and then `vstack validate`
 - Agent results look generic: explicitly invoke a role (for example `@tester`) before a skill
 
 ## Full documentation
