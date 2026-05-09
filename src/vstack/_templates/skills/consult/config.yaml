@@ -7,6 +7,7 @@ description: |
   specialized skill (analyse/debug/security/performance/design/verify/code-review).
   Use when asked to "review DX", "review API usability", "review CLI experience",
   or "review developer workflow friction".
+allowed-tools: 'execute read search'
 argument-hint: '[API, tool, or workflow to consult]'
 
 license: MIT

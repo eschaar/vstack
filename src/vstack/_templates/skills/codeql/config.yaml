@@ -6,6 +6,7 @@ description: |
   configuration, SARIF output, and alert triage. Use when asked to "set up CodeQL",
   "configure code scanning", "add a codeql workflow", or "scan for vulnerabilities
   with CodeQL".
+allowed-tools: 'execute read search edit web'
 argument-hint: '[languages and setup type: default or advanced]'
 
 license: MIT

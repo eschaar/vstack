@@ -6,6 +6,7 @@ description: |
   selection, optional asset upload, and release metadata verification before publication.
   Use when asked to "create a GitHub release", "publish a release", or
   "draft release with gh".
+allowed-tools: 'execute read search edit web'
 argument-hint: '[version/tag and release notes source]'
 
 license: MIT

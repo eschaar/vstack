@@ -6,6 +6,7 @@ description: |
   exposed secrets, dependency vulnerabilities, and broken access control.
   Use when asked to "security audit", "security review", or "check for vulnerabilities".
   Proactively suggest before any code ships to production.
+allowed-tools: 'execute read search edit'
 argument-hint: '[component or service to audit]'
 
 license: MIT

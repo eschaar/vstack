@@ -6,6 +6,7 @@ description: |
   Use when asked to "write an ADR", "document this decision", "record why we
   chose X", or when a significant technical decision needs a permanent record.
   Runs after a decision is made or while evaluating options.
+allowed-tools: 'execute read search edit'
 argument-hint: '[decision to record]'
 
 license: MIT

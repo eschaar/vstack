@@ -6,6 +6,7 @@ description: |
   generation or CHANGELOG updates.
   Use after release or deploy, or when asked to "update docs", "align
   documentation", or "refresh README/API docs".
+allowed-tools: 'execute read search edit'
 argument-hint: '[release or change to document]'
 
 license: MIT

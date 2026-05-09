@@ -6,6 +6,7 @@ description: |
   summary. Use at the start of any engagement with an unfamiliar codebase,
   when asked to "understand this codebase", "map the architecture", "explore
   the repo", or "what does this service do?".
+allowed-tools: 'execute read search'
 argument-hint: '[repository or system to explore]'
 
 license: MIT

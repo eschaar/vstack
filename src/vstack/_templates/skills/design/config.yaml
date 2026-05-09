@@ -5,6 +5,7 @@ description: |
   specs, error conventions, naming standards, pagination patterns, and versioning
   policies. Use when asked to "design the API", "create a design system for this
   service", "define the API standards", or "design this service interface".
+allowed-tools: 'execute read search edit'
 argument-hint: '[API or service to design]'
 
 license: MIT

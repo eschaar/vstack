@@ -6,6 +6,7 @@ description: |
   Produces a requirements.md document. Use when asked to "gather requirements",
   "write the requirements", "define the spec", or "what are we building?".
   Runs before architecture and design work begins.
+allowed-tools: 'execute read search edit'
 argument-hint: '[feature or system to document]'
 
 license: MIT

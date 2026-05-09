@@ -6,6 +6,7 @@ description: |
   analysis to `rca` and stakeholder documentation to `postmortem`. Use when asked
   to "incident review", "analyse this outage", "what went wrong?", or to coordinate
   a full incident response retrospective.
+allowed-tools: 'execute read search edit'
 argument-hint: '[incident or outage to analyse]'
 
 license: MIT

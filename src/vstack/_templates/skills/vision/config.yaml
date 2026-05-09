@@ -8,6 +8,7 @@ description: |
   Use when asked to "think bigger", "strategy review", "rethink this", or
   "is this ambitious enough". Proactively suggest when a plan feels under-scoped
   or when the user is questioning ambition.
+allowed-tools: 'execute read search edit'
 argument-hint: '[plan or idea to review]'
 
 license: MIT

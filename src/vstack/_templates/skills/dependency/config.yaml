@@ -7,6 +7,7 @@ description: |
   licence obligations, and long-term dependency health. Use when asked to
   "audit dependencies", "check for outdated packages", "licence compliance",
   "pin versions", or "dependency health check".
+allowed-tools: 'execute read search edit web'
 argument-hint: '[project or package manifest to audit]'
 
 license: MIT

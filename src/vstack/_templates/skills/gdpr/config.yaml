@@ -8,6 +8,7 @@ description: |
   checklists. Use when asked to "GDPR review", "is this GDPR-compliant?",
   "privacy by design", "data retention policy", "right to erasure", or
   "DPIA". Proactively suggest before any feature that handles personal data.
+allowed-tools: 'execute read search edit'
 argument-hint: '[component or feature: data model | API | logging | retention | erasure | infra | PR review]'
 
 license: MIT

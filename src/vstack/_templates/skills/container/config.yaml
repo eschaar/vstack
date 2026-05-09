@@ -6,6 +6,7 @@ description: |
   layer optimisation, and local development compose setup.
   Use when asked to "containerise", "write a Dockerfile", "add docker-compose",
   or "harden the container image".
+allowed-tools: 'execute read search edit'
 argument-hint: '[service to containerise]'
 
 license: MIT

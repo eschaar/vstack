@@ -30,6 +30,8 @@ SKILL_SCHEMA = FrontmatterSchema(
         FieldSpec("compatibility", max_length=500, normalize_whitespace=True),
         # Agent Skills spec: arbitrary key/value mapping. We preserve this as raw YAML.
         FieldSpec("metadata", type="raw"),
+        # Agent Skills spec (experimental): space-separated pre-approved tool names.
+        FieldSpec("allowed-tools"),
         FieldSpec("argument-hint"),
         FieldSpec("user-invocable", type="bool"),
         FieldSpec("disable-model-invocation", type="bool"),

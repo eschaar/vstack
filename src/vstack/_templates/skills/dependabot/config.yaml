@@ -6,6 +6,7 @@ description: |
   update configuration, schedule optimization, and PR customization. Use when
   asked to "set up Dependabot", "configure dependency updates", "add dependabot.yml",
   or "reduce Dependabot PR noise".
+allowed-tools: 'execute read search edit'
 argument-hint: '[repository type: library | service | monorepo, and ecosystems to cover]'
 
 license: MIT

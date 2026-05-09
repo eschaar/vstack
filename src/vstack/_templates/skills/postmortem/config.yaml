@@ -5,6 +5,7 @@ description: |
   post-mortem document linked to the triggering issue and RCA. Use when asked
   to "write a post-mortem", "blameless post-mortem", or "incident post-mortem".
   Called by the incident skill; the RCA should be available before invoking this.
+allowed-tools: 'execute read search edit'
 argument-hint: '[incident to write a post-mortem for]'
 
 license: MIT
