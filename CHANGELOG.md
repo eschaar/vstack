@@ -2,6 +2,53 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.1.0](https://github.com/eschaar/vstack/compare/3.0.0...3.1.0) (2026-05-09)
+
+
+### Features
+
+* **agents:** add missing execute/web tools to product, architect, designer, release ([6ac17de](https://github.com/eschaar/vstack/commit/6ac17de8e7a747b0406d6abc743ae7b9ee3680f8))
+* **agents:** restructure config to defaults block; add baseline artifact flag ([86e1cf6](https://github.com/eschaar/vstack/commit/86e1cf65c9cbe89d8321a1fc9694965e8e1dee16))
+* **parser:** replace hand-rolled YAML parser with PyYAML ([17de97d](https://github.com/eschaar/vstack/commit/17de97d418030983971f23479b30624e7cce7d0c))
+* **parser:** support nested block YAML in object-list items ([a5f2df0](https://github.com/eschaar/vstack/commit/a5f2df00f0b8cc78a513efcf9ed5fae85dda3893))
+* **skills:** add allowed-tools field to SKILL_SCHEMA and all 44 skill configs ([aa02d46](https://github.com/eschaar/vstack/commit/aa02d464dcd5f36ed1aa88c29c2a8474ca6d4bbe))
+* **workflow:** add workflow contract schema to .vstack/config.yaml ([acc859f](https://github.com/eschaar/vstack/commit/acc859f8eb0c0de4d698cdebdab642c65364ebc1))
+
+
+### Fixes
+
+* **agents:** restore _resolve_handoffs fallback; fix None guard in migrate ([8f2dbaf](https://github.com/eschaar/vstack/commit/8f2dbafe161814a903551f28e47afbe1cc77f303))
+* **ci:** add FORCE_JAVASCRIPT_ACTIONS_TO_NODE24 to all workflows; fix security.yml env ([b2e6ccd](https://github.com/eschaar/vstack/commit/b2e6ccd3c73e0cf984d27cb7439b0ac9fc349540))
+* **frontmatter:** restore [@staticmethod](https://github.com/staticmethod) on FrontmatterParser; fix dict/list serialization ([8711e3e](https://github.com/eschaar/vstack/commit/8711e3e7d3a32117c024bd5dbdc2fc8ed9723d58))
+* **manifest:** re-export removed helpers as deprecated shims ([d4face3](https://github.com/eschaar/vstack/commit/d4face3a9608dd84aacd8b4981adff65467f0c1a))
+* **review:** remove dead str-fallback in _extract_defaults; sync docs with pyyaml dep ([993c2fc](https://github.com/eschaar/vstack/commit/993c2fce69fdf57bdbe407ff2104e09c997cd4a6))
+
+
+### Refactoring
+
+* OOP cleanup — instance methods, inline registry, extracted utils ([2d13679](https://github.com/eschaar/vstack/commit/2d13679b770fed5ed8488184ef1a8e1eae180ac9))
+
+
+### Documentation
+
+* add install and upgrade guide with quickstart and quick upgrade paths ([39ea7f1](https://github.com/eschaar/vstack/commit/39ea7f13ce41d42634b12426d97211cdc269c9f1))
+* **adr:** add ADR-023 and ADR-024; supersede ADR-004; update overview ([bf199f2](https://github.com/eschaar/vstack/commit/bf199f222a2360d4d63b18b863d9938c9cc0a127))
+* **adr:** align ADR-023 schema; mark ADR-026 shipped; update migrations README ([ce5fcda](https://github.com/eschaar/vstack/commit/ce5fcda2da8ba7ccffa323e56d2ed94ab5a82841))
+* correct runtime dependency badge and text — PyYAML is required ([27d60e3](https://github.com/eschaar/vstack/commit/27d60e3701c387d76c11ed42350bf00cc606709b))
+* **roadmap:** correct orchestrated pipeline status from in-progress to candidate ([51a4780](https://github.com/eschaar/vstack/commit/51a4780d4d775a9ea8b2d22b2f16757234e85591))
+* **roadmap:** mark workflow contract source-of-truth as shipped ([e57755b](https://github.com/eschaar/vstack/commit/e57755b6751e0879f31ce3e0932b5c3c108411d4))
+
+
+### Maintenance
+
+* **docs:** apply mdformat to adr-026 and migrations readme ([55ed664](https://github.com/eschaar/vstack/commit/55ed66415d29f621e8d2a662cc1fde880966dbdf))
+* expand PyPI keywords and classifiers for discoverability ([a2bcd7e](https://github.com/eschaar/vstack/commit/a2bcd7e279284e91046b90027de8903e3ca0f9bb))
+* **install:** regenerate artifacts after agent and skill tool config changes ([f4c62f4](https://github.com/eschaar/vstack/commit/f4c62f4955fad34a600408effaed60ccf0a7d646))
+* **install:** regenerate artifacts with quoted wildcard agents ([b1b2024](https://github.com/eschaar/vstack/commit/b1b20249329f7ad067ef91f30238090bf67317a6))
+* **install:** regenerate artifacts; update manifest and changelog formatting ([d1c2cf2](https://github.com/eschaar/vstack/commit/d1c2cf215b65c90a948e5bfee83c249a0f106782))
+* **install:** regenerate skills artifacts and manifest ([d5c2a6e](https://github.com/eschaar/vstack/commit/d5c2a6e5c27b87ebee883a64c1b5ad8e68bc1a2c))
+* regenerate poetry.lock after adding pyyaml runtime dependency ([f34b181](https://github.com/eschaar/vstack/commit/f34b1818f9fc161bc5fa05ba740c3eee61e9fa79))
+
 ## [3.0.0](https://github.com/eschaar/vstack/compare/2.2.0...3.0.0) (2026-05-06)
 
 ### ⚠ BREAKING CHANGES
