@@ -10,6 +10,7 @@ tools:
   - read
   - search
   - edit
+  - execute
   - web
   - vscode
   - todo
