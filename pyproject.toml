@@ -19,8 +19,19 @@ keywords = [
     "api",
     "workflow-automation",
     "release-engineering",
+    "agentic-workflow",
+    "agentic-ai",
+    "ai-agent",
+    "llm",
+    "llm-agents",
+    "prompt-engineering",
+    "code-generation",
+    "scaffolding",
+    "cli",
+    "agents",
 ]
 classifiers = [
+    "Development Status :: 4 - Beta",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
@@ -30,7 +41,9 @@ classifiers = [
     "Environment :: Console",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Code Generators",
     "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
 ]
 
 [project.urls]
