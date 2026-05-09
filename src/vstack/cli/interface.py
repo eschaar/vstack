@@ -102,13 +102,6 @@ class CommandLineInterface:
             return frozenset(), {}
         parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
         raw_exclude = parsed.get("exclude", "")
-        # The minimal YAML parser stores nested mappings as raw indented strings.
-        # Re-parse by stripping the 2-space indent to access sub-keys.
-        if isinstance(raw_exclude, str) and raw_exclude.strip():
-            dedented = "\n".join(
-                line[2:] if line.startswith("  ") else line for line in raw_exclude.split("\n")
-            )
-            raw_exclude = FrontmatterParser.parse_yaml(dedented) or {}
         if not isinstance(raw_exclude, dict):
             return frozenset(), {}
         excluded_types: set[str] = set()
@@ -146,13 +139,6 @@ class CommandLineInterface:
             return ARTIFACTS_DOCS_ROOT
         parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
         artifacts = parsed.get("artifacts", "")
-        # The minimal YAML parser stores nested mappings as raw indented strings.
-        # Re-parse by stripping the 2-space indent to access sub-keys.
-        if isinstance(artifacts, str) and artifacts.strip():
-            dedented = "\n".join(
-                line[2:] if line.startswith("  ") else line for line in artifacts.split("\n")
-            )
-            artifacts = FrontmatterParser.parse_yaml(dedented) or {}
         if not isinstance(artifacts, dict):
             return ARTIFACTS_DOCS_ROOT
         value = artifacts.get("root", "")
@@ -180,11 +166,6 @@ class CommandLineInterface:
             return []
         parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
         workflow = parsed.get("workflow", "")
-        if isinstance(workflow, str) and workflow.strip():
-            dedented = "\n".join(
-                line[2:] if line.startswith("  ") else line for line in workflow.split("\n")
-            )
-            workflow = FrontmatterParser.parse_yaml(dedented) or {}
         if not isinstance(workflow, dict):
             return []
         stages_raw = workflow.get("stages", [])
@@ -219,9 +200,7 @@ class CommandLineInterface:
         raw = item.get("handoffs", "")
         parsed_block: dict | list | None = None
 
-        if isinstance(raw, str) and raw.strip():
-            parsed_block = FrontmatterParser.parse_yaml(raw.strip())
-        elif isinstance(raw, (dict, list)):
+        if isinstance(raw, (dict, list)):
             parsed_block = raw
 
         if isinstance(parsed_block, dict):

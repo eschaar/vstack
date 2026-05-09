@@ -61,11 +61,17 @@ class TestFrontmatterParser:
         assert result.metadata == {}
         assert result.content == "body-only"
 
+    def test_parse_yaml_empty_input_returns_empty_dict(self) -> None:
+        """Empty input and non-mapping YAML values return an empty dict."""
+        assert FrontmatterParser.parse_yaml("") == {}
+        assert FrontmatterParser.parse_yaml("just a scalar") == {}
+        assert FrontmatterParser.parse_yaml("- a\n- b\n") == {}
+
     def test_parse_yaml_raw_block(self) -> None:
-        """Test that parse yaml raw block."""
+        """Raw block value is parsed as a nested dict by PyYAML."""
         meta = FrontmatterParser.parse_yaml("mcp-servers:\n  srv:\n    command: cmd\n")
-        assert isinstance(meta["mcp-servers"], str)
-        assert "srv:" in meta["mcp-servers"]
+        assert isinstance(meta["mcp-servers"], dict)
+        assert meta["mcp-servers"]["srv"]["command"] == "cmd"
 
     def test_parse_yaml_ignores_comments_and_handles_object_list_continuation(self) -> None:
         """Test that parse yaml ignores comments and handles object list continuation."""
@@ -75,10 +81,10 @@ class TestFrontmatterParser:
         assert meta["handoffs"][0]["prompt"] == "hi"
 
     def test_parse_yaml_raw_block_closed_by_next_key(self) -> None:
-        """Test that parse yaml raw block closed by next key."""
+        """Nested mapping value and subsequent sibling key are both parsed correctly."""
         raw = "mcp-servers:\n  srv:\n    type: local\nname: x\n"
         meta = FrontmatterParser.parse_yaml(raw)
-        assert "type: local" in meta["mcp-servers"]
+        assert meta["mcp-servers"]["srv"]["type"] == "local"
         assert meta["name"] == "x"
 
     def test_parse_yaml_block_scalar_closed_by_next_key(self) -> None:
@@ -110,24 +116,22 @@ class TestFrontmatterParser:
         assert isinstance(meta["handoffs"], list)
         assert "Line one" in meta["handoffs"][0]["prompt"]
         assert "Line two" in meta["handoffs"][0]["prompt"]
-        assert meta["handoffs"][0]["send"] == "false"
+        assert meta["handoffs"][0]["send"] is False
 
-    def test_parse_yaml_object_list_coerces_from_scalar(self) -> None:
-        """Test that parse yaml object list coerces from scalar."""
-        raw = "handoffs: value\n  - label: A\n"
+    def test_parse_yaml_wildcard_list_item(self) -> None:
+        """Bare ``*`` list items (VS Code wildcard) are pre-processed so PyYAML parses them as strings."""
+        raw = "agents:\n  - '*'\n  - architect\n"
         meta = FrontmatterParser.parse_yaml(raw)
-        assert isinstance(meta["handoffs"], list)
-        assert meta["handoffs"][0]["label"] == "A"
+        assert meta["agents"] == ["*", "architect"]
 
-    def test_parse_yaml_string_list_coerces_from_scalar(self) -> None:
-        """Test that parse yaml string list coerces from scalar."""
-        raw = "tools: value\n  - read\n"
+    def test_parse_yaml_unquoted_wildcard_list_item(self) -> None:
+        """Unquoted ``- *`` in existing generated files is pre-processed before PyYAML."""
+        raw = "agents:\n  - *\n  - architect\n"
         meta = FrontmatterParser.parse_yaml(raw)
-        assert isinstance(meta["tools"], list)
-        assert meta["tools"] == ["read"]
+        assert meta["agents"] == ["*", "architect"]
 
     def test_parse_yaml_object_list_nested_block_dict(self) -> None:
-        """Nested dict block inside an object-list item is accumulated and stored as a string."""
+        """Nested dict block inside an object-list item is parsed as a dict by PyYAML."""
         raw = (
             "stages:\n"
             "  - role: architect\n"
@@ -141,13 +145,13 @@ class TestFrontmatterParser:
         stage = meta["stages"][0]
         assert stage["role"] == "architect"
         assert stage["gate"] == "required"
-        # handoffs is stored as a raw string stripped of 6-space indent
-        assert isinstance(stage["handoffs"], str)
-        assert "prompt: Architecture done." in stage["handoffs"]
-        assert "agent: designer" in stage["handoffs"]
+        # PyYAML parses the nested mapping directly as a dict
+        assert isinstance(stage["handoffs"], dict)
+        assert stage["handoffs"]["prompt"] == "Architecture done."
+        assert stage["handoffs"]["agent"] == "designer"
 
     def test_parse_yaml_object_list_nested_block_with_block_scalar(self) -> None:
-        """Nested block inside an object-list item handles block scalar prompts."""
+        """Nested block inside an object-list item: folded scalar prompt is parsed directly."""
         raw = (
             "stages:\n"
             "  - role: architect\n"
@@ -160,19 +164,16 @@ class TestFrontmatterParser:
         )
         meta = FrontmatterParser.parse_yaml(raw)
         stage = meta["stages"][0]
-        assert isinstance(stage["handoffs"], str)
-        # Re-parsing the stored raw string should yield the folded prompt
-        from vstack.frontmatter import FrontmatterParser as FP
-
-        reparsed = FP.parse_yaml(stage["handoffs"])
-        assert "Line one" in reparsed["prompt"]
-        assert "Line two" in reparsed["prompt"]
-        # The key after handoffs block is parsed correctly
+        # PyYAML parses the nested mapping directly as a dict with the folded scalar resolved
+        assert isinstance(stage["handoffs"], dict)
+        assert "Line one" in stage["handoffs"]["prompt"]
+        assert "Line two" in stage["handoffs"]["prompt"]
+        # The sibling key is parsed correctly
         assert stage["other"] == "value"
 
-    def test_parse_yaml_object_list_empty_nested_block_is_empty_string(self) -> None:
-        """An empty-value nested key in an object-list item stores an empty string."""
+    def test_parse_yaml_object_list_empty_nested_block_is_none(self) -> None:
+        """An empty-value nested key in an object-list item is None (PyYAML null)."""
         raw = "stages:\n  - role: release\n    gate: required\n    handoffs:\n"
         meta = FrontmatterParser.parse_yaml(raw)
         stage = meta["stages"][0]
-        assert stage["handoffs"] == ""
+        assert stage["handoffs"] is None

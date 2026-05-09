@@ -257,7 +257,7 @@ class InitCommand(BaseCommand):
     ) -> str:
         """Apply install decision flow for one rendered artifact and return the action taken."""
         out_file = out_dir / gen.output_path(artifact.name)
-        new_version = (artifact.frontmatter or {}).get("version") or VERSION
+        new_version = str((artifact.frontmatter or {}).get("version") or VERSION)
         key = f"{gen.config.type_name}/{artifact.name}"
         existing_entry = existing_entries.get(key)
         existing_version = existing_entry.version if existing_entry is not None else None
