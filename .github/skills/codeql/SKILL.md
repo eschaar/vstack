@@ -4,8 +4,7 @@ description: 'Set up and configure CodeQL code scanning via GitHub Actions or th
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution. GitHub Advanced Security or public repository required for alert upload.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[languages and setup type: default or advanced]'
 user-invocable: true
 disable-model-invocation: false
@@ -250,4 +249,4 @@ GITHUB_TOKEN=<token> codeql github upload-results \
 - [Supported languages and frameworks](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/codeql-code-scanning-for-compiled-languages)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"codeql","artifact_type":"skill","artifact_version":"20260502026","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"codeql","artifact_type":"skill","artifact_version":"20260502026","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

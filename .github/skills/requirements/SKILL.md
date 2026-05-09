@@ -4,8 +4,7 @@ description: 'Collaborative requirements gathering and documentation. Clarifies 
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[feature or system to document]'
 user-invocable: true
 disable-model-invocation: false
@@ -198,4 +197,4 @@ Write all findings to `docs/product/requirements.md`:
 After writing, summarize what was decided so the architect role can start.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"requirements","artifact_type":"skill","artifact_version":"20260421024","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"requirements","artifact_type":"skill","artifact_version":"20260421024","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

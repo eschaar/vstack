@@ -15,7 +15,7 @@ tools:
   - todo
   - agent
 agents:
-  - *
+  - '*'
 model:
   - GPT-5.3-Codex (copilot)
   - Claude Sonnet 4.6 (copilot)
@@ -204,4 +204,4 @@ that requires changes to upstream artifacts, flag it and trigger a reverse hando
 - `@#rancher` — Rancher and Fleet multi-cluster operations and governance
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"engineer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"engineer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

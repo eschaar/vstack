@@ -4,8 +4,7 @@ description: 'Create or optimize a Dependabot configuration file (.github/depend
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access. Dependabot requires GitHub repository access (public or private with GitHub Advanced Security for private).'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[repository type: library | service | monorepo, and ecosystems to cover]'
 user-invocable: true
 disable-model-invocation: false
@@ -319,4 +318,4 @@ updates:
 - [Dependabot security updates](https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"dependabot","artifact_type":"skill","artifact_version":"20260502027","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"dependabot","artifact_type":"skill","artifact_version":"20260502027","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

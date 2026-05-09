@@ -4,8 +4,7 @@ description: 'Write, review, and refactor AWS CloudFormation templates. Covers t
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access. Requires AWS CLI with appropriate IAM permissions for deploy and drift operations.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[resource type or stack name, e.g. VPC | RDS | ECS service | Lambda function]'
 user-invocable: true
 disable-model-invocation: false
@@ -343,4 +342,4 @@ AppSecurityGroup:
 - [AWS SAM documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"cloudformation","artifact_type":"skill","artifact_version":"20260502032","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"cloudformation","artifact_type":"skill","artifact_version":"20260502032","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

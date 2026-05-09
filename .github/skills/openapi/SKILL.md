@@ -4,8 +4,7 @@ description: 'Write and review OpenAPI 3.1 specifications. Covers resource namin
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[API or spec file to write or review]'
 user-invocable: true
 disable-model-invocation: false
@@ -402,4 +401,4 @@ Summary: [N critical, N warnings, N info]
 - [Redocly CLI (linting)](https://redocly.com/docs/cli/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"openapi","artifact_type":"skill","artifact_version":"20260421021","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"openapi","artifact_type":"skill","artifact_version":"20260421021","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

@@ -4,8 +4,7 @@ description: 'Incident analysis and coordination. Guides timeline reconstruction
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[incident or outage to analyse]'
 user-invocable: true
 disable-model-invocation: false
@@ -250,4 +249,4 @@ Next: invoke @#rca and @#postmortem to produce written artifacts.
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"incident","artifact_type":"skill","artifact_version":"20260503002","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"incident","artifact_type":"skill","artifact_version":"20260503002","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

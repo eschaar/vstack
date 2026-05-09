@@ -4,8 +4,7 @@ description: 'Write, review, and troubleshoot Kubernetes manifests and operation
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access. Requires kubectl access to a target cluster for live operations.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[cluster/context, namespace, and scope: manifest review | deploy | rollout debug | hardening]'
 user-invocable: true
 disable-model-invocation: false
@@ -143,4 +142,4 @@ Common failure classes:
 - [Kubernetes API reference](https://kubernetes.io/docs/reference/kubernetes-api/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"k8s","artifact_type":"skill","artifact_version":"20260502036","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"k8s","artifact_type":"skill","artifact_version":"20260502036","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

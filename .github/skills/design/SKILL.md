@@ -4,8 +4,7 @@ description: 'Build a complete API design or service design from scratch. Produc
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[API or service to design]'
 user-invocable: true
 disable-model-invocation: false
@@ -242,4 +241,4 @@ Output a complete design document to `docs/design/overview.md` or `openapi.yaml`
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"design","artifact_type":"skill","artifact_version":"20260421013","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"design","artifact_type":"skill","artifact_version":"20260421013","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

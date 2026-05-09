@@ -4,8 +4,7 @@ description: 'Dependency health audit. Covers vulnerability scanning, outdated p
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[project or package manifest to audit]'
 user-invocable: true
 disable-model-invocation: false
@@ -317,4 +316,4 @@ Action items (priority order):
 - [PyPI / npm / crates.io / Maven Central](https://pypi.org) (replace with the relevant registry)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"dependency","artifact_type":"skill","artifact_version":"20260421012","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"dependency","artifact_type":"skill","artifact_version":"20260421012","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

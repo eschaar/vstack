@@ -4,8 +4,7 @@ description: 'Write, review, and operate Helm charts and release lifecycles. Cov
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access. Requires Helm CLI and target cluster access for live release operations.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[chart path, release name, namespace, and scope: chart review | install | upgrade | rollback]'
 user-invocable: true
 disable-model-invocation: false
@@ -139,4 +138,4 @@ Practices:
 - [Chart best practices](https://helm.sh/docs/chart_best_practices/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"helm","artifact_type":"skill","artifact_version":"20260502037","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"helm","artifact_type":"skill","artifact_version":"20260502037","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

@@ -4,8 +4,7 @@ description: 'Create, update, and manage GitHub issues using the gh CLI. Covers 
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with terminal command execution and GitHub CLI authentication (`gh auth status`).'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[what to create or which issue number to update]'
 user-invocable: true
 disable-model-invocation: false
@@ -229,4 +228,4 @@ https://github.com/<org>/<repo>/issues/<number>
 - [GitHub Issues documentation](https://docs.github.com/en/issues)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"gh-issues","artifact_type":"skill","artifact_version":"20260502025","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"gh-issues","artifact_type":"skill","artifact_version":"20260502025","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

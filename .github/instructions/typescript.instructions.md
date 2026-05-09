@@ -49,4 +49,4 @@ Use these TypeScript conventions in this project.
 1. Do not suppress lint or type errors with inline disable comments unless there is a documented, task-specific reason.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"typescript","artifact_type":"instruction","artifact_version":"20260502005","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"typescript","artifact_type":"instruction","artifact_version":"20260502005","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

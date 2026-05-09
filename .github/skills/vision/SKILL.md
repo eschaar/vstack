@@ -4,8 +4,7 @@ description: 'CEO/founder-mode plan review. Rethink the problem from first princ
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-  owner: vstack
-  maturity: stable
+{'owner': 'vstack', 'maturity': 'stable'}
 argument-hint: '[plan or idea to review]'
 user-invocable: true
 disable-model-invocation: false
@@ -205,4 +204,4 @@ For each finding: explain the tradeoff, give an opinionated recommendation, ask 
 Present as: "Overall assessment: [READY/NEEDS REVISION/SCOPE CHANGE] because [1-2 sentence reason]."
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"vision","artifact_type":"skill","artifact_version":"20260421027","generator":"vstack","vstack_version":"3.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"vision","artifact_type":"skill","artifact_version":"20260421027","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
