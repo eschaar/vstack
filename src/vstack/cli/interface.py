@@ -99,7 +99,7 @@ class CommandLineInterface:
         config_path = install_dir.parent / ".vstack" / "config.yaml"
         if not config_path.exists():
             return frozenset(), {}
-        parsed = FrontmatterParser().parse_yaml(config_path.read_text(encoding="utf-8"))
+        parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
         raw_exclude = parsed.get("exclude", "")
         if not isinstance(raw_exclude, dict):
             return frozenset(), {}
@@ -136,7 +136,7 @@ class CommandLineInterface:
         config_path = install_dir.parent / ".vstack" / "config.yaml"
         if not config_path.exists():
             return ARTIFACTS_DOCS_ROOT
-        parsed = FrontmatterParser().parse_yaml(config_path.read_text(encoding="utf-8"))
+        parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
         artifacts = parsed.get("artifacts", "")
         if not isinstance(artifacts, dict):
             return ARTIFACTS_DOCS_ROOT
@@ -163,7 +163,7 @@ class CommandLineInterface:
         config_path = install_dir.parent / ".vstack" / "config.yaml"
         if not config_path.exists():
             return []
-        parsed = FrontmatterParser().parse_yaml(config_path.read_text(encoding="utf-8"))
+        parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
         workflow = parsed.get("workflow", "")
         if not isinstance(workflow, dict):
             return []

@@ -56,7 +56,9 @@ class CommandService:
                 override via ``artifacts.root`` in ``.vstack/config.yaml``.
             workflow_stages: Ordered list of pipeline stage dicts read from
                 the ``workflow.stages`` block in ``.vstack/config.yaml``.
-                Each dict has ``role``, ``gate``, and ``handoff_prompt`` keys.
+                Each dict has ``role`` and ``gate`` string keys, a ``handoffs``
+                key containing a list of dicts with ``prompt``, ``agent``, and
+                ``label`` string keys, and an optional ``hitl`` string key.
                 When ``None`` or empty the generator falls back to v3 behaviour.
         """
         self.root = templates_root
