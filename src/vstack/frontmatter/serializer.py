@@ -13,6 +13,8 @@ from __future__ import annotations
 import re
 import textwrap
 
+import yaml
+
 from vstack.frontmatter.schema import FieldSpec, FrontmatterSchema
 
 # Characters that open a YAML alias (*), anchor (&), or tag (!) when they appear
@@ -149,7 +151,25 @@ class FrontmatterSerializer:
                 lines.append(f"{prefix}{obj_line}")
 
     def _append_raw_field(self, lines: list[str], name: str, value: object) -> None:
-        """Append a raw YAML field value without additional serialization."""
+        """Append a raw YAML field, properly indenting dict/list values.
+
+        When *value* is a ``dict`` or ``list`` (as returned by PyYAML when
+        parsing nested structures), it is serialised with :func:`yaml.dump` and
+        each output line is indented by two spaces under the parent key.  Plain
+        string values are treated as pre-formatted YAML and emitted as-is,
+        preserving the original behaviour for hand-authored raw blocks.
+        """
+        if isinstance(value, (dict, list)):
+            yaml_str = yaml.dump(
+                value,
+                default_flow_style=False,
+                allow_unicode=True,
+                sort_keys=False,
+            ).rstrip("\n")
+            lines.append(f"{name}:")
+            for raw_line in yaml_str.splitlines():
+                lines.append(f"  {raw_line}")
+            return
         raw_str = str(value).strip() if value is not None else ""
         if raw_str:
             lines.append(f"{name}:")

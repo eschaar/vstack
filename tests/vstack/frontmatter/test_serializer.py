@@ -29,6 +29,35 @@ class TestFrontmatterSerializer:
         output = FrontmatterSerializer().serialize({"name": "agent", "mcp-servers": ""}, schema)
         assert "mcp-servers" not in output
 
+    def test_serialize_raw_field_dict_value(self) -> None:
+        """Dict value from PyYAML parsing is emitted as properly indented YAML."""
+        schema = FrontmatterSchema(
+            [FieldSpec("name", quoted=False), FieldSpec("metadata", type="raw")]
+        )
+        output = FrontmatterSerializer().serialize(
+            {"name": "agent", "metadata": {"owner": "team-a", "tier": "backend"}},
+            schema,
+        )
+        assert "metadata:" in output
+        assert "  owner: team-a" in output
+        assert "  tier: backend" in output
+        # Must not contain a Python dict repr
+        assert "{'owner'" not in output
+
+    def test_serialize_raw_field_list_value(self) -> None:
+        """List value from PyYAML parsing is emitted as properly indented YAML."""
+        schema = FrontmatterSchema(
+            [FieldSpec("name", quoted=False), FieldSpec("hooks", type="raw")]
+        )
+        output = FrontmatterSerializer().serialize(
+            {"name": "agent", "hooks": [{"event": "onSave", "command": "lint"}]},
+            schema,
+        )
+        assert "hooks:" in output
+        assert "  - command: lint" in output or "  - event: onSave" in output
+        # Must not contain a Python list repr
+        assert "[{" not in output
+
     def test_serialize_frontmatter_required_fields(self) -> None:
         """Test that serialize includes required frontmatter fields."""
         output = FrontmatterSerializer().serialize(
