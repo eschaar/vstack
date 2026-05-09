@@ -44,7 +44,7 @@ class TestAgentGeneration:
         assert out.exists()
 
         content = out.read_text(encoding="utf-8")
-        parsed = FrontmatterParser().parse(content)
+        parsed = FrontmatterParser.parse(content)
 
         assert parsed.metadata.get("name") == "architect"
         assert parsed.metadata.get("model") == [

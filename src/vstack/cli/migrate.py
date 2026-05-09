@@ -106,7 +106,7 @@ class MigrateCommand(BaseCommand):
         config_path = project_root / VSTACK_DIR_NAME / "config.yaml"
         if not config_path.exists():
             return ARTIFACTS_DOCS_ROOT
-        parsed = FrontmatterParser().parse_yaml(config_path.read_text(encoding="utf-8"))
+        parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
         artifacts = parsed.get("artifacts", "")
         if not isinstance(artifacts, dict):
             return ARTIFACTS_DOCS_ROOT

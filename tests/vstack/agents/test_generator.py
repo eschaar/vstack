@@ -334,13 +334,13 @@ class TestAgentGenerator:
             """Returns empty list when no workflow is configured and no prompt given."""
             assert AgentGenerator()._resolve_handoffs("architect", "") == []
 
-        def test_no_handoff_without_workflow(self) -> None:
-            """Returns empty list when no workflow is configured, even with a prompt.
-
-            A handoff without an explicit ``agent:`` target is invalid per the
-            VS Code agent schema, so none is emitted when no workflow is configured.
-            """
-            assert AgentGenerator()._resolve_handoffs("architect", "Do some work.") == []
+        def test_fallback_handoff_without_workflow(self) -> None:
+            """Returns a generic handoff (no agent:) when no workflow is configured but a prompt exists."""
+            result = AgentGenerator()._resolve_handoffs("architect", "Do some work.")
+            assert len(result) == 1
+            assert result[0]["prompt"] == "Do some work."
+            assert result[0]["label"] == "Continue to next stage"
+            assert "agent" not in result[0]
 
         def test_with_workflow_finds_next_role(self) -> None:
             """Returns handoff with correct next agent when workflow is configured."""
@@ -476,9 +476,12 @@ class TestAgentGenerator:
             """Returns empty string when no workflow and no prompt."""
             assert AgentGenerator()._build_handoffs("architect", "") == ""
 
-        def test_returns_empty_string_without_workflow(self) -> None:
-            """Returns empty string when no workflow is configured, even with a prompt."""
-            assert AgentGenerator()._build_handoffs("architect", "Work done.") == ""
+        def test_returns_handoff_without_agent_when_no_workflow(self) -> None:
+            """Returns a handoff block without agent: key when no workflow is configured but prompt is set."""
+            result = AgentGenerator()._build_handoffs("architect", "Work done.")
+            assert "handoffs:" in result
+            assert "Work done." in result
+            assert "agent:" not in result
 
         def test_returns_handoff_string_with_agent(self) -> None:
             """Returns handoffs block with agent key when workflow is configured."""

@@ -68,8 +68,10 @@ class AgentGenerator(GenericArtifactGenerator):
                 ``"docs"``).
             workflow_stages: Ordered list of pipeline stage dicts read from
                 ``workflow.stages`` in ``.vstack/config.yaml``.  Each dict has
-                ``role``, ``gate``, and ``handoff_prompt`` keys.  When ``None``
-                or empty the generator falls back to v3 behaviour: a generic
+                ``role`` and ``gate`` string keys, a ``handoffs`` key containing
+                a list of dicts with ``prompt``, ``agent``, and ``label`` string
+                keys, and an optional ``hitl`` string key.  When ``None`` or
+                empty the generator falls back to v3 behaviour: a generic
                 handoff label without an explicit ``agent:`` target.
         """
         super().__init__(
@@ -189,8 +191,18 @@ class AgentGenerator(GenericArtifactGenerator):
             or an empty list when this is the last stage or no prompts exist.
         """
         if not self.workflow_stages:
-            # No workflow configured — cannot emit valid ``agent:`` targets.
-            return []
+            # No workflow configured — emit a generic handoff without an
+            # explicit ``agent:`` target when a prompt is available, so that
+            # projects without a workflow: block still get a usable handoff
+            # entry rather than silently dropping the configured prompt.
+            if not handoff_prompt.strip():
+                return []
+            return [
+                {
+                    "label": "Continue to next stage",
+                    "prompt": handoff_prompt.strip(),
+                }
+            ]
 
         roles = [s["role"] for s in self.workflow_stages]
         try:
