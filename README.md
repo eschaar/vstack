@@ -55,38 +55,75 @@ For experienced users:
 - Role summary
 - Example usage
 - All vstack CLI commands
+- Install and upgrade guide
 - Workflow
 - Development
 - CI and Release Automation
 
 ### ⚡ Quick paths
 
-#### New user path (2 minutes)
+#### Quickstart — fresh install (2 minutes)
 
 ```bash
+# 1. Install the CLI once, globally
 pipx install vstack
-vstack install --target /path/to/your/project
+
+# 2. Move to your repository root — all commands default to the current directory
+cd /path/to/your/project
+vstack install    # seeds .vstack/config.yaml and generates .github/ here
+
+# 3. Confirm everything is in order
 vstack validate
 ```
 
-Then in Copilot Agent Mode:
+When you omit `--target`, vstack uses the current working directory.
+The explicit form `vstack install --target /path/to/your/project` is equivalent
+and useful when running from a different directory.
+
+Then open Copilot Agent Mode and run:
 
 ```text
 @tester /verify Check this repository and summarize findings
 ```
 
-#### Power user path (30 seconds)
+#### Quick upgrade — patch or minor version (same major)
+
+Docs paths never change within a major version. Only `.github/` artifacts are updated.
 
 ```bash
-vstack install --target /path/to/your/project && vstack verify --target /path/to/your/project
+# 1. Upgrade the CLI
+pipx upgrade vstack
+
+# 2. From your repository root — regenerate .github/ artifacts
+cd /path/to/your/project
+vstack init
 ```
 
-Then jump straight into your role workflow:
+#### Quick upgrade — major version (e.g. v2 → v3)
 
-```text
-@architect Review contracts in src/api/
-@engineer /code-review
-@tester /security
+Docs paths may change on a major version bump. Run `vstack migrate` before `vstack init`.
+
+```bash
+# 1. Upgrade the CLI
+pipx upgrade vstack
+
+# 2. From your repository root
+cd /path/to/your/project
+
+# 3. Move any docs files that changed path (reads installed version from .vstack/vstack.json)
+vstack migrate
+
+# 4. Regenerate .github/ artifacts
+vstack init
+
+# 5. If the manifest schema is outdated (you will see an error message telling you to do this)
+vstack manifest upgrade
+```
+
+Preview the docs moves without touching any files:
+
+```bash
+vstack migrate --dry-run
 ```
 
 ```mermaid
@@ -101,7 +138,7 @@ ______________________________________________________________________
 
 ## 🚀 Quickstart
 
-> New here? Start with `pipx install ...`, then run `vstack install --target ...`, then try `@tester /verify` in Copilot Agent Mode.
+> New here? Run `pipx install vstack`, move to your repository root, run `vstack install`, then try `@tester /verify` in Copilot Agent Mode.
 
 ### ⚡ Install with pipx (recommended)
 
@@ -116,7 +153,11 @@ pipx install vstack
 Afterwards, the `vstack` command is available everywhere:
 
 ```bash
-# Recommended: install vstack artifacts per project/repository
+# Recommended: move to your repository root and install there
+cd /path/to/your/project
+vstack install          # generates .github/ in the current directory
+
+# Or specify a path explicitly when running from a different directory
 vstack install --target /path/to/your/project
 
 # Optional: install profile-wide defaults for all VS Code projects
@@ -156,8 +197,8 @@ Use repository-scoped installation so every contributor and CI run uses the same
 1. Require `commit.yml`, `check.yml`, `verify.yml`, and `security.yml` checks before merge.
 
 ```bash
-# From your repository root
-vstack install --target /path/to/your/project
+cd /path/to/your/project
+vstack install
 git add .github
 git commit -m "chore: install vstack artifacts"
 ```
@@ -344,7 +385,7 @@ A: In a specific repository, run `vstack install --target /path/to/your/project`
 A: Python 3.11–3.14 (see badges above).
 
 **Q: How do I reset the install?**
-A: For one repository, run `vstack uninstall --target /path/to/your/project` and then reinstall with `vstack install --target /path/to/your/project`. Use `--global` only for profile-wide defaults.
+A: Move to your repository root and run `vstack uninstall`, then `vstack install`. You can also use `vstack uninstall --target /path/to/your/project` from any directory. Use `--global` only for profile-wide defaults.
 
 **Q: Where can I ask questions or give feedback?**
 A: [Start a discussion or ask a question here.](https://github.com/eschaar/vstack/discussions)
@@ -356,7 +397,11 @@ ______________________________________________________________________
 To remove vstack artifacts from your project or profile, use the CLI:
 
 ```bash
-# Uninstall vstack artifacts from your current project
+# Move to your repository root and uninstall
+cd /path/to/your/project
+vstack uninstall
+
+# Or specify a path explicitly from any directory
 vstack uninstall --target /path/to/your/project
 
 # Uninstall vstack artifacts from your global VS Code profile
@@ -416,27 +461,30 @@ ______________________________________________________________________
 | `vstack uninstall --target DIR`        | Uninstall tracked artifacts that still match the manifest                                |
 | `vstack uninstall --global`            | Uninstall vstack artifacts from your VS Code profile                                     |
 | `vstack uninstall`                     | Uninstall from the current directory default target                                      |
+| `vstack migrate --target DIR`          | Move docs files from old paths to new paths after a major vstack upgrade                 |
+| `vstack migrate --from M --to N`       | Migrate docs paths across major versions M through N (chains intermediate steps)         |
+| `vstack migrate --dry-run`             | Preview docs path moves without touching any files                                       |
 
 By default, `vstack install` is conservative: if a target file already exists but is not tracked by `vstack`, it is left in place. For tracked files, `--update` only rewrites artifacts whose on-disk content still matches the SHA-256 checksum of the last installed version recorded in `.vstack/vstack.json`. Use `--force` to overwrite everything, `--force-name <name>` to overwrite one specific managed artifact, or `--adopt-name <name>` to start tracking one existing unmanaged file without overwriting it.
 
 If you already have agents, skills, or other files in `.github/`, run a dry-run first to see what would be preserved before committing:
 
 ```bash
-# Preview what install would do — no files are written
-vstack install --dry-run --target /path/to/your/project
+# Preview what install would do — no files are written (run from your repository root)
+vstack install --dry-run
 ```
 
 The summary shows every preserved file as a `type/name` selector (e.g. `agent/engineer`, `skill/verify`). You can then resolve each conflict selectively:
 
 ```bash
 # Overwrite a specific preserved artifact
-vstack install --target . --force-name agent/engineer
+vstack install --force-name agent/engineer
 
 # Take ownership of an existing file without overwriting it
-vstack install --target . --adopt-name agent/engineer
+vstack install --adopt-name agent/engineer
 
 # Overwrite everything
-vstack install --target . --force
+vstack install --force
 ```
 
 When multiple artifact types share the same name (e.g. an `agent` and a `skill` both named `engineer`), use the `type/name` form to target one precisely.
@@ -486,6 +534,139 @@ artifacts:
 ```
 
 All fields are optional. An absent or commented-out block restores the default behaviour.
+
+______________________________________________________________________
+
+## ⬆️ Install and upgrade guide
+
+vstack manages two separate layers. Knowing which layer each command touches prevents mistakes:
+
+| Layer                 | What it contains                                                                 | Updated by                       |
+| --------------------- | -------------------------------------------------------------------------------- | -------------------------------- |
+| `.github/`            | Agent, skill, instruction, and prompt files that Copilot reads                   | `vstack install` / `vstack init` |
+| `docs/`               | Docs files that agents read and write (paths may change on a major version bump) | `vstack migrate`                 |
+| `.vstack/vstack.json` | Manifest — tracks which `.github/` files are managed and stores their checksums  | `vstack manifest upgrade`        |
+
+### Scenario 1 — Fresh install (no previous vstack)
+
+```bash
+# Install the CLI once, globally
+pipx install vstack
+
+# Move to your repository root
+cd /path/to/your/project
+vstack install    # seeds .vstack/config.yaml and generates .github/ in the current directory
+vstack validate   # confirm no errors
+```
+
+All commands default to the current working directory when `--target` is omitted.
+Run them from the repository root. The explicit form `vstack install --target /path/to/your/project`
+is equivalent and useful when running from a different directory.
+
+### Scenario 2 — Fresh install over an existing version (force)
+
+Replace all managed artifacts, even if you have made local edits:
+
+```bash
+# Preview what would happen first
+vstack install --dry-run
+
+# Overwrite everything
+vstack install --force
+```
+
+Or target a single artifact without touching the rest:
+
+```bash
+vstack install --force-name agent/engineer
+vstack install --force-name skill/verify
+```
+
+To take ownership of an existing unmanaged file without overwriting it:
+
+```bash
+vstack install --adopt-name agent/architect
+```
+
+### Scenario 3 — Patch or minor upgrade (e.g. v3.1 → v3.2, same major)
+
+Docs paths never change within a major version. Only `.github/` artifacts need updating.
+
+```bash
+pipx upgrade vstack
+
+cd /path/to/your/project
+vstack init           # idempotent regeneration — safe to run in CI
+```
+
+`vstack init` is safe to re-run at any time. It reads `.vstack/config.yaml` and regenerates `.github/` artifacts without touching anything else.
+
+### Scenario 4 — Major upgrade, single step (e.g. v2 → v3)
+
+Docs paths may change on a major version bump. Run `vstack migrate` before `vstack init`.
+
+```bash
+pipx upgrade vstack
+
+cd /path/to/your/project
+
+# Preview what migrate would move (no files are touched)
+vstack migrate --dry-run
+
+# Apply the docs path moves (auto-detects your installed version from .vstack/vstack.json)
+vstack migrate
+
+# Regenerate .github/ artifacts
+vstack init
+
+# Only needed if you see: "Legacy manifest schema detected" in the output above
+vstack manifest upgrade
+vstack init
+```
+
+### Scenario 5 — Major upgrade, multiple steps (e.g. v1 → v3)
+
+`vstack migrate` chains all intermediate steps automatically. You do not need to run it once per version.
+
+```bash
+pipx upgrade vstack
+
+cd /path/to/your/project
+
+# Auto-detects v1 from manifest, chains v1→v2→v3 automatically
+vstack migrate
+
+# Or specify the range explicitly if auto-detection fails
+vstack migrate --from 1 --to 3
+
+vstack init
+```
+
+If no migration record exists for an intermediate step (for example v1 → v2), that step is silently skipped.
+
+### Scenario 6 — Manifest schema is outdated
+
+If a command fails with:
+
+```text
+Legacy manifest schema detected in vstack.json. Run: vstack manifest upgrade
+```
+
+Run:
+
+```bash
+vstack manifest upgrade
+vstack init
+```
+
+### Common mistakes to avoid
+
+| Mistake                                                          | Symptom                                                   | Fix                                                                   |
+| ---------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------- |
+| Running `vstack init` before `vstack migrate` on a major upgrade | Agents reference docs paths that no longer exist          | Run `vstack migrate` first, then `vstack init`                        |
+| Running `vstack migrate` without a manifest                      | `ERROR: could not detect installed version from manifest` | Run `vstack migrate --from <major>` to specify explicitly             |
+| Local edits not overwritten                                      | `vstack init` skips modified files silently               | Use `vstack install --force-name type/name` to overwrite one artifact |
+| Manifest schema error after upgrade                              | `vstack init` fails with a schema error                   | Run `vstack manifest upgrade` first                                   |
 
 ______________________________________________________________________
 
