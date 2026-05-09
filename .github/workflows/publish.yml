@@ -88,8 +88,6 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: poetry
-          cache-dependency-path: poetry.lock
 
       - name: Validate release tag checkout
         run: |

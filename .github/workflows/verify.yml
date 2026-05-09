@@ -24,6 +24,7 @@ env:
   POETRY_VERSION: "2.3.4"
   # Keep Poetry virtual environments inside the workspace for deterministic paths.
   POETRY_VIRTUALENVS_IN_PROJECT: "true"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   test-matrix:
