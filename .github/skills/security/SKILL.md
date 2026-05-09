@@ -4,7 +4,8 @@ description: 'OWASP Top 10 + STRIDE security audit for APIs, services, and libra
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[component or service to audit]'
 user-invocable: true
 disable-model-invocation: false

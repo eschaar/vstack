@@ -4,7 +4,8 @@ description: 'Write, review, and refactor Terragrunt configurations for DRY mult
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access. Requires Terraform CLI and Terragrunt installed for plan/apply operations.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[scope: new layout | dependency graph | state migration | run-all workflow | security review]'
 user-invocable: true
 disable-model-invocation: false

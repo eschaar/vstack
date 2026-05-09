@@ -4,7 +4,8 @@ description: 'Read-only verification audit. Runs baseline plus optional extended
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[component or service to inspect]'
 user-invocable: true
 disable-model-invocation: false

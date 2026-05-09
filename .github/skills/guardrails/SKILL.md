@@ -4,7 +4,8 @@ description: 'Activate safety guardrails for the current session. Before any des
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[task]'
 user-invocable: true
 disable-model-invocation: true

@@ -4,7 +4,8 @@ description: 'Create or optimize a Dependabot configuration file (.github/depend
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access. Dependabot requires GitHub repository access (public or private with GitHub Advanced Security for private).'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[repository type: library | service | monorepo, and ecosystems to cover]'
 user-invocable: true
 disable-model-invocation: false

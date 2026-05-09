@@ -4,7 +4,8 @@ description: 'Runtime response-style controller for concise communication. Switc
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with session memory and repository context.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[normal|compact|ultra|status|on|off]'
 user-invocable: true
 disable-model-invocation: false

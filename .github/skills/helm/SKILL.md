@@ -4,7 +4,8 @@ description: 'Write, review, and operate Helm charts and release lifecycles. Cov
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access. Requires Helm CLI and target cluster access for live release operations.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[chart path, release name, namespace, and scope: chart review | install | upgrade | rollback]'
 user-invocable: true
 disable-model-invocation: false

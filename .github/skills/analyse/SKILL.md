@@ -4,7 +4,8 @@ description: 'Cross-cutting technical analysis. Investigates impact, tradeoffs, 
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[topic, change, or question to analyse]'
 user-invocable: true
 disable-model-invocation: false

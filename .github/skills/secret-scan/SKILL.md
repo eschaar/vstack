@@ -4,7 +4,8 @@ description: 'Configure and manage GitHub secret scanning and push protection. C
 license: 'MIT'
 compatibility: 'Requires repository access and GitHub Advanced Security (private repos) or public repository. Alert management requires gh CLI authentication.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[scope: enable | configure push-protection | custom-pattern | triage alerts | remediate]'
 user-invocable: true
 disable-model-invocation: false

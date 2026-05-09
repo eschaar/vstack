@@ -4,7 +4,8 @@ description: 'Operate Kubernetes workloads and governance through Rancher. Cover
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access. Requires Rancher UI/API access or Rancher CLI where applicable.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[rancher server/context, cluster/project, and scope: deploy | governance | fleet | troubleshooting]'
 user-invocable: true
 disable-model-invocation: false

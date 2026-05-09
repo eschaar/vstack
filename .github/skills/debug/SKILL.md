@@ -4,7 +4,8 @@ description: 'Systematic root-cause debugging for backend services, APIs, and li
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[issue or error to debug]'
 user-invocable: true
 disable-model-invocation: false

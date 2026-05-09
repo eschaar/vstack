@@ -4,7 +4,8 @@ description: 'Threat modeling for APIs, services, and systems using a practical 
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[system, component, or architecture to threat model]'
 user-invocable: true
 disable-model-invocation: false

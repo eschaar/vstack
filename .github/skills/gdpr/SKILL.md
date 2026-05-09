@@ -4,7 +4,8 @@ description: 'GDPR-compliant engineering practices for APIs, data models, authen
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[component or feature: data model | API | logging | retention | erasure | infra | PR review]'
 user-invocable: true
 disable-model-invocation: false

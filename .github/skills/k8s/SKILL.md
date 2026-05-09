@@ -4,7 +4,8 @@ description: 'Write, review, and troubleshoot Kubernetes manifests and operation
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access. Requires kubectl access to a target cluster for live operations.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[cluster/context, namespace, and scope: manifest review | deploy | rollout debug | hardening]'
 user-invocable: true
 disable-model-invocation: false

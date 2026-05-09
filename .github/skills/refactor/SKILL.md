@@ -4,7 +4,8 @@ description: 'Structured refactoring for backend services, APIs, and libraries. 
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[module, file, or area to refactor]'
 user-invocable: true
 disable-model-invocation: false

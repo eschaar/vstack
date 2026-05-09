@@ -4,7 +4,8 @@ description: 'Dependency health audit. Covers vulnerability scanning, outdated p
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[project or package manifest to audit]'
 user-invocable: true
 disable-model-invocation: false

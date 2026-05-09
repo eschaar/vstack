@@ -4,7 +4,8 @@ description: 'Write, review, and refactor Terraform infrastructure-as-code. Cove
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access. Requires Terraform CLI installed for plan/apply operations.'
 metadata:
-{'owner': 'vstack', 'maturity': 'stable'}
+  owner: vstack
+  maturity: stable
 argument-hint: '[provider: aws | azure | gcp | generic, and scope: new resource | module | state migration | security review]'
 user-invocable: true
 disable-model-invocation: false
