@@ -271,6 +271,36 @@ class CommandLineParser:
             help="Force uninstall one named artifact without removing every modified file",
         )
 
+    def _add_migrate_command(self, sub: SubparserFactory) -> None:
+        """Register the ``migrate`` subcommand."""
+        migrate_config = COMMAND_CATALOG["migrate"]
+        parser = sub.add_parser("migrate", help=migrate_config.help_text)
+        parser.add_argument(
+            "--target",
+            metavar="<dir>",
+            help="Project root directory (default: current working directory)",
+        )
+        parser.add_argument(
+            "--from",
+            dest="from_major",
+            type=int,
+            metavar="<major>",
+            help="Source major version (e.g. 2). Detected from manifest when absent.",
+        )
+        parser.add_argument(
+            "--to",
+            dest="to_major",
+            type=int,
+            metavar="<major>",
+            help="Target major version (e.g. 3). Defaults to current vstack major.",
+        )
+        parser.add_argument(
+            "--dry-run",
+            dest="dry_run",
+            action="store_true",
+            help="Show what would be moved without writing files",
+        )
+
     def vscode_user_dir(self) -> Path | None:
         """Return the first detected VS Code user data directory.
 
@@ -339,6 +369,7 @@ class CommandLineParser:
             "install": self._add_install_command,
             "init": self._add_init_command,
             "uninstall": self._add_uninstall_command,
+            "migrate": self._add_migrate_command,
         }
         for command_name in TOP_LEVEL_COMMAND_ORDER:
             command_adders[command_name](sub)

@@ -13,6 +13,7 @@ from pathlib import Path
 _PACKAGE_ROOT = files("vstack")
 
 TEMPLATES_ROOT = Path(str(_PACKAGE_ROOT / "_templates"))
+MIGRATIONS_ROOT = Path(str(_PACKAGE_ROOT / "_migrations"))
 
 # Default root directory for all role artifacts. Individual agent configs specify
 # only the subdirectory via ``artifacts.dir``; this root is applied at render time.
