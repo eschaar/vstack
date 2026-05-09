@@ -6,7 +6,7 @@
 [![Python version](https://img.shields.io/badge/python-3.11--3.14-0B8A6F)](https://github.com/eschaar/vstack/blob/main/pyproject.toml)
 [![Verify status](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/verify.yml?label=verify&color=1D6FA5)](https://github.com/eschaar/vstack/actions/workflows/verify.yml)
 [![Security checks](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/security.yml?label=security&color=B15E00)](https://github.com/eschaar/vstack/actions/workflows/security.yml)
-[![Runtime: stdlib only](https://img.shields.io/badge/runtime-stdlib%20only-5B6C8F)](https://github.com/eschaar/vstack/blob/main/pyproject.toml)
+[![Runtime: PyYAML](https://img.shields.io/badge/runtime-PyYAML-5B6C8F)](https://github.com/eschaar/vstack/blob/main/pyproject.toml)
 [![License: MIT](https://img.shields.io/github/license/eschaar/vstack?color=5F7A1F)](https://github.com/eschaar/vstack/blob/main/LICENSE)
 [![GitHub Discussions](https://img.shields.io/badge/discussions-ask%20%26%20share-blueviolet?logo=github)](https://github.com/eschaar/vstack/discussions)
 
@@ -27,7 +27,7 @@ It provides a fixed role model for end-to-end software delivery: `product`, `arc
 - Fixed role model: `product`, `architect`, `designer`, `engineer`, `tester`, `release`
 - Template-driven install model from `src/vstack/_templates/`
 - Backend-first verification, security, and release discipline
-- Standard-library-only runtime dependencies
+- One runtime dependency: PyYAML
 
 ## Building blocks
 

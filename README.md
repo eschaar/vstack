@@ -8,7 +8,7 @@
 [![Python version](https://img.shields.io/badge/python-3.11--3.14-0B8A6F "Supported Python versions")](pyproject.toml)
 [![Verify status](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/verify.yml?label=verify&color=1D6FA5 "Build and test status")](https://github.com/eschaar/vstack/actions/workflows/verify.yml)
 [![Security checks](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/security.yml?label=security&color=B15E00 "Security workflow status")](https://github.com/eschaar/vstack/actions/workflows/security.yml)
-[![Runtime: stdlib only](https://img.shields.io/badge/runtime-stdlib%20only-5B6C8F "No runtime dependencies")](pyproject.toml)
+[![Runtime: PyYAML](https://img.shields.io/badge/runtime-PyYAML-5B6C8F "One runtime dependency: PyYAML")](pyproject.toml)
 [![License: MIT](https://img.shields.io/github/license/eschaar/vstack?color=5F7A1F "Project license")](LICENSE)
 [![GitHub Discussions](https://img.shields.io/badge/discussions-ask%20%26%20share-blueviolet?logo=github "GitHub Discussions")](https://github.com/eschaar/vstack/discussions)
 
@@ -35,7 +35,7 @@ ______________________________________________________________________
 - Fixed role model with explicit ownership boundaries
 - Template-driven install model from `src/vstack/_templates/`
 - Backend-first verification, security, and release discipline
-- No runtime dependencies beyond the Python standard library
+- One runtime dependency: [PyYAML](https://pypi.org/project/PyYAML/)
 - Works at project scope or globally in the VS Code user profile
 
 ______________________________________________________________________
