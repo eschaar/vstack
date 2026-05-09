@@ -16,6 +16,8 @@ from vstack.manifest import (
     Manifest,
     ManifestFile,
     hash_with_algorithm,
+    preserve_existing_entry,
+    preserved_manifest_entries,
 )
 
 
@@ -597,3 +599,39 @@ class TestManifestFile:
             encoding="utf-8",
         )
         assert mf.read() is None
+
+
+class TestDeprecatedModuleLevelHelpers:
+    """Deprecated module-level helpers re-export Manifest methods and warn."""
+
+    def test_preserved_manifest_entries_warns_and_delegates(self) -> None:
+        """preserved_manifest_entries() emits DeprecationWarning and returns correct result."""
+        entry = ArtifactEntry(name="vision", file="docs/vision.md", checksum="abc")
+        manifest = Manifest(
+            vstack_version="0.1.0",
+            installed_at="2026-01-01T00:00:00Z",
+            artifacts={"skills": [entry], "agents": []},
+        )
+        with pytest.warns(
+            DeprecationWarning, match="preserved_manifest_entries\\(\\) is deprecated"
+        ):
+            result = preserved_manifest_entries(manifest, {"agents"})
+        assert result == {"skills": [entry]}
+
+    def test_preserved_manifest_entries_none_returns_empty(self) -> None:
+        """preserved_manifest_entries() returns {} when existing_manifest is None."""
+        with pytest.warns(DeprecationWarning):
+            result = preserved_manifest_entries(None, {"agents"})
+        assert result == {}
+
+    def test_preserve_existing_entry_warns_and_delegates(self) -> None:
+        """preserve_existing_entry() emits DeprecationWarning and appends the entry."""
+        entry = ArtifactEntry(name="vision", file="docs/vision.md", checksum="abc")
+        new_entries: dict = {}
+        with pytest.warns(DeprecationWarning, match="preserve_existing_entry\\(\\) is deprecated"):
+            preserve_existing_entry(
+                new_entries=new_entries,
+                manifest_key="skills",
+                existing_entry=entry,
+            )
+        assert new_entries == {"skills": [entry]}
