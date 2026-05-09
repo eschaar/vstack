@@ -22,8 +22,11 @@ env:
   PYTHON_VERSION: "3.11"
   # Pin Poetry CLI version for deterministic CI behavior.
   POETRY_VERSION: "2.3.4"
+  # Keep Poetry virtual environments inside the workspace for deterministic paths.
+  POETRY_VIRTUALENVS_IN_PROJECT: "true"
   # Pin pip-audit to avoid non-deterministic CI failures from tool updates.
   PIP_AUDIT_VERSION: "2.9.0"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   security:
