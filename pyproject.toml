@@ -183,6 +183,7 @@ description = Run mypy type checks
 package = skip
 deps =
     mypy>=1.20
+    types-PyYAML>=6.0
 commands =
     mypy src tests
 """

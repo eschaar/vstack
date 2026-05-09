@@ -120,23 +120,16 @@ class AgentGenerator(GenericArtifactGenerator):
         }
 
     def _extract_defaults(self, config: dict) -> dict:
-        """Return the parsed ``defaults:`` block from *config*, or an empty dict.
+        """Return the ``defaults:`` block from *config*, or an empty dict.
 
-        The ``defaults:`` value may be stored as a raw indented YAML string by
-        the minimal frontmatter parser.  This helper re-parses it when needed
-        and always returns a plain dict.
+        PyYAML always returns ``defaults:`` as a dict when the block is
+        present in ``config.yaml``.  Non-dict values (e.g. ``None`` when the
+        key is absent) are normalised to ``{}``.
 
         :param config: Raw config dict as returned by ``load_artifact_config``.
-        :returns: Parsed ``defaults`` dict, or ``{}`` when absent or unparseable.
+        :returns: Parsed ``defaults`` dict, or ``{}`` when absent or not a mapping.
         """
-        from vstack.frontmatter import FrontmatterParser
-
         defaults = config.get("defaults") or {}
-        if isinstance(defaults, str) and defaults.strip():
-            dedented = "\n".join(
-                line[2:] if line.startswith("  ") else line for line in defaults.split("\n")
-            )
-            defaults = FrontmatterParser.parse_yaml(dedented) or {}
         return defaults if isinstance(defaults, dict) else {}
 
     def load_artifact_config(self, tmpl_dir: Path) -> dict:

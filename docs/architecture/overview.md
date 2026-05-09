@@ -169,15 +169,15 @@ ______________________________________________________________________
 
 These bind architecture decisions. Full list in `docs/product/requirements.md`.
 
-| ID    | Requirement                                                                       | Architectural binding                     |
-| ----- | --------------------------------------------------------------------------------- | ----------------------------------------- |
-| NFR-1 | No runtime dependencies beyond the Python standard library                        | ADR-006, ADR-007                          |
-| NFR-2 | Python 3.11–3.14 compatibility                                                    | ADR-007                                   |
-| NFR-3 | Manifest writes are atomic                                                        | ADR-016                                   |
-| NFR-4 | All public behavior covered by automated tests; CI enforces test pass             | `tests/` structure, `verify.yml` workflow |
-| NFR-5 | CLI operates standalone; no VS Code process required for CLI operations           | ADR-006, stdlib-only runtime              |
-| NFR-6 | Lint and type checking pass on every commit; CI gate enforces zero violations     | `pyproject.toml` ruff + mypy config       |
-| NFR-7 | Generated output lives under `.github/` only; templates never modified at runtime | ADR-012                                   |
+| ID    | Requirement                                                                       | Architectural binding                                      |
+| ----- | --------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| NFR-1 | No external binary dependencies in skill template content                         | ADR-006; one pip dependency (`pyyaml`) allowed per ADR-025 |
+| NFR-2 | Python 3.11–3.14 compatibility                                                    | ADR-007                                                    |
+| NFR-3 | Manifest writes are atomic                                                        | ADR-016                                                    |
+| NFR-4 | All public behavior covered by automated tests; CI enforces test pass             | `tests/` structure, `verify.yml` workflow                  |
+| NFR-5 | CLI operates standalone; no VS Code process required for CLI operations           | ADR-006; only `pyyaml` required at runtime (ADR-025)       |
+| NFR-6 | Lint and type checking pass on every commit; CI gate enforces zero violations     | `pyproject.toml` ruff + mypy config                        |
+| NFR-7 | Generated output lives under `.github/` only; templates never modified at runtime | ADR-012                                                    |
 
 ______________________________________________________________________
 
@@ -251,3 +251,4 @@ See individual files for context, decision, alternatives, and rationale.
 | 022 | Selective exclude filter in `.vstack/config.yaml`    | accepted   | Agents cannot be excluded (atomic unit) |
 | 023 | Workflow contract in `.vstack/config.yaml`           | accepted   | Pipeline order, gate, hitl, handoffs    |
 | 024 | Subagent orchestration via VS Code native subagents  | accepted   | Supersedes ADR-004; planner coordinator |
+| 025 | PyYAML as sole runtime dependency                    | accepted   | Replaces hand-rolled frontmatter parser |

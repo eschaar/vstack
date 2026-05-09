@@ -36,5 +36,7 @@ any prerequisites beyond the project's own toolchain.
 
 ## impact on future orchestrated pipeline
 
-The future orchestrated pipeline runner will be `scripts/runner.py` (stdlib only), not a
-skill runtime dependency.
+The orchestrated pipeline uses VS Code native subagents via the `runSubagent` tool
+(see ADR-024) — no separate `scripts/runner.py` runner is needed.
+The sole runtime dependency (`pyyaml`) is a pip package, not a binary, and does
+not affect the skill portability guarantee this ADR establishes.
