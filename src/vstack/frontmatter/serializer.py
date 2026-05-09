@@ -15,6 +15,18 @@ import textwrap
 
 from vstack.frontmatter.schema import FieldSpec, FrontmatterSchema
 
+# Characters that open a YAML alias (*), anchor (&), or tag (!) when they appear
+# as the first character of a plain scalar.  List items starting with these must
+# be single-quoted so that PyYAML and VS Code parse them correctly.
+_YAML_SPECIAL_LEADING = frozenset("*&!")
+
+
+def _quote_list_item(item: str) -> str:
+    """Return *item* single-quoted when it starts with a YAML-special character."""
+    if item and item[0] in _YAML_SPECIAL_LEADING:
+        return "'" + item.replace("'", "''") + "'"
+    return item
+
 
 class FrontmatterSerializer:
     """Frontmatter serializer — converts metadata dict to YAML.
@@ -90,7 +102,7 @@ class FrontmatterSerializer:
         if spec.type == "list":
             if isinstance(value, list) and value:
                 lines = [f"{spec.name}:"]
-                lines.extend(f"  - {item_v}" for item_v in value)
+                lines.extend(f"  - {_quote_list_item(str(item_v))}" for item_v in value)
                 return lines
             return []
         if self._should_emit_multiline(value, preserve_multiline):
@@ -160,7 +172,7 @@ class FrontmatterSerializer:
             if isinstance(value, list) and value:
                 lines.append(f"{spec.name}:")
                 for item in value:
-                    lines.append(f"  - {item}")
+                    lines.append(f"  - {_quote_list_item(str(item))}")
             return
         if spec.type == "object-list":
             if isinstance(value, list) and value:

@@ -3,7 +3,11 @@
 > Maintained by: **architect** role
 
 **date:** 2026-03-27\
-**status:** accepted
+**status:** accepted\
+**scope note:** This ADR covers **skill template content** only — the Markdown files
+the AI agent executes. It does not govern the Python package's own `pip` dependencies.
+The decision to introduce `pyyaml` as a runtime package dependency is documented in
+ADR-025.
 
 ## context
 

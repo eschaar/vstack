@@ -5,7 +5,7 @@ description = "VS Code-native AI engineering workflow system for microservices, 
 license = "MIT"
 readme = "README-pypi.md"
 requires-python = ">=3.11,<3.15"
-dependencies = []
+dependencies = ["pyyaml>=6.0"]
 keywords = [
     "github-copilot",
     "vscode",
@@ -69,6 +69,7 @@ ruff = ">=0.15.12"
 mypy = ">=1.20.2"
 pre-commit = ">=4.6.0"
 tox = ">=4.15"
+types-PyYAML = ">=6.0"
 
 
 # ---------------------------------------------------------------------------
@@ -163,6 +164,7 @@ package = skip
 deps =
     pytest>=9.0
     pytest-cov>=6.0
+    pyyaml>=6.0
 setenv =
     PYTHONPATH = {tox_root}/src
 commands =

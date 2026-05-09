@@ -86,18 +86,9 @@ class AgentGenerator(GenericArtifactGenerator):
         ``AGENT_ARTIFACTS_INPUT_COMMENTS``, ``AGENT_ARTIFACTS_OUTPUT_COMMENTS``,
         and ``AGENT_ARTIFACTS_BASELINE``.
         """
-        from vstack.frontmatter import FrontmatterParser
 
         artifact_config = self.load_artifact_config(tmpl_dir)
         artifacts = artifact_config.get("artifacts") or {}
-
-        # The minimal YAML parser stores nested dicts as raw indented strings.
-        # Re-parse by stripping the 2-space indent that the raw-block mode preserves.
-        if isinstance(artifacts, str):
-            dedented = "\n".join(
-                line[2:] if line.startswith("  ") else line for line in artifacts.split("\n")
-            )
-            artifacts = FrontmatterParser.parse_yaml(dedented) or {}
 
         if not isinstance(artifacts, dict):
             artifacts = {}
@@ -173,13 +164,6 @@ class AgentGenerator(GenericArtifactGenerator):
             if artifacts_from_defaults:
                 config["artifacts"] = artifacts_from_defaults
         handoffs_block = defaults.get("handoffs") or {}
-        if isinstance(handoffs_block, str) and handoffs_block.strip():
-            from vstack.frontmatter import FrontmatterParser
-
-            dedented = "\n".join(
-                line[2:] if line.startswith("  ") else line for line in handoffs_block.split("\n")
-            )
-            handoffs_block = FrontmatterParser.parse_yaml(dedented) or {}
         if isinstance(handoffs_block, dict):
             handoff_prompt: str = str(handoffs_block.get("prompt", "") or "")
         else:

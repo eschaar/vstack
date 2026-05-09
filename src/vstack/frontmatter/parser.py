@@ -1,17 +1,16 @@
-"""YAML frontmatter parser — no external dependencies.
+"""YAML frontmatter parser.
 
-Supports:
-- String scalars (quoted and unquoted)
-- Inline lists  ``[a, b, c]``
-- Block lists   ``\n  - item``
-- Block sequences of mappings (object-lists)  ``\n  - key: val\n    key2: val2``
-- Block scalars ``|``
+Delegates YAML parsing to :func:`yaml.safe_load` (PyYAML).  Supports the full
+YAML 1.1 feature set used by vstack config files, including nested mappings,
+block sequences, block scalars, and inline lists.
 """
 
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+
+import yaml
 
 _FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n(.*)", re.DOTALL)
 
@@ -50,40 +49,7 @@ class FrontmatterContent:
 
 
 class FrontmatterParser:
-    """Parse the repository's supported subset of YAML frontmatter."""
-
-    @staticmethod
-    def _is_current_object_list_item(meta: dict, current_key: str) -> bool:
-        """Return ``True`` when ``current_key`` points to the active object-list item."""
-        return (
-            bool(current_key)
-            and isinstance(meta.get(current_key), list)
-            and bool(meta[current_key])
-            and isinstance(meta[current_key][-1], dict)
-        )
-
-    @staticmethod
-    def _flush_object_block_scalar(
-        *,
-        meta: dict,
-        current_key: str,
-        object_scalar_field: str,
-        object_block_lines: list[str],
-    ) -> None:
-        """Flush buffered block-scalar content into the active object-list item."""
-        text = " ".join(b for b in object_block_lines if b).strip()
-        if FrontmatterParser._is_current_object_list_item(meta, current_key):
-            meta[current_key][-1][object_scalar_field] = text
-
-    @staticmethod
-    def _flush_raw_block(*, meta: dict, current_key: str, raw_lines: list[str]) -> None:
-        """Flush buffered raw block content into the current top-level key."""
-        meta[current_key] = "\n".join(raw_lines).rstrip()
-
-    @staticmethod
-    def _flush_block_scalar(*, meta: dict, current_key: str, block_lines: list[str]) -> None:
-        """Flush a buffered top-level block scalar into the current key."""
-        meta[current_key] = " ".join(b for b in block_lines if b).strip()
+    """Parse YAML frontmatter using :func:`yaml.safe_load`."""
 
     @staticmethod
     def parse(content: str) -> FrontmatterContent:
@@ -114,191 +80,19 @@ class FrontmatterParser:
     # ── Internal ──────────────────────────────────────────────────────────────
 
     @staticmethod
-    def _parse_scalar(val: str) -> str:
-        """Strip surrounding quotes from a YAML scalar string."""
-        return val.strip().strip("\"'")
-
-    @staticmethod
     def _parse_yaml_block(raw: str) -> dict:
-        """Parse a minimal YAML subset (no external dependencies).
+        """Delegate YAML parsing to :func:`yaml.safe_load`.
 
-        Supports: string values, inline lists ``[a, b]``,
-        block lists ``\n  - item``, block scalars ``|``,
-        block sequences of mappings (object-lists):
-        ``\n  - key: val\n    key2: val2``,
-        raw mapping blocks where the value is indented non-list YAML content:
-        ``\n  server:\n    type: local`` (used for ``mcp-servers``, ``hooks``, etc.), and
-        nested blocks inside object-list items: an empty-value 4-space key
-        (``    key:``) accumulates subsequent 6-space lines as a stripped raw
-        string that callers can re-parse (e.g. ``workflow.stages[].handoffs``).
+        Pre-processes ``- *`` (VS Code wildcard list items) into quoted form
+        so that PyYAML does not interpret the bare ``*`` as a YAML alias.
+
+        Returns an empty dict when *raw* is empty or parses to a non-mapping
+        value.
         """
-        meta: dict = {}
-        current_key = ""
-        in_block_scalar = False
-        block_lines: list[str] = []
-        in_raw_block = False
-        raw_lines: list[str] = []
-        in_object_block_scalar = False
-        object_scalar_field = ""
-        object_block_lines: list[str] = []
-        in_object_nested_block = False
-        object_nested_key = ""
-        object_nested_lines: list[str] = []
-
-        for line in raw.split("\n"):
-            if line.strip().startswith("#"):
-                continue
-
-            # ── Nested block inside object-list item ─────────────────────────
-            if in_object_nested_block:
-                if line.startswith("      ") or line == "":
-                    # Strip 6 leading spaces so the stored content is parseable
-                    # as top-level YAML (for dict) or as a 0-indent list.
-                    object_nested_lines.append(line[6:] if len(line) > 6 else "")
-                    continue
-                else:
-                    # Non-6-space line closes the nested block.
-                    meta[current_key][-1][object_nested_key] = "\n".join(
-                        object_nested_lines
-                    ).rstrip()
-                    in_object_nested_block = False
-                    object_nested_key = ""
-                    object_nested_lines = []
-                    # Fall through to process current line.
-
-            if in_object_block_scalar:
-                if line.startswith("      ") or line == "":
-                    object_block_lines.append(line.strip())
-                    continue
-                else:
-                    FrontmatterParser._flush_object_block_scalar(
-                        meta=meta,
-                        current_key=current_key,
-                        object_scalar_field=object_scalar_field,
-                        object_block_lines=object_block_lines,
-                    )
-                    in_object_block_scalar = False
-                    object_scalar_field = ""
-                    object_block_lines = []
-
-            # ── Raw block accumulation ────────────────────────────────────────
-            if in_raw_block:
-                if line == "" or line.startswith(" "):
-                    raw_lines.append(line)
-                    continue
-                else:
-                    # Non-indented line closes the raw block; fall through to process it
-                    FrontmatterParser._flush_raw_block(
-                        meta=meta,
-                        current_key=current_key,
-                        raw_lines=raw_lines,
-                    )
-                    in_raw_block = False
-                    raw_lines = []
-
-            if in_block_scalar:
-                if line.startswith("  ") or line == "":
-                    block_lines.append(line.strip())
-                    continue
-                else:
-                    FrontmatterParser._flush_block_scalar(
-                        meta=meta,
-                        current_key=current_key,
-                        block_lines=block_lines,
-                    )
-                    in_block_scalar = False
-                    block_lines = []
-
-            # 4-space key: continuation of an object-list item
-            obj_kv = re.match(r"^    ([a-zA-Z_-]+):\s*(.*)$", line)
-            if obj_kv and FrontmatterParser._is_current_object_list_item(meta, current_key):
-                obj_key = obj_kv.group(1)
-                obj_val = obj_kv.group(2).strip()
-                if obj_val in ("|", "|-", "|+", ">", ">-", ">+"):
-                    in_object_block_scalar = True
-                    object_scalar_field = obj_key
-                    object_block_lines = []
-                    meta[current_key][-1][obj_key] = ""
-                elif obj_val:
-                    meta[current_key][-1][obj_key] = FrontmatterParser._parse_scalar(obj_val)
-                else:
-                    # Empty value in an object-list item: start nested block
-                    # accumulation for any following 6-space-indented content.
-                    in_object_nested_block = True
-                    object_nested_key = obj_key
-                    object_nested_lines = []
-                    meta[current_key][-1][obj_key] = ""
-                continue
-
-            # Raw block trigger: 2-space non-list indented line when the current key
-            # has an empty provisional value (set by a bare ``key:`` with no value).
-            if (
-                line.startswith("  ")
-                and not line.startswith("  - ")
-                and current_key
-                and meta.get(current_key) == []
-            ):
-                in_raw_block = True
-                raw_lines = [line]
-                meta[current_key] = ""  # clear empty-list placeholder
-                continue
-
-            # 2-space list item
-            list_match = re.match(r"^  - (.+)$", line)
-            if list_match and current_key:
-                item_str = list_match.group(1).strip()
-                item_kv = re.match(r"^([a-zA-Z_-]+):\s*(.*)$", item_str)
-                if item_kv:
-                    # Object-list item — first key bootstraps the dict
-                    if not isinstance(meta.get(current_key), list):
-                        meta[current_key] = []
-                    meta[current_key].append(
-                        {item_kv.group(1): FrontmatterParser._parse_scalar(item_kv.group(2))}
-                    )
-                else:
-                    if not isinstance(meta.get(current_key), list):
-                        meta[current_key] = []
-                    meta[current_key].append(item_str.strip("\"'"))
-                continue
-
-            kv = re.match(r"^([a-zA-Z_-]+):\s*(.*)$", line)
-            if kv:
-                current_key = kv.group(1)
-                val = kv.group(2).strip()
-                if val.startswith("[") and val.endswith("]"):
-                    meta[current_key] = [
-                        v.strip().strip("\"'") for v in val[1:-1].split(",") if v.strip()
-                    ]
-                elif val in ("|", "|-", "|+", ">", ">-", ">+"):
-                    in_block_scalar = True
-                    block_lines = []
-                    meta[current_key] = ""
-                elif val == "":
-                    meta[current_key] = []  # provisional: may become a raw block
-                else:
-                    meta[current_key] = val.strip("\"'")
-
-        if in_object_block_scalar:
-            if object_scalar_field:
-                FrontmatterParser._flush_object_block_scalar(
-                    meta=meta,
-                    current_key=current_key,
-                    object_scalar_field=object_scalar_field,
-                    object_block_lines=object_block_lines,
-                )
-        if in_object_nested_block:
-            meta[current_key][-1][object_nested_key] = "\n".join(object_nested_lines).rstrip()
-        if in_raw_block and raw_lines:
-            FrontmatterParser._flush_raw_block(
-                meta=meta,
-                current_key=current_key,
-                raw_lines=raw_lines,
-            )
-        if in_block_scalar and block_lines:
-            FrontmatterParser._flush_block_scalar(
-                meta=meta,
-                current_key=current_key,
-                block_lines=block_lines,
-            )
-
-        return meta
+        # Replace bare wildcard items (``  - *``) with single-quoted form so that
+        # PyYAML does not treat the leading ``*`` as a YAML alias marker.
+        preprocessed = re.sub(r"^(\s*-\s)\*(\s*)$", r"\1'*'\2", raw, flags=re.MULTILINE)
+        result = yaml.safe_load(preprocessed)
+        if not isinstance(result, dict):
+            return {}
+        return result

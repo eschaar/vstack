@@ -196,7 +196,7 @@ class TestGenericArtifactGenerator:
         tmpl_dir.mkdir(parents=True)
         (tmpl_dir / "template.md").write_text("# writer\nbody\n", encoding="utf-8")
         (tmpl_dir / "config.yaml").write_text(
-            "name: writer\ndescription: A writer agent\nuser-invocable: yes\n",
+            "name: writer\ndescription: A writer agent\nuser-invocable: maybe\n",
             encoding="utf-8",
         )
         gen = GenericArtifactGenerator(AGENT_TYPE, tmp_path / "templates")
