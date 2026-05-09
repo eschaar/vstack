@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 import re
@@ -10,25 +9,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from vstack.constants import MANIFEST_FILENAME
+from vstack.utils import content_hash, hash_with_algorithm
 
 CURRENT_MANIFEST_VERSION = 2
 CURRENT_HASH_ALGORITHM = "sha256"
 _META_COMMENT_RE = re.compile(r"<!--\s*VSTACK-META:\s*(\{.*?\})\s*-->")
 
-
-def content_hash(content: str) -> str:
-    """Return a stable SHA-256 checksum for rendered artifact content."""
-    return hashlib.sha256(content.encode("utf-8")).hexdigest()
-
-
-def hash_with_algorithm(content: str, algorithm: str) -> str:
-    """Return a checksum for *content* using the requested algorithm."""
-    normalized = algorithm.lower()
-    if normalized == "sha256":
-        return hashlib.sha256(content.encode("utf-8")).hexdigest()
-    if normalized == "md5":
-        return hashlib.md5(content.encode("utf-8"), usedforsecurity=False).hexdigest()
-    raise ValueError(f"Unsupported checksum algorithm: {algorithm}")
+__all__ = ["content_hash", "hash_with_algorithm"]
 
 
 @dataclass
@@ -240,6 +227,39 @@ class Manifest:
             skipped,
         )
 
+    def preserved_entries(
+        self,
+        selected_manifest_keys: set[str],
+    ) -> dict[str, list[ArtifactEntry]]:
+        """Return artifact families not in *selected_manifest_keys*, preserving them intact.
+
+        Used to carry forward unselected artifact types when only a subset
+        is targeted for the current install or uninstall operation.
+
+        :param selected_manifest_keys: Manifest keys that the current operation manages.
+        :returns: A shallow copy of every artifact family that was not selected.
+        """
+        return {
+            manifest_key: list(entries)
+            for manifest_key, entries in self.artifacts.items()
+            if manifest_key not in selected_manifest_keys
+        }
+
+    @staticmethod
+    def preserve_existing_entry(
+        *,
+        new_entries: dict[str, list[ArtifactEntry]],
+        manifest_key: str,
+        existing_entry: ArtifactEntry,
+    ) -> None:
+        """Carry forward one unchanged manifest entry into *new_entries*.
+
+        :param new_entries: The artifact dict being built for the updated manifest.
+        :param manifest_key: Manifest key (e.g. ``"agents"``) for the entry.
+        :param existing_entry: The entry to preserve as-is.
+        """
+        new_entries.setdefault(manifest_key, []).append(existing_entry)
+
     @classmethod
     def from_dict(cls, data: dict) -> Manifest:
         """Create a :class:`Manifest` from parsed JSON data."""
@@ -279,31 +299,6 @@ class Manifest:
             installed_at=data.get("installed_at", ""),
             artifacts=artifacts,
         )
-
-
-def preserved_manifest_entries(
-    existing_manifest: Manifest | None,
-    selected_manifest_keys: set[str],
-) -> dict[str, list[ArtifactEntry]]:
-    """Preserve artifact families not selected for the current operation."""
-    if existing_manifest is None:
-        return {}
-
-    preserved: dict[str, list[ArtifactEntry]] = {}
-    for manifest_key, entries in existing_manifest.artifacts.items():
-        if manifest_key not in selected_manifest_keys:
-            preserved[manifest_key] = list(entries)
-    return preserved
-
-
-def preserve_existing_entry(
-    *,
-    new_entries: dict[str, list[ArtifactEntry]],
-    manifest_key: str,
-    existing_entry: ArtifactEntry,
-) -> None:
-    """Carry forward one unchanged manifest entry for a manifest key."""
-    new_entries.setdefault(manifest_key, []).append(existing_entry)
 
 
 class ManifestFile:

@@ -5,11 +5,10 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from vstack.cli.base import CommandContext
+from vstack.cli.base import BaseCommand, CommandContext
 from vstack.cli.catalog import COMMAND_CATALOG
 from vstack.cli.constants import GLOBAL_SUPPORTED_TYPE_NAMES, KNOWN_TYPE_NAMES
 from vstack.cli.parser import CommandLineParser
-from vstack.cli.registry import build_command_registry
 from vstack.cli.service import CommandService
 from vstack.constants import ARTIFACTS_DOCS_ROOT
 from vstack.frontmatter import FrontmatterParser
@@ -100,7 +99,7 @@ class CommandLineInterface:
         config_path = install_dir.parent / ".vstack" / "config.yaml"
         if not config_path.exists():
             return frozenset(), {}
-        parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
+        parsed = FrontmatterParser().parse_yaml(config_path.read_text(encoding="utf-8"))
         raw_exclude = parsed.get("exclude", "")
         if not isinstance(raw_exclude, dict):
             return frozenset(), {}
@@ -137,7 +136,7 @@ class CommandLineInterface:
         config_path = install_dir.parent / ".vstack" / "config.yaml"
         if not config_path.exists():
             return ARTIFACTS_DOCS_ROOT
-        parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
+        parsed = FrontmatterParser().parse_yaml(config_path.read_text(encoding="utf-8"))
         artifacts = parsed.get("artifacts", "")
         if not isinstance(artifacts, dict):
             return ARTIFACTS_DOCS_ROOT
@@ -164,7 +163,7 @@ class CommandLineInterface:
         config_path = install_dir.parent / ".vstack" / "config.yaml"
         if not config_path.exists():
             return []
-        parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
+        parsed = FrontmatterParser().parse_yaml(config_path.read_text(encoding="utf-8"))
         workflow = parsed.get("workflow", "")
         if not isinstance(workflow, dict):
             return []
@@ -232,6 +231,13 @@ class CommandLineInterface:
             return [{"prompt": legacy, "agent": "", "label": ""}]
         return []
 
+    def _build_command_registry(self, service: CommandService) -> dict[str, BaseCommand]:
+        """Instantiate all catalog commands against *service*."""
+        return {
+            command_name: config.command_factory(service)
+            for command_name, config in COMMAND_CATALOG.items()
+        }
+
     def run(self) -> int:
         """Run one CLI invocation and return a process-style status code."""
         cli_parser = self._parser_cls()
@@ -251,7 +257,7 @@ class CommandLineInterface:
             artifacts_root=artifacts_root,
             workflow_stages=workflow_stages,
         )
-        commands = build_command_registry(service)
+        commands = self._build_command_registry(service)
         effective_only = self._resolve_only_filter(
             args=args,
             resolve_only_for_scope=command_config.resolve_only_for_scope,

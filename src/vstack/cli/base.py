@@ -27,6 +27,11 @@ class CommandContext:
 class BaseCommand(ABC):
     """Abstract base class for top-level CLI command handlers."""
 
+    @staticmethod
+    def _normalize_targeted_names(names: list[str] | None) -> set[str]:
+        """Normalize targeted artifact names for force/adopt operations."""
+        return {name.strip() for name in names or [] if name.strip()}
+
     @abstractmethod
     def run(
         self,

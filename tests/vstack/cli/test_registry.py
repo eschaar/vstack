@@ -1,4 +1,4 @@
-"""Tests for build_command_registry catalog factory dispatch."""
+"""Tests for CommandLineInterface command registry construction."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import cast
 import pytest
 
 from vstack.cli.base import BaseCommand, CommandContext
-from vstack.cli.registry import build_command_registry
+from vstack.cli.interface import CommandLineInterface
 from vstack.cli.service import CommandService
 
 
@@ -21,9 +21,9 @@ class _FakeCommand(BaseCommand):
 
 
 class TestBuildCommandRegistry:
-    """Test cases for build_command_registry."""
+    """Test cases for CommandLineInterface._build_command_registry."""
 
-    def test_uses_catalog_factories(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_uses_catalog_factories(self, monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
         """Registry construction delegates to command_factory for each catalog entry."""
         created: list[str] = []
 
@@ -35,22 +35,24 @@ class TestBuildCommandRegistry:
             return _make
 
         monkeypatch.setattr(
-            "vstack.cli.registry.COMMAND_CATALOG",
+            "vstack.cli.interface.COMMAND_CATALOG",
             {
                 "alpha": SimpleNamespace(command_factory=_factory("alpha")),
                 "beta": SimpleNamespace(command_factory=_factory("beta")),
             },
         )
 
-        registry = build_command_registry(service=cast(CommandService, object()))
+        cli = CommandLineInterface(templates_root=tmp_path)
+        registry = cli._build_command_registry(service=cast(CommandService, object()))
         assert set(registry.keys()) == {"alpha", "beta"}
         assert created == ["alpha", "beta"]
 
-    def test_returns_all_catalog_commands(self) -> None:
+    def test_returns_all_catalog_commands(self, tmp_path) -> None:
         """Default registry contains one entry per COMMAND_CATALOG key."""
         from vstack.cli.catalog import COMMAND_CATALOG
         from vstack.constants import TEMPLATES_ROOT
 
         svc = CommandService(templates_root=TEMPLATES_ROOT)
-        registry = build_command_registry(service=svc)
+        cli = CommandLineInterface(templates_root=tmp_path)
+        registry = cli._build_command_registry(service=svc)
         assert set(registry.keys()) == set(COMMAND_CATALOG.keys())

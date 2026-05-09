@@ -46,6 +46,7 @@ class GenericArtifactGenerator:
             else None
         )
         self._partials: dict[str, str] | None = None
+        self._parser = FrontmatterParser()
 
     # ── Placeholder resolution ────────────────────────────────────────────────
 
@@ -140,7 +141,7 @@ class GenericArtifactGenerator:
         if not config_file.exists():
             return {}
         raw = config_file.read_text(encoding="utf-8")
-        return FrontmatterParser.parse_yaml(raw)
+        return self._parser.parse_yaml(raw)
 
     # ── Rendering ─────────────────────────────────────────────────────────────
 
@@ -172,7 +173,7 @@ class GenericArtifactGenerator:
         resolved = self.resolve_placeholders(content, partials)
 
         # Split existing frontmatter from body
-        parsed = FrontmatterParser.parse(resolved)
+        parsed = self._parser.parse(resolved)
         existing_fm = parsed.metadata
         body = parsed.content
 
@@ -312,7 +313,7 @@ class GenericArtifactGenerator:
         for name, tmpl_dir in tmpl_by_name.items():
             content = (tmpl_dir / self.config.template_filename).read_text(encoding="utf-8")
             artifact_config = self.load_artifact_config(tmpl_dir)
-            parsed = FrontmatterParser.parse(content)
+            parsed = self._parser.parse(content)
             existing_fm = parsed.metadata
             meta = {**artifact_config, **existing_fm} if existing_fm else artifact_config
 

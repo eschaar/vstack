@@ -9,9 +9,8 @@ from typing import TYPE_CHECKING
 
 from vstack.cli.base import BaseCommand, CommandContext
 from vstack.cli.constants import ArtifactState
-from vstack.cli.helpers import normalize_targeted_names
 from vstack.constants import VERSION
-from vstack.manifest import Manifest, preserve_existing_entry, preserved_manifest_entries
+from vstack.manifest import Manifest
 
 if TYPE_CHECKING:
     from vstack.cli.service import CommandService
@@ -67,7 +66,7 @@ class UninstallCommand(BaseCommand):
             return
 
         preserved.append(message)
-        preserve_existing_entry(
+        Manifest.preserve_existing_entry(
             new_entries=new_entries,
             manifest_key=gen.config.manifest_key,
             existing_entry=entry,
@@ -125,7 +124,7 @@ class UninstallCommand(BaseCommand):
         manifest_file = service.manifest_for(install_dir)
         manifest_data = manifest_file.read()
         gens = [g for g in service.generators if only is None or g.config.type_name in only]
-        targeted_force_names = normalize_targeted_names(force_names)
+        targeted_force_names = UninstallCommand._normalize_targeted_names(force_names)
 
         if manifest_data is None:
             if manifest_file.read_error:
@@ -135,10 +134,7 @@ class UninstallCommand(BaseCommand):
             return 0
 
         selected_manifest_keys = {gen.config.manifest_key for gen in gens}
-        new_entries = preserved_manifest_entries(
-            manifest_data,
-            selected_manifest_keys,
-        )
+        new_entries = manifest_data.preserved_entries(selected_manifest_keys)
 
         for gen in gens:
             out_dir = install_dir / gen.config.output_subdir
