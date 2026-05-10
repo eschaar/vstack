@@ -18,6 +18,7 @@ from vstack.frontmatter import FrontmatterParser
 # Maps plural config.yaml keys to singular internal type names.
 _CONFIG_TYPE_ALIAS: dict[str, str] = {
     "agents": "agent",
+    "hooks": "hook",
     "instructions": "instruction",
     "prompts": "prompt",
     "skills": "skill",
@@ -229,6 +230,48 @@ class CommandLineInterface:
         return "agentic"
 
     @staticmethod
+    def _read_hook_settings(
+        install_dir: Path | None,
+    ) -> tuple[bool, str, list[str], dict[str, str]]:
+        """Read project-level hook enablement and mode defaults from config."""
+        if install_dir is None:
+            return True, "audit", [], {}
+        config_path = install_dir.parent / ".vstack" / "config.yaml"
+        if not config_path.exists():
+            return True, "audit", [], {}
+
+        parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
+        hooks_config = parsed.get("hooks", "")
+        if not isinstance(hooks_config, dict):
+            return True, "audit", [], {}
+
+        enabled = hooks_config.get("enabled", True)
+        global_enabled = enabled if isinstance(enabled, bool) else True
+
+        mode_value = hooks_config.get("mode", "audit")
+        default_mode = (
+            mode_value
+            if isinstance(mode_value, str) and mode_value in {"audit", "enforce"}
+            else "audit"
+        )
+
+        disabled_names: list[str] = []
+        mode_overrides: dict[str, str] = {}
+        per_hook = hooks_config.get("hooks", "")
+        if isinstance(per_hook, dict):
+            for hook_name, hook_config in per_hook.items():
+                if not isinstance(hook_name, str) or not isinstance(hook_config, dict):
+                    continue
+                if hook_config.get("enabled") is False:
+                    disabled_names.append(hook_name)
+                    continue
+                hook_mode = hook_config.get("mode", "")
+                if isinstance(hook_mode, str) and hook_mode in {"audit", "enforce"}:
+                    mode_overrides[hook_name] = hook_mode
+
+        return global_enabled, default_mode, disabled_names, mode_overrides
+
+    @staticmethod
     def _parse_stage_handoffs(item: dict) -> list[dict[str, str]]:
         """Parse the ``handoffs`` entry from a workflow stage dict.
 
@@ -297,11 +340,17 @@ class CommandLineInterface:
         items_root = self._read_items_root(resolved_install_dir)
         workflow_stages = self._read_workflow_stages(resolved_install_dir)
         workflow_mode = self._read_workflow_mode(resolved_install_dir)
+        hooks_enabled, hook_default_mode, disabled_hook_names, hook_mode_overrides = (
+            self._read_hook_settings(resolved_install_dir)
+        )
         service = cast(Any, self._service_cls)(
             templates_root=self._templates_root,
             items_root=items_root,
             workflow_stages=workflow_stages,
             workflow_mode=workflow_mode,
+            hook_default_mode=hook_default_mode,
+            hook_mode_overrides=hook_mode_overrides,
+            disabled_hook_names=disabled_hook_names,
         )
         commands = self._build_command_registry(service)
         effective_only = self._resolve_only_filter(
@@ -309,6 +358,13 @@ class CommandLineInterface:
             resolve_only_for_scope=command_config.resolve_only_for_scope,
         )
         excluded_types, excluded_names = self._read_exclude(resolved_install_dir)
+        if not hooks_enabled:
+            excluded_types = frozenset(set(excluded_types) | {"hook"})
+        elif disabled_hook_names:
+            merged = dict(excluded_names)
+            merged.setdefault("hook", [])
+            merged["hook"] = sorted(set(merged["hook"]) | set(disabled_hook_names))
+            excluded_names = merged
         if excluded_types:
             base = effective_only if effective_only is not None else list(KNOWN_TYPE_NAMES)
             effective_only = [t for t in base if t not in excluded_types]

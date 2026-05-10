@@ -8,7 +8,7 @@ from typing import Any, cast
 
 import pytest
 
-from vstack.cli.base import CommandContext
+from vstack.cli.base import BaseCommand, CommandContext
 from vstack.cli.interface import CommandLineInterface
 
 
@@ -40,6 +40,14 @@ class _Parser:
         return self._resolved_target
 
 
+class _ExposedCommandLineInterface(CommandLineInterface):
+    """Test helper exposing selected internals through public wrappers."""
+
+    def build_command_registry_public(self, service: Any) -> dict[str, BaseCommand]:
+        """Expose registry construction for direct branch coverage."""
+        return self._build_command_registry(cast(Any, service))
+
+
 class _Command:
     """Command test double that records invocation context."""
 
@@ -63,17 +71,30 @@ class _Service:
         items_root: str = "docs",
         workflow_stages=None,
         workflow_mode: str = "agentic",
+        hook_default_mode: str = "audit",
+        hook_mode_overrides=None,
+        disabled_hook_names=None,
         excluded_names=None,
     ) -> None:
         self.templates_root = templates_root
         self.items_root = items_root
         self.workflow_stages = workflow_stages
         self.workflow_mode = workflow_mode
+        self.hook_default_mode = hook_default_mode
+        self.hook_mode_overrides = hook_mode_overrides
+        self.disabled_hook_names = disabled_hook_names
         self.excluded_names = excluded_names
 
 
 class TestCommandLineInterface:
     """Test cases for interface-level parser and command dispatch."""
+
+    def test_build_command_registry_instantiates_catalog_commands(self, tmp_path: Path) -> None:
+        """_build_command_registry returns instantiated command handlers."""
+        interface = _ExposedCommandLineInterface(templates_root=tmp_path)
+        registry = interface.build_command_registry_public(_Service(templates_root=tmp_path))
+        assert "install" in registry
+        assert "validate" in registry
 
     def test_run_dispatches_validate_without_resolving_target(self, monkeypatch, tmp_path) -> None:
         """Test that validate passes through only-filter and no install_dir."""
@@ -235,9 +256,20 @@ class TestReadItemsRoot:
                 items_root: str = "docs",
                 workflow_stages=None,
                 workflow_mode: str = "agentic",
+                hook_default_mode: str = "audit",
+                hook_mode_overrides=None,
+                disabled_hook_names=None,
                 excluded_names=None,
             ) -> None:
-                del templates_root, workflow_stages, workflow_mode, excluded_names
+                del (
+                    templates_root,
+                    workflow_stages,
+                    workflow_mode,
+                    hook_default_mode,
+                    hook_mode_overrides,
+                    disabled_hook_names,
+                    excluded_names,
+                )
                 captured.append(items_root)
 
         monkeypatch.setattr(
@@ -435,9 +467,20 @@ class TestReadWorkflowMode:
                 items_root: str = "docs",
                 workflow_stages=None,
                 workflow_mode: str = "agentic",
+                hook_default_mode: str = "audit",
+                hook_mode_overrides=None,
+                disabled_hook_names=None,
                 excluded_names=None,
             ) -> None:
-                del templates_root, items_root, workflow_stages, excluded_names
+                del (
+                    templates_root,
+                    items_root,
+                    workflow_stages,
+                    hook_default_mode,
+                    hook_mode_overrides,
+                    disabled_hook_names,
+                    excluded_names,
+                )
                 captured.append(workflow_mode)
 
         monkeypatch.setattr(
@@ -454,6 +497,123 @@ class TestReadWorkflowMode:
         interface.run()
 
         assert captured == ["hybrid"]
+
+
+class TestReadHookSettings:
+    """Tests for CommandLineInterface._read_hook_settings."""
+
+    def test_returns_defaults_when_install_dir_is_none(self) -> None:
+        """Missing install dir yields enabled audit defaults."""
+        assert CommandLineInterface._read_hook_settings(None) == (True, "audit", [], {})
+
+    def test_reads_global_and_per_hook_settings(self, tmp_path: Path) -> None:
+        """Reads hooks.enabled, hooks.mode, and per-hook overrides from config."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "hooks:\n"
+            "  enabled: true\n"
+            "  mode: enforce\n"
+            "  hooks:\n"
+            "    session-audit:\n"
+            "      enabled: false\n"
+            "    pre-tool-safety-gate:\n"
+            "      mode: audit\n",
+            encoding="utf-8",
+        )
+
+        enabled, mode, disabled_names, mode_overrides = CommandLineInterface._read_hook_settings(
+            tmp_path / ".github"
+        )
+
+        assert enabled is True
+        assert mode == "enforce"
+        assert disabled_names == ["session-audit"]
+        assert mode_overrides == {"pre-tool-safety-gate": "audit"}
+
+    def test_run_applies_disabled_hooks_to_context_and_service(
+        self, monkeypatch, tmp_path: Path
+    ) -> None:
+        """run() forwards hook settings into service construction and exclusions."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "hooks:\n"
+            "  enabled: true\n"
+            "  mode: enforce\n"
+            "  hooks:\n"
+            "    session-audit:\n"
+            "      enabled: false\n",
+            encoding="utf-8",
+        )
+        install_dir = tmp_path / ".github"
+        args = argparse.Namespace(command="install", only=None, use_global=False)
+        parser = _Parser(args=args, resolved_target=install_dir)
+        command = _Command(exit_code=0)
+
+        monkeypatch.setattr(
+            CommandLineInterface,
+            "_build_command_registry",
+            lambda self, service: {"install": command},
+        )
+
+        interface = CommandLineInterface(
+            parser_cls=cast(Any, lambda: parser),
+            service_cls=cast(Any, _Service),
+            templates_root=tmp_path,
+        )
+        interface.run()
+
+        assert command.calls[0].excluded_names == {"hook": ["session-audit"]}
+
+    def test_read_hook_settings_ignores_non_dict_hook_entries(self, tmp_path: Path) -> None:
+        """Non-dict per-hook config entries are ignored gracefully."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "hooks:\n  hooks:\n    session-audit: disabled\n",
+            encoding="utf-8",
+        )
+
+        enabled, mode, disabled_names, mode_overrides = CommandLineInterface._read_hook_settings(
+            tmp_path / ".github"
+        )
+
+        assert enabled is True
+        assert mode == "audit"
+        assert disabled_names == []
+        assert mode_overrides == {}
+
+    def test_run_disables_hook_type_when_hooks_enabled_is_false(
+        self, monkeypatch, tmp_path: Path
+    ) -> None:
+        """run() removes hook from effective_only when hooks.enabled is false."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "hooks:\n  enabled: false\n",
+            encoding="utf-8",
+        )
+        install_dir = tmp_path / ".github"
+        args = argparse.Namespace(command="install", only=None, use_global=False)
+        parser = _Parser(args=args, resolved_target=install_dir)
+        command = _Command(exit_code=0)
+
+        monkeypatch.setattr(
+            CommandLineInterface,
+            "_build_command_registry",
+            lambda self, service: {"install": command},
+        )
+
+        interface = CommandLineInterface(
+            parser_cls=cast(Any, lambda: parser),
+            service_cls=cast(Any, _Service),
+            templates_root=tmp_path,
+        )
+        interface.run()
+
+        assert command.calls[0].only is not None
+        assert "hook" not in command.calls[0].only
 
 
 class TestParseStageHandoffs:

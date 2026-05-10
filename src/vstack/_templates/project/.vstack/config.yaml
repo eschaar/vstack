@@ -22,8 +22,30 @@
 #     - terragrunt
 #     - helm
 #     - k8s
+#   hooks:
+#     - post-edit-markdown-quality
 #   instructions: all
 #   prompts: all
+
+# -----------------------------------------------------------------------------
+# REPOSITORY HOOKS
+#
+# Hooks are installed under .github/hooks/*.json and can be tuned here.
+#
+# hooks.enabled: disable the entire generated hook baseline
+# hooks.mode:    default runtime posture for generated hooks (audit or enforce)
+# hooks.hooks.<name>.enabled: disable one named hook without disabling the type
+# hooks.hooks.<name>.mode:    override the default mode for one named hook
+# -----------------------------------------------------------------------------
+
+# hooks:
+#   enabled: true
+#   mode: audit
+#   hooks:
+#     pre-tool-safety-gate:
+#       mode: enforce
+#     post-edit-markdown-quality:
+#       enabled: false
 
 # -----------------------------------------------------------------------------
 # ROOT DIRECTORY FOR GENERATED WORK ITEMS

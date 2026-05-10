@@ -28,6 +28,6 @@ class TestHookType:
         """Hook artifacts must not include the auto-gen footer."""
         assert HOOK_TYPE.auto_gen_footer is False
 
-    def test_template_filename_is_hook_json(self) -> None:
-        """Hook artifacts render from hook.json template files."""
-        assert HOOK_TYPE.template_filename == "hook.json"
+    def test_template_filename_is_hook_yaml(self) -> None:
+        """Hook artifacts render from hook.yaml template files."""
+        assert HOOK_TYPE.template_filename == "hook.yaml"

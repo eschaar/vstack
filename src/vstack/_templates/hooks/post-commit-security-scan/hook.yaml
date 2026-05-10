@@ -1,0 +1,79 @@
+version: 20260510003
+
+metadata:
+  name: post-commit-security-scan
+  description: |
+    Staged diff security scanner. Detects git mutations and pattern-matches staged secrets
+    (AWS keys, GitHub tokens, private keys). Runs optional gitleaks scan when
+    VSTACK_HOOKS_MODE=enforce for deeper compliance scanning.
+  purpose: security
+  security_level: high
+  mode_default: audit
+  execution_context: copilot-hook-runtime
+  dependencies:
+    required:
+      - git
+    optional:
+      - gitleaks
+
+hooks:
+  postToolUse:
+    - type: command
+      description: |
+        Check staged diffs for secrets and log alerts to audit trail.
+      bash: |
+        mkdir -p .vstack/logs
+        input="$(cat)"
+        printf '%s\n' "$input" >> .vstack/logs/hook-post-commit.jsonl
+        if ! printf '%s' "$input" | grep -Eiq 'git (commit|push|merge|rebase)'; then
+          exit 0
+        fi
+        if git rev-parse --git-dir >/dev/null 2>&1 && \
+           git diff --cached 2>/dev/null | grep -Eiq 'AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36,}|-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----'; then
+          printf '%s\n' 'possible-secrets-detected-in-staged-diff' >> .vstack/logs/hook-security-alerts.log
+        fi
+        if [ "${VSTACK_HOOKS_MODE:-audit}" = "enforce" ]; then
+          if command -v gitleaks >/dev/null 2>&1; then
+            gitleaks dir . --no-banner --redact >/dev/null 2>&1 || printf '%s\n' 'gitleaks-reported-findings' >> .vstack/logs/hook-security-alerts.log
+          else
+            printf '%s\n' 'gitleaks-not-installed' >> .vstack/logs/hook-security-alerts.log
+          fi
+        fi
+      powershell: |
+        $inputText = [Console]::In.ReadToEnd()
+        New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null
+        Add-Content -Path .vstack/logs/hook-post-commit.jsonl -Value $inputText
+        if ($inputText -notmatch 'git (commit|push|merge|rebase)') {
+          exit 0
+        }
+        if ((git rev-parse --git-dir 2>$null) -and (git diff --cached | Select-String -Pattern 'AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36,}|-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----' -Quiet)) {
+          Add-Content -Path .vstack/logs/hook-security-alerts.log -Value 'possible-secrets-detected-in-staged-diff'
+        }
+        $mode = if ($env:VSTACK_HOOKS_MODE) { $env:VSTACK_HOOKS_MODE } else { 'audit' }
+        if ($mode -eq 'enforce') {
+          if (Get-Command gitleaks -ErrorAction SilentlyContinue) {
+            gitleaks dir . --no-banner --redact *> $null
+            if ($LASTEXITCODE -ne 0) {
+              Add-Content -Path .vstack/logs/hook-security-alerts.log -Value 'gitleaks-reported-findings'
+            }
+          } else {
+            Add-Content -Path .vstack/logs/hook-security-alerts.log -Value 'gitleaks-not-installed'
+          }
+        }
+      cwd: "."
+      timeoutSec: 60
+
+  sessionEnd:
+    - type: command
+      description: |
+        Log session end for security scanning completeness.
+      bash: |
+        mkdir -p .vstack/logs
+        input="$(cat)"
+        printf '%s\n' "$input" >> .vstack/logs/hook-session-end-security.jsonl
+      powershell: |
+        New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null
+        $inputText = [Console]::In.ReadToEnd()
+        Add-Content -Path .vstack/logs/hook-session-end-security.jsonl -Value $inputText
+      cwd: "."
+      timeoutSec: 10

@@ -30,8 +30,7 @@ Hooks are promoted to a first-class artifact type in vstack.
 
 A new singular type `hook` is added to the generator and CLI type registry.
 
-- Source templates: `src/vstack/_templates/hooks/<name>/hook.json`
-- Source metadata: `src/vstack/_templates/hooks/<name>/config.yaml`
+- Source template: `src/vstack/_templates/hooks/<name>/hook.yaml`
 - Install output: `.github/hooks/<name>.json`
 
 ### 2) Manifest tracking and verify behavior
@@ -53,10 +52,15 @@ vstack ships multiple default hooks, not just one sample:
 - `session-audit`
 - `pre-tool-safety-gate`
 - `post-edit-format`
+- `post-edit-markdown-quality`
 - `post-commit-security-scan`
 
 These templates are conservative defaults that provide immediate, low-risk guidance.
 Teams can replace or extend them via normal template customization patterns.
+
+For vstack itself, the markdown-quality hook is part of the default baseline because
+the repository's primary outputs include ADRs, docs, prompts, instructions, and other
+Markdown-heavy work items.
 
 ### 4) Separation from per-agent frontmatter hooks
 
@@ -73,9 +77,43 @@ For existing repositories:
 
 1. upgrade to a vstack version that includes this ADR implementation,
 1. run `vstack install` (or `vstack init` in CI),
-1. optional: disable repository hooks using `.vstack/config.yaml` with `exclude.hook`.
+1. optional: disable repository hooks using `.vstack/config.yaml` with `exclude.hook`
+   or the `hooks:` configuration block.
 
 No existing agent configuration must be rewritten.
+
+### 6) Execution model and dependency policy
+
+Repository hooks execute in the active Copilot hook runtime context for the current
+workspace session.
+
+- local session: hooks run on the local machine,
+- remote/devcontainer/SSH session: hooks run in that remote runtime.
+
+Hook defaults must remain operational in `audit` mode without hard external-tool
+dependencies. Optional integrations (for example `make` or `gitleaks`) may run only
+when explicitly enabled, and implementations must degrade safely when those tools are
+not available.
+
+### 7) Project-level hook controls and template metadata semantics
+
+Projects may control the default generated hook baseline from `.vstack/config.yaml`.
+
+Supported controls:
+
+- `hooks.enabled`: disable the baseline hook family for the project,
+- `hooks.mode`: set the generated default runtime mode (`audit` or `enforce`),
+- `hooks.hooks.<name>.enabled`: disable one named hook,
+- `hooks.hooks.<name>.mode`: override mode for one named hook.
+
+Hook `hook.yaml` files include descriptive metadata beyond versioning. This metadata
+improves maintainability and reviewability while preserving the runtime JSON contract.
+
+Examples include:
+
+- `description` and `purpose` to state intent,
+- `security_level` and `mode_default` to communicate expected operating posture,
+- dependency hints for optional enforce-mode tooling.
 
 ## alternatives considered
 

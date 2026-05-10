@@ -1,0 +1,67 @@
+version: 20260510003
+
+metadata:
+  name: pre-tool-safety-gate
+  description: |
+    Destructive operation safety gate. Logs all tool invocations to audit trail.
+    In enforce mode, blocks dangerous commands (rm -rf /, DROP TABLE, git reset --hard)
+    with explicit deny response.
+  purpose: security
+  security_level: high
+  mode_default: audit
+  execution_context: copilot-hook-runtime
+  dependencies:
+    required: []
+    optional: []
+
+hooks:
+  preToolUse:
+    - type: command
+      description: |
+        Check for destructive bash patterns and block in enforce mode.
+        Always logs to audit trail.
+      bash: |
+        mkdir -p .vstack/logs
+        input="$(cat)"
+        printf '%s\n' "$input" >> .vstack/logs/hook-pre-tool.jsonl
+        mode="${VSTACK_HOOKS_MODE:-audit}"
+        if [ "$mode" != "enforce" ]; then
+          exit 0
+        fi
+        if printf '%s' "$input" | grep -Eq '"toolName"[[:space:]]*:[[:space:]]*"bash"' && \
+           printf '%s' "$input" | grep -Eiq 'rm -rf /|mkfs|dd if=|DROP TABLE|TRUNCATE TABLE|git reset --hard|git clean -fdx'; then
+          echo '{"permissionDecision":"deny","permissionDecisionReason":"Blocked potentially destructive shell command by vstack pre-tool safety policy"}'
+        fi
+      powershell: |
+        $inputText = [Console]::In.ReadToEnd()
+        New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null
+        Add-Content -Path .vstack/logs/hook-pre-tool.jsonl -Value $inputText
+        $mode = if ($env:VSTACK_HOOKS_MODE) { $env:VSTACK_HOOKS_MODE } else { 'audit' }
+        if ($mode -ne 'enforce') {
+          exit 0
+        }
+        try {
+          $payload = $inputText | ConvertFrom-Json -ErrorAction Stop
+        } catch {
+          exit 0
+        }
+        if ($payload.toolName -eq 'bash' -and $inputText -match 'rm -rf /|mkfs|dd if=|DROP TABLE|TRUNCATE TABLE|git reset --hard|git clean -fdx') {
+          @{ permissionDecision = 'deny'; permissionDecisionReason = 'Blocked potentially destructive shell command by vstack pre-tool safety policy' } | ConvertTo-Json -Compress
+        }
+      cwd: "."
+      timeoutSec: 15
+
+  errorOccurred:
+    - type: command
+      description: |
+        Log tool errors for incident investigation and debugging.
+      bash: |
+        mkdir -p .vstack/logs
+        input="$(cat)"
+        printf '%s\n' "$input" >> .vstack/logs/hook-errors.jsonl
+      powershell: |
+        New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null
+        $inputText = [Console]::In.ReadToEnd()
+        Add-Content -Path .vstack/logs/hook-errors.jsonl -Value $inputText
+      cwd: "."
+      timeoutSec: 10

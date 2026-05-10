@@ -172,7 +172,7 @@ vstack now provides installable repository hook templates for quality-gate patte
 Implemented:
 
 - `hook` is a first-class artifact type in the generator and CLI type registry
-- Templates live in `src/vstack/_templates/hooks/<name>/hook.json` (source of truth)
+- Templates live in `src/vstack/_templates/hooks/<name>/hook.yaml` (source of truth)
 - Generated output is written to `.github/hooks/<name>.json` at install time
 - Hooks are registered in `.vstack/vstack.json` and tracked with checksums like other artifact types
 - The per-agent `hooks` frontmatter field remains separate and still scopes hooks to one
