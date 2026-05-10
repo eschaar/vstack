@@ -60,4 +60,4 @@ Use these Terraform conventions in this project.
 - [tfsec](https://aquasecurity.github.io/tfsec/) · [checkov](https://www.checkov.io/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"terraform","artifact_type":"instruction","artifact_version":"20260502034","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"terraform","artifact_type":"instruction","artifact_version":"20260502034","generator":"vstack","vstack_version":"3.1.1.post2.dev0+4d3419b"} -->

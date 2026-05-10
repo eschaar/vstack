@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "hooks": {
+    "postToolUse": [
+      {
+        "type": "command",
+        "description": "Log markdown-oriented edit events and optionally run markdown formatting.\n",
+        "bash": "mkdir -p .vstack/logs\ninput=\"$(cat)\"\nprintf '%s\\n' \"$input\" >> .vstack/logs/hook-markdown-quality.jsonl\nmode=\"${VSTACK_HOOKS_MODE:-audit}\"\nif [ \"$mode\" != \"enforce\" ]; then\n  exit 0\nfi\nif ! printf '%s' \"$input\" | grep -Eiq '\\.md|docs/|\\.github/|\\.vstack/templates/|adr/|prompt\\.md|instructions\\.md|SKILL\\.md'; then\n  exit 0\nfi\nif [ -f Makefile ] && command -v make >/dev/null 2>&1; then\n  make markdown-format >/dev/null 2>&1 || \\\n    make format >/dev/null 2>&1 || \\\n    printf '%s\\n' 'markdown-format-run-failed' >> .vstack/logs/hook-markdown-quality-alerts.log\nelse\n  printf '%s\\n' 'markdown-format-skipped-missing-make-or-makefile' >> .vstack/logs/hook-markdown-quality-alerts.log\nfi\n",
+        "powershell": "$inputText = [Console]::In.ReadToEnd()\nNew-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null\nAdd-Content -Path .vstack/logs/hook-markdown-quality.jsonl -Value $inputText\n$mode = if ($env:VSTACK_HOOKS_MODE) { $env:VSTACK_HOOKS_MODE } else { 'audit' }\nif ($mode -ne 'enforce') {\n  exit 0\n}\nif ($inputText -notmatch '\\.md|docs/|\\.github/|\\.vstack/templates/|adr/|prompt\\.md|instructions\\.md|SKILL\\.md') {\n  exit 0\n}\nif ((Test-Path Makefile) -and (Get-Command make -ErrorAction SilentlyContinue)) {\n  make markdown-format *> $null\n  if ($LASTEXITCODE -ne 0) {\n    make format *> $null\n  }\n  if ($LASTEXITCODE -ne 0) {\n    Add-Content -Path .vstack/logs/hook-markdown-quality-alerts.log -Value 'markdown-format-run-failed'\n  }\n} else {\n  Add-Content -Path .vstack/logs/hook-markdown-quality-alerts.log -Value 'markdown-format-skipped-missing-make-or-makefile'\n}\n",
+        "cwd": ".",
+        "timeoutSec": 30
+      }
+    ]
+  }
+}
