@@ -1,0 +1,64 @@
+version: 20260510004
+
+metadata:
+  name: post-edit-markdown-quality
+  description: |
+    vstack-oriented markdown/work-item quality hook. Logs markdown-related edits
+    and, in enforce mode, runs markdown formatting targets when docs, ADRs,
+    prompts, instructions, or template markdown content appear in the tool payload.
+  purpose: quality
+  security_level: low
+  mode_default: audit
+  execution_context: copilot-hook-runtime
+  dependencies:
+    required: []
+    optional:
+      - make
+
+hooks:
+  postToolUse:
+    - type: command
+      description: |
+        Log markdown-oriented edit events and optionally run markdown formatting.
+      bash: |
+        mkdir -p .vstack/logs
+        input="$(cat)"
+        printf '%s\n' "$input" >> .vstack/logs/hook-markdown-quality.jsonl
+        mode="${VSTACK_HOOKS_MODE:-audit}"
+        if [ "$mode" != "enforce" ]; then
+          exit 0
+        fi
+        if ! printf '%s' "$input" | grep -Eiq '\.md|docs/|\.github/|\.vstack/templates/|adr/|prompt\.md|instructions\.md|SKILL\.md'; then
+          exit 0
+        fi
+        if [ -f Makefile ] && command -v make >/dev/null 2>&1; then
+          make markdown-format >/dev/null 2>&1 || \
+            make format >/dev/null 2>&1 || \
+            printf '%s\n' 'markdown-format-run-failed' >> .vstack/logs/hook-markdown-quality-alerts.log
+        else
+          printf '%s\n' 'markdown-format-skipped-missing-make-or-makefile' >> .vstack/logs/hook-markdown-quality-alerts.log
+        fi
+      powershell: |
+        $inputText = [Console]::In.ReadToEnd()
+        New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null
+        Add-Content -Path .vstack/logs/hook-markdown-quality.jsonl -Value $inputText
+        $mode = if ($env:VSTACK_HOOKS_MODE) { $env:VSTACK_HOOKS_MODE } else { 'audit' }
+        if ($mode -ne 'enforce') {
+          exit 0
+        }
+        if ($inputText -notmatch '\.md|docs/|\.github/|\.vstack/templates/|adr/|prompt\.md|instructions\.md|SKILL\.md') {
+          exit 0
+        }
+        if ((Test-Path Makefile) -and (Get-Command make -ErrorAction SilentlyContinue)) {
+          make markdown-format *> $null
+          if ($LASTEXITCODE -ne 0) {
+            make format *> $null
+          }
+          if ($LASTEXITCODE -ne 0) {
+            Add-Content -Path .vstack/logs/hook-markdown-quality-alerts.log -Value 'markdown-format-run-failed'
+          }
+        } else {
+          Add-Content -Path .vstack/logs/hook-markdown-quality-alerts.log -Value 'markdown-format-skipped-missing-make-or-makefile'
+        }
+      cwd: "."
+      timeoutSec: 30

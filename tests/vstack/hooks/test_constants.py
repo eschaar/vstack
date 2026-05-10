@@ -25,6 +25,6 @@ class TestHookConstants:
         """Output subdir must be 'hooks'."""
         assert HOOK_OUTPUT_SUBDIR == "hooks"
 
-    def test_template_filename_is_hook_json(self) -> None:
-        """Template filename must be hook.json."""
-        assert HOOK_TEMPLATE_FILENAME == "hook.json"
+    def test_template_filename_is_hook_yaml(self) -> None:
+        """Template filename must be hook.yaml."""
+        assert HOOK_TEMPLATE_FILENAME == "hook.yaml"

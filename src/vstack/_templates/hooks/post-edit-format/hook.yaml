@@ -1,0 +1,61 @@
+version: 20260510003
+
+metadata:
+  name: post-edit-format
+  description: |
+    Code quality enforcement hook. Runs 'make format' when VSTACK_HOOKS_MODE=enforce
+    on edit-like tools. Logs all edit events to audit trail regardless of mode.
+  purpose: quality
+  security_level: low
+  mode_default: audit
+  execution_context: copilot-hook-runtime
+  dependencies:
+    required: []
+    optional:
+      - make
+
+hooks:
+  postToolUse:
+    - type: command
+      description: |
+        Log edit events and optionally run format in enforce mode.
+      bash: |
+        mkdir -p .vstack/logs
+        input="$(cat)"
+        printf '%s\n' "$input" >> .vstack/logs/hook-post-edit.jsonl
+        mode="${VSTACK_HOOKS_MODE:-audit}"
+        if [ "$mode" != "enforce" ]; then
+          exit 0
+        fi
+        if printf '%s' "$input" | grep -Eq '"toolName"[[:space:]]*:[[:space:]]*"(edit|create|write|replace)"'; then
+          if [ -f Makefile ] && command -v make >/dev/null 2>&1; then
+            make format >/dev/null 2>&1 || printf '%s\n' 'format-run-failed' >> .vstack/logs/hook-quality-alerts.log
+          else
+            printf '%s\n' 'format-skipped-missing-make-or-makefile' >> .vstack/logs/hook-quality-alerts.log
+          fi
+        fi
+      powershell: |
+        $inputText = [Console]::In.ReadToEnd()
+        New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null
+        Add-Content -Path .vstack/logs/hook-post-edit.jsonl -Value $inputText
+        $mode = if ($env:VSTACK_HOOKS_MODE) { $env:VSTACK_HOOKS_MODE } else { 'audit' }
+        if ($mode -ne 'enforce') {
+          exit 0
+        }
+        try {
+          $payload = $inputText | ConvertFrom-Json -ErrorAction Stop
+        } catch {
+          exit 0
+        }
+        if ($payload.toolName -match '^(edit|create|write|replace)$') {
+          if ((Test-Path Makefile) -and (Get-Command make -ErrorAction SilentlyContinue)) {
+            make format *> $null
+            if ($LASTEXITCODE -ne 0) {
+              Add-Content -Path .vstack/logs/hook-quality-alerts.log -Value 'format-run-failed'
+            }
+          } else {
+            Add-Content -Path .vstack/logs/hook-quality-alerts.log -Value 'format-skipped-missing-make-or-makefile'
+          }
+        }
+      cwd: "."
+      timeoutSec: 30

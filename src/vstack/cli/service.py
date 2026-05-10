@@ -24,6 +24,8 @@ from vstack.agents.generator import AgentGenerator
 from vstack.artifacts.generator import GenericArtifactGenerator
 from vstack.cli.constants import KNOWN_TYPES, ArtifactState
 from vstack.constants import ARTIFACTS_DOCS_ROOT, VSTACK_DIR_NAME
+from vstack.hooks.config import HOOK_TYPE
+from vstack.hooks.generator import HookGenerator
 from vstack.manifest import CURRENT_MANIFEST_VERSION, ManifestFile, hash_with_algorithm
 
 
@@ -42,6 +44,9 @@ class CommandService:
         artifacts_root: str | None = None,
         workflow_stages: list[dict[str, str]] | None = None,
         workflow_mode: str = "agentic",
+        hook_default_mode: str = "audit",
+        hook_mode_overrides: dict[str, str] | None = None,
+        disabled_hook_names: list[str] | None = None,
     ) -> None:
         """Create generators for all known artifact families.
 
@@ -77,6 +82,13 @@ class CommandService:
                 workflow_mode=workflow_mode,
             )
             if tc is AGENT_TYPE
+            else HookGenerator(
+                templates_root,
+                default_mode=hook_default_mode,
+                mode_overrides=hook_mode_overrides,
+                disabled_names=disabled_hook_names,
+            )
+            if tc is HOOK_TYPE
             else GenericArtifactGenerator(tc, templates_root)
             for tc in KNOWN_TYPES
         ]

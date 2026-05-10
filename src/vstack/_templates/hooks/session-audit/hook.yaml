@@ -1,0 +1,60 @@
+version: 20260510003
+
+metadata:
+  name: session-audit
+  description: |
+    Records session start and end events to structured JSONL logs
+    in .vstack/logs/ for audit trail and compliance verification.
+  purpose: audit
+  security_level: low
+  mode_default: audit
+  execution_context: copilot-hook-runtime
+  dependencies:
+    required: []
+    optional: []
+
+hooks:
+  userPromptSubmitted:
+    - type: command
+      description: |
+        Log prompt submission events for audit correlation.
+      bash: |
+        mkdir -p .vstack/logs
+        input="$(cat)"
+        printf '%s\n' "$input" >> .vstack/logs/hook-user-prompt.jsonl
+      powershell: |
+        New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null
+        $inputText = [Console]::In.ReadToEnd()
+        Add-Content -Path .vstack/logs/hook-user-prompt.jsonl -Value $inputText
+      cwd: "."
+      timeoutSec: 10
+
+  sessionStart:
+    - type: command
+      description: |
+        Log session start event with timestamp and context.
+      bash: |
+        mkdir -p .vstack/logs
+        input="$(cat)"
+        printf '%s\n' "$input" >> .vstack/logs/hook-session-start.jsonl
+      powershell: |
+        New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null
+        $inputText = [Console]::In.ReadToEnd()
+        Add-Content -Path .vstack/logs/hook-session-start.jsonl -Value $inputText
+      cwd: "."
+      timeoutSec: 10
+
+  sessionEnd:
+    - type: command
+      description: |
+        Log session end event for correlation with start.
+      bash: |
+        mkdir -p .vstack/logs
+        input="$(cat)"
+        printf '%s\n' "$input" >> .vstack/logs/hook-session-end.jsonl
+      powershell: |
+        New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null
+        $inputText = [Console]::In.ReadToEnd()
+        Add-Content -Path .vstack/logs/hook-session-end.jsonl -Value $inputText
+      cwd: "."
+      timeoutSec: 10
