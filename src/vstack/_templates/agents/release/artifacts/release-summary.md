@@ -32,7 +32,7 @@ by the release-notes skill or CI workflow. Deviate from this structure as needed
 
 <!-- Migration steps required. Remove this section if none. -->
 
-## artifacts reviewed
+## items reviewed
 
 <!-- List each role artifact that was reviewed or updated for this release. -->
 

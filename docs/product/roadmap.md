@@ -7,36 +7,37 @@ ______________________________________________________________________
 
 ## feature status table
 
-| Feature                                  | Version | Status      | Notes                                                                                                                                                        |
-| ---------------------------------------- | ------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| foundation                               | v1.0.0  | shipped     | Core template-driven install model is in place                                                                                                               |
-| backend-first verification               | v1.0.0  | shipped     | Verify/inspect focus on contracts, observability, security                                                                                                   |
-| VS Code agent migration                  | v1.x    | shipped     | Native `.github/agents/*.agent.md` output format implemented                                                                                                 |
-| role model + doc restructure             | v1.1.0  | shipped     | 6-role model, agent templates, and docs baseline established                                                                                                 |
-| new skill scaffolding                    | v2.2.0  | shipped     | 42-skill set with canonical naming                                                                                                                           |
-| agent skill wiring                       | v2.2.0  | shipped     | Role-to-skill mapping, handoffs, and concise modes wired into all agents                                                                                     |
-| CLI modularisation                       | v2.0.0  | shipped     | 12 focused CLI modules; BaseCommand + CommandContext contract                                                                                                |
-| manifest package                         | v2.0.0  | shipped     | Dedicated `manifest/` package; atomic writes (ADR-016)                                                                                                       |
-| mypy type checking                       | v2.0.0  | shipped     | Full mypy coverage enforced in CI; 100% test coverage gate                                                                                                   |
-| manifest schema versioning               | v2.0.0  | shipped     | `manifest_version: 2`; upgrade path via `manifest upgrade` (ADR-014)                                                                                         |
-| checksum backfill                        | v2.0.0  | shipped     | `manifest upgrade --backfill` adds SHA-256 for VSTACK-META-tagged files (ADR-017)                                                                            |
-| conservative install                     | v2.0.0  | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015, superseded by ADR-020)                                                                    |
-| dry-run install                          | v2.1.0  | shipped     | `vstack install --dry-run` previews actions; type/name selectors in summary                                                                                  |
-| project-scope directory                  | v3.0.0  | shipped     | `.vstack/` directory: `config.yaml`, manifest, delta templates (ADR-019)                                                                                     |
-| install/init command semantics           | v3.0.0  | shipped     | `install` = first-run setup; `init` = idempotent CI regeneration (ADR-020, breaking change)                                                                  |
-| manifest relocation                      | v3.0.0  | shipped     | `vstack.json` moves from `.github/` to `.vstack/`; migration via `manifest upgrade` (ADR-014)                                                                |
-| selective install                        | v3.0.0  | shipped     | Per-type and per-name exclusions via `exclude:` in `.vstack/config.yaml`; agents always installed (ADR-022)                                                  |
-| agent hooks support                      | t.b.d.  | candidate   | Generate `.github/hooks/<name>.json` from vstack templates; enforce quality gates at session boundaries                                                      |
-| new skills (next batch)                  | t.b.d.  | candidate   | `spaces`: set up Copilot Spaces; `copilot-admin`: manage Copilot settings via `gh api`                                                                       |
-| team customization layer                 | t.b.d.  | candidate   | Custompacks on top of vstack defaults; agents non-removable, skills fully overridable; overlay merge model                                                   |
-| workflow contract source-of-truth        | t.b.d.  | shipped     | `workflow:` block in `.vstack/config.yaml`; `gate`, `hitl`, `handoffs` schema; `vstack migrate` command (ADR-023, ADR-026)                                   |
-| optional orchestrated role pipeline      | t.b.d.  | candidate   | `planner` coordinator agent using VS Code native subagents (ADR-024); prerequisite workflow contract shipped in this release; implementation not yet started |
-| multi-IDE support (IntelliJ first)       | t.b.d.  | candidate   | Not planned before current model stabilizes                                                                                                                  |
-| heavy agent runtime framework            | —       | not planned | Keeps runtime lightweight and transparent                                                                                                                    |
-| cloud control plane dependency           | —       | not planned | Keeps operation local/offline-capable                                                                                                                        |
-| VS Code extension packaging              | —       | not planned | Not required for current install model                                                                                                                       |
-| browser automation as default dependency | —       | not planned | Backend/microservice-first remains default                                                                                                                   |
-| install target directory override        | —       | not planned | Won't implement unless a concrete tool incompatibility with `.github/` arises                                                                                |
+| Feature                                  | Version | Status      | Notes                                                                                                                                |
+| ---------------------------------------- | ------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| foundation                               | v1.0.0  | shipped     | Core template-driven install model is in place                                                                                       |
+| backend-first verification               | v1.0.0  | shipped     | Verify/inspect focus on contracts, observability, security                                                                           |
+| VS Code agent migration                  | v1.x    | shipped     | Native `.github/agents/*.agent.md` output format implemented                                                                         |
+| role model + doc restructure             | v1.1.0  | shipped     | 6-role model, agent templates, and docs baseline established                                                                         |
+| new skill scaffolding                    | v2.2.0  | shipped     | 42-skill set with canonical naming                                                                                                   |
+| agent skill wiring                       | v2.2.0  | shipped     | Role-to-skill mapping, handoffs, and concise modes wired into all agents                                                             |
+| CLI modularisation                       | v2.0.0  | shipped     | 12 focused CLI modules; BaseCommand + CommandContext contract                                                                        |
+| manifest package                         | v2.0.0  | shipped     | Dedicated `manifest/` package; atomic writes (ADR-016)                                                                               |
+| mypy type checking                       | v2.0.0  | shipped     | Full mypy coverage enforced in CI; 100% test coverage gate                                                                           |
+| manifest schema versioning               | v2.0.0  | shipped     | `manifest_version: 2`; upgrade path via `manifest upgrade` (ADR-014)                                                                 |
+| checksum backfill                        | v2.0.0  | shipped     | `manifest upgrade --backfill` adds SHA-256 for VSTACK-META-tagged files (ADR-017)                                                    |
+| conservative install                     | v2.0.0  | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015, superseded by ADR-020)                                            |
+| dry-run install                          | v2.1.0  | shipped     | `vstack install --dry-run` previews actions; type/name selectors in summary                                                          |
+| project-scope directory                  | v3.0.0  | shipped     | `.vstack/` directory: `config.yaml`, manifest, delta templates (ADR-019)                                                             |
+| install/init command semantics           | v3.0.0  | shipped     | `install` = first-run setup; `init` = idempotent CI regeneration (ADR-020, breaking change)                                          |
+| manifest relocation                      | v3.0.0  | shipped     | `vstack.json` moves from `.github/` to `.vstack/`; migration via `manifest upgrade` (ADR-014)                                        |
+| selective install                        | v3.0.0  | shipped     | Per-type and per-name exclusions via `exclude:` in `.vstack/config.yaml`; agents always installed (ADR-022)                          |
+| agent hooks support                      | t.b.d.  | candidate   | Generate `.github/hooks/<name>.json` from vstack templates; enforce quality gates at session boundaries                              |
+| new skills (next batch)                  | t.b.d.  | candidate   | `spaces`: set up Copilot Spaces; `copilot-admin`: manage Copilot settings via `gh api`                                               |
+| team customization layer                 | t.b.d.  | candidate   | Custompacks on top of vstack defaults; agents non-removable, skills fully overridable; overlay merge model                           |
+| workflow contract source-of-truth        | t.b.d.  | shipped     | `workflow:` block in `.vstack/config.yaml`; `gate`, `hitl`, `handoffs` schema; `vstack migrate` command (ADR-023, ADR-026)           |
+| optional orchestrated role pipeline      | v3.2.0  | shipped     | `planner` coordinator agent implemented with mode-aware generation; default mode is `agentic` (`manual` and `hybrid` also supported) |
+| parallel workflow via DAG model          | v3.3.0  | candidate   | Directed Acyclic Graph orchestration: run stages in parallel where safe; serialize only on data dependencies                         |
+| multi-IDE support (IntelliJ first)       | t.b.d.  | candidate   | Not planned before current model stabilizes                                                                                          |
+| heavy agent runtime framework            | —       | not planned | Keeps runtime lightweight and transparent                                                                                            |
+| cloud control plane dependency           | —       | not planned | Keeps operation local/offline-capable                                                                                                |
+| VS Code extension packaging              | —       | not planned | Not required for current install model                                                                                               |
+| browser automation as default dependency | —       | not planned | Backend/microservice-first remains default                                                                                           |
+| install target directory override        | —       | not planned | Won't implement unless a concrete tool incompatibility with `.github/` arises                                                        |
 
 ______________________________________________________________________
 
@@ -68,7 +69,7 @@ ______________________________________________________________________
 
 ### role model + doc restructure [shipped — v1.1.0]
 
-- 6-role model defined: product, architect, designer, engineer, tester, release (guardian merged into tester)
+- Delivery role model defined: product, architect, designer, engineer, tester, release
 - Artifact ownership documented per role; all docs renamed to lowercase
 - `docs/architecture/adr/` structure established
 - Docs rewritten to match agent-output format; per-role concise modes wired into all agents
@@ -258,16 +259,154 @@ Not yet implemented (deferred to orchestrated pipeline milestone):
 - Generator-level cross-role validation of input/output chains
 - Central read-only contract export for external orchestrator consumption
 
-### optional orchestrated role pipeline [candidate — t.b.d.]
+### parallel workflow via DAG model [candidate — v3.3.0]
 
-ADR-024 is accepted and the prerequisite workflow contract (`workflow.stages`, `gate`, `hitl`,
-`handoffs`) is shipped as of this release. The `planner` coordinator agent and worker-agent
-wiring are not yet implemented. Next steps:
+**What is DAG?** (Directed Acyclic Graph)
 
-- Add `planner` agent template (`src/vstack/_templates/agents/planner/`)
-- Set `user-invocable: false` on worker agents (or add a `planner`-scoped variant)
-- Implement gate evaluation and `hitl` pause logic in the planner body
-- Wire `runSubagent` calls based on `workflow.stages` order
+A DAG is a directed graph with no cycles that represents task dependencies. In the context of vstack:
+
+- Each workflow stage (product, architect, designer, engineer, tester, release) is a **node**
+- An edge from stage A → B means "B depends on output from A" (e.g., engineer depends on designer)
+- **Parallel execution** happens when stages have no direct or transitive dependency between them
+- **Deterministic ordering** is preserved: a stage never starts until all its dependencies complete
+
+**Current limitation:**
+
+Today, vstack uses **linear/serial execution**: stages run strictly in canonical order (product → architect →
+designer → engineer → tester → release). This is safe and deterministic, but inefficient:
+
+```
+time →
+product     ████
+            ├─ architect     ████
+            │   ├─ designer      ████
+            │   │   ├─ engineer       ████
+            │   │   │   ├─ tester         ████
+            │   │   │   │   ├─ release         ████
+```
+
+Total: 6 sequential stages, ~6× the wall-clock time of a single stage.
+
+**Why DAG matters:**
+
+Many stages **do not** have dependencies. For example:
+
+- `architect` and `tester` are often independent: architecture design does not block security/performance
+  review of a feature proposal
+- `designer` and `tester` may be independent: API contract specification does not block observability design
+- `release` is independent of most stages except explicit gate decisions
+
+With DAG, independent stages can run **in parallel**:
+
+```
+time →
+product        ████
+               ├─ architect     ████   ┐
+               │                       ├─ (parallel) engineer ████
+               ├─ designer      ████   ┤
+               │                       ┤ tester         ████
+               └─ tester               ┘
+                   └─ release ████
+```
+
+Potential wall-clock reduction: 6 stages → 3 stages (~50% faster).
+
+**DAG-model implementation plan:**
+
+1. **Dependency schema** — extend `.vstack/config.yaml` `workflow.stages` with optional `depends_on: [list]` field
+
+   - Default (omitted): inherits canonical ordering (backwards-compatible)
+   - Explicit deps: enables parallel scheduling
+
+1. **Scheduling algorithm** — topological sort of the DAG
+
+   - `planner` agent computes the schedule at orchestration start
+   - Stages are grouped into "layers": all stages in layer N can run in parallel; layer N+1 starts after layer N completes
+
+1. **Artifact locking** — prevent concurrent modification of shared output files
+
+   - Manifest locks at the artifact type level (e.g., only one agent can write to `.github/agents/`)
+   - Staged writes: all agents in a layer write to temp files; `planner` merges after layer completes
+
+1. **Join semantics** — configurable failure policy per stage layer
+
+   - `all_success` (default): if any stage in a layer fails, the entire DAG fails
+   - `fail_fast`: same; no alternative in the initial version
+   - Future: `best_effort`, `skip_on_error` for optional quality gates
+
+1. **Output ordering** — ensure deterministic artifact ordering in generated files
+
+   - Agent output is sorted by role name; same for skills, instructions
+   - Reproducible builds remain a design principle
+
+**Backwards compatibility:**
+
+- `.vstack/config.yaml` without `depends_on` fields defaults to canonical ordering
+- Existing configs work unchanged
+- DAG adoption is opt-in: teams explicitly add `depends_on` to enable parallelism
+
+**Risks and mitigations:**
+
+| Risk                                         | Mitigation                                                               |
+| -------------------------------------------- | ------------------------------------------------------------------------ |
+| Non-deterministic artifact ordering          | Sort all outputs by role/name/type                                       |
+| Race conditions on manifest writes           | Atomic writes, per-layer serialization of merges                         |
+| Unclear error causation in parallel failures | Preserve stage execution order in logs; label outputs by layer and stage |
+| Config complexity                            | Sane defaults (canonical order); optional `depends_on`                   |
+
+**Example config:**
+
+```yaml
+version: 3
+workflow:
+  mode: agentic
+  stages:
+    - role: product
+      gate: required
+
+    - role: architect
+      gate: required
+      depends_on: [product]  # must wait for product
+
+    - role: designer
+      gate: required
+      depends_on: [product]  # can run in parallel with architect
+
+    - role: engineer
+      gate: required
+      depends_on: [architect, designer]  # waits for both
+
+    - role: tester
+      gate: required
+      depends_on: [product, architect]  # independent of designer
+
+    - role: release
+      gate: required
+      depends_on: [engineer, tester]  # waits for both
+```
+
+**Next steps:**
+
+1. Write ADR-027 (DAG-model orchestration with dependency schema)
+1. Design `depends_on` schema and topological sort algorithm
+1. Implement `planner` layer-grouping logic
+1. Add integration tests for parallel stage execution and failure scenarios
+1. Update config schema docs and examples
+
+### optional orchestrated role pipeline [shipped — v3.2.0]
+
+ADR-024 is implemented.
+
+Shipped:
+
+- Added `planner` agent template (`src/vstack/_templates/agents/planner/`)
+- Implemented mode-aware agent generation via `workflow.mode`
+- Added planner/worker mode semantics for `agentic` (default): planner generated, worker handoff buttons omitted
+- Added planner/worker mode semantics for `manual`: planner omitted, worker handoff buttons generated
+- Added planner/worker mode semantics for `hybrid`: planner generated, worker handoff buttons generated
+- Added mode-switch pruning for tracked planner artifact when switching to `manual`
+- Added CLI parsing defaults and validation for workflow mode
+- Added tests for manual/agentic/hybrid behavior and mode-switch behavior
 
 ### multi-IDE support [candidate — t.b.d.]
 

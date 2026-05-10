@@ -12,7 +12,17 @@ Agents are VS Code custom agents (`.agent.md`) that adopt a specific role or per
 - **Instructions** in the file body (role, responsibilities, how to work)
 - Optional **handoffs** to transition the user to the next agent in a workflow
 
-In vstack, agents map to the 6 engineering roles: `product`, `architect`, `designer`, `engineer`, `tester`, `release`.
+In vstack, agents include six delivery roles (`product`, `architect`, `designer`,
+`engineer`, `tester`, `release`) plus a coordinator role (`planner`).
+
+Generation is mode-aware via `.vstack/config.yaml` `workflow.mode`:
+
+- `agentic` (default): planner is generated; worker handoff buttons are omitted.
+- `manual`: planner is not generated; worker handoff buttons are generated.
+- `hybrid`: planner is generated; worker handoff buttons are also generated.
+
+In `hybrid`, the UI exposes both progression paths (planner and handoff buttons).
+Use it only when your process explicitly allows both.
 
 Canonical names are the source of truth. Historical or compatibility aliases should
 remain exceptional and temporary. See `docs/architecture/adr/002-artifact-naming-and-compatibility-policy.md`.
@@ -61,25 +71,27 @@ Style rule: long `description` and `handoffs.prompt` values should use YAML bloc
 
 ### vstack-internal only (not emitted)
 
-| Field       | Notes                                                                          |
-| ----------- | ------------------------------------------------------------------------------ |
-| `version`   | Semantic version for vstack change tracking — never reaches the generated file |
-| `artifacts` | Declares artifact ownership for this agent — see [artifacts](#artifacts) below |
+| Field     | Notes                                                                          |
+| --------- | ------------------------------------------------------------------------------ |
+| `version` | Semantic version for vstack change tracking — never reaches the generated file |
+| `items`   | Declares work-item ownership for this agent — see [items](#items) below        |
 
 Frontmatter multiline rendering is configured in generator code (`ArtifactTypeConfig.preserve_multiline_frontmatter`), not per-agent `config.yaml`.
 
 ______________________________________________________________________
 
-## artifacts
+## items
 
-The optional `artifacts:` block declares which paths an agent reads and writes.
+The optional `items:` block declares which paths an agent reads and writes.
 This field is **vstack-internal** — it is not emitted to the generated `.agent.md`
-frontmatter; instead it drives the rendered `## artifacts you use` section in the
+frontmatter; instead it drives the rendered `## work items` section in the
 template body.
 See [ADR-021](../architecture/adr/021-config-driven-artifact-paths.md) for rationale.
 
+Backward compatibility: legacy `artifacts:` blocks are still accepted.
+
 ```yaml
-artifacts:
+items:
   dir: architecture               # subdirectory within the global docs root (no root prefix)
   input:                          # paths this agent reads (glob patterns, relative to docs root)
     - product/**/*.md
@@ -100,7 +112,7 @@ artifacts:
 | `output` `path` with `./` prefix                      | strip `./`, use remainder verbatim (e.g. `./src/**/*` → `src/**/*`) |
 
 `ARTIFACTS_DOCS_ROOT` defaults to `docs`. It is a global constant in
-`src/vstack/constants.py` and can be overridden per project via `artifacts.root`
+`src/vstack/constants.py` and can be overridden per project via `items.root`
 in `.vstack/config.yaml`. Individual agent configs must never embed the root
 prefix; set only the subdirectory in `dir`.
 
@@ -116,18 +128,18 @@ prefix; set only the subdirectory in `dir`.
 
 ### generated template tokens
 
-The `## artifacts you use` section in each `template.md` uses four placeholder
+The `## work items` section in each `template.md` uses four placeholder
 tokens that are resolved by `AgentGenerator` at install time:
 
-| Token                                 | Rendered as                                         |
-| ------------------------------------- | --------------------------------------------------- |
-| `{{AGENT_ARTIFACTS_INPUT}}`           | Markdown table of input artifacts, or empty string  |
-| `{{AGENT_ARTIFACTS_OUTPUT}}`          | Markdown table of output artifacts, or empty string |
-| `{{AGENT_ARTIFACTS_INPUT_COMMENTS}}`  | Value of `input_comments`, or empty string          |
-| `{{AGENT_ARTIFACTS_OUTPUT_COMMENTS}}` | Value of `output_comments`, or empty string         |
+| Token                                 | Rendered as                                     |
+| ------------------------------------- | ----------------------------------------------- |
+| `{{AGENT_ARTIFACTS_INPUT}}`           | Markdown table of input items, or empty string  |
+| `{{AGENT_ARTIFACTS_OUTPUT}}`          | Markdown table of output items, or empty string |
+| `{{AGENT_ARTIFACTS_INPUT_COMMENTS}}`  | Value of `input_comments`, or empty string      |
+| `{{AGENT_ARTIFACTS_OUTPUT_COMMENTS}}` | Value of `output_comments`, or empty string     |
 
-Tables use a single `Artifact` column when no entry has notes, and two columns
-(`Artifact`, `Notes`) when any entry has a non-empty `notes` value.
+Tables use a single `Item` column when no entry has notes, and two columns
+(`Item`, `Notes`) when any entry has a non-empty `notes` value.
 
 ______________________________________________________________________
 
@@ -199,7 +211,7 @@ All role templates in `src/vstack/_templates/agents/<name>/template.md` must fol
 1. Role-specific deep-dive sections (e.g. `how you work`, `scope detection`, `artifact checklist`, `verification tracks`)
 1. `## success criteria`
 1. `## failure and escalation rules`
-1. `## artifacts you use`
+1. `## work items`
 1. `## completion checklist`
 1. `## skills you use`
 
@@ -254,7 +266,7 @@ You are a **<title>** acting as the **<role> role**. <one-line purpose>.
 
 - …
 
-## artifacts you use
+## work items
 
 {{AGENT_ARTIFACTS_INPUT}}
 
@@ -302,10 +314,10 @@ tools:
   - todo
   - agent
 agents: ["*"]
-artifacts:
-  target: docs/architecture
+items:
+  dir: architecture
   input:
-    - docs/product/*.md
+    - product/*.md
   output:
     - overview.md
     - adr/*.md

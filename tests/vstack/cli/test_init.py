@@ -299,6 +299,250 @@ class TestInitCommand:
         assert "skills" not in new_entries
 
     # ------------------------------------------------------------------
+    # _prune_planner_when_manual_mode
+    # ------------------------------------------------------------------
+
+    def test_prune_planner_when_manual_mode_removes_unchanged_tracked_file(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """Manual mode removes tracked planner file when checksum matches."""
+        install_dir = tmp_path / ".github"
+        planner_file = install_dir / "agents" / "planner.agent.md"
+        planner_file.parent.mkdir(parents=True)
+        content = "planner\n"
+        planner_file.write_text(content, encoding="utf-8")
+
+        entry = SimpleNamespace(
+            name="planner",
+            file="agents/planner.agent.md",
+            checksum=content_hash(content),
+            checksum_algorithm="sha256",
+        )
+        gen = SimpleNamespace(
+            config=SimpleNamespace(type_name="agent", manifest_key="agents"),
+            workflow_mode="manual",
+        )
+        new_entries: dict[str, list[Any]] = {}
+
+        InitCommand._prune_planner_when_manual_mode(
+            install_dir=install_dir,
+            gen=gen,
+            existing_entries={"agent/planner": entry},
+            new_entries=new_entries,
+            colors=SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD=""),
+            prefix="",
+            dry_run=False,
+        )
+
+        assert not planner_file.exists()
+        assert "agents" not in new_entries
+
+    def test_prune_planner_when_manual_mode_preserves_modified_file(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """Manual mode preserves locally modified planner file and keeps it tracked."""
+        install_dir = tmp_path / ".github"
+        planner_file = install_dir / "agents" / "planner.agent.md"
+        planner_file.parent.mkdir(parents=True)
+        planner_file.write_text("planner modified\n", encoding="utf-8")
+
+        entry = SimpleNamespace(
+            name="planner",
+            file="agents/planner.agent.md",
+            checksum=content_hash("planner original\n"),
+            checksum_algorithm="sha256",
+        )
+        gen = SimpleNamespace(
+            config=SimpleNamespace(type_name="agent", manifest_key="agents"),
+            workflow_mode="manual",
+        )
+        new_entries: dict[str, list[Any]] = {}
+
+        InitCommand._prune_planner_when_manual_mode(
+            install_dir=install_dir,
+            gen=gen,
+            existing_entries={"agent/planner": entry},
+            new_entries=new_entries,
+            colors=SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD=""),
+            prefix="",
+            dry_run=False,
+        )
+
+        assert planner_file.exists()
+        assert "agents" in new_entries
+        assert len(new_entries["agents"]) == 1
+
+    @pytest.mark.parametrize(
+        ("type_name", "workflow_mode"),
+        [("skill", "manual"), ("agent", "agentic")],
+    )
+    def test_prune_planner_noop_for_non_agent_or_non_manual_mode(
+        self,
+        tmp_path: Path,
+        type_name: str,
+        workflow_mode: str,
+    ) -> None:
+        """Prune helper should no-op unless generator is agent type in manual mode."""
+        install_dir = tmp_path / ".github"
+        planner_file = install_dir / "agents" / "planner.agent.md"
+        planner_file.parent.mkdir(parents=True)
+        planner_file.write_text("planner\n", encoding="utf-8")
+
+        entry = SimpleNamespace(
+            name="planner",
+            file="agents/planner.agent.md",
+            checksum=content_hash("planner\n"),
+            checksum_algorithm="sha256",
+        )
+        gen = SimpleNamespace(
+            config=SimpleNamespace(type_name=type_name, manifest_key="agents"),
+            workflow_mode=workflow_mode,
+        )
+        new_entries: dict[str, list[Any]] = {}
+
+        InitCommand._prune_planner_when_manual_mode(
+            install_dir=install_dir,
+            gen=gen,
+            existing_entries={"agent/planner": entry},
+            new_entries=new_entries,
+            colors=SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD=""),
+            prefix="",
+            dry_run=False,
+        )
+
+        assert planner_file.exists()
+        assert new_entries == {}
+
+    def test_prune_planner_noop_when_tracked_entry_file_is_missing(self, tmp_path: Path) -> None:
+        """Tracked planner entry with missing file should be ignored safely."""
+        install_dir = tmp_path / ".github"
+        gen = SimpleNamespace(
+            config=SimpleNamespace(type_name="agent", manifest_key="agents"),
+            workflow_mode="manual",
+        )
+        new_entries: dict[str, list[Any]] = {}
+
+        entry = SimpleNamespace(
+            name="planner",
+            file="agents/planner.agent.md",
+            checksum=content_hash("planner\n"),
+            checksum_algorithm="sha256",
+        )
+
+        InitCommand._prune_planner_when_manual_mode(
+            install_dir=install_dir,
+            gen=gen,
+            existing_entries={"agent/planner": entry},
+            new_entries=new_entries,
+            colors=SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD=""),
+            prefix="",
+            dry_run=False,
+        )
+
+        assert new_entries == {}
+
+    def test_prune_planner_noop_when_planner_entry_not_tracked(self, tmp_path: Path) -> None:
+        """Manual mode should no-op when manifest has no planner entry."""
+        install_dir = tmp_path / ".github"
+        gen = SimpleNamespace(
+            config=SimpleNamespace(type_name="agent", manifest_key="agents"),
+            workflow_mode="manual",
+        )
+        new_entries: dict[str, list[Any]] = {}
+
+        InitCommand._prune_planner_when_manual_mode(
+            install_dir=install_dir,
+            gen=gen,
+            existing_entries={},
+            new_entries=new_entries,
+            colors=SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD=""),
+            prefix="",
+            dry_run=False,
+        )
+
+        assert new_entries == {}
+
+    def test_prune_planner_preserves_when_checksum_algorithm_is_invalid(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """Invalid checksum algorithm should be treated as non-removable and preserved."""
+        install_dir = tmp_path / ".github"
+        planner_file = install_dir / "agents" / "planner.agent.md"
+        planner_file.parent.mkdir(parents=True)
+        planner_file.write_text("planner\n", encoding="utf-8")
+
+        entry = SimpleNamespace(
+            name="planner",
+            file="agents/planner.agent.md",
+            checksum="abc123",
+            checksum_algorithm="sha999",
+        )
+        gen = SimpleNamespace(
+            config=SimpleNamespace(type_name="agent", manifest_key="agents"),
+            workflow_mode="manual",
+        )
+        new_entries: dict[str, list[Any]] = {}
+
+        InitCommand._prune_planner_when_manual_mode(
+            install_dir=install_dir,
+            gen=gen,
+            existing_entries={"agent/planner": entry},
+            new_entries=new_entries,
+            colors=SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD=""),
+            prefix="",
+            dry_run=False,
+        )
+
+        assert planner_file.exists()
+        assert "agents" in new_entries
+        assert len(new_entries["agents"]) == 1
+
+    def test_prune_planner_ignores_parent_rmdir_error(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        tmp_path: Path,
+    ) -> None:
+        """Parent directory cleanup failure should be swallowed after planner removal."""
+        install_dir = tmp_path / ".github"
+        planner_file = install_dir / "agents" / "planner.agent.md"
+        planner_file.parent.mkdir(parents=True)
+        content = "planner\n"
+        planner_file.write_text(content, encoding="utf-8")
+
+        entry = SimpleNamespace(
+            name="planner",
+            file="agents/planner.agent.md",
+            checksum=content_hash(content),
+            checksum_algorithm="sha256",
+        )
+        gen = SimpleNamespace(
+            config=SimpleNamespace(type_name="agent", manifest_key="agents"),
+            workflow_mode="manual",
+        )
+        new_entries: dict[str, list[Any]] = {}
+
+        def _raise_rmdir(self: Path) -> None:
+            del self
+            raise OSError("rmdir blocked")
+
+        monkeypatch.setattr(Path, "rmdir", _raise_rmdir)
+
+        InitCommand._prune_planner_when_manual_mode(
+            install_dir=install_dir,
+            gen=gen,
+            existing_entries={"agent/planner": entry},
+            new_entries=new_entries,
+            colors=SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD=""),
+            prefix="",
+            dry_run=False,
+        )
+
+        assert not planner_file.exists()
+
+    # ------------------------------------------------------------------
     # _print_summary
     # ------------------------------------------------------------------
 

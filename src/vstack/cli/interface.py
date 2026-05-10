@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
+from typing import Any, cast
 
 from vstack.cli.base import BaseCommand, CommandContext
 from vstack.cli.catalog import COMMAND_CATALOG
@@ -24,6 +26,8 @@ _CONFIG_TYPE_ALIAS: dict[str, str] = {
 
 class CommandLineInterface:
     """Facade that coordinates parser, service construction, and dispatch."""
+
+    _legacy_items_root_warned = False
 
     def __init__(
         self,
@@ -112,7 +116,7 @@ class CommandLineInterface:
             if type_name == "agent":
                 raise ValueError(
                     "exclude: agents is not supported. "
-                    "The six-role agent chain is an atomic unit and cannot be partially "
+                    "The role-agent set is an atomic unit and cannot be partially "
                     "excluded. See ADR-022."
                 )
             if isinstance(value, str) and value.strip().lower() == "all":
@@ -124,12 +128,15 @@ class CommandLineInterface:
         return frozenset(excluded_types), excluded_names
 
     @staticmethod
-    def _read_artifacts_root(install_dir: Path | None) -> str:
-        """Read ``artifacts.root`` from ``.vstack/config.yaml`` when available.
+    def _read_items_root(install_dir: Path | None) -> str:
+        """Read ``items.root`` for agent work-item paths from ``.vstack/config.yaml``.
 
         Returns :data:`~vstack.constants.ARTIFACTS_DOCS_ROOT` when *install_dir*
         is ``None``, when the config file does not exist, or when the key is
         absent or blank.
+
+        Backward compatibility: if ``items.root`` is not set, the legacy
+        ``artifacts.root`` key is still accepted and triggers a deprecation warning.
         """
         if install_dir is None:
             return ARTIFACTS_DOCS_ROOT
@@ -137,12 +144,25 @@ class CommandLineInterface:
         if not config_path.exists():
             return ARTIFACTS_DOCS_ROOT
         parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
+        items = parsed.get("items", "")
+        if isinstance(items, dict):
+            value = items.get("root", "")
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+
         artifacts = parsed.get("artifacts", "")
-        if not isinstance(artifacts, dict):
-            return ARTIFACTS_DOCS_ROOT
-        value = artifacts.get("root", "")
-        if isinstance(value, str) and value.strip():
-            return value.strip()
+        if isinstance(artifacts, dict):
+            value = artifacts.get("root", "")
+            if isinstance(value, str) and value.strip():
+                if not CommandLineInterface._legacy_items_root_warned:
+                    print(
+                        "WARNING: '.vstack/config.yaml' uses legacy 'artifacts.root'. "
+                        "Use 'items.root' for agent work-item paths. "
+                        "Run 'vstack migrate --target <dir>' to auto-upgrade.",
+                        file=sys.stderr,
+                    )
+                    CommandLineInterface._legacy_items_root_warned = True
+                return value.strip()
         return ARTIFACTS_DOCS_ROOT
 
     @staticmethod
@@ -183,6 +203,30 @@ class CommandLineInterface:
                     stage["hitl"] = str(item["hitl"])
                 result.append(stage)
         return result
+
+    @staticmethod
+    def _read_workflow_mode(install_dir: Path | None) -> str:
+        """Read ``workflow.mode`` from ``.vstack/config.yaml`` when available.
+
+        Supported values are ``manual``, ``agentic``, and ``hybrid``.
+        Returns ``agentic`` when missing, invalid, or unavailable.
+        """
+        if install_dir is None:
+            return "agentic"
+        config_path = install_dir.parent / ".vstack" / "config.yaml"
+        if not config_path.exists():
+            return "agentic"
+        parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
+        workflow = parsed.get("workflow", "")
+        if not isinstance(workflow, dict):
+            return "agentic"
+        raw_mode = workflow.get("mode", "agentic")
+        if not isinstance(raw_mode, str):
+            return "agentic"
+        mode = raw_mode.strip().lower()
+        if mode in {"manual", "agentic", "hybrid"}:
+            return mode
+        return "agentic"
 
     @staticmethod
     def _parse_stage_handoffs(item: dict) -> list[dict[str, str]]:
@@ -250,12 +294,14 @@ class CommandLineInterface:
             args=args,
             requires_install_dir=command_config.requires_install_dir,
         )
-        artifacts_root = self._read_artifacts_root(resolved_install_dir)
+        items_root = self._read_items_root(resolved_install_dir)
         workflow_stages = self._read_workflow_stages(resolved_install_dir)
-        service = self._service_cls(
+        workflow_mode = self._read_workflow_mode(resolved_install_dir)
+        service = cast(Any, self._service_cls)(
             templates_root=self._templates_root,
-            artifacts_root=artifacts_root,
+            items_root=items_root,
             workflow_stages=workflow_stages,
+            workflow_mode=workflow_mode,
         )
         commands = self._build_command_registry(service)
         effective_only = self._resolve_only_filter(

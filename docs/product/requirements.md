@@ -91,9 +91,17 @@ ______________________________________________________________________
 
 ### FR-10 — role model
 
-- 6 fixed agent roles: `product`, `architect`, `designer`, `engineer`, `tester`,
-  `release`.
+- 6 delivery agent roles: `product`, `architect`, `designer`, `engineer`,
+  `tester`, `release`, plus a `planner` coordinator agent.
 - 27 backend-oriented skills with canonical names enforced at source-verify time.
+
+### FR-11 — workflow mode semantics
+
+- `workflow.mode` supports `agentic`, `manual`, and `hybrid`.
+- Default mode is `agentic` when `workflow.mode` is missing, invalid, or unavailable.
+- In `agentic`, planner is generated and worker handoff buttons are omitted.
+- In `manual`, planner is not generated and worker handoff buttons are shown.
+- In `hybrid`, planner is generated and worker handoff buttons are shown.
 
 ______________________________________________________________________
 

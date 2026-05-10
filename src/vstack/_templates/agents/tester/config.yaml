@@ -23,9 +23,9 @@ defaults:
   handoffs:
     prompt: >
       Verification outputs are approved. Assess the current state and prepare
-      the release as needed. Create and/or update the relevant artifacts if needed,
+      the release as needed. Create and/or update the relevant items if needed,
       as well as any sign-offs.
-  artifacts:
+  items:
     dir: reports
     input:
       - architecture/**/*.md

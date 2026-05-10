@@ -56,4 +56,4 @@ Use these Java conventions in this project.
 1. Do not suppress static analysis warnings without a documented, task-specific reason.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"java","artifact_type":"instruction","artifact_version":"20260502001","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->
+<!-- VSTACK-META: {"artifact_name":"java","artifact_type":"instruction","artifact_version":"20260502001","generator":"vstack","vstack_version":"3.1.1"} -->

@@ -5,6 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from vstack.agents.generator import AgentGenerator
 from vstack.constants import ARTIFACTS_DOCS_ROOT
 
@@ -54,7 +56,7 @@ class TestAgentGenerator:
             tmpl_dir = tmp_path / "architect"
             tmpl_dir.mkdir()
             (tmpl_dir / "config.yaml").write_text(
-                "name: architect\ndefaults:\n  artifacts:\n    dir: architecture\n    input:\n      - product/**/*.md\n",
+                "name: architect\ndefaults:\n  items:\n    dir: architecture\n    input:\n      - product/**/*.md\n",
                 encoding="utf-8",
             )
 
@@ -67,7 +69,7 @@ class TestAgentGenerator:
             tmpl_dir = tmp_path / "architect"
             tmpl_dir.mkdir()
             (tmpl_dir / "config.yaml").write_text(
-                "name: architect\ndefaults:\n  artifacts:\n    dir: architecture\n    output:\n      - overview.md\n",
+                "name: architect\ndefaults:\n  items:\n    dir: architecture\n    output:\n      - overview.md\n",
                 encoding="utf-8",
             )
 
@@ -83,7 +85,7 @@ class TestAgentGenerator:
             tmpl_dir = tmp_path / "engineer"
             tmpl_dir.mkdir()
             (tmpl_dir / "config.yaml").write_text(
-                "name: engineer\ndefaults:\n  artifacts:\n    output:\n      - path: ./src/**/*\n",
+                "name: engineer\ndefaults:\n  items:\n    output:\n      - path: ./src/**/*\n",
                 encoding="utf-8",
             )
 
@@ -97,7 +99,7 @@ class TestAgentGenerator:
             tmpl_dir = tmp_path / "tester"
             tmpl_dir.mkdir()
             (tmpl_dir / "config.yaml").write_text(
-                "name: tester\ndefaults:\n  artifacts:\n    dir: reports\n    output:\n      - ./tests/**/*\n",
+                "name: tester\ndefaults:\n  items:\n    dir: reports\n    output:\n      - ./tests/**/*\n",
                 encoding="utf-8",
             )
 
@@ -111,7 +113,7 @@ class TestAgentGenerator:
             tmpl_dir = tmp_path / "custom"
             tmpl_dir.mkdir()
             (tmpl_dir / "config.yaml").write_text(
-                "name: custom\ndefaults:\n  artifacts:\n    input_comments: 'Read in order.'\n",
+                "name: custom\ndefaults:\n  items:\n    input_comments: 'Read in order.'\n",
                 encoding="utf-8",
             )
 
@@ -124,7 +126,7 @@ class TestAgentGenerator:
             tmpl_dir = tmp_path / "custom"
             tmpl_dir.mkdir()
             (tmpl_dir / "config.yaml").write_text(
-                "name: custom\ndefaults:\n  artifacts:\n    output_comments: 'See ADR-001.'\n",
+                "name: custom\ndefaults:\n  items:\n    output_comments: 'See ADR-001.'\n",
                 encoding="utf-8",
             )
 
@@ -137,7 +139,7 @@ class TestAgentGenerator:
             tmpl_dir = tmp_path / "broken"
             tmpl_dir.mkdir()
             (tmpl_dir / "config.yaml").write_text(
-                "name: broken\ndefaults:\n  artifacts:\n    - foo\n    - bar\n", encoding="utf-8"
+                "name: broken\ndefaults:\n  items:\n    - foo\n    - bar\n", encoding="utf-8"
             )
 
             result = AgentGenerator().template_partials(tmpl_dir)
@@ -150,7 +152,7 @@ class TestAgentGenerator:
             tmpl_dir = tmp_path / "scalar"
             tmpl_dir.mkdir()
             (tmpl_dir / "config.yaml").write_text(
-                "name: scalar\ndefaults:\n  artifacts:\n    dir: architecture\n    input: not-a-list\n    output: not-a-list\n",
+                "name: scalar\ndefaults:\n  items:\n    dir: architecture\n    input: not-a-list\n    output: not-a-list\n",
                 encoding="utf-8",
             )
 
@@ -164,7 +166,7 @@ class TestAgentGenerator:
             tmpl_dir = tmp_path / "product"
             tmpl_dir.mkdir()
             (tmpl_dir / "config.yaml").write_text(
-                "name: product\ndefaults:\n  artifacts:\n    dir: product\n    output:\n      - vision.md\n",
+                "name: product\ndefaults:\n  items:\n    dir: product\n    output:\n      - vision.md\n",
                 encoding="utf-8",
             )
 
@@ -178,7 +180,7 @@ class TestAgentGenerator:
             tmpl_dir = tmp_path / "architect"
             tmpl_dir.mkdir()
             (tmpl_dir / "config.yaml").write_text(
-                "name: architect\ndefaults:\n  artifacts:\n    dir: architecture\n    input:\n      - product/**/*.md\n"
+                "name: architect\ndefaults:\n  items:\n    dir: architecture\n    input:\n      - product/**/*.md\n"
                 "    output:\n      - overview.md\n",
                 encoding="utf-8",
             )
@@ -189,6 +191,39 @@ class TestAgentGenerator:
             assert "`documentation/architecture/overview.md`" in result["AGENT_ARTIFACTS_OUTPUT"]
             assert "docs/" not in result["AGENT_ARTIFACTS_INPUT"]
             assert "docs/" not in result["AGENT_ARTIFACTS_OUTPUT"]
+
+        def test_legacy_artifacts_block_is_still_supported(self, tmp_path: Path) -> None:
+            """Legacy defaults.artifacts still renders input/output tables."""
+            tmpl_dir = tmp_path / "architect"
+            tmpl_dir.mkdir()
+            (tmpl_dir / "config.yaml").write_text(
+                "name: architect\ndefaults:\n  artifacts:\n    dir: architecture\n    input:\n      - product/**/*.md\n"
+                "    output:\n      - overview.md\n",
+                encoding="utf-8",
+            )
+
+            AgentGenerator._legacy_items_block_warned = False
+            with pytest.warns(FutureWarning, match="defaults.artifacts"):
+                result = AgentGenerator().template_partials(tmpl_dir)
+
+            assert "`docs/product/**/*.md`" in result["AGENT_ARTIFACTS_INPUT"]
+            assert "`docs/architecture/overview.md`" in result["AGENT_ARTIFACTS_OUTPUT"]
+
+        def test_items_block_takes_precedence_over_legacy_artifacts(self, tmp_path: Path) -> None:
+            """When both blocks exist, defaults.items wins over defaults.artifacts."""
+            tmpl_dir = tmp_path / "architect"
+            tmpl_dir.mkdir()
+            (tmpl_dir / "config.yaml").write_text(
+                "name: architect\ndefaults:\n"
+                "  items:\n    dir: design\n    output:\n      - overview.md\n"
+                "  artifacts:\n    dir: architecture\n    output:\n      - legacy.md\n",
+                encoding="utf-8",
+            )
+
+            result = AgentGenerator().template_partials(tmpl_dir)
+
+            assert "`docs/design/overview.md`" in result["AGENT_ARTIFACTS_OUTPUT"]
+            assert "legacy.md" not in result["AGENT_ARTIFACTS_OUTPUT"]
 
     class TestExtractDefaults:
         """Tests for AgentGenerator._extract_defaults."""
@@ -269,7 +304,7 @@ class TestAgentGenerator:
                 },
                 {"role": "designer", "gate": "optional", "handoffs": []},
             ]
-            gen = AgentGenerator(workflow_stages=stages)
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
             config = gen.load_artifact_config(tmpl_dir)
             assert "handoffs" in config
             assert config["handoffs"][0]["agent"] == "designer"
@@ -336,7 +371,9 @@ class TestAgentGenerator:
 
         def test_fallback_handoff_without_workflow(self) -> None:
             """Returns a generic handoff (no agent:) when no workflow is configured but a prompt exists."""
-            result = AgentGenerator()._resolve_handoffs("architect", "Do some work.")
+            result = AgentGenerator(workflow_mode="manual")._resolve_handoffs(
+                "architect", "Do some work."
+            )
             assert len(result) == 1
             assert result[0]["prompt"] == "Do some work."
             assert result[0]["label"] == "Continue to next stage"
@@ -361,7 +398,7 @@ class TestAgentGenerator:
                     "handoffs": [{"prompt": "Design done.", "agent": "", "label": ""}],
                 },
             ]
-            gen = AgentGenerator(workflow_stages=stages)
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
             result = gen._resolve_handoffs("architect", "Arch done.")
             assert len(result) == 1
             assert result[0]["agent"] == "designer"
@@ -377,7 +414,7 @@ class TestAgentGenerator:
                 },
                 {"role": "release", "gate": "required", "handoffs": []},
             ]
-            gen = AgentGenerator(workflow_stages=stages)
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
             assert gen._resolve_handoffs("release", "") == []
 
         def test_unknown_role_returns_empty(self) -> None:
@@ -389,7 +426,7 @@ class TestAgentGenerator:
                     "handoffs": [{"prompt": "Done.", "agent": "", "label": ""}],
                 }
             ]
-            gen = AgentGenerator(workflow_stages=stages)
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
             assert gen._resolve_handoffs("unknown", "Some prompt.") == []
 
         def test_workflow_prompt_used_as_fallback(self) -> None:
@@ -402,7 +439,7 @@ class TestAgentGenerator:
                 },
                 {"role": "tester", "gate": "required", "handoffs": []},
             ]
-            gen = AgentGenerator(workflow_stages=stages)
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
             result = gen._resolve_handoffs("engineer", "")
             assert len(result) == 1
             assert "From workflow." in result[0]["prompt"]
@@ -425,7 +462,7 @@ class TestAgentGenerator:
                 {"role": "designer", "gate": "optional", "handoffs": []},
                 {"role": "engineer", "gate": "required", "handoffs": []},
             ]
-            gen = AgentGenerator(workflow_stages=stages)
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
             result = gen._resolve_handoffs("architect", "")
             assert len(result) == 2
             assert result[0]["agent"] == "designer"
@@ -442,7 +479,7 @@ class TestAgentGenerator:
                 },
                 {"role": "tester", "gate": "required", "handoffs": []},
             ]
-            gen = AgentGenerator(workflow_stages=stages)
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
             assert gen._resolve_handoffs("engineer", "") == []
 
         def test_non_list_stage_handoffs_returns_empty(self) -> None:
@@ -451,8 +488,21 @@ class TestAgentGenerator:
                 {"role": "engineer", "gate": "required", "handoffs": "bad-value"},
                 {"role": "tester", "gate": "required", "handoffs": []},
             ]
-            gen = AgentGenerator(workflow_stages=stages)
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
             assert gen._resolve_handoffs("engineer", "") == []
+
+        def test_empty_stage_handoffs_falls_back_to_agent_prompt(self) -> None:
+            """Falls back to agent default prompt when stage has no explicit handoffs."""
+            stages: list[dict[str, Any]] = [
+                {"role": "architect", "gate": "required", "handoffs": []},
+                {"role": "designer", "gate": "required", "handoffs": []},
+            ]
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
+            result = gen._resolve_handoffs("architect", "Use agent default prompt.")
+            assert len(result) == 1
+            assert result[0]["agent"] == "designer"
+            assert result[0]["prompt"] == "Use agent default prompt."
+            assert result[0]["label"] == "Go to next stage: Designer"
 
         def test_non_dict_handoff_entry_is_skipped(self) -> None:
             """Non-dict handoff entries are skipped."""
@@ -464,7 +514,7 @@ class TestAgentGenerator:
                 },
                 {"role": "tester", "gate": "required", "handoffs": []},
             ]
-            gen = AgentGenerator(workflow_stages=stages)
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
             result = gen._resolve_handoffs("engineer", "")
             assert len(result) == 1
             assert result[0]["agent"] == "tester"
@@ -478,7 +528,9 @@ class TestAgentGenerator:
 
         def test_returns_handoff_without_agent_when_no_workflow(self) -> None:
             """Returns a handoff block without agent: key when no workflow is configured but prompt is set."""
-            result = AgentGenerator()._build_handoffs("architect", "Work done.")
+            result = AgentGenerator(workflow_mode="manual")._build_handoffs(
+                "architect", "Work done."
+            )
             assert "handoffs:" in result
             assert "Work done." in result
             assert "agent:" not in result
@@ -493,7 +545,7 @@ class TestAgentGenerator:
                 },
                 {"role": "designer", "gate": "optional", "handoffs": []},
             ]
-            gen = AgentGenerator(workflow_stages=stages)
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
             result = gen._build_handoffs("architect", "Work done.")
             assert "handoffs:" in result
             assert "agent: designer" in result
@@ -502,17 +554,17 @@ class TestAgentGenerator:
         """Tests for AgentGenerator._build_table."""
 
         def test_single_column_when_no_notes(self) -> None:
-            """A single-column Artifact table is produced when no entry has notes."""
+            """A single-column Item table is produced when no entry has notes."""
             table = AgentGenerator()._build_table(
                 [{"path": "docs/foo.md", "notes": "", "baseline": False}]
             )
             lines = table.splitlines()
-            assert lines[0].startswith("| Artifact")
+            assert lines[0].startswith("| Item")
             assert lines[0].count("|") == 2
             assert "`docs/foo.md`" in lines[2]
 
         def test_two_column_when_any_entry_has_notes(self) -> None:
-            """A two-column Artifact | Notes table is produced when any entry has notes."""
+            """A two-column Item | Notes table is produced when any entry has notes."""
             entries: list[dict[str, str | bool]] = [
                 {"path": "docs/foo.md", "notes": "", "baseline": False},
                 {"path": "docs/bar.md", "notes": "important", "baseline": False},

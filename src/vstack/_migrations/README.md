@@ -27,8 +27,9 @@ and the current package major.
 | `--dry-run`      | Print moves without touching the filesystem                     |
 
 `vstack migrate` only moves files that exist at the old path; absent files are silently
-skipped. It reads `artifacts.root` from `.vstack/config.yaml` and adjusts destination
-paths when the project uses a custom docs root.
+skipped. It reads `items.root` from `.vstack/config.yaml` (with `artifacts.root`
+as a legacy fallback) and adjusts destination paths when the project uses a custom
+docs root.
 
 ## Schema
 

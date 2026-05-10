@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 TEMPLATES_ROOT = Path(__file__).resolve().parents[3] / "src" / "vstack" / "_templates" / "agents"
-ROLES = ["product", "architect", "designer", "engineer", "tester", "release"]
+ROLES = ["product", "architect", "designer", "engineer", "tester", "release", "planner"]
 REQUIRED_HEADINGS_IN_ORDER = [
     "## identity and purpose",
     "## responsibilities",
@@ -17,7 +17,7 @@ REQUIRED_HEADINGS_IN_ORDER = [
     "## workflow and handoffs",
     "## success criteria",
     "## failure and escalation rules",
-    "## artifacts you use",
+    "## work items",
     "## completion checklist",
     "## skills you use",
 ]

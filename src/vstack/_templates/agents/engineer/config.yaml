@@ -28,7 +28,7 @@ defaults:
       analysis. If this is an issue (bug, problem, or incident), also produce
       or update an RCA and, if stakeholder impact is significant, a
       post-mortem.
-  artifacts:
+  items:
     input:
       - product/**/*.md
       - architecture/**/*.md

@@ -23,7 +23,7 @@ has a clear operating model instead of ad hoc chat prompts.
 
 What gets built is determined by the product vision. vstack fixes the delivery
 roles and boundaries: `product`, `architect`, `designer`, `engineer`, `tester`,
-and `release`.
+and `release`, coordinated by `planner`.
 
 vstack started as a rethink inspired by [gstack](https://github.com/garrytan/gstack),
 but was rebuilt around a template-driven, VS Code-first workflow model.
@@ -510,6 +510,13 @@ Both commands default to the current working directory when `--target` is omitte
 
 When you run `vstack install`, a `.vstack/config.yaml` file is seeded in your project. This file is yours: vstack never overwrites it. Commit it to version control — it expresses stable project preferences that apply on every future `vstack init` run.
 
+How to read this file:
+
+- Lines starting with `#` are comments, explanation, or example configuration and are not active.
+- Only uncommented YAML keys are active configuration.
+- To enable an example block, remove `#` from that block and keep valid YAML indentation.
+- After any config change, run `vstack init` to apply it to generated `.github/` artifacts.
+
 The two most useful settings:
 
 **Exclude specific artifacts** — skip artifact types or individual artifacts you do not need:
@@ -526,11 +533,86 @@ exclude:
 
 Type-level entries (`all`) remove the type from generation entirely. Name-level entries skip individual artifacts within a type while keeping the rest.
 
-**Override the docs root path** — change where agent artifact paths point (default: `docs`):
+**Override the docs root path** — change where agent work-item paths point (default: `docs`):
 
 ```yaml
-artifacts:
+items:
   root: documentation   # use a different path prefix in generated agent files
+```
+
+Legacy compatibility: `artifacts.root` is still supported as a fallback for older configs.
+
+Migration path:
+
+1. Keep existing `artifacts.root` configs unchanged — current versions continue to read them.
+1. Move to `items.root` when convenient; `items.root` takes precedence when both are present.
+1. For teams with mixed versions, either key is accepted until all projects standardize on `items.root`.
+
+**Select workflow mode** — control whether users progress manually, via planner orchestration, or both:
+
+```yaml
+workflow:
+  mode: agentic  # default
+```
+
+After changing `workflow.mode`, regenerate artifacts:
+
+```bash
+vstack init
+```
+
+Supported values:
+
+| Mode      | Behavior                                 | Planner file  | Worker handoff buttons |
+| --------- | ---------------------------------------- | ------------- | ---------------------- |
+| `agentic` | Planner orchestrates stages as subagents | generated     | omitted                |
+| `manual`  | User progresses stage-by-stage manually  | not generated | shown                  |
+| `hybrid`  | Both patterns are available              | generated     | shown                  |
+
+Execution semantics:
+
+- `workflow.stages` order is the canonical progression order.
+- `agentic` is stage-sequential by default: planner advances one stage at a time in configured order.
+- Parallelization is still possible inside a stage (independent subtasks), but cross-stage progression remains ordered.
+
+Handoff target semantics:
+
+- `handoffs.prompt` is the transition prompt text.
+- If `handoffs.agent` is omitted, the target defaults to the next role in `workflow.stages`.
+- You can set `handoffs.agent` explicitly to override that default target in `manual`/`hybrid`.
+- In `agentic`, worker handoff buttons are hidden; planner controls progression.
+
+Mode quickstart in Copilot Agent Mode:
+
+| Mode      | Start here               | First prompt example                                    |
+| --------- | ------------------------ | ------------------------------------------------------- |
+| `agentic` | `@planner`               | `@planner Run the workflow for this repository change.` |
+| `manual`  | `@product`               | `@product Define requirements for this change.`         |
+| `hybrid`  | `@planner` or `@product` | `@planner Run the workflow for this repository change.` |
+
+Hybrid operating rule:
+
+- Choose one path per session (planner-led or manual handoffs) and stay on it.
+- Mixing both paths in one session increases the chance of duplicate stage transitions.
+
+Hybrid mode warning:
+
+- In `hybrid`, users can continue via planner orchestration and via handoff buttons.
+- This dual-path UX can create unintended jumps or duplicate progression in teams that expect a single strict path.
+- If you want one deterministic flow, prefer `agentic`.
+
+```mermaid
+flowchart LR
+  A[workflow.mode] --> B{Selected mode}
+  B --> C[agentic]
+  B --> D[manual]
+  B --> E[hybrid]
+  C --> C1[Planner generated]
+  C --> C2[Worker handoffs hidden]
+  D --> D1[Planner omitted]
+  D --> D2[Worker handoffs visible]
+  E --> E1[Planner generated]
+  E --> E2[Worker handoffs visible]
 ```
 
 All fields are optional. An absent or commented-out block restores the default behaviour.

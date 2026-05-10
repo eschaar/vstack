@@ -87,8 +87,10 @@ Key resolvers defined inline in the generator:
 
 ### 4. role model
 
-vstack uses 6 fixed agent roles. Each role has defined skill access and artifact ownership.
-See `docs/architecture/adr/009-role-model.md` for the decision record.
+vstack uses six delivery roles plus a planner coordinator agent. Delivery roles
+have defined skill access and artifact ownership. See
+`docs/architecture/adr/009-role-model.md` for the role-model decision and
+`docs/architecture/adr/024-subagent-orchestration.md` for planner orchestration.
 
 | Role      | Artifact ownership                                                                                       |
 | --------- | -------------------------------------------------------------------------------------------------------- |
@@ -98,6 +100,7 @@ See `docs/architecture/adr/009-role-model.md` for the decision record.
 | engineer  | code, unit tests                                                                                         |
 | tester    | `docs/reports/test-report.md`, `docs/reports/security-report.md`, `docs/reports/performance-baseline.md` |
 | release   | `docs/releases/YYYYMMDDNN.md`, `CHANGELOG.md`, release PR                                                |
+| planner   | none (coordination only; reads workflow config and stage outputs)                                        |
 
 ### 5. manifest (`.vstack/vstack.json`)
 
@@ -124,8 +127,11 @@ manifest. See ADR-016.
 
 ### 6. VS Code agent files (`.github/agents/<name>.agent.md`)
 
-Generated output — one file per role (6 total: product, architect, designer, engineer,
-tester, release). Installed to `.github/agents/` in a project.
+Generated output — mode-dependent role set in `.github/agents/`.
+
+- `workflow.mode=agentic` (default): 7 files (`planner` + 6 worker roles)
+- `workflow.mode=manual`: 6 files (worker roles only; planner omitted)
+- `workflow.mode=hybrid`: 7 files (`planner` + 6 worker roles)
 
 ```yaml
 ---
@@ -183,9 +189,10 @@ ______________________________________________________________________
 
 ## execution model
 
-### current execution model — single-call
+### execution models by workflow mode
 
-Copilot executes the selected role or skill in a single context window.
+Manual mode executes selected roles/skills in single calls; agentic mode adds
+planner-led orchestration.
 
 ```mermaid
 flowchart LR
@@ -194,7 +201,7 @@ flowchart LR
   C --> D[Writes docs, code, or reports to disk]
 ```
 
-### target operating model — stage-gated role pipeline
+### planner-orchestrated model — stage-gated role pipeline
 
 Each role is a separate model call. Output artifacts from one role become the input context
 for the next, and progression only happens after explicit user approval at each stage gate.

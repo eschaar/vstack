@@ -66,13 +66,13 @@ class TestCommandService:
         names = {g.config.type_name for g in svc.generators}
         assert names == {"skill", "agent", "instruction", "prompt"}
 
-    def test_custom_artifacts_root_is_passed_to_agent_generator(self, tmp_path: Path) -> None:
-        """artifacts_root kwarg is forwarded to the AgentGenerator instance."""
+    def test_custom_items_root_is_passed_to_agent_generator(self, tmp_path: Path) -> None:
+        """items_root kwarg is forwarded to the AgentGenerator instance."""
         from vstack.agents.generator import AgentGenerator
 
-        svc = CommandService(templates_root=tmp_path, artifacts_root="documentation")
+        svc = CommandService(templates_root=tmp_path, items_root="documentation")
         agent_gen = next(g for g in svc.generators if isinstance(g, AgentGenerator))
-        assert agent_gen.artifacts_root == "documentation"
+        assert agent_gen.items_root == "documentation"
 
     def test_gen_for_returns_none_for_unknown_type(self) -> None:
         """gen_for() returns None for an unrecognized type name."""

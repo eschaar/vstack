@@ -440,6 +440,77 @@ class InitCommand(BaseCommand):
                 )
 
     @staticmethod
+    def _prune_planner_when_manual_mode(
+        *,
+        install_dir: Path,
+        gen,
+        existing_entries,
+        new_entries,
+        colors,
+        prefix: str,
+        dry_run: bool,
+    ) -> None:
+        """Remove tracked planner artifact when agent workflow mode is ``manual``.
+
+        In manual mode planner is not generated. If a tracked planner file
+        exists from a previous non-manual mode, remove it when unchanged.
+        Locally modified planner files are preserved and kept tracked.
+        """
+        from vstack.manifest import hash_with_algorithm
+
+        if gen.config.type_name != "agent":
+            return
+        if getattr(gen, "workflow_mode", "manual") != "manual":
+            return
+
+        existing_entry = existing_entries.get("agent/planner")
+        if existing_entry is None:
+            return
+
+        planner_file = install_dir / existing_entry.file
+        rel = str(existing_entry.file)
+
+        if not planner_file.exists():
+            return
+
+        removable = True
+        checksum = existing_entry.checksum
+        if checksum:
+            checksum_algorithm = (existing_entry.checksum_algorithm or "sha256").lower()
+            try:
+                current = hash_with_algorithm(
+                    planner_file.read_text(encoding="utf-8"), checksum_algorithm
+                )
+                removable = current == checksum
+            except (OSError, ValueError):
+                removable = False
+
+        if not removable:
+            print(
+                f"  {prefix}{colors.YELLOW}↷{colors.RESET}  {rel}"
+                f"  {colors.DIM}preserved — local changes detected{colors.RESET}"
+            )
+            Manifest.preserve_existing_entry(
+                new_entries=new_entries,
+                manifest_key=gen.config.manifest_key,
+                existing_entry=existing_entry,
+            )
+            return
+
+        print(
+            f"  {prefix}{colors.CYAN}−{colors.RESET}  {rel}"
+            f"  {colors.DIM}removed — planner disabled in workflow.mode=manual{colors.RESET}"
+        )
+        if not dry_run:
+            planner_file.unlink(missing_ok=True)
+            parent = planner_file.parent
+            try:
+                if parent.exists() and not any(parent.iterdir()):
+                    parent.rmdir()
+            except OSError:
+                pass
+
+    @staticmethod
     def execute(
         service: CommandService,
         install_dir: Path,
@@ -526,6 +597,16 @@ class InitCommand(BaseCommand):
                 action_counts[artifact_action] = action_counts.get(artifact_action, 0) + 1
                 if artifact_action == "preserve":
                     preserved_selectors.add(f"{gen.config.type_name}/{artifact.name}")
+
+            InitCommand._prune_planner_when_manual_mode(
+                install_dir=install_dir,
+                gen=gen,
+                existing_entries=existing_entries,
+                new_entries=new_entries,
+                colors=colors,
+                prefix=prefix,
+                dry_run=dry_run,
+            )
 
             # Verify source for unresolvable issues.
             verify_result = gen.verify_input()

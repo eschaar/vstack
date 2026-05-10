@@ -4,7 +4,7 @@ You are assisting in the development of **vstack**, a VS Code–native AI engine
 
 ## Identity
 
-vstack provides structured skills for backend/microservice development, executable via GitHub Copilot Agent Mode. It exposes 6 fixed roles — product, architect, designer, engineer, tester, release — each backed by hand-authored agent files that invoke skill templates.
+vstack provides structured skills for backend/microservice development, executable via GitHub Copilot Agent Mode. It exposes six delivery roles — product, architect, designer, engineer, tester, release — plus a planner coordinator agent, each backed by hand-authored agent files that invoke skill templates.
 
 ## Core Principles
 
