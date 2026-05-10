@@ -1,14 +1,25 @@
 {
-  "preToolUse": [
-    {
-      "type": "command",
-      "command": "echo \"[vstack] safety gate: review destructive operations before execution\""
-    }
-  ],
-  "errorOccurred": [
-    {
-      "type": "command",
-      "command": "echo \"[vstack] safety gate: execution error captured\""
-    }
-  ]
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "description": "Check for destructive bash patterns and block in enforce mode.\nAlways logs to audit trail.\n",
+        "bash": "mkdir -p .vstack/logs\ninput=\"$(cat)\"\nprintf '%s\\n' \"$input\" >> .vstack/logs/hook-pre-tool.jsonl\nmode=\"${VSTACK_HOOKS_MODE:-audit}\"\nif [ \"$mode\" != \"enforce\" ]; then\n  exit 0\nfi\nif printf '%s' \"$input\" | grep -Eq '\"toolName\"[[:space:]]*:[[:space:]]*\"bash\"' && \\\n   printf '%s' \"$input\" | grep -Eiq 'rm -rf /|mkfs|dd if=|DROP TABLE|TRUNCATE TABLE|git reset --hard|git clean -fdx'; then\n  echo '{\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Blocked potentially destructive shell command by vstack pre-tool safety policy\"}'\nfi\n",
+        "powershell": "$inputText = [Console]::In.ReadToEnd()\nNew-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null\nAdd-Content -Path .vstack/logs/hook-pre-tool.jsonl -Value $inputText\n$mode = if ($env:VSTACK_HOOKS_MODE) { $env:VSTACK_HOOKS_MODE } else { 'audit' }\nif ($mode -ne 'enforce') {\n  exit 0\n}\ntry {\n  $payload = $inputText | ConvertFrom-Json -ErrorAction Stop\n} catch {\n  exit 0\n}\nif ($payload.toolName -eq 'bash' -and $inputText -match 'rm -rf /|mkfs|dd if=|DROP TABLE|TRUNCATE TABLE|git reset --hard|git clean -fdx') {\n  @{ permissionDecision = 'deny'; permissionDecisionReason = 'Blocked potentially destructive shell command by vstack pre-tool safety policy' } | ConvertTo-Json -Compress\n}\n",
+        "cwd": ".",
+        "timeoutSec": 15
+      }
+    ],
+    "errorOccurred": [
+      {
+        "type": "command",
+        "description": "Log tool errors for incident investigation and debugging.\n",
+        "bash": "mkdir -p .vstack/logs\ninput=\"$(cat)\"\nprintf '%s\\n' \"$input\" >> .vstack/logs/hook-errors.jsonl\n",
+        "powershell": "New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null\n$inputText = [Console]::In.ReadToEnd()\nAdd-Content -Path .vstack/logs/hook-errors.jsonl -Value $inputText\n",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ]
+  }
 }

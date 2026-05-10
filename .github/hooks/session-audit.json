@@ -1,14 +1,35 @@
 {
-  "sessionStart": [
-    {
-      "type": "command",
-      "command": "echo \"[vstack] session started\""
-    }
-  ],
-  "sessionEnd": [
-    {
-      "type": "command",
-      "command": "echo \"[vstack] session finished\""
-    }
-  ]
+  "version": 1,
+  "hooks": {
+    "userPromptSubmitted": [
+      {
+        "type": "command",
+        "description": "Log prompt submission events for audit correlation.\n",
+        "bash": "mkdir -p .vstack/logs\ninput=\"$(cat)\"\nprintf '%s\\n' \"$input\" >> .vstack/logs/hook-user-prompt.jsonl\n",
+        "powershell": "New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null\n$inputText = [Console]::In.ReadToEnd()\nAdd-Content -Path .vstack/logs/hook-user-prompt.jsonl -Value $inputText\n",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ],
+    "sessionStart": [
+      {
+        "type": "command",
+        "description": "Log session start event with timestamp and context.\n",
+        "bash": "mkdir -p .vstack/logs\ninput=\"$(cat)\"\nprintf '%s\\n' \"$input\" >> .vstack/logs/hook-session-start.jsonl\n",
+        "powershell": "New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null\n$inputText = [Console]::In.ReadToEnd()\nAdd-Content -Path .vstack/logs/hook-session-start.jsonl -Value $inputText\n",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "description": "Log session end event for correlation with start.\n",
+        "bash": "mkdir -p .vstack/logs\ninput=\"$(cat)\"\nprintf '%s\\n' \"$input\" >> .vstack/logs/hook-session-end.jsonl\n",
+        "powershell": "New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null\n$inputText = [Console]::In.ReadToEnd()\nAdd-Content -Path .vstack/logs/hook-session-end.jsonl -Value $inputText\n",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ]
+  }
 }
