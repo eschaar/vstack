@@ -24,6 +24,7 @@ env/
 .pytest_cache/
 .hypothesis/
 .nox/
+.tmp-test-home/
 .coverage
 .coverage.*
 coverage.xml
