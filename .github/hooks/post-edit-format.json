@@ -1,0 +1,8 @@
+{
+  "postToolUse": [
+    {
+      "type": "command",
+      "command": "echo \"[vstack] format hint: run make format after file edits\""
+    }
+  ]
+}

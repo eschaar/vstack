@@ -133,6 +133,15 @@ warn_return_any = false
 ignore_missing_imports = true
 
 # ---------------------------------------------------------------------------
+# pylint
+# ---------------------------------------------------------------------------
+
+[tool.pylint.main]
+# Ensure src-layout imports (e.g. vstack.hooks) resolve in editor-integrated pylint runs.
+init-hook = "import sys; sys.path.insert(0, 'src')"
+py-version = "3.11"
+
+# ---------------------------------------------------------------------------
 # build system
 # ---------------------------------------------------------------------------
 

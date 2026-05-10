@@ -26,7 +26,7 @@ ______________________________________________________________________
 | install/init command semantics           | v3.0.0  | shipped     | `install` = first-run setup; `init` = idempotent CI regeneration (ADR-020, breaking change)                                          |
 | manifest relocation                      | v3.0.0  | shipped     | `vstack.json` moves from `.github/` to `.vstack/`; migration via `manifest upgrade` (ADR-014)                                        |
 | selective install                        | v3.0.0  | shipped     | Per-type and per-name exclusions via `exclude:` in `.vstack/config.yaml`; agents always installed (ADR-022)                          |
-| agent hooks support                      | t.b.d.  | candidate   | Generate `.github/hooks/<name>.json` from vstack templates; enforce quality gates at session boundaries                              |
+| agent hooks support                      | t.b.d.  | shipped     | First-class `hook` artifact type: generate `.github/hooks/<name>.json` from templates and track in manifest                          |
 | new skills (next batch)                  | t.b.d.  | candidate   | `spaces`: set up Copilot Spaces; `copilot-admin`: manage Copilot settings via `gh api`                                               |
 | team customization layer                 | t.b.d.  | candidate   | Custompacks on top of vstack defaults; agents non-removable, skills fully overridable; overlay merge model                           |
 | workflow contract source-of-truth        | t.b.d.  | shipped     | `workflow:` block in `.vstack/config.yaml`; `gate`, `hitl`, `handoffs` schema; `vstack migrate` command (ADR-023, ADR-026)           |
@@ -155,13 +155,13 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### agent hooks support [candidate — t.b.d.]
+### agent hooks support [shipped — t.b.d.]
 
 GitHub Copilot agents support a repository-level hooks mechanism: shell commands defined in
 `.github/hooks/<name>.json` that execute at key points during an agent session —
 `sessionStart`, `sessionEnd`, `userPromptSubmitted`, `preToolUse`, `postToolUse`, and `errorOccurred`.
 
-vstack is well-positioned to provide curated, installable hook templates for common quality-gate patterns:
+vstack now provides installable repository hook templates for quality-gate patterns:
 
 - **Pre-tool safety gate** (`preToolUse`) — block or log destructive operations before they run
 - **Session audit log** (`sessionStart` / `sessionEnd`) — record session boundaries with timestamp and working directory
@@ -169,14 +169,27 @@ vstack is well-positioned to provide curated, installable hook templates for com
 - **Commit policy check** (`postToolUse`) — run `cchk` or commit-message lint after `git commit` tool calls
 - **Security scan on push** (`postToolUse`) — run `gitleaks` or `detect-secrets` after repository mutations
 
-Planned direction:
+Implemented:
 
-- Add a `hooks` artifact type to the vstack generator, parallel to `skills` and `instructions`
+- `hook` is a first-class artifact type in the generator and CLI type registry
 - Templates live in `src/vstack/_templates/hooks/<name>/hook.json` (source of truth)
-- Generated output written to `.github/hooks/<name>.json` at install time
-- Register hooks in `vstack.json` manifest and track them with checksums like other artifact types
-- Note: the per-agent `hooks` frontmatter field (already supported) is separate — it scopes hooks to one
+- Generated output is written to `.github/hooks/<name>.json` at install time
+- Hooks are registered in `.vstack/vstack.json` and tracked with checksums like other artifact types
+- The per-agent `hooks` frontmatter field remains separate and still scopes hooks to one
   agent; repository hooks apply to all agent sessions
+
+Shipped default hook set:
+
+- `session-audit`
+- `pre-tool-safety-gate`
+- `post-edit-format`
+- `post-commit-security-scan`
+
+Migration path:
+
+- Existing repositories do not require a manual migration step for this feature
+- Run `vstack install` (or `vstack init` in CI) to materialize managed `.github/hooks/*.json` output
+- Use `.vstack/config.yaml` `exclude.hook` if your project does not want repository-level hooks
 
 Ref: [GitHub — Customize agent workflows with hooks](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/use-hooks)
 

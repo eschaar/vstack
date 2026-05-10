@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from vstack.agents.config import AGENT_TYPE
+from vstack.hooks.config import HOOK_TYPE
 from vstack.instructions.config import INSTRUCTION_TYPE
 from vstack.prompts.config import PROMPT_TYPE
 from vstack.skills.config import SKILL_TYPE
@@ -68,10 +69,11 @@ class Colors:
     RESET = "\033[0m"
 
 
-KNOWN_TYPES = [SKILL_TYPE, AGENT_TYPE, INSTRUCTION_TYPE, PROMPT_TYPE]
+KNOWN_TYPES = [SKILL_TYPE, AGENT_TYPE, HOOK_TYPE, INSTRUCTION_TYPE, PROMPT_TYPE]
 KNOWN_TYPE_NAMES = [type_config.type_name for type_config in KNOWN_TYPES]
 GLOBAL_SUPPORTED_TYPE_NAMES = [
     AGENT_TYPE.type_name,
+    HOOK_TYPE.type_name,
     INSTRUCTION_TYPE.type_name,
     PROMPT_TYPE.type_name,
     SKILL_TYPE.type_name,
@@ -107,6 +109,12 @@ EXPECTED_INPUT_NAMES: dict[str, list[str]] = {
         "terragrunt",
         "testing",
         "typescript",
+    ],
+    "hook": [
+        "post-edit-format",
+        "post-commit-security-scan",
+        "pre-tool-safety-gate",
+        "session-audit",
     ],
     "prompt": [
         "api-design-review",

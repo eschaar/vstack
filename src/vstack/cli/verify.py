@@ -136,6 +136,9 @@ class VerifyCommand(BaseCommand):
         service: CommandService, gen, manifest_data, install_dir: Path
     ) -> ValidationResult | None:
         """Verify footer metadata for all manifest-tracked artifacts of one type."""
+        if not gen.config.auto_gen_footer:
+            return None
+
         manifest_entries = manifest_data.entries_for(gen.config.manifest_key)
         if not manifest_entries:
             return None

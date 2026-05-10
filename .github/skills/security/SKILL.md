@@ -295,4 +295,4 @@ Scope: [full/diff/dependency/config]
 - [STRIDE threat modeling (Microsoft)](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"security","artifact_type":"skill","artifact_version":"20260421025","generator":"vstack","vstack_version":"3.1.1"} -->
+<!-- VSTACK-META: {"artifact_name":"security","artifact_type":"skill","artifact_version":"20260421025","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

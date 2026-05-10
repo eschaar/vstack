@@ -180,4 +180,4 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 - `@#rancher` — Rancher/Fleet configuration and multi-cluster governance review
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"tester","artifact_type":"agent","artifact_version":"20260503026","generator":"vstack","vstack_version":"3.1.1"} -->
+<!-- VSTACK-META: {"artifact_name":"tester","artifact_type":"agent","artifact_version":"20260503026","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

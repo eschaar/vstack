@@ -79,9 +79,9 @@ Execution model:
 
 1. Load workflow stages from project config.
 1. Read `workflow.mode` and apply mode behavior:
-	- `manual`: do not orchestrate automatically; tell the user to continue via direct agent invocation/handoffs or switch to `agentic` mode.
-	- `agentic`: orchestrate stages sequentially and treat planner as the progression controller.
-	- `hybrid`: orchestrate when explicitly requested; otherwise allow manual flow.
+   - `manual`: do not orchestrate automatically; tell the user to continue via direct agent invocation/handoffs or switch to `agentic` mode.
+   - `agentic`: orchestrate stages sequentially and treat planner as the progression controller.
+   - `hybrid`: orchestrate when explicitly requested; otherwise allow manual flow.
 1. For each stage, invoke the mapped role agent as a subagent.
 1. Capture stage result and evaluate gate policy.
 1. Pause for user approval when required.
@@ -135,4 +135,4 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 - `@#analyse` - assess stage impact, skip rationale, and trade-offs
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"planner","artifact_type":"agent","artifact_version":"20260510001","generator":"vstack","vstack_version":"3.1.1"} -->
+<!-- VSTACK-META: {"artifact_name":"planner","artifact_type":"agent","artifact_version":"20260510001","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

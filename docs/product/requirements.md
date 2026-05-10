@@ -1,7 +1,7 @@
 # requirements
 
 > Maintained by: **product** role\
-> Last updated: 2026-04-26
+> Last updated: 2026-05-10
 
 ______________________________________________________________________
 
@@ -23,7 +23,8 @@ ______________________________________________________________________
 - Supported artifact types: `skill` (`.github/skills/<name>/SKILL.md`), `agent`
   (`.github/agents/<name>.agent.md`), `instruction`
   (`.github/instructions/<name>.instructions.md`), `prompt`
-  (`.github/prompts/<name>.prompt.md`).
+  (`.github/prompts/<name>.prompt.md`), `hook`
+  (`.github/hooks/<name>.json`).
 - At generation time the generator resolves `{{TOKEN}}` placeholders from shared
   partials and injects frontmatter validated against the artifact schema.
 - Unresolved tokens are flagged as errors by `validate` and `install`.
