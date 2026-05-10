@@ -60,13 +60,15 @@ class _Service:
         self,
         *,
         templates_root,
-        artifacts_root: str = "docs",
+        items_root: str = "docs",
         workflow_stages=None,
+        workflow_mode: str = "agentic",
         excluded_names=None,
     ) -> None:
         self.templates_root = templates_root
-        self.artifacts_root = artifacts_root
+        self.items_root = items_root
         self.workflow_stages = workflow_stages
+        self.workflow_mode = workflow_mode
         self.excluded_names = excluded_names
 
 
@@ -164,46 +166,44 @@ class TestCommandLineInterface:
         assert CommandLineInterface.resolve_only_for_scope(args) == ["skill", "agent"]
 
 
-class TestReadArtifactsRoot:
-    """Tests for CommandLineInterface._read_artifacts_root."""
+class TestReadItemsRoot:
+    """Tests for CommandLineInterface._read_items_root."""
 
     def test_returns_default_when_install_dir_is_none(self) -> None:
         """Returns ARTIFACTS_DOCS_ROOT when no install dir is provided."""
         from vstack.constants import ARTIFACTS_DOCS_ROOT
 
-        assert CommandLineInterface._read_artifacts_root(None) == ARTIFACTS_DOCS_ROOT
+        assert CommandLineInterface._read_items_root(None) == ARTIFACTS_DOCS_ROOT
 
     def test_returns_default_when_config_file_absent(self, tmp_path: Path) -> None:
         """Returns ARTIFACTS_DOCS_ROOT when .vstack/config.yaml does not exist."""
         from vstack.constants import ARTIFACTS_DOCS_ROOT
 
         install_dir = tmp_path / ".github"
-        assert CommandLineInterface._read_artifacts_root(install_dir) == ARTIFACTS_DOCS_ROOT
+        assert CommandLineInterface._read_items_root(install_dir) == ARTIFACTS_DOCS_ROOT
 
     def test_returns_value_from_config(self, tmp_path: Path) -> None:
-        """Returns the artifacts.root value from .vstack/config.yaml."""
+        """Returns the items.root value from .vstack/config.yaml."""
         vstack_dir = tmp_path / ".vstack"
         vstack_dir.mkdir()
-        (vstack_dir / "config.yaml").write_text(
-            "artifacts:\n  root: documentation\n", encoding="utf-8"
-        )
+        (vstack_dir / "config.yaml").write_text("items:\n  root: documentation\n", encoding="utf-8")
 
         install_dir = tmp_path / ".github"
-        assert CommandLineInterface._read_artifacts_root(install_dir) == "documentation"
+        assert CommandLineInterface._read_items_root(install_dir) == "documentation"
 
     def test_returns_default_when_value_is_blank(self, tmp_path: Path) -> None:
-        """Returns ARTIFACTS_DOCS_ROOT when artifacts.root is present but blank."""
+        """Returns ARTIFACTS_DOCS_ROOT when items.root is present but blank."""
         from vstack.constants import ARTIFACTS_DOCS_ROOT
 
         vstack_dir = tmp_path / ".vstack"
         vstack_dir.mkdir()
-        (vstack_dir / "config.yaml").write_text("artifacts:\n  root:\n", encoding="utf-8")
+        (vstack_dir / "config.yaml").write_text("items:\n  root:\n", encoding="utf-8")
 
         install_dir = tmp_path / ".github"
-        assert CommandLineInterface._read_artifacts_root(install_dir) == ARTIFACTS_DOCS_ROOT
+        assert CommandLineInterface._read_items_root(install_dir) == ARTIFACTS_DOCS_ROOT
 
     def test_returns_default_when_key_absent_in_config(self, tmp_path: Path) -> None:
-        """Returns ARTIFACTS_DOCS_ROOT when config.yaml exists but has no artifacts.root key."""
+        """Returns ARTIFACTS_DOCS_ROOT when config.yaml exists but has no items.root key."""
         from vstack.constants import ARTIFACTS_DOCS_ROOT
 
         vstack_dir = tmp_path / ".vstack"
@@ -211,15 +211,15 @@ class TestReadArtifactsRoot:
         (vstack_dir / "config.yaml").write_text("exclude:\n  prompts: all\n", encoding="utf-8")
 
         install_dir = tmp_path / ".github"
-        assert CommandLineInterface._read_artifacts_root(install_dir) == ARTIFACTS_DOCS_ROOT
+        assert CommandLineInterface._read_items_root(install_dir) == ARTIFACTS_DOCS_ROOT
 
-    def test_run_passes_artifacts_root_from_config_to_service(
+    def test_run_passes_items_root_from_config_to_service(
         self, monkeypatch, tmp_path: Path
     ) -> None:
-        """run() reads artifacts.root from .vstack/config.yaml and passes it to the service."""
+        """run() reads items.root from .vstack/config.yaml and passes it to the service."""
         vstack_dir = tmp_path / ".vstack"
         vstack_dir.mkdir()
-        (vstack_dir / "config.yaml").write_text("artifacts:\n  root: custom\n", encoding="utf-8")
+        (vstack_dir / "config.yaml").write_text("items:\n  root: custom\n", encoding="utf-8")
 
         install_dir = tmp_path / ".github"
         args = argparse.Namespace(command="install", only=None, use_global=False)
@@ -232,11 +232,13 @@ class TestReadArtifactsRoot:
                 self,
                 *,
                 templates_root,
-                artifacts_root: str = "docs",
+                items_root: str = "docs",
                 workflow_stages=None,
+                workflow_mode: str = "agentic",
                 excluded_names=None,
             ) -> None:
-                captured.append(artifacts_root)
+                del templates_root, workflow_stages, workflow_mode, excluded_names
+                captured.append(items_root)
 
         monkeypatch.setattr(
             CommandLineInterface,
@@ -252,6 +254,22 @@ class TestReadArtifactsRoot:
         interface.run()
 
         assert captured == ["custom"]
+
+    def test_returns_legacy_artifacts_root_when_items_root_missing(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Legacy artifacts.root still works and emits a deprecation warning."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "artifacts:\n  root: legacy-docs\n", encoding="utf-8"
+        )
+
+        install_dir = tmp_path / ".github"
+        CommandLineInterface._legacy_items_root_warned = False
+        assert CommandLineInterface._read_items_root(install_dir) == "legacy-docs"
+        captured = capsys.readouterr()
+        assert "legacy 'artifacts.root'" in captured.err
 
 
 class TestReadWorkflowStages:
@@ -361,6 +379,81 @@ class TestReadWorkflowStages:
         )
         result = CommandLineInterface._read_workflow_stages(tmp_path / ".github")
         assert result == []
+
+
+class TestReadWorkflowMode:
+    """Tests for CommandLineInterface._read_workflow_mode."""
+
+    def test_returns_manual_when_install_dir_is_none(self) -> None:
+        """Defaults to agentic mode when no install dir is available."""
+        assert CommandLineInterface._read_workflow_mode(None) == "agentic"
+
+    def test_returns_manual_when_config_absent(self, tmp_path: Path) -> None:
+        """Defaults to agentic mode when .vstack/config.yaml is missing."""
+        assert CommandLineInterface._read_workflow_mode(tmp_path / ".github") == "agentic"
+
+    def test_returns_mode_from_config_when_valid(self, tmp_path: Path) -> None:
+        """Returns parsed workflow.mode when value is supported."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text("workflow:\n  mode: agentic\n", encoding="utf-8")
+        assert CommandLineInterface._read_workflow_mode(tmp_path / ".github") == "agentic"
+
+    def test_returns_manual_when_mode_invalid(self, tmp_path: Path) -> None:
+        """Invalid mode values are normalized to agentic."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n  mode: orchestration\n", encoding="utf-8"
+        )
+        assert CommandLineInterface._read_workflow_mode(tmp_path / ".github") == "agentic"
+
+    def test_returns_manual_when_mode_not_string(self, tmp_path: Path) -> None:
+        """Non-string workflow.mode values are normalized to agentic."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text("workflow:\n  mode: 1\n", encoding="utf-8")
+        assert CommandLineInterface._read_workflow_mode(tmp_path / ".github") == "agentic"
+
+    def test_run_passes_workflow_mode_to_service(self, monkeypatch, tmp_path: Path) -> None:
+        """run() reads workflow.mode and passes it into service construction."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text("workflow:\n  mode: hybrid\n", encoding="utf-8")
+
+        install_dir = tmp_path / ".github"
+        args = argparse.Namespace(command="install", only=None, use_global=False)
+        parser = _Parser(args=args, resolved_target=install_dir)
+        command = _Command(exit_code=0)
+        captured: list[str] = []
+
+        class _CapturingService:
+            def __init__(
+                self,
+                *,
+                templates_root,
+                items_root: str = "docs",
+                workflow_stages=None,
+                workflow_mode: str = "agentic",
+                excluded_names=None,
+            ) -> None:
+                del templates_root, items_root, workflow_stages, excluded_names
+                captured.append(workflow_mode)
+
+        monkeypatch.setattr(
+            CommandLineInterface,
+            "_build_command_registry",
+            lambda self, service: {"install": command},
+        )
+
+        interface = CommandLineInterface(
+            parser_cls=cast(Any, lambda: parser),
+            service_cls=cast(Any, _CapturingService),
+            templates_root=tmp_path,
+        )
+        interface.run()
+
+        assert captured == ["hybrid"]
 
 
 class TestParseStageHandoffs:

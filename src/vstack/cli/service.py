@@ -38,8 +38,10 @@ class CommandService:
         self,
         templates_root: Path,
         *,
-        artifacts_root: str = ARTIFACTS_DOCS_ROOT,
+        items_root: str = ARTIFACTS_DOCS_ROOT,
+        artifacts_root: str | None = None,
         workflow_stages: list[dict[str, str]] | None = None,
+        workflow_mode: str = "agentic",
     ) -> None:
         """Create generators for all known artifact families.
 
@@ -50,23 +52,29 @@ class CommandService:
 
         Args:
             templates_root: Root directory containing the source templates.
-            artifacts_root: Root directory for agent artifact paths.  Passed
+            items_root: Root directory for agent work-item paths.  Passed
                 through to :class:`~vstack.agents.generator.AgentGenerator`.
                 Defaults to :data:`~vstack.constants.ARTIFACTS_DOCS_ROOT`;
-                override via ``artifacts.root`` in ``.vstack/config.yaml``.
+                override via ``items.root`` in ``.vstack/config.yaml``.
+            artifacts_root: Deprecated alias for ``items_root``.
             workflow_stages: Ordered list of pipeline stage dicts read from
                 the ``workflow.stages`` block in ``.vstack/config.yaml``.
                 Each dict has ``role`` and ``gate`` string keys, a ``handoffs``
                 key containing a list of dicts with ``prompt``, ``agent``, and
                 ``label`` string keys, and an optional ``hitl`` string key.
                 When ``None`` or empty the generator falls back to v3 behaviour.
+            workflow_mode: Workflow execution mode from ``workflow.mode`` in
+                ``.vstack/config.yaml``. Supported values: ``manual``,
+                ``agentic``, and ``hybrid``.
         """
         self.root = templates_root
+        resolved_items_root = artifacts_root or items_root
         self.generators: list[GenericArtifactGenerator] = [
             AgentGenerator(
                 templates_root,
-                artifacts_root=artifacts_root,
+                items_root=resolved_items_root,
                 workflow_stages=workflow_stages or [],
+                workflow_mode=workflow_mode,
             )
             if tc is AGENT_TYPE
             else GenericArtifactGenerator(tc, templates_root)

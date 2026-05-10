@@ -211,33 +211,45 @@ class TestResolveNewPath:
         assert result == "other/architecture/overview.md"
 
 
-class TestReadArtifactsRoot:
-    """_read_artifacts_root reads artifacts.root from config.yaml."""
+class TestReadItemsRoot:
+    """_read_items_root reads items.root from config.yaml."""
 
     def test_returns_default_when_config_absent(self, tmp_path: Path) -> None:
         """Returns the default docs root when no config.yaml exists."""
-        assert MigrateCommand._read_artifacts_root(tmp_path) == ARTIFACTS_DOCS_ROOT
+        assert MigrateCommand._read_items_root(tmp_path) == ARTIFACTS_DOCS_ROOT
 
     def test_returns_configured_root(self, tmp_path: Path) -> None:
         """Returns the custom root from config.yaml."""
         vstack_dir = tmp_path / ".vstack"
         vstack_dir.mkdir()
-        (vstack_dir / "config.yaml").write_text("artifacts:\n  root: content\n", encoding="utf-8")
-        assert MigrateCommand._read_artifacts_root(tmp_path) == "content"
+        (vstack_dir / "config.yaml").write_text("items:\n  root: content\n", encoding="utf-8")
+        assert MigrateCommand._read_items_root(tmp_path) == "content"
 
-    def test_returns_default_when_artifacts_not_dict(self, tmp_path: Path) -> None:
-        """Returns default when artifacts key is not a mapping."""
+    def test_returns_default_when_items_not_dict(self, tmp_path: Path) -> None:
+        """Returns default when items key is not a mapping."""
         vstack_dir = tmp_path / ".vstack"
         vstack_dir.mkdir()
-        (vstack_dir / "config.yaml").write_text("artifacts: all\n", encoding="utf-8")
-        assert MigrateCommand._read_artifacts_root(tmp_path) == ARTIFACTS_DOCS_ROOT
+        (vstack_dir / "config.yaml").write_text("items: all\n", encoding="utf-8")
+        assert MigrateCommand._read_items_root(tmp_path) == ARTIFACTS_DOCS_ROOT
+
+    def test_returns_legacy_artifacts_root_when_items_missing(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Legacy artifacts.root remains accepted and emits a deprecation warning."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text("artifacts:\n  root: content\n", encoding="utf-8")
+        MigrateCommand._legacy_items_root_warned = False
+        assert MigrateCommand._read_items_root(tmp_path) == "content"
+        captured = capsys.readouterr()
+        assert "legacy 'artifacts.root'" in captured.err
 
     def test_returns_default_when_root_blank(self, tmp_path: Path) -> None:
-        """Returns default when artifacts.root is blank."""
+        """Returns default when items.root is blank."""
         vstack_dir = tmp_path / ".vstack"
         vstack_dir.mkdir()
         (vstack_dir / "config.yaml").write_text("artifacts:\n  root: ''\n", encoding="utf-8")
-        assert MigrateCommand._read_artifacts_root(tmp_path) == ARTIFACTS_DOCS_ROOT
+        assert MigrateCommand._read_items_root(tmp_path) == ARTIFACTS_DOCS_ROOT
 
 
 class _FakeColors(Colors):
@@ -249,6 +261,284 @@ class _FakeColors(Colors):
     RED = ""
     CYAN = ""
     BLUE = ""
+
+
+class TestUpgradeLegacyKeys:
+    """Legacy key upgrades for items migration."""
+
+    def test_upgrades_project_config_root_key(self, tmp_path: Path) -> None:
+        """Adds items.root when only artifacts.root is configured."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        config_path = vstack_dir / "config.yaml"
+        config_path.write_text("artifacts:\n  root: content\n", encoding="utf-8")
+
+        changed = MigrateCommand._upgrade_project_items_root_key(
+            project_root=tmp_path,
+            dry_run=False,
+        )
+
+        assert changed == 1
+        content = config_path.read_text(encoding="utf-8")
+        assert "items:" in content
+        assert "root: content" in content
+
+    def test_project_config_upgrade_is_dry_run_only(self, tmp_path: Path) -> None:
+        """Dry-run reports project config upgrade without writing the file."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        config_path = vstack_dir / "config.yaml"
+        original = "artifacts:\n  root: content\n"
+        config_path.write_text(original, encoding="utf-8")
+
+        changed = MigrateCommand._upgrade_project_items_root_key(
+            project_root=tmp_path,
+            dry_run=True,
+        )
+
+        assert changed == 1
+        assert config_path.read_text(encoding="utf-8") == original
+
+    def test_project_config_upgrade_skips_when_items_root_already_set(self, tmp_path: Path) -> None:
+        """Does not change config when items.root is already present."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        config_path = vstack_dir / "config.yaml"
+        config_path.write_text("items:\n  root: docs\n", encoding="utf-8")
+
+        changed = MigrateCommand._upgrade_project_items_root_key(
+            project_root=tmp_path,
+            dry_run=False,
+        )
+
+        assert changed == 0
+
+    def test_project_config_upgrade_skips_when_artifacts_block_invalid(
+        self, tmp_path: Path
+    ) -> None:
+        """Does not change config when artifacts is not a mapping."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text("artifacts: all\n", encoding="utf-8")
+
+        changed = MigrateCommand._upgrade_project_items_root_key(
+            project_root=tmp_path,
+            dry_run=False,
+        )
+
+        assert changed == 0
+
+    def test_project_config_upgrade_skips_when_artifacts_root_blank(self, tmp_path: Path) -> None:
+        """Does not change config when legacy artifacts.root is blank."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text("artifacts:\n  root: ''\n", encoding="utf-8")
+
+        changed = MigrateCommand._upgrade_project_items_root_key(
+            project_root=tmp_path,
+            dry_run=False,
+        )
+
+        assert changed == 0
+
+    def test_upgrades_agent_template_defaults_key(self, tmp_path: Path) -> None:
+        """Adds defaults.items from legacy defaults.artifacts in local templates."""
+        config_path = tmp_path / ".vstack" / "templates" / "architect" / "config.yaml"
+        config_path.parent.mkdir(parents=True)
+        config_path.write_text(
+            "name: architect\ndefaults:\n  artifacts:\n    dir: architecture\n",
+            encoding="utf-8",
+        )
+
+        changed = MigrateCommand._upgrade_agent_template_items_keys(
+            project_root=tmp_path,
+            dry_run=False,
+        )
+
+        assert changed == 1
+        parsed = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+        assert parsed["defaults"]["items"]["dir"] == "architecture"
+
+    def test_agent_template_upgrade_is_dry_run_only(self, tmp_path: Path) -> None:
+        """Dry-run reports agent template upgrade without writing files."""
+        config_path = tmp_path / ".vstack" / "templates" / "architect" / "config.yaml"
+        config_path.parent.mkdir(parents=True)
+        original = "name: architect\ndefaults:\n  artifacts:\n    dir: architecture\n"
+        config_path.write_text(original, encoding="utf-8")
+
+        changed = MigrateCommand._upgrade_agent_template_items_keys(
+            project_root=tmp_path,
+            dry_run=True,
+        )
+
+        assert changed == 1
+        assert config_path.read_text(encoding="utf-8") == original
+
+    def test_agent_template_upgrade_skips_non_mapping_yaml(self, tmp_path: Path) -> None:
+        """Skips template config files whose YAML root is not a mapping."""
+        config_path = tmp_path / ".vstack" / "templates" / "architect" / "config.yaml"
+        config_path.parent.mkdir(parents=True)
+        config_path.write_text("- just\n- a\n- list\n", encoding="utf-8")
+
+        changed = MigrateCommand._upgrade_agent_template_items_keys(
+            project_root=tmp_path,
+            dry_run=False,
+        )
+
+        assert changed == 0
+
+    def test_agent_template_upgrade_skips_when_defaults_invalid(self, tmp_path: Path) -> None:
+        """Skips template config files with non-mapping defaults."""
+        config_path = tmp_path / ".vstack" / "templates" / "architect" / "config.yaml"
+        config_path.parent.mkdir(parents=True)
+        config_path.write_text("name: architect\ndefaults: all\n", encoding="utf-8")
+
+        changed = MigrateCommand._upgrade_agent_template_items_keys(
+            project_root=tmp_path,
+            dry_run=False,
+        )
+
+        assert changed == 0
+
+    def test_agent_template_upgrade_skips_when_items_already_present(self, tmp_path: Path) -> None:
+        """Skips template config files that already define defaults.items."""
+        config_path = tmp_path / ".vstack" / "templates" / "architect" / "config.yaml"
+        config_path.parent.mkdir(parents=True)
+        config_path.write_text(
+            "name: architect\ndefaults:\n  items:\n    dir: architecture\n",
+            encoding="utf-8",
+        )
+
+        changed = MigrateCommand._upgrade_agent_template_items_keys(
+            project_root=tmp_path,
+            dry_run=False,
+        )
+
+        assert changed == 0
+
+    def test_agent_template_upgrade_skips_when_artifacts_invalid(self, tmp_path: Path) -> None:
+        """Skips template config files where defaults.artifacts is not a mapping."""
+        config_path = tmp_path / ".vstack" / "templates" / "architect" / "config.yaml"
+        config_path.parent.mkdir(parents=True)
+        config_path.write_text(
+            "name: architect\ndefaults:\n  artifacts: all\n",
+            encoding="utf-8",
+        )
+
+        changed = MigrateCommand._upgrade_agent_template_items_keys(
+            project_root=tmp_path,
+            dry_run=False,
+        )
+
+        assert changed == 0
+
+    def test_cleanup_removes_legacy_commented_workflow_example(self, tmp_path: Path) -> None:
+        """Removes trailing commented ACTIVE CONFIGURATION example block."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        config_path = vstack_dir / "config.yaml"
+        config_path.write_text(
+            "workflow:\n"
+            "  mode: agentic\n"
+            "# -----------------------------------------------------------------------------\n"
+            "# ACTIVE CONFIGURATION (UNCOMMENT AND EDIT)\n"
+            "# -----------------------------------------------------------------------------\n"
+            "# workflow:\n"
+            "#   mode: agentic\n",
+            encoding="utf-8",
+        )
+
+        changed = MigrateCommand._cleanup_commented_workflow_example(
+            project_root=tmp_path,
+            dry_run=False,
+        )
+
+        assert changed == 1
+        content = config_path.read_text(encoding="utf-8")
+        assert "ACTIVE CONFIGURATION (UNCOMMENT AND EDIT)" not in content
+        assert "workflow:\n  mode: agentic" in content
+
+    def test_cleanup_dry_run_does_not_write(self, tmp_path: Path) -> None:
+        """Dry-run reports cleanup without changing file content."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        config_path = vstack_dir / "config.yaml"
+        original = "# ACTIVE CONFIGURATION (UNCOMMENT AND EDIT)\n# workflow:\n#   mode: agentic\n"
+        config_path.write_text(original, encoding="utf-8")
+
+        changed = MigrateCommand._cleanup_commented_workflow_example(
+            project_root=tmp_path,
+            dry_run=True,
+        )
+
+        assert changed == 1
+        assert config_path.read_text(encoding="utf-8") == original
+
+    def test_cleanup_is_noop_when_marker_absent(self, tmp_path: Path) -> None:
+        """No changes are reported when the marker block is absent."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        config_path = vstack_dir / "config.yaml"
+        config_path.write_text("workflow:\n  mode: agentic\n", encoding="utf-8")
+
+        changed = MigrateCommand._cleanup_commented_workflow_example(
+            project_root=tmp_path,
+            dry_run=False,
+        )
+
+        assert changed == 0
+
+    def test_cleanup_preserves_non_comment_lines_after_marker(self, tmp_path: Path) -> None:
+        """Marker cleanup stops once active YAML resumes after commented lines."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        config_path = vstack_dir / "config.yaml"
+        config_path.write_text(
+            "# ACTIVE CONFIGURATION (UNCOMMENT AND EDIT)\n"
+            "# workflow:\n"
+            "workflow:\n"
+            "  mode: agentic\n",
+            encoding="utf-8",
+        )
+
+        changed = MigrateCommand._cleanup_commented_workflow_example(
+            project_root=tmp_path,
+            dry_run=False,
+        )
+
+        assert changed == 1
+        content = config_path.read_text(encoding="utf-8")
+        assert content == "workflow:\n  mode: agentic\n"
+
+    def test_cleanup_preserves_active_workflow_handoffs(self, tmp_path: Path) -> None:
+        """Cleanup never removes active workflow and handoff settings."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        config_path = vstack_dir / "config.yaml"
+        config_path.write_text(
+            "# ACTIVE CONFIGURATION (UNCOMMENT AND EDIT)\n"
+            "# workflow:\n"
+            "workflow:\n"
+            "  mode: manual\n"
+            "  stages:\n"
+            "    - role: architect\n"
+            "      gate: required\n"
+            "      handoffs:\n"
+            "        prompt: Keep this\n",
+            encoding="utf-8",
+        )
+
+        changed = MigrateCommand._cleanup_commented_workflow_example(
+            project_root=tmp_path,
+            dry_run=False,
+        )
+
+        assert changed == 1
+        content = config_path.read_text(encoding="utf-8")
+        assert "workflow:" in content
+        assert "mode: manual" in content
+        assert "handoffs:" in content
+        assert "prompt: Keep this" in content
 
 
 class TestApplyMoves:
@@ -264,7 +554,7 @@ class TestApplyMoves:
         moved, skipped = MigrateCommand._apply_moves(
             moves=moves,
             project_root=tmp_path,
-            artifacts_root="docs",
+            items_root="docs",
             dry_run=False,
             colors=_FakeColors,
         )
@@ -279,7 +569,7 @@ class TestApplyMoves:
         moved, skipped = MigrateCommand._apply_moves(
             moves=moves,
             project_root=tmp_path,
-            artifacts_root="docs",
+            items_root="docs",
             dry_run=False,
             colors=_FakeColors,
         )
@@ -298,7 +588,7 @@ class TestApplyMoves:
         moved, skipped = MigrateCommand._apply_moves(
             moves=moves,
             project_root=tmp_path,
-            artifacts_root="docs",
+            items_root="docs",
             dry_run=False,
             colors=_FakeColors,
         )
@@ -316,7 +606,7 @@ class TestApplyMoves:
         moved, skipped = MigrateCommand._apply_moves(
             moves=moves,
             project_root=tmp_path,
-            artifacts_root="docs",
+            items_root="docs",
             dry_run=True,
             colors=_FakeColors,
         )
@@ -334,7 +624,7 @@ class TestApplyMoves:
         moved, skipped = MigrateCommand._apply_moves(
             moves=moves,
             project_root=tmp_path,
-            artifacts_root="docs",
+            items_root="docs",
             dry_run=False,
             colors=_FakeColors,
         )
@@ -351,14 +641,14 @@ class TestApplyMoves:
         MigrateCommand._apply_moves(
             moves=moves,
             project_root=tmp_path,
-            artifacts_root="docs",
+            items_root="docs",
             dry_run=False,
             colors=_FakeColors,
         )
         assert (tmp_path / "docs" / "deep" / "nested" / "b.md").exists()
 
-    def test_substitutes_custom_artifacts_root_in_new_path(self, tmp_path: Path) -> None:
-        """Applies the custom artifacts root when resolving new paths."""
+    def test_substitutes_custom_items_root_in_new_path(self, tmp_path: Path) -> None:
+        """Applies the custom items.root when resolving new paths."""
         old = tmp_path / "docs" / "a.md"
         old.parent.mkdir(parents=True)
         old.write_text("content", encoding="utf-8")
@@ -367,7 +657,7 @@ class TestApplyMoves:
         MigrateCommand._apply_moves(
             moves=moves,
             project_root=tmp_path,
-            artifacts_root="content",
+            items_root="content",
             dry_run=False,
             colors=_FakeColors,
         )
@@ -415,6 +705,22 @@ class TestMigrateCommandRun:
         context = _context(Namespace(dry_run=False, target=str(tmp_path), from_major=3, to_major=3))
         assert cmd.run(context=context) == 0
         assert "Nothing to migrate" in capsys.readouterr().out
+
+    def test_prints_config_upgrade_message_when_from_gte_to(self, tmp_path: Path) -> None:
+        """Reports config upgrade when no path move is required."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text("artifacts:\n  root: content\n", encoding="utf-8")
+
+        cmd = MigrateCommand(_service())
+        context = _context(Namespace(dry_run=False, target=str(tmp_path), from_major=3, to_major=3))
+
+        with patch("builtins.print") as mock_print:
+            result = cmd.run(context=context)
+
+        assert result == 0
+        printed = "\n".join(str(call.args[0]) for call in mock_print.call_args_list if call.args)
+        assert "Updated legacy config keys" in printed
 
     def test_returns_1_when_major_not_detectable(self, tmp_path: Path) -> None:
         """Returns 1 and writes to stderr when from_major cannot be detected."""

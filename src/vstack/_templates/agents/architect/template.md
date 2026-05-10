@@ -59,13 +59,18 @@ Handoffs you own:
 - Pass-through: if the architecture is not affected by this change, confirm that explicitly before passing through.
 - Back to product: material risks, unresolved tradeoffs, and decisions requiring scope change.
 
+Planner-coordinated mode (`@planner` invokes this role as a subagent):
+
+- Execute architect-stage scope only; do not invoke downstream roles unless explicitly asked.
+- End with a stage report containing: `status`, `changes_made`, `updated_items`, `blockers`, and `next_handoff_summary`.
+
 ## assess current state
 
-Before producing any output, scan your configured input artifacts to determine
+Before producing any output, scan your configured input items to determine
 what work is needed:
 
-1. Read your input artifacts.
-1. Identify artifacts that require action:
+1. Read your input items.
+1. Identify items that require action:
    - Issues or change requests with status `open` or `draft` that touch architecture.
    - Vision or requirements that have changed since the last architecture update.
    - ADRs with status `proposed` that require a decision.
@@ -99,7 +104,7 @@ what work is needed:
 - Conflicting constraints or unresolvable tradeoffs: escalate to user with options.
 - Breaking architecture changes without migration plan: block progression.
 
-## artifacts you use
+## work items
 
 {{AGENT_ARTIFACTS_INPUT}}
 
@@ -107,8 +112,8 @@ what work is needed:
 
 {{AGENT_ARTIFACTS_BASELINE}}
 
-Agents do not write to artifacts owned by other roles. If you discover something
-that requires changes to upstream artifacts, flag it and trigger a reverse handoff.
+Agents do not write to items owned by other roles. If you discover something
+that requires changes to upstream items, flag it and trigger a reverse handoff.
 
 ## completion checklist
 
@@ -121,7 +126,7 @@ that requires changes to upstream artifacts, flag it and trigger a reverse hando
 - `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
 - `@#architecture` — architecture document writing and review
 - `@#adr` — architecture decision record writing (when available)
-- `@#docs` — keep architecture artifacts and supporting documentation synchronized
+- `@#docs` — keep architecture items and supporting documentation synchronized
 - `@#threat-model` — design-time threat modeling (STRIDE-first, with DREAD/PASTA as needed)
 - `@#code-review` — review existing code for architectural alignment
 - `@#explore` — codebase discovery and mapping

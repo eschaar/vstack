@@ -60,7 +60,7 @@ This commitment applies to:
 It does **not** apply to:
 
 - `.github/` artifact paths, which follow VS Code / Copilot conventions (covered by ADR-002)
-- Project-specific paths the user configures via `artifacts.root` or workflow overrides
+- Project-specific paths the user configures via `items.root` or workflow overrides
 
 ### 2. Agent config.yaml is the source of truth; skill prose is informational
 
@@ -135,9 +135,9 @@ the same moves in prose for users who prefer to migrate manually.
 ### 5. Skill prose references are resolved at LLM runtime, not install time
 
 No variable substitution is applied to skill template prose at install time (e.g.
-`{{artifacts_root}}/architecture/overview.md`). The agent config `artifacts.dir` is
+`{{items_root}}/architecture/overview.md`). The agent config `items.dir` is
 the machine-readable source; prose is a human-readable aid for the LLM. If a user
-sets a custom `artifacts.root` in `.vstack/config.yaml`, the agent's generated
+sets a custom `items.root` in `.vstack/config.yaml`, the agent's generated
 `.agent.md` body will contain the resolved root because the agent template uses the
 config value at generation time. Skill markdown bodies remain as authored.
 
@@ -154,10 +154,10 @@ current execution model.
 ### B — Variable substitution in skill template prose
 
 Replace hardcoded paths in skill markdown (e.g. `docs/architecture/overview.md`) with
-install-time variables (`{{artifacts_root}}/architecture/overview.md`). Rejected because:
+install-time variables (`{{items_root}}/architecture/overview.md`). Rejected because:
 the agent config is already the machine-readable authority; prose is LLM guidance only;
 adding a substitution pass increases template complexity for marginal gain. The LLM reads
-the agent's own `.agent.md` (which does resolve `artifacts_root`) before executing a skill —
+the agent's own `.agent.md` (which does resolve `items.root`) before executing a skill —
 the agent already has the correct context.
 
 ### C — Stability promise only, no migration tooling

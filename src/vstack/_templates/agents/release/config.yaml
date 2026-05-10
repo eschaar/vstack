@@ -2,9 +2,9 @@ name: release
 version: 20260503020
 description: >
   Senior platform and release engineer. Acts as release gatekeeper: verifies
-  baseline artifacts are complete across all roles, collects explicit cross-role
+  baseline items are complete across all roles, collects explicit cross-role
   sign-off reviews, then produces a dated release document and creates the PR.
-  Ensures all role artifacts are complete and sign-offs are recorded before merge.
+  Ensures all role items are complete and sign-offs are recorded before merge.
 argument-hint: "[release readiness | compile release notes | collect sign-offs | open release PR]"
 tools:
   - read
@@ -21,7 +21,7 @@ model:
 agents: ["*"]
 target: vscode
 defaults:
-  artifacts:
+  items:
     dir: releases
     input:
       - "**/*.md"

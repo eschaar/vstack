@@ -14,7 +14,7 @@ The VS Code-native AI workflow system for backend engineering.
 
 vstack installs structured agents, skills, instructions, and prompts into `.github/` so GitHub Copilot Agent Mode can run repeatable backend workflows with clear role boundaries.
 
-It provides a fixed role model for end-to-end software delivery: `product`, `architect`, `designer`, `engineer`, `tester`, and `release`.
+It provides six delivery roles for end-to-end software work: `product`, `architect`, `designer`, `engineer`, `tester`, and `release`, coordinated by `planner`.
 
 ## Best for
 
@@ -24,7 +24,7 @@ It provides a fixed role model for end-to-end software delivery: `product`, `arc
 
 ## What you get
 
-- Fixed role model: `product`, `architect`, `designer`, `engineer`, `tester`, `release`
+- Fixed role model: six delivery roles plus a planner coordinator
 - Template-driven install model from `src/vstack/_templates/`
 - Backend-first verification, security, and release discipline
 - One runtime dependency: PyYAML
@@ -197,6 +197,71 @@ vstack install --dry-run
 ```
 
 The summary lists preserved files as `type/name` selectors (e.g. `agent/engineer`). Resolve each conflict with `--force-name type/name` to overwrite, `--adopt-name type/name` to take ownership without overwriting, or `--force` to overwrite everything.
+
+## Reading `.vstack/config.yaml`
+
+- Lines starting with `#` are comments, explanation, or example configuration and are not active.
+- Only uncommented YAML keys are active configuration.
+- To enable an example block, remove `#` from that block and keep valid YAML indentation.
+- After any config change, run `vstack init` to apply it to generated `.github/` artifacts.
+
+## Workflow modes
+
+vstack supports three workflow modes via `.vstack/config.yaml`:
+
+```yaml
+workflow:
+  mode: agentic  # default
+```
+
+After changing `workflow.mode`, regenerate artifacts:
+
+```bash
+vstack init
+```
+
+| Mode      | Behavior                                                     | Planner file  | Worker handoff buttons |
+| --------- | ------------------------------------------------------------ | ------------- | ---------------------- |
+| `agentic` | Planner orchestrates stage progression using subagents       | generated     | omitted                |
+| `manual`  | User progresses stage-by-stage manually                      | not generated | shown                  |
+| `hybrid`  | Both planner orchestration and manual handoffs are available | generated     | shown                  |
+
+Execution semantics:
+
+- `workflow.stages` order is the canonical progression order.
+- `agentic` is stage-sequential by default: planner advances one stage at a time in configured order.
+- Parallelization is still possible inside a stage (independent subtasks), but cross-stage progression remains ordered.
+
+Handoff target semantics:
+
+- `handoffs.prompt` is the transition prompt text.
+- If `handoffs.agent` is omitted, the target defaults to the next role in `workflow.stages`.
+- You can set `handoffs.agent` explicitly to override that default target in `manual`/`hybrid`.
+- In `agentic`, worker handoff buttons are hidden; planner controls progression.
+
+Mode quickstart in Copilot Agent Mode:
+
+| Mode      | Start here               | First prompt example                                    |
+| --------- | ------------------------ | ------------------------------------------------------- |
+| `agentic` | `@planner`               | `@planner Run the workflow for this repository change.` |
+| `manual`  | `@product`               | `@product Define requirements for this change.`         |
+| `hybrid`  | `@planner` or `@product` | `@planner Run the workflow for this repository change.` |
+
+Usage guidance:
+
+- Use `agentic` when you want one deterministic orchestration path.
+- Use `manual` when your team prefers explicit user-controlled stage transitions.
+- Use `hybrid` only when your team intentionally wants both options.
+
+Hybrid operating rule:
+
+- Choose one path per session (planner-led or manual handoffs) and stay on it.
+- Mixing both paths in one session increases the chance of duplicate stage transitions.
+
+Hybrid warning:
+
+- In `hybrid`, users can click handoff buttons while a planner-led flow is also available.
+- This can cause unintended progression jumps or duplicated transitions if your process assumes one strict path.
 
 ## Fast troubleshooting
 

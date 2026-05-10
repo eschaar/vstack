@@ -1,44 +1,51 @@
-"""AgentGenerator — generator for agent artifacts with artifacts-section support.
+"""AgentGenerator — generator for agent artifacts with work-items support.
 
 Import :class:`AgentGenerator` to get a generator pre-configured for the
 ``agents`` artifact type.  The generator extends
 :class:`~vstack.artifacts.generator.GenericArtifactGenerator` with
-per-template placeholder injection that builds the ``## artifacts you use``
-subsections from each agent's ``config.yaml`` ``artifacts:`` block.
+per-template placeholder injection that builds the ``## work items``
+subsections from each agent's ``config.yaml`` ``items:`` block.
 
 Placeholder tokens injected per template:
 
 ``{{AGENT_ARTIFACTS_INPUT}}``
-    Markdown ``### input`` block (header + table) built from ``artifacts.input``,
+    Markdown ``### input`` block (header + table) built from ``items.input``,
     or an empty string when no input entries are configured.
 
 ``{{AGENT_ARTIFACTS_OUTPUT}}``
-    Markdown ``### output`` block (header + table) built from ``artifacts.output``,
+    Markdown ``### output`` block (header + table) built from ``items.output``,
     or an empty string when no output entries are configured.
 
 ``{{AGENT_ARTIFACTS_INPUT_COMMENTS}}``
-    Verbatim text from ``artifacts.input_comments``, or an empty string.
+    Verbatim text from ``items.input_comments``, or an empty string.
 
 ``{{AGENT_ARTIFACTS_OUTPUT_COMMENTS}}``
-    Verbatim text from ``artifacts.output_comments``, or an empty string.
+    Verbatim text from ``items.output_comments``, or an empty string.
 
 Path construction rules
 -----------------------
-Input items in ``artifacts.input`` are relative to :data:`~vstack.constants.ARTIFACTS_DOCS_ROOT`
+Input items in ``items.input`` are relative to :data:`~vstack.constants.ARTIFACTS_DOCS_ROOT`
 (default ``"docs"``), so ``product/**/*.md`` renders as ``docs/product/**/*.md``.
 
-Output items in ``artifacts.output`` are interpreted as follows:
+Output items in ``items.output`` are interpreted as follows:
 
-- When ``artifacts.dir`` is set: items are relative to ``{root}/{dir}/``, e.g.
+- When ``items.dir`` is set: items are relative to ``{root}/{dir}/``, e.g.
   ``overview.md`` → ``docs/architecture/overview.md``.
 - When an item (string or ``path`` key) starts with ``./``, the ``./`` prefix is
   stripped and the remainder is used verbatim — allowing paths outside the docs
   root (e.g. ``./src/**/*``, ``./tests/**/*``).
-- When ``artifacts.dir`` is absent: all output items are used verbatim.
+- When ``items.dir`` is absent: all output items are used verbatim.
+
+Backward compatibility
+----------------------
+Legacy ``artifacts:`` blocks in agent template ``config.yaml`` files are still
+accepted. When both ``items:`` and ``artifacts:`` are present, ``items:`` takes
+precedence.
 """
 
 from __future__ import annotations
 
+import warnings
 from pathlib import Path
 
 from vstack.agents.config import AGENT_TYPE
@@ -49,23 +56,29 @@ from vstack.constants import ARTIFACTS_DOCS_ROOT, TEMPLATES_ROOT
 class AgentGenerator(GenericArtifactGenerator):
     """Generate agent artifacts using the built-in agent type configuration."""
 
+    _legacy_items_block_warned = False
+
     def __init__(
         self,
         templates_root: Path | None = None,
         *,
-        artifacts_root: str = ARTIFACTS_DOCS_ROOT,
+        items_root: str = ARTIFACTS_DOCS_ROOT,
+        artifacts_root: str | None = None,
         workflow_stages: list[dict] | None = None,
+        workflow_mode: str = "agentic",
     ) -> None:
         """Create an agent generator bound to *templates_root*.
 
         Args:
             templates_root: Root directory containing the source templates.
                 When ``None``, the built-in package template root is used.
-            artifacts_root: Root directory for all agent artifacts.  Defaults
+            items_root: Root directory for all agent work-item paths.  Defaults
                 to :data:`~vstack.constants.ARTIFACTS_DOCS_ROOT`.  Override
-                via ``artifacts.root`` in ``.vstack/config.yaml`` to relocate
-                generated artifact paths (e.g. ``"documentation"`` instead of
+                via ``items.root`` in ``.vstack/config.yaml`` to relocate
+                generated item paths (e.g. ``"documentation"`` instead of
                 ``"docs"``).
+            artifacts_root: Deprecated alias for ``items_root``. Retained for
+                backward compatibility.
             workflow_stages: Ordered list of pipeline stage dicts read from
                 ``workflow.stages`` in ``.vstack/config.yaml``.  Each dict has
                 ``role`` and ``gate`` string keys, a ``handoffs`` key containing
@@ -73,15 +86,37 @@ class AgentGenerator(GenericArtifactGenerator):
                 keys, and an optional ``hitl`` string key.  When ``None`` or
                 empty the generator falls back to v3 behaviour: a generic
                 handoff label without an explicit ``agent:`` target.
+            workflow_mode: Workflow execution mode read from
+                ``workflow.mode`` in ``.vstack/config.yaml``. Supported values
+                are ``manual``, ``agentic``, and ``hybrid``. In ``agentic``
+                mode, worker-agent handoff buttons are omitted.
         """
         super().__init__(
             AGENT_TYPE, templates_root if templates_root is not None else TEMPLATES_ROOT
         )
-        self.artifacts_root = artifacts_root
+        if artifacts_root is not None:
+            self.items_root = artifacts_root
+        else:
+            self.items_root = items_root
+        # Backward-compatible attribute used by older tests/callers.
+        self.artifacts_root = self.items_root
         self.workflow_stages: list[dict] = workflow_stages or []
+        self.workflow_mode = workflow_mode.strip().lower()
+
+    def find_templates(self) -> list[Path]:
+        """Return agent template dirs filtered by workflow mode.
+
+        In ``manual`` mode, the planner coordinator agent is not generated.
+        In ``agentic`` and ``hybrid`` modes, planner is generated alongside
+        worker agents.
+        """
+        templates = super().find_templates()
+        if self.workflow_mode != "manual":
+            return templates
+        return [p for p in templates if p.name != "planner"]
 
     def template_partials(self, tmpl_dir: Path) -> dict[str, str]:
-        """Inject per-template artifact placeholder tokens.
+        """Inject per-template work-item placeholder tokens.
 
         Returns a dict with five keys:
         ``AGENT_ARTIFACTS_INPUT``, ``AGENT_ARTIFACTS_OUTPUT``,
@@ -90,18 +125,30 @@ class AgentGenerator(GenericArtifactGenerator):
         """
 
         artifact_config = self.load_artifact_config(tmpl_dir)
-        artifacts = artifact_config.get("artifacts") or {}
+        items = artifact_config.get("items") or {}
 
-        if not isinstance(artifacts, dict):
-            artifacts = {}
+        # Backward compatibility: legacy ``artifacts`` block.
+        if not items:
+            items = artifact_config.get("artifacts") or {}
+            if items and not AgentGenerator._legacy_items_block_warned:
+                warnings.warn(
+                    "Legacy defaults.artifacts is deprecated for agent work items; "
+                    "use defaults.items instead.",
+                    FutureWarning,
+                    stacklevel=2,
+                )
+                AgentGenerator._legacy_items_block_warned = True
 
-        doc_root = self.artifacts_root
-        agent_dir: str = str(artifacts.get("dir", "")).strip()
+        if not isinstance(items, dict):
+            items = {}
 
-        raw_inputs: list = artifacts.get("input", [])
+        doc_root = self.items_root
+        agent_dir: str = str(items.get("dir", "")).strip()
+
+        raw_inputs: list = items.get("input", [])
         if not isinstance(raw_inputs, list):
             raw_inputs = []
-        raw_outputs: list = artifacts.get("output", [])
+        raw_outputs: list = items.get("output", [])
         if not isinstance(raw_outputs, list):
             raw_outputs = []
 
@@ -116,8 +163,8 @@ class AgentGenerator(GenericArtifactGenerator):
         return {
             "AGENT_ARTIFACTS_INPUT": self._build_section("input", input_entries),
             "AGENT_ARTIFACTS_OUTPUT": self._build_section("output", output_entries),
-            "AGENT_ARTIFACTS_INPUT_COMMENTS": str(artifacts.get("input_comments", "") or ""),
-            "AGENT_ARTIFACTS_OUTPUT_COMMENTS": str(artifacts.get("output_comments", "") or ""),
+            "AGENT_ARTIFACTS_INPUT_COMMENTS": str(items.get("input_comments", "") or ""),
+            "AGENT_ARTIFACTS_OUTPUT_COMMENTS": str(items.get("output_comments", "") or ""),
             "AGENT_ARTIFACTS_BASELINE": self._build_baseline_section(baseline_entries),
         }
 
@@ -152,12 +199,16 @@ class AgentGenerator(GenericArtifactGenerator):
         agent_role = tmpl_dir.name
         defaults = self._extract_defaults(config)
         config.pop("defaults", None)
-        # Re-expose artifacts at top level so template_partials can read them
-        # via the standard artifact_config.get("artifacts") path.
-        if "artifacts" not in config:
-            artifacts_from_defaults = defaults.get("artifacts")
-            if artifacts_from_defaults:
-                config["artifacts"] = artifacts_from_defaults
+        # Re-expose items at top level so template_partials can read them.
+        # Fallback to legacy ``artifacts`` for backward compatibility.
+        if "items" not in config:
+            items_from_defaults = defaults.get("items")
+            if items_from_defaults:
+                config["items"] = items_from_defaults
+            elif "artifacts" not in config:
+                artifacts_from_defaults = defaults.get("artifacts")
+                if artifacts_from_defaults:
+                    config["artifacts"] = artifacts_from_defaults
         handoffs_block = defaults.get("handoffs") or {}
         if isinstance(handoffs_block, dict):
             handoff_prompt: str = str(handoffs_block.get("prompt", "") or "")
@@ -190,6 +241,11 @@ class AgentGenerator(GenericArtifactGenerator):
         :returns: List of handoff dicts suitable for frontmatter serialization,
             or an empty list when this is the last stage or no prompts exist.
         """
+        # In agentic mode the planner orchestrates stage progression, so worker
+        # agents should not expose forward handoff buttons.
+        if self.workflow_mode == "agentic" and agent_role != "planner":
+            return []
+
         if not self.workflow_stages:
             # No workflow configured — emit a generic handoff without an
             # explicit ``agent:`` target when a prompt is available, so that
@@ -216,6 +272,19 @@ class AgentGenerator(GenericArtifactGenerator):
         stage_handoffs: list[dict[str, str]] = self.workflow_stages[idx].get("handoffs", [])
         if not isinstance(stage_handoffs, list):
             stage_handoffs = []
+
+        # If workflow stages are configured but this stage has no explicit
+        # handoffs block, fall back to the agent's own default prompt.
+        if not stage_handoffs:
+            if not handoff_prompt.strip():
+                return []
+            return [
+                {
+                    "label": f"Go to next stage: {next_role.capitalize()}",
+                    "agent": next_role,
+                    "prompt": handoff_prompt.strip(),
+                }
+            ]
 
         result: list[dict[str, str]] = []
         agent_override_applied = False
@@ -249,12 +318,12 @@ class AgentGenerator(GenericArtifactGenerator):
     ) -> list[dict[str, str | bool]]:
         """Resolve raw output config items to display-path dicts.
 
-        :param raw_outputs: List of strings or dicts from ``artifacts.output``.
+        :param raw_outputs: List of strings or dicts from ``items.output``.
         :param agent_dir: Subdirectory for this agent (e.g. ``"architecture"``).
             When empty, output paths are used verbatim.
         :returns: List of ``{"path": ..., "notes": ..., "baseline": ...}`` dicts.
         """
-        doc_root = self.artifacts_root
+        doc_root = self.items_root
         result: list[dict[str, str | bool]] = []
         for item in raw_outputs:
             if isinstance(item, str):
@@ -280,8 +349,8 @@ class AgentGenerator(GenericArtifactGenerator):
     def _build_table(self, entries: list[dict[str, str | bool]]) -> str:
         """Build a Markdown table from normalised artifact entry dicts.
 
-        Produces a single-column ``Artifact`` table when no entry has notes,
-        or a two-column ``Artifact | Notes`` table when any entry does.
+        Produces a single-column ``Item`` table when no entry has notes,
+        or a two-column ``Item | Notes`` table when any entry does.
         All rows are padded to equal column widths.
         """
         cells = [f"`{e['path']}`" for e in entries]
@@ -289,10 +358,10 @@ class AgentGenerator(GenericArtifactGenerator):
         has_notes = any(notes_cells)
 
         if has_notes:
-            art_w = max(len("Artifact"), *(len(c) for c in cells))
+            art_w = max(len("Item"), *(len(c) for c in cells))
             notes_w = max(len("Notes"), *(len(n) for n in notes_cells))
             lines = [
-                f"| {'Artifact':<{art_w}} | {'Notes':<{notes_w}} |",
+                f"| {'Item':<{art_w}} | {'Notes':<{notes_w}} |",
                 f"| {'-' * art_w} | {'-' * notes_w} |",
                 *(
                     f"| {cell:<{art_w}} | {note:<{notes_w}} |"
@@ -300,9 +369,9 @@ class AgentGenerator(GenericArtifactGenerator):
                 ),
             ]
         else:
-            col_w = max(len("Artifact"), *(len(c) for c in cells))
+            col_w = max(len("Item"), *(len(c) for c in cells))
             lines = [
-                f"| {'Artifact':<{col_w}} |",
+                f"| {'Item':<{col_w}} |",
                 f"| {'-' * col_w} |",
                 *(f"| {cell:<{col_w}} |" for cell in cells),
             ]
@@ -321,7 +390,7 @@ class AgentGenerator(GenericArtifactGenerator):
     def _build_baseline_section(self, entries: list[dict[str, str | bool]]) -> str:
         """Build the ``### baseline docs you maintain`` subsection.
 
-        Renders a table of output artifacts flagged with ``baseline: true``.
+        Renders a table of output items flagged with ``baseline: true``.
         Returns an empty string when no baseline entries are present.
 
         :param entries: Resolved output entries where ``baseline`` is ``True``.

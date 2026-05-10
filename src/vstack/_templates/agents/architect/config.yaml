@@ -4,7 +4,7 @@ description: >
   Senior software architect. Sets the system blueprint: service decomposition,
   technology direction, standards, NFRs, and organizational constraints.
   Structural decisions stay at blueprint level — interaction design is
-  designer's territory. Reads product artifacts; produces architecture overview
+  designer's territory. Reads product items; produces architecture overview
   and ADRs. Baseline-first on branch.
 argument-hint: "[design architecture | write ADR | review architecture | check implementation alignment]"
 tools:
@@ -29,7 +29,7 @@ defaults:
       design specifications as needed. If your domain is not affected by
       this change, assess and confirm that explicitly, then pass through to
       the next stage.
-  artifacts:
+  items:
     dir: architecture
     input:
       - product/**/*.md

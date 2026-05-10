@@ -10,8 +10,12 @@
 # This file is committed to git. It expresses stable project preferences —
 # editing it is a deliberate choice that affects all future vstack init runs.
 
-# Selective install exclusions — remove or comment out to install everything.
+# -----------------------------------------------------------------------------
+# SELECTIVE INSTALL EXCLUSIONS
 #
+# Remove or comment out to install everything.
+# -----------------------------------------------------------------------------
+
 # exclude:
 #   skills:
 #     - terraform
@@ -21,16 +25,49 @@
 #   instructions: all
 #   prompts: all
 
-# Root directory for generated agent artifact paths.
-# Default: docs
+# -----------------------------------------------------------------------------
+# ROOT DIRECTORY FOR GENERATED WORK ITEMS
 #
+# Default: docs
+# -----------------------------------------------------------------------------
+
+# Root directory for generated agent work-item paths.
+#
+# items:
+#   root: docs
+#
+# Legacy fallback (still supported):
 # artifacts:
 #   root: docs
 
-# Pipeline workflow — seeded by vstack install, owned by this project.
+# -----------------------------------------------------------------------------
+# PIPELINE WORKFLOW
 #
-# Edit stages, gates, hitl policy, and handoff prompts to match your team's process.
-# version allows vstack to warn on schema changes after upgrades.
+# Seeded by vstack install, owned by this project.
+#
+# mode: agentic — default; planner orchestrates stage progression; worker handoff buttons are omitted
+# mode: manual  — keep worker handoff buttons; planner agent is not generated
+# mode: hybrid  — support both (planner optional + worker handoffs)
+#
+# Execution order:
+# - Stage order in workflow.stages is the canonical progression order.
+# - agentic is stage-sequential by default (planner advances per stage in order).
+# - Parallel work can still happen inside a stage (for independent subtasks),
+#   but cross-stage progression remains ordered by workflow.stages.
+#
+# Handoffs:
+# - handoffs.prompt is the message used when transitioning to the next stage.
+# - If handoffs.agent is omitted, target defaults to the next role in workflow.stages.
+# - By default, leave handoffs unset and let each agent's defaults drive prompts.
+# - Add overrides only when your team needs custom wording.
+#   Example:
+#     handoffs:
+#       prompt: "<replace with your team-specific transition prompt>"
+# - Keep handoffs.agent unset in normal use so workflow order stays canonical.
+# - Explicit handoffs.agent overrides are advanced/exceptional and usually unnecessary.
+# - In agentic mode, worker handoff buttons are hidden; planner drives progression.
+# - handoffs.prompt values remain in this file in agentic mode for compatibility
+#   when switching to manual or hybrid.
 #
 # gate: required   — stage always runs
 # gate: optional   — stage may be skipped when its domain is unaffected
@@ -40,57 +77,42 @@
 # hitl: on-change  — pipeline pauses only when the stage made changes (default for optional)
 # hitl: never      — pipeline continues without human approval (explicit opt-out)
 #
+# Notes:
+# - Lines starting with # are documentation/examples and are not active config.
+# - Active configuration starts below at workflow:.
+# - After edits, run: vstack init
+#
+# Minimal active config example:
 # workflow:
+#   mode: agentic
 #   version: 1
 #   stages:
 #     - role: product
 #       gate: required
 #       hitl: always
-#       handoffs:
-#         prompt: >
-#           Product outputs are approved. Assess the current state and produce or
-#           update the architecture as needed. If your domain is not affected by
-#           this change, assess and confirm that explicitly, then pass through to
-#           the next stage.
-#     - role: architect
-#       gate: required
-#       hitl: always
-#       handoffs:
-#         prompt: >
-#           Architecture outputs are approved. Assess the current state and produce
-#           design specifications as needed. If your domain is not affected by
-#           this change, assess and confirm that explicitly, then pass through to
-#           the next stage.
-#     - role: designer
-#       gate: optional
-#       hitl: on-change
-#       handoffs:
-#         prompt: >
-#           Design outputs are approved. Assess the current state and implement
-#           code and tests as needed. If your domain is not affected by this
-#           change, assess and confirm that explicitly, then pass through to
-#           engineering. If working on an issue, document findings in RCA or
-#           post-mortem artifacts as relevant.
-#     - role: engineer
-#       gate: required
-#       hitl: always
-#       handoffs:
-#         prompt: >
-#           Implementation is approved. Assess the current state and verify the
-#           implementation as needed — run tests, security checks, and performance
-#           analysis. If this is an issue (bug, problem, or incident), also produce
-#           or update an RCA and, if stakeholder impact is significant, a
-#           post-mortem.
-#     - role: tester
-#       gate: required
-#       hitl: always
-#       handoffs:
-#         prompt: >
-#           Verification outputs are approved. Assess the current state and prepare
-#           the release as needed. Create and/or update the relevant artifacts if
-#           needed, as well as any sign-offs.
 #     - role: release
 #       gate: required
 #       hitl: always
-#       handoffs:
-#         prompt: ""
+#
+workflow:
+  mode: agentic
+  version: 1
+  stages:
+    - role: product
+      gate: required
+      hitl: always
+    - role: architect
+      gate: required
+      hitl: always
+    - role: designer
+      gate: optional
+      hitl: on-change
+    - role: engineer
+      gate: required
+      hitl: always
+    - role: tester
+      gate: required
+      hitl: always
+    - role: release
+      gate: required
+      hitl: always

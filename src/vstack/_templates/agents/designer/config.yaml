@@ -4,7 +4,7 @@ description: >
   Senior interaction designer. Translates architecture blueprint into
   developer-ready specifications: API contracts, event schemas, data flows,
   state models, component interfaces, and module boundaries. Reads architecture
-  artifacts; produces design overview. Baseline-first on branch.
+  items; produces design overview. Baseline-first on branch.
 argument-hint: "[write design | API contracts | event and data flows | state models | interaction review]"
 tools:
   - read
@@ -27,8 +27,8 @@ defaults:
       code and tests as needed. If your domain is not affected by this
       change, assess and confirm that explicitly, then pass through to
       engineering. If working on an issue, document findings in RCA or
-      post-mortem artifacts as relevant.
-  artifacts:
+      post-mortem items as relevant.
+  items:
     dir: design
     input:
       - architecture/**/*.md

@@ -19,6 +19,57 @@ For authoring boundaries between reusable guidance mechanisms:
 
 ______________________________________________________________________
 
+## workflow modes
+
+Workflow mode is configured in `.vstack/config.yaml` at `workflow.mode`.
+
+Default mode:
+
+- `agentic`
+
+Mode semantics:
+
+| Mode      | Primary progression model                      | Planner generated | Worker handoff buttons |
+| --------- | ---------------------------------------------- | ----------------- | ---------------------- |
+| `agentic` | Planner coordinates stage execution            | yes               | no                     |
+| `manual`  | User manually advances between role stages     | no                | yes                    |
+| `hybrid`  | Both planner orchestration and manual handoffs | yes               | yes                    |
+
+Execution semantics:
+
+- `workflow.stages` order is the canonical progression order.
+- `agentic` is stage-sequential by default: planner advances one stage at a time in configured order.
+- Parallelization may still happen inside a stage (independent subtasks), but cross-stage progression remains ordered.
+
+Handoff target semantics:
+
+- `handoffs.prompt` defines the transition prompt text.
+- If `handoffs.agent` is omitted, the target defaults to the next role in `workflow.stages`.
+- `handoffs.agent` may be set explicitly to override default targeting in `manual`/`hybrid`.
+- In `agentic`, worker handoff buttons are omitted; planner controls progression.
+
+```mermaid
+flowchart LR
+  A[workflow.mode] --> B{mode}
+  B --> C[agentic]
+  B --> D[manual]
+  B --> E[hybrid]
+  C --> C1[planner.agent.md generated]
+  C --> C2[worker handoffs omitted]
+  D --> D1[planner.agent.md omitted]
+  D --> D2[worker handoffs generated]
+  E --> E1[planner.agent.md generated]
+  E --> E2[worker handoffs generated]
+```
+
+Hybrid caution:
+
+- Hybrid intentionally exposes two progression paths in the UI.
+- Users can trigger stage changes via planner orchestration and via role handoff buttons.
+- If your team wants one strict path, use `agentic` instead of `hybrid`.
+
+______________________________________________________________________
+
 ## repository automation (GitHub Actions)
 
 The repository uses a split workflow model so each automation concern is isolated
@@ -39,10 +90,10 @@ rules, see `docs/design/cicd.md`.
 
 ______________________________________________________________________
 
-## current execution model — single-call
+## manual execution model — single-call
 
-The user invokes a role or skill from Copilot Agent Mode. Copilot loads the
-relevant installed artifact and executes the full workflow in a single model call.
+The user invokes a role or skill from Copilot Agent Mode and manually progresses.
+Copilot loads the relevant installed artifact and executes in a single model call.
 
 ```mermaid
 flowchart LR
@@ -57,15 +108,15 @@ flowchart LR
 - Fast, low friction
 - All context fits in one call
 - Limited to skills the user explicitly invokes
-- No automatic hand-off between roles
+- Progression is user-driven between role calls
 
 ______________________________________________________________________
 
-## stage-gated role pipeline (target operating model)
+## stage-gated role pipeline (planner orchestration)
 
-Each role is a separate model call. Output artifacts from one role become the
-input context for the next role, and progression only happens after explicit
-user approval.
+Each role is a separate model call dispatched by the planner. Output artifacts
+from one role become the input context for the next role, and progression only
+happens after explicit user approval according to gate policy.
 
 ```mermaid
 flowchart TD
