@@ -52,4 +52,4 @@ List security-specific risks not covered above: auth boundaries, sensitive data 
 - one-sentence rationale
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"architecture-risk","artifact_type":"prompt","artifact_version":"20260502007","generator":"vstack","vstack_version":"3.1.1"} -->
+<!-- VSTACK-META: {"artifact_name":"architecture-risk","artifact_type":"prompt","artifact_version":"20260502007","generator":"vstack","vstack_version":"0.0.0.post3.dev0+df3fe6e"} -->

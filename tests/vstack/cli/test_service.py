@@ -61,10 +61,10 @@ class TestCommandService:
         assert svc.label(other) == str(other)
 
     def test_cli_class_uses_known_types(self) -> None:
-        """Service generators cover the four known artifact families."""
+        """Service generators cover all known artifact families."""
         svc = CommandService(templates_root=TEMPLATES_ROOT)
         names = {g.config.type_name for g in svc.generators}
-        assert names == {"skill", "agent", "instruction", "prompt"}
+        assert names == {"skill", "agent", "hook", "instruction", "prompt"}
 
     def test_custom_items_root_is_passed_to_agent_generator(self, tmp_path: Path) -> None:
         """items_root kwarg is forwarded to the AgentGenerator instance."""
@@ -1327,6 +1327,31 @@ class TestCommandService:
                         name="missing-skill",
                         file="skills/missing-skill/SKILL.md",
                         version="1.0.0",
+                    )
+                ]
+            },
+        )
+
+        result = VerifyCommand._verify_manifest_metadata(
+            svc, gen, manifest_data, tmp_path / ".github"
+        )
+        assert result is None
+
+    def test_verify_manifest_metadata_skips_types_without_footer(self, tmp_path: Path) -> None:
+        """VerifyCommand._verify_manifest_metadata skips artifacts that disable footers."""
+        svc = CommandService(templates_root=TEMPLATES_ROOT)
+        gen = svc.gen_for("hook")
+        assert gen is not None
+
+        manifest_data = Manifest(
+            vstack_version=VERSION,
+            installed_at="2026-01-01T00:00:00Z",
+            artifacts={
+                "hooks": [
+                    ArtifactEntry(
+                        name="session-audit",
+                        file="hooks/session-audit.json",
+                        version="20260510001",
                     )
                 ]
             },

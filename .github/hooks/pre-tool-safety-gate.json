@@ -1,0 +1,14 @@
+{
+  "preToolUse": [
+    {
+      "type": "command",
+      "command": "echo \"[vstack] safety gate: review destructive operations before execution\""
+    }
+  ],
+  "errorOccurred": [
+    {
+      "type": "command",
+      "command": "echo \"[vstack] safety gate: execution error captured\""
+    }
+  ]
+}

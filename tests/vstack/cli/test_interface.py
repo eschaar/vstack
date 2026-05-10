@@ -121,7 +121,7 @@ class TestCommandLineInterface:
         assert len(command.calls) == 1
         assert command.calls[0].args is args
         assert command.calls[0].install_dir == tmp_path / ".github"
-        assert command.calls[0].only == ["agent", "instruction", "prompt", "skill"]
+        assert command.calls[0].only == ["agent", "hook", "instruction", "prompt", "skill"]
 
     def test_resolve_only_for_scope_rejects_disallowed_global_types(self) -> None:
         """Global mode rejects unsupported type filters with a helpful message."""

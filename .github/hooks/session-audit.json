@@ -1,0 +1,14 @@
+{
+  "sessionStart": [
+    {
+      "type": "command",
+      "command": "echo \"[vstack] session started\""
+    }
+  ],
+  "sessionEnd": [
+    {
+      "type": "command",
+      "command": "echo \"[vstack] session finished\""
+    }
+  ]
+}

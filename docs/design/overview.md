@@ -326,6 +326,7 @@ The tables below are the authoritative quick-reference for implementers. For ful
 guidance, field semantics, examples, and template structure, see the dedicated docs:
 
 - Agents → [agents.md](./agents.md)
+- Hooks → [hooks.md](./hooks.md)
 - Skills → [skills.md](./skills.md)
 - Instructions → [instructions.md](./instructions.md)
 
@@ -419,7 +420,8 @@ Every generated artifact ends with this block when `auto_gen_footer=True`:
 
 - Human-readable line: constant in `src/vstack/artifacts/constants.py`
 - Machine-readable `VSTACK-META` line: emitted by `GenericArtifactGenerator._build_footer`
-- All 4 artifact types have `auto_gen_footer=True`
+- Markdown artifact types (`skill`, `agent`, `instruction`, `prompt`) use
+  `auto_gen_footer=True`; JSON hooks use `auto_gen_footer=False`
 
 ______________________________________________________________________
 
