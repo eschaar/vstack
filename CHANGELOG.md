@@ -2,6 +2,13 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.1.1](https://github.com/eschaar/vstack/compare/3.1.0...3.1.1) (2026-05-10)
+
+
+### Fixes
+
+* **ci:** install wheel dependencies in publish smoke test ([8fa6502](https://github.com/eschaar/vstack/commit/8fa6502609184075cd2771e724ff3e7758b3a1df))
+
 ## [3.1.0](https://github.com/eschaar/vstack/compare/3.0.0...3.1.0) (2026-05-09)
 
 
