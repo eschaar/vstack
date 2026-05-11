@@ -4,7 +4,10 @@ metadata:
   name: post-edit-format
   description: |
     Code quality enforcement hook. Runs 'make format' when VSTACK_HOOKS_MODE=enforce
-    on edit-like tools. Logs all edit events to audit trail regardless of mode.
+    on edit-like tools. Central audit logging is handled by session-audit.
+  log:
+    name: hook-quality-alerts.log
+    retention_days: 7
   purpose: quality
   security_level: low
   mode_default: audit
@@ -18,26 +21,32 @@ hooks:
   postToolUse:
     - type: command
       description: |
-        Log edit events and optionally run format in enforce mode.
+        Optionally run format in enforce mode; write alerts only on failures.
       bash: |
-        mkdir -p .vstack/logs
         input="$(cat)"
-        printf '%s\n' "$input" >> .vstack/logs/hook-post-edit.jsonl
+        log_name="${VSTACK_HOOK_LOG_NAME:-hook-quality-alerts.log}"
+        log_root="${VSTACK_HOOK_LOG_DIR:-.vstack/logs}"
+        log_dir="$log_root/$(date -u +%Y%m%d)"
+        mkdir -p "$log_dir"
+        log_path="$log_dir/$log_name"
         mode="${VSTACK_HOOKS_MODE:-audit}"
         if [ "$mode" != "enforce" ]; then
           exit 0
         fi
         if printf '%s' "$input" | grep -Eq '"toolName"[[:space:]]*:[[:space:]]*"(edit|create|write|replace)"'; then
           if [ -f Makefile ] && command -v make >/dev/null 2>&1; then
-            make format >/dev/null 2>&1 || printf '%s\n' 'format-run-failed' >> .vstack/logs/hook-quality-alerts.log
+            make format >/dev/null 2>&1 || printf '%s\n' 'format-run-failed' >> "$log_path"
           else
-            printf '%s\n' 'format-skipped-missing-make-or-makefile' >> .vstack/logs/hook-quality-alerts.log
+            printf '%s\n' 'format-skipped-missing-make-or-makefile' >> "$log_path"
           fi
         fi
       powershell: |
         $inputText = [Console]::In.ReadToEnd()
-        New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null
-        Add-Content -Path .vstack/logs/hook-post-edit.jsonl -Value $inputText
+        $logName = if ($env:VSTACK_HOOK_LOG_NAME) { $env:VSTACK_HOOK_LOG_NAME } else { 'hook-quality-alerts.log' }
+        $logRoot = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { '.vstack/logs' }
+        $logDir = Join-Path $logRoot (Get-Date).ToUniversalTime().ToString('yyyyMMdd')
+        New-Item -ItemType Directory -Force -Path $logDir | Out-Null
+        $logPath = Join-Path $logDir $logName
         $mode = if ($env:VSTACK_HOOKS_MODE) { $env:VSTACK_HOOKS_MODE } else { 'audit' }
         if ($mode -ne 'enforce') {
           exit 0
@@ -51,10 +60,10 @@ hooks:
           if ((Test-Path Makefile) -and (Get-Command make -ErrorAction SilentlyContinue)) {
             make format *> $null
             if ($LASTEXITCODE -ne 0) {
-              Add-Content -Path .vstack/logs/hook-quality-alerts.log -Value 'format-run-failed'
+              Add-Content -Path $logPath -Value 'format-run-failed'
             }
           } else {
-            Add-Content -Path .vstack/logs/hook-quality-alerts.log -Value 'format-skipped-missing-make-or-makefile'
+            Add-Content -Path $logPath -Value 'format-skipped-missing-make-or-makefile'
           }
         }
       cwd: "."

@@ -58,13 +58,28 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            await github.rest.pulls.createReview({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number,
-              event: "APPROVE",
-              body: "Auto-approved for safe Dependabot update policy."
-            })
+            try {
+              await github.rest.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                event: "APPROVE",
+                body: "Auto-approved for safe Dependabot update policy."
+              })
+            } catch (error) {
+              const msg = String(error.message || "")
+              if (
+                error.status === 422 &&
+                msg.includes("GitHub Actions is not permitted to approve pull requests")
+              ) {
+                core.warning(
+                  "Skipping auto-approve: repository setting blocks workflow approvals. " +
+                  "Enable 'Allow GitHub Actions to create and approve pull requests' to restore this step."
+                )
+              } else {
+                core.setFailed("Could not auto-approve eligible Dependabot PR. " + msg)
+              }
+            }
 
       - name: Update branch for eligible PR
         if: steps.decision.outputs.should_automerge == 'true'

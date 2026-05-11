@@ -25,6 +25,7 @@ Their jobs are merge-blocking when configured as required status checks in the `
 | `.github/workflows/check.yml`     | push to non-main branches, pull_request to `main` | Single-version unit tests (py3.11)                                                 |
 | `.github/workflows/verify.yml`    | pull_request to `main`                            | Cross-version test matrix (py3.11–3.14) and artifact install verify                |
 | `.github/workflows/security.yml`  | pull_request to `main`                            | Dependency vulnerability scan and secret scan                                      |
+| `.github/workflows/codeql.yml`    | push/pull_request to `main` + weekly schedule     | Code scanning for GitHub Actions and Python                                        |
 | `.github/workflows/automerge.yml` | pull_request_target to `main`                     | Dependabot auto-approve/auto-merge policy gate                                     |
 | `.github/workflows/release.yml`   | push to `main`, workflow_dispatch                 | Release Please orchestration: release PR lifecycle, changelog, tag, GitHub release |
 | `.github/workflows/publish.yml`   | release `published`                               | Build artifacts from release tag and publish to PyPI                               |
@@ -186,13 +187,15 @@ Configure via **Settings → Rules → Rulesets** on GitHub.
 
 - **Require a pull request before merging**: enabled.
 - **Required approvals**: at least 1.
-- **Require status checks to pass**: add the following checks:
-  - `Commit / Validate Commit Messages`
-  - `Commit / Format Lint Typecheck`
-  - `Check / Unit Tests`
-  - `Verify / Tests (py3.11)`, `Verify / Tests (py3.12)`, `Verify / Tests (py3.13)`, `Verify / Tests (py3.14)`
-  - `Verify / Artifact Install Verify`
-  - `Security / Dependency and Secret Scan`
+- **Require status checks to pass**.
+- Required checks:
+- `Commit / Validate Commit Messages`
+- `Commit / Format Lint Typecheck`
+- `Check / Unit Tests`
+- `Verify / Tests (py3.11)`, `Verify / Tests (py3.12)`, `Verify / Tests (py3.13)`, `Verify / Tests (py3.14)`
+- `Verify / Artifact Install Verify`
+- `Security / Dependency and Secret Scan`
+- `CodeQL / Analyze (actions)`, `CodeQL / Analyze (python)`
 - Release PRs created by the GitHub App token (`vstack-release-bot[bot]`) trigger `pull_request`
   events normally — these checks run on release PRs the same as on any other PR.
 - **Allowed merge methods**: must include **Squash** — required for `automerge.yml` to enable auto-merge for Dependabot PRs.
@@ -247,6 +250,7 @@ commit. No manual tracking is needed.
 - `.github/workflows/check.yml`
 - `.github/workflows/verify.yml`
 - `.github/workflows/security.yml`
+- `.github/workflows/codeql.yml`
 - `.github/workflows/automerge.yml`
 - `.github/workflows/release.yml`
 - `.github/workflows/publish.yml`

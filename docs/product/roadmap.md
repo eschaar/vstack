@@ -164,10 +164,11 @@ GitHub Copilot agents support a repository-level hooks mechanism: shell commands
 vstack now provides installable repository hook templates for quality-gate patterns:
 
 - **Pre-tool safety gate** (`preToolUse`) — block or log destructive operations before they run
-- **Session audit log** (`sessionStart` / `sessionEnd`) — record session boundaries with timestamp and working directory
-- **Auto-format on edit** (`postToolUse`) — trigger `ruff format`, `terraform fmt`, `mdformat` after file edits
-- **Commit policy check** (`postToolUse`) — run `cchk` or commit-message lint after `git commit` tool calls
-- **Security scan on push** (`postToolUse`) — run `gitleaks` or `detect-secrets` after repository mutations
+- **Session audit log** (`sessionStart` / `sessionEnd` / `userPromptSubmitted` / `preToolUse` / `postToolUse`) — record session boundaries and lightweight prompt/tool telemetry
+- **Log retention cleanup** (`sessionStart`) — prune old dated log directories based on retention settings
+- **Auto-format on edit** (`postToolUse`) — optionally run `make format` in enforce mode
+- **Markdown quality check** (`postToolUse`) — run markdown/work-item formatting checks for docs and templates
+- **Post-commit security scan** (`postToolUse` / `sessionEnd`) — run staged secret checks with optional `gitleaks` in enforce mode
 
 Implemented:
 
@@ -181,8 +182,10 @@ Implemented:
 Shipped default hook set:
 
 - `session-audit`
+- `log-retention-cleanup`
 - `pre-tool-safety-gate`
 - `post-edit-format`
+- `post-edit-markdown-quality`
 - `post-commit-security-scan`
 
 Migration path:

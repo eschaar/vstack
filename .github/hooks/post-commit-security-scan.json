@@ -4,21 +4,11 @@
     "postToolUse": [
       {
         "type": "command",
-        "description": "Check staged diffs for secrets and log alerts to audit trail.\n",
-        "bash": "mkdir -p .vstack/logs\ninput=\"$(cat)\"\nprintf '%s\\n' \"$input\" >> .vstack/logs/hook-post-commit.jsonl\nif ! printf '%s' \"$input\" | grep -Eiq 'git (commit|push|merge|rebase)'; then\n  exit 0\nfi\nif git rev-parse --git-dir >/dev/null 2>&1 && \\\n   git diff --cached 2>/dev/null | grep -Eiq 'AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36,}|-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----'; then\n  printf '%s\\n' 'possible-secrets-detected-in-staged-diff' >> .vstack/logs/hook-security-alerts.log\nfi\nif [ \"${VSTACK_HOOKS_MODE:-audit}\" = \"enforce\" ]; then\n  if command -v gitleaks >/dev/null 2>&1; then\n    gitleaks dir . --no-banner --redact >/dev/null 2>&1 || printf '%s\\n' 'gitleaks-reported-findings' >> .vstack/logs/hook-security-alerts.log\n  else\n    printf '%s\\n' 'gitleaks-not-installed' >> .vstack/logs/hook-security-alerts.log\n  fi\nfi\n",
-        "powershell": "$inputText = [Console]::In.ReadToEnd()\nNew-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null\nAdd-Content -Path .vstack/logs/hook-post-commit.jsonl -Value $inputText\nif ($inputText -notmatch 'git (commit|push|merge|rebase)') {\n  exit 0\n}\nif ((git rev-parse --git-dir 2>$null) -and (git diff --cached | Select-String -Pattern 'AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36,}|-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----' -Quiet)) {\n  Add-Content -Path .vstack/logs/hook-security-alerts.log -Value 'possible-secrets-detected-in-staged-diff'\n}\n$mode = if ($env:VSTACK_HOOKS_MODE) { $env:VSTACK_HOOKS_MODE } else { 'audit' }\nif ($mode -eq 'enforce') {\n  if (Get-Command gitleaks -ErrorAction SilentlyContinue) {\n    gitleaks dir . --no-banner --redact *> $null\n    if ($LASTEXITCODE -ne 0) {\n      Add-Content -Path .vstack/logs/hook-security-alerts.log -Value 'gitleaks-reported-findings'\n    }\n  } else {\n    Add-Content -Path .vstack/logs/hook-security-alerts.log -Value 'gitleaks-not-installed'\n  }\n}\n",
+        "description": "Check staged diffs for secrets and log only security alerts.\n",
+        "bash": "input=\"$(cat)\"\nlog_name=\"${VSTACK_HOOK_LOG_NAME:-hook-security-alerts.log}\"\nlog_root=\"${VSTACK_HOOK_LOG_DIR:-.vstack/logs}\"\nlog_dir=\"$log_root/$(date -u +%Y%m%d)\"\nmkdir -p \"$log_dir\"\nlog_path=\"$log_dir/$log_name\"\nif ! printf '%s' \"$input\" | grep -Eiq 'git (commit|push|merge|rebase)'; then\n  exit 0\nfi\nif git rev-parse --git-dir >/dev/null 2>&1 && \\\n   git diff --cached 2>/dev/null | grep -Eiq 'AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36,}|-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----'; then\n   printf '%s\\n' 'possible-secrets-detected-in-staged-diff' >> \"$log_path\"\nfi\nif [ \"${VSTACK_HOOKS_MODE:-audit}\" = \"enforce\" ]; then\n  if command -v gitleaks >/dev/null 2>&1; then\n    gitleaks dir . --no-banner --redact >/dev/null 2>&1 || printf '%s\\n' 'gitleaks-reported-findings' >> \"$log_path\"\n  else\n    printf '%s\\n' 'gitleaks-not-installed' >> \"$log_path\"\n  fi\nfi\n",
+        "powershell": "$inputText = [Console]::In.ReadToEnd()\n$logName = if ($env:VSTACK_HOOK_LOG_NAME) { $env:VSTACK_HOOK_LOG_NAME } else { 'hook-security-alerts.log' }\n$logRoot = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { '.vstack/logs' }\n$logDir = Join-Path $logRoot (Get-Date).ToUniversalTime().ToString('yyyyMMdd')\nNew-Item -ItemType Directory -Force -Path $logDir | Out-Null\n$logPath = Join-Path $logDir $logName\nif ($inputText -notmatch 'git (commit|push|merge|rebase)') {\n  exit 0\n}\nif ((git rev-parse --git-dir 2>$null) -and (git diff --cached | Select-String -Pattern 'AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36,}|-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----' -Quiet)) {\n   Add-Content -Path $logPath -Value 'possible-secrets-detected-in-staged-diff'\n}\n$mode = if ($env:VSTACK_HOOKS_MODE) { $env:VSTACK_HOOKS_MODE } else { 'audit' }\nif ($mode -eq 'enforce') {\n  if (Get-Command gitleaks -ErrorAction SilentlyContinue) {\n    gitleaks dir . --no-banner --redact *> $null\n    if ($LASTEXITCODE -ne 0) {\n      Add-Content -Path $logPath -Value 'gitleaks-reported-findings'\n    }\n  } else {\n    Add-Content -Path $logPath -Value 'gitleaks-not-installed'\n  }\n}\n",
         "cwd": ".",
         "timeoutSec": 60
-      }
-    ],
-    "sessionEnd": [
-      {
-        "type": "command",
-        "description": "Log session end for security scanning completeness.\n",
-        "bash": "mkdir -p .vstack/logs\ninput=\"$(cat)\"\nprintf '%s\\n' \"$input\" >> .vstack/logs/hook-session-end-security.jsonl\n",
-        "powershell": "New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null\n$inputText = [Console]::In.ReadToEnd()\nAdd-Content -Path .vstack/logs/hook-session-end-security.jsonl -Value $inputText\n",
-        "cwd": ".",
-        "timeoutSec": 10
       }
     ]
   }

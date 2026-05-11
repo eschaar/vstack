@@ -108,6 +108,9 @@ ______________________________________________________________________
 
 ## Example: Complete Hook Template
 
+This is a minimal example to show the schema shape. Production hooks in vstack also
+use a dated log directory pattern and dedicated retention cleanup logic.
+
 ```yaml
 version: 20260510003
 
@@ -193,7 +196,15 @@ bash: |
 - `VSTACK_HOOKS_MODE` (string: `audit` | `enforce`)
   - Default: `audit` if unset
   - User can override in session
-- `.vstack/logs/` for structured JSONL audit output
+- `VSTACK_HOOK_LOG_DIR` (string path)
+  - Default: `.vstack/logs`
+  - Hooks write under dated directories: `<log_root>/YYYYMMDD/`
+- `VSTACK_HOOKS_LOG_RETENTION_DAYS` (positive integer)
+  - Default: `7`
+  - Used by `log-retention-cleanup` to prune older dated directories
+- `VSTACK_HOOKS_CLEANUP_LOG` (`0` | `1`)
+  - Default: `0`
+  - When set to `1`, retention hook emits cleanup summary logs even when no deletions occur
 - `.vstack/config.yaml` available for shared settings
 
 ______________________________________________________________________

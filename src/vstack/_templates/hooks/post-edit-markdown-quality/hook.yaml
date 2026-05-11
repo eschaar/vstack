@@ -3,9 +3,12 @@ version: 20260510004
 metadata:
   name: post-edit-markdown-quality
   description: |
-    vstack-oriented markdown/work-item quality hook. Logs markdown-related edits
+    vstack-oriented markdown/work-item quality hook.
     and, in enforce mode, runs markdown formatting targets when docs, ADRs,
     prompts, instructions, or template markdown content appear in the tool payload.
+  log:
+    name: hook-markdown-quality-alerts.log
+    retention_days: 7
   purpose: quality
   security_level: low
   mode_default: audit
@@ -19,11 +22,14 @@ hooks:
   postToolUse:
     - type: command
       description: |
-        Log markdown-oriented edit events and optionally run markdown formatting.
+        Run markdown formatting in enforce mode and log only failures/skips.
       bash: |
-        mkdir -p .vstack/logs
         input="$(cat)"
-        printf '%s\n' "$input" >> .vstack/logs/hook-markdown-quality.jsonl
+        log_name="${VSTACK_HOOK_LOG_NAME:-hook-markdown-quality-alerts.log}"
+        log_root="${VSTACK_HOOK_LOG_DIR:-.vstack/logs}"
+        log_dir="$log_root/$(date -u +%Y%m%d)"
+        mkdir -p "$log_dir"
+        log_path="$log_dir/$log_name"
         mode="${VSTACK_HOOKS_MODE:-audit}"
         if [ "$mode" != "enforce" ]; then
           exit 0
@@ -34,14 +40,17 @@ hooks:
         if [ -f Makefile ] && command -v make >/dev/null 2>&1; then
           make markdown-format >/dev/null 2>&1 || \
             make format >/dev/null 2>&1 || \
-            printf '%s\n' 'markdown-format-run-failed' >> .vstack/logs/hook-markdown-quality-alerts.log
+            printf '%s\n' 'markdown-format-run-failed' >> "$log_path"
         else
-          printf '%s\n' 'markdown-format-skipped-missing-make-or-makefile' >> .vstack/logs/hook-markdown-quality-alerts.log
+          printf '%s\n' 'markdown-format-skipped-missing-make-or-makefile' >> "$log_path"
         fi
       powershell: |
         $inputText = [Console]::In.ReadToEnd()
-        New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null
-        Add-Content -Path .vstack/logs/hook-markdown-quality.jsonl -Value $inputText
+        $logName = if ($env:VSTACK_HOOK_LOG_NAME) { $env:VSTACK_HOOK_LOG_NAME } else { 'hook-markdown-quality-alerts.log' }
+        $logRoot = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { '.vstack/logs' }
+        $logDir = Join-Path $logRoot (Get-Date).ToUniversalTime().ToString('yyyyMMdd')
+        New-Item -ItemType Directory -Force -Path $logDir | Out-Null
+        $logPath = Join-Path $logDir $logName
         $mode = if ($env:VSTACK_HOOKS_MODE) { $env:VSTACK_HOOKS_MODE } else { 'audit' }
         if ($mode -ne 'enforce') {
           exit 0
@@ -55,10 +64,10 @@ hooks:
             make format *> $null
           }
           if ($LASTEXITCODE -ne 0) {
-            Add-Content -Path .vstack/logs/hook-markdown-quality-alerts.log -Value 'markdown-format-run-failed'
+            Add-Content -Path $logPath -Value 'markdown-format-run-failed'
           }
         } else {
-          Add-Content -Path .vstack/logs/hook-markdown-quality-alerts.log -Value 'markdown-format-skipped-missing-make-or-makefile'
+           Add-Content -Path $logPath -Value 'markdown-format-skipped-missing-make-or-makefile'
         }
       cwd: "."
       timeoutSec: 30

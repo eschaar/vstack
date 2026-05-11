@@ -45,7 +45,13 @@ class CommandService:
         workflow_stages: list[dict[str, str]] | None = None,
         workflow_mode: str = "agentic",
         hook_default_mode: str = "audit",
+        hook_default_log_level: str = "minimal",
+        hook_log_retention_days: int = 7,
+        hook_log_dir: str = ".vstack/logs",
         hook_mode_overrides: dict[str, str] | None = None,
+        hook_log_level_overrides: dict[str, str] | None = None,
+        hook_log_name_overrides: dict[str, str] | None = None,
+        hook_log_retention_days_overrides: dict[str, int] | None = None,
         disabled_hook_names: list[str] | None = None,
     ) -> None:
         """Create generators for all known artifact families.
@@ -85,7 +91,13 @@ class CommandService:
             else HookGenerator(
                 templates_root,
                 default_mode=hook_default_mode,
+                default_log_level=hook_default_log_level,
+                default_log_retention_days=hook_log_retention_days,
+                default_log_dir=hook_log_dir,
                 mode_overrides=hook_mode_overrides,
+                log_level_overrides=hook_log_level_overrides,
+                log_name_overrides=hook_log_name_overrides,
+                log_retention_days_overrides=hook_log_retention_days_overrides,
                 disabled_names=disabled_hook_names,
             )
             if tc is HOOK_TYPE
