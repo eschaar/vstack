@@ -1,7 +1,7 @@
 # vstack - hooks design
 
 > Maintained by: **designer** role\
-> Last updated: 2026-05-10
+> Last updated: 2026-05-11
 
 ## overview
 
@@ -66,15 +66,16 @@ ______________________________________________________________________
 
 ## 2. baseline hook set
 
-vstack ships five default repository hooks:
+vstack ships six default repository hooks:
 
-| Hook name                    | Primary events                                      | Intent                                                      |
-| ---------------------------- | --------------------------------------------------- | ----------------------------------------------------------- |
-| `session-audit`              | `userPromptSubmitted`, `sessionStart`, `sessionEnd` | Structured JSONL session and prompt audit trail             |
-| `pre-tool-safety-gate`       | `preToolUse`, `errorOccurred`                       | Deny destructive shell patterns + error logging             |
-| `post-edit-format`           | `postToolUse`                                       | Edit-event logging + optional `make format` run             |
-| `post-edit-markdown-quality` | `postToolUse`                                       | vstack markdown/work-item formatting for docs and templates |
-| `post-commit-security-scan`  | `postToolUse`, `sessionEnd`                         | Git-mutation checks + optional `gitleaks` run               |
+| Hook name                    | Primary events                                                                   | Intent                                                           |
+| ---------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `session-audit`              | `userPromptSubmitted`, `sessionStart`, `sessionEnd`, `preToolUse`, `postToolUse` | Structured JSONL session, prompt, and tool telemetry audit trail |
+| `log-retention-cleanup`      | `sessionStart`                                                                   | Prune dated log directories by retention policy                  |
+| `pre-tool-safety-gate`       | `preToolUse`, `errorOccurred`                                                    | Deny destructive shell patterns + error logging                  |
+| `post-edit-format`           | `postToolUse`                                                                    | Edit-event logging + optional `make format` run                  |
+| `post-edit-markdown-quality` | `postToolUse`                                                                    | vstack markdown/work-item formatting for docs and templates      |
+| `post-commit-security-scan`  | `postToolUse`, `sessionEnd`                                                      | Git-mutation checks + optional `gitleaks` run                    |
 
 These defaults are safe in audit mode and can be upgraded to enforcement behavior.
 For vstack specifically, the markdown-quality hook gives the baseline hook set a direct payoff on ADRs,

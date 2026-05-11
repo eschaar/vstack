@@ -84,6 +84,23 @@ class CommandLineInterface:
         return getattr(args, "only", None)
 
     @staticmethod
+    def _is_valid_hook_log_name(name: str) -> bool:
+        """Return whether *name* is an allowed per-hook log filename.
+
+        Allowed names are plain filenames (no path separators), ending in ``.log``
+        and containing only alphanumeric characters, ``.``, ``_`` and ``-``.
+        """
+        candidate = name.strip()
+        if not candidate:
+            return False
+        if "/" in candidate or "\\" in candidate:
+            return False
+        if not candidate.endswith(".log"):
+            return False
+        allowed = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-")
+        return all(char in allowed for char in candidate)
+
+    @staticmethod
     def _read_exclude(
         install_dir: Path | None,
     ) -> tuple[frozenset[str], dict[str, list[str]]]:
@@ -232,31 +249,64 @@ class CommandLineInterface:
     @staticmethod
     def _read_hook_settings(
         install_dir: Path | None,
-    ) -> tuple[bool, str, list[str], dict[str, str]]:
-        """Read project-level hook enablement and mode defaults from config."""
+    ) -> tuple[
+        bool,
+        str,
+        str,
+        int,
+        str,
+        list[str],
+        dict[str, str],
+        dict[str, str],
+        dict[str, str],
+        dict[str, int],
+    ]:
+        """Read project-level hook enablement, mode, and log-level settings."""
+        allowed_modes = {"audit", "enforce"}
+        allowed_log_levels = {"off", "minimal", "verbose"}
         if install_dir is None:
-            return True, "audit", [], {}
+            return True, "audit", "minimal", 7, ".vstack/logs", [], {}, {}, {}, {}
         config_path = install_dir.parent / ".vstack" / "config.yaml"
         if not config_path.exists():
-            return True, "audit", [], {}
+            return True, "audit", "minimal", 7, ".vstack/logs", [], {}, {}, {}, {}
 
         parsed = FrontmatterParser.parse_yaml(config_path.read_text(encoding="utf-8"))
         hooks_config = parsed.get("hooks", "")
         if not isinstance(hooks_config, dict):
-            return True, "audit", [], {}
+            return True, "audit", "minimal", 7, ".vstack/logs", [], {}, {}, {}, {}
 
         enabled = hooks_config.get("enabled", True)
         global_enabled = enabled if isinstance(enabled, bool) else True
 
         mode_value = hooks_config.get("mode", "audit")
         default_mode = (
-            mode_value
-            if isinstance(mode_value, str) and mode_value in {"audit", "enforce"}
-            else "audit"
+            mode_value if isinstance(mode_value, str) and mode_value in allowed_modes else "audit"
         )
+
+        log_level_value = hooks_config.get("log_level", "minimal")
+        default_log_level = (
+            log_level_value
+            if isinstance(log_level_value, str) and log_level_value in allowed_log_levels
+            else "minimal"
+        )
+
+        retention_value = hooks_config.get("log_retention_days", 7)
+        if isinstance(retention_value, int) and retention_value >= 0:
+            default_retention_days = retention_value
+        else:
+            default_retention_days = 7
+
+        log_dir_value = hooks_config.get("log_dir", ".vstack/logs")
+        if isinstance(log_dir_value, str) and log_dir_value.strip():
+            default_log_dir = log_dir_value.strip()
+        else:
+            default_log_dir = ".vstack/logs"
 
         disabled_names: list[str] = []
         mode_overrides: dict[str, str] = {}
+        log_level_overrides: dict[str, str] = {}
+        log_name_overrides: dict[str, str] = {}
+        log_retention_days_overrides: dict[str, int] = {}
         per_hook = hooks_config.get("hooks", "")
         if isinstance(per_hook, dict):
             for hook_name, hook_config in per_hook.items():
@@ -265,11 +315,40 @@ class CommandLineInterface:
                 if hook_config.get("enabled") is False:
                     disabled_names.append(hook_name)
                     continue
+
+                nested_log = hook_config.get("log", "")
+                nested_log_config = nested_log if isinstance(nested_log, dict) else {}
+
                 hook_mode = hook_config.get("mode", "")
-                if isinstance(hook_mode, str) and hook_mode in {"audit", "enforce"}:
+                if isinstance(hook_mode, str) and hook_mode in allowed_modes:
                     mode_overrides[hook_name] = hook_mode
 
-        return global_enabled, default_mode, disabled_names, mode_overrides
+                hook_log_level = nested_log_config.get("level", "")
+                if isinstance(hook_log_level, str) and hook_log_level in allowed_log_levels:
+                    log_level_overrides[hook_name] = hook_log_level
+
+                hook_log_name = nested_log_config.get("name", "")
+                if isinstance(hook_log_name, str):
+                    normalized_log_name = hook_log_name.strip()
+                    if CommandLineInterface._is_valid_hook_log_name(normalized_log_name):
+                        log_name_overrides[hook_name] = normalized_log_name
+
+                hook_retention_days = nested_log_config.get("retention_days", None)
+                if isinstance(hook_retention_days, int) and hook_retention_days >= 0:
+                    log_retention_days_overrides[hook_name] = hook_retention_days
+
+        return (
+            global_enabled,
+            default_mode,
+            default_log_level,
+            default_retention_days,
+            default_log_dir,
+            disabled_names,
+            mode_overrides,
+            log_level_overrides,
+            log_name_overrides,
+            log_retention_days_overrides,
+        )
 
     @staticmethod
     def _parse_stage_handoffs(item: dict) -> list[dict[str, str]]:
@@ -340,16 +419,31 @@ class CommandLineInterface:
         items_root = self._read_items_root(resolved_install_dir)
         workflow_stages = self._read_workflow_stages(resolved_install_dir)
         workflow_mode = self._read_workflow_mode(resolved_install_dir)
-        hooks_enabled, hook_default_mode, disabled_hook_names, hook_mode_overrides = (
-            self._read_hook_settings(resolved_install_dir)
-        )
+        (
+            hooks_enabled,
+            hook_default_mode,
+            hook_default_log_level,
+            hook_log_retention_days,
+            hook_log_dir,
+            disabled_hook_names,
+            hook_mode_overrides,
+            hook_log_level_overrides,
+            hook_log_name_overrides,
+            hook_log_retention_days_overrides,
+        ) = self._read_hook_settings(resolved_install_dir)
         service = cast(Any, self._service_cls)(
             templates_root=self._templates_root,
             items_root=items_root,
             workflow_stages=workflow_stages,
             workflow_mode=workflow_mode,
             hook_default_mode=hook_default_mode,
+            hook_default_log_level=hook_default_log_level,
+            hook_log_retention_days=hook_log_retention_days,
+            hook_log_dir=hook_log_dir,
             hook_mode_overrides=hook_mode_overrides,
+            hook_log_level_overrides=hook_log_level_overrides,
+            hook_log_name_overrides=hook_log_name_overrides,
+            hook_log_retention_days_overrides=hook_log_retention_days_overrides,
             disabled_hook_names=disabled_hook_names,
         )
         commands = self._build_command_registry(service)

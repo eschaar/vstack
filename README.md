@@ -1038,15 +1038,16 @@ ______________________________________________________________________
 
 ## 🚦 CI and Release Automation
 
-| Workflow        | Trigger                                    | Purpose                                                             |
-| --------------- | ------------------------------------------ | ------------------------------------------------------------------- |
-| `commit.yml`    | Push to non-main branches and PR to `main` | commit/branch policy and lint/typecheck gate                        |
-| `check.yml`     | Push to non-main branches and PR to `main` | single-version unit tests (py3.11)                                  |
-| `verify.yml`    | Pull request to `main`                     | cross-version test matrix (py3.11–3.14) and artifact install/verify |
-| `security.yml`  | Pull request to `main`                     | dependency audit and secret scanning                                |
-| `automerge.yml` | Pull request target to `main`              | safe Dependabot auto-merge policy                                   |
-| `release.yml`   | Push to `main`                             | Release Please orchestration (release PR, changelog, tags)          |
-| `publish.yml`   | GitHub release `published`                 | build from release tag and publish to PyPI                          |
+| Workflow        | Trigger                                       | Purpose                                                             |
+| --------------- | --------------------------------------------- | ------------------------------------------------------------------- |
+| `commit.yml`    | Push to non-main branches and PR to `main`    | commit/branch policy and lint/typecheck gate                        |
+| `check.yml`     | Push to non-main branches and PR to `main`    | single-version unit tests (py3.11)                                  |
+| `verify.yml`    | Pull request to `main`                        | cross-version test matrix (py3.11–3.14) and artifact install/verify |
+| `security.yml`  | Pull request to `main`                        | dependency audit and secret scanning                                |
+| `codeql.yml`    | Push/pull request to `main` + weekly schedule | code scanning for GitHub Actions and Python                         |
+| `automerge.yml` | Pull request target to `main`                 | safe Dependabot auto-merge policy                                   |
+| `release.yml`   | Push to `main`                                | Release Please orchestration (release PR, changelog, tags)          |
+| `publish.yml`   | GitHub release `published`                    | build from release tag and publish to PyPI                          |
 
 Commit policy specifics:
 
@@ -1058,7 +1059,7 @@ Commit policy specifics:
 Recommended branch protection for `main`:
 
 - Require PR before merge.
-- Require status checks from `commit.yml`, `check.yml`, `verify.yml`, and `security.yml`.
+- Require status checks from `commit.yml`, `check.yml`, `verify.yml`, `security.yml`, and `codeql.yml`.
 - Disallow force pushes and branch deletion.
 
 Full pipeline documentation: [docs/design/cicd.md](docs/design/cicd.md)

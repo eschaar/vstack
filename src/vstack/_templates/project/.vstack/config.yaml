@@ -34,16 +34,78 @@
 #
 # hooks.enabled: disable the entire generated hook baseline
 # hooks.mode:    default runtime posture for generated hooks (audit or enforce)
+# hooks.log_level: default audit verbosity for central logger (off|minimal|verbose)
+# hooks.log_retention_days: retain dated log folders for this many days (session-audit)
+# hooks.log_dir: root directory for dated hook logs (YYYYMMDD buckets)
 # hooks.hooks.<name>.enabled: disable one named hook without disabling the type
 # hooks.hooks.<name>.mode:    override the default mode for one named hook
+# hooks.hooks.<name>.log.level: override central audit verbosity per hook
+# hooks.hooks.<name>.log.name: override the log filename for one hook (basename only)
+#                              Effective path is always .vstack/logs/YYYYMMDD/<name>
+# hooks.hooks.<name>.log.retention_days: override retention days for one hook (e.g., security alerts: 30)
+#
+# Example 1: quiet mode (logs off)
+#   hooks:
+#     enabled: true
+#     mode: audit
+#     log_level: off
+#
+# Example 2: security team setup (verbose, longer retention, custom paths)
+#   hooks:
+#     enabled: true
+#     log_level: verbose
+#     log_retention_days: 7
+#     hooks:
+#       pre-tool-safety-gate:
+#         mode: enforce
+#         log:
+#           name: security-gate.log
+#           retention_days: 30
+#       post-commit-security-scan:
+#         log:
+#           name: security-scan.log
+#           retention_days: 30
+#       session-audit:
+#         log:
+#           level: verbose
+#
+# Example 3: minimal quality checks, verbose security logging
+#   hooks:
+#     enabled: true
+#     log_level: minimal
+#     hooks:
+#       post-edit-format:
+#         log:
+#           level: off
+#       post-edit-markdown-quality:
+#         log:
+#           level: off
+#       post-commit-security-scan:
+#         log:
+#           level: verbose
+#           retention_days: 60
+#
+# Defaults: enabled=true, mode=audit, log_level=minimal, log_retention_days=7
 # -----------------------------------------------------------------------------
 
 # hooks:
 #   enabled: true
 #   mode: audit
+#   log_level: minimal
+#   log_retention_days: 7
+#   log_dir: .vstack/logs
 #   hooks:
 #     pre-tool-safety-gate:
 #       mode: enforce
+#     session-audit:
+#       log:
+#         level: verbose
+#     post-edit-format:
+#       log:
+#         name: custom-quality.log
+#     post-commit-security-scan:
+#       log:
+#         retention_days: 30
 #     post-edit-markdown-quality:
 #       enabled: false
 

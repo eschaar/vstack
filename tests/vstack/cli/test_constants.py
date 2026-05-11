@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from vstack.cli.constants import EXPECTED_CANONICAL_NAMES as CLI_NAMES
+from vstack.cli.constants import EXPECTED_INPUT_NAMES
 
 EXPECTED_CLI_NAMES = [
     "vision",
@@ -62,3 +63,14 @@ class TestCliConstants:
             f"Expected:   {EXPECTED_CLI_NAMES}\n"
             f"Found: {CLI_NAMES}"
         )
+
+    def test_expected_hook_input_names_content(self) -> None:
+        """Verify source checks require the complete built-in hook set."""
+        assert EXPECTED_INPUT_NAMES["hook"] == [
+            "log-retention-cleanup",
+            "post-edit-markdown-quality",
+            "post-edit-format",
+            "post-commit-security-scan",
+            "pre-tool-safety-gate",
+            "session-audit",
+        ]

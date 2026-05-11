@@ -227,6 +227,111 @@ class TestHookGenerator:
         assert "${VSTACK_HOOKS_MODE:-enforce}" in action["bash"]
         assert "else { 'enforce' }" in action["powershell"]
 
+    def test_render_uses_project_default_log_level_for_shell_fallbacks(
+        self, tmp_path: Path
+    ) -> None:
+        """Configured project hook log level is injected into generated shell fallbacks."""
+        tmpl_dir = tmp_path / "hooks" / "log-level-test"
+        tmpl_dir.mkdir(parents=True)
+        (tmpl_dir / "hook.yaml").write_text(
+            "version: 20260510003\nmetadata:\n  name: log-level-test\n"
+            "  description: 'test hook'\n  purpose: audit\n  security_level: low\n"
+            "  mode_default: audit\n  execution_context: copilot-hook-runtime\n"
+            "  dependencies:\n    required: []\n    optional: []\n"
+            "hooks:\n  sessionStart:\n    - type: command\n"
+            "      bash: 'level=${VSTACK_HOOKS_LOG_LEVEL:-minimal}'\n"
+            "      powershell: '$level = if ($env:VSTACK_HOOKS_LOG_LEVEL) { $env:VSTACK_HOOKS_LOG_LEVEL } else { ''minimal'' }'\n",
+            encoding="utf-8",
+        )
+
+        gen = HookGenerator(default_log_level="verbose")
+        gen.templates_dir = tmp_path / "hooks"
+        artifact = gen.render_all()[0]
+
+        content = json.loads(artifact.content)
+        action = content["hooks"]["sessionStart"][0]
+        assert "${VSTACK_HOOKS_LOG_LEVEL:-verbose}" in action["bash"]
+        assert "else { 'verbose' }" in action["powershell"]
+
+    def test_render_uses_project_default_log_name_for_shell_targets(self, tmp_path: Path) -> None:
+        """Configured project hook log name is injected into generated shell fallbacks."""
+        tmpl_dir = tmp_path / "hooks" / "path-test"
+        tmpl_dir.mkdir(parents=True)
+        (tmpl_dir / "hook.yaml").write_text(
+            "version: 20260510003\nmetadata:\n  name: path-test\n"
+            "  description: 'test hook'\n  purpose: quality\n  security_level: low\n"
+            "  log:\n    name: hook-quality-alerts.log\n"
+            "  mode_default: audit\n  execution_context: copilot-hook-runtime\n"
+            "  dependencies:\n    required: []\n    optional: []\n"
+            "hooks:\n  postToolUse:\n    - type: command\n"
+            "      bash: 'log_name=${VSTACK_HOOK_LOG_NAME:-hook-quality-alerts.log}'\n"
+            "      powershell: '$name = if ($env:VSTACK_HOOK_LOG_NAME) { $env:VSTACK_HOOK_LOG_NAME } else { ''hook-quality-alerts.log'' }'\n",
+            encoding="utf-8",
+        )
+
+        gen = HookGenerator(log_name_overrides={"path-test": "custom-quality.log"})
+        gen.templates_dir = tmp_path / "hooks"
+        artifact = gen.render_all()[0]
+
+        content = json.loads(artifact.content)
+        action = content["hooks"]["postToolUse"][0]
+        assert "${VSTACK_HOOK_LOG_NAME:-custom-quality.log}" in action["bash"]
+        assert "else { 'custom-quality.log' }" in action["powershell"]
+
+    def test_render_uses_per_hook_retention_days_override(self, tmp_path: Path) -> None:
+        """Per-hook retention_days overrides are applied to shell fallbacks."""
+        tmpl_dir = tmp_path / "hooks" / "retention-test"
+        tmpl_dir.mkdir(parents=True)
+        (tmpl_dir / "hook.yaml").write_text(
+            "version: 20260510003\nmetadata:\n  name: retention-test\n"
+            "  description: 'test hook'\n  purpose: security\n  security_level: high\n"
+            "  mode_default: audit\n  execution_context: copilot-hook-runtime\n"
+            "  dependencies:\n    required: []\n    optional: []\n"
+            "hooks:\n  postToolUse:\n    - type: command\n"
+            "      bash: 'retention_days=\"${VSTACK_HOOKS_LOG_RETENTION_DAYS:-7}\"'\n"
+            "      powershell: '$retention = if ($env:VSTACK_HOOKS_LOG_RETENTION_DAYS) { $env:VSTACK_HOOKS_LOG_RETENTION_DAYS } else { \"7\" }'\n",
+            encoding="utf-8",
+        )
+
+        gen = HookGenerator(
+            default_log_retention_days=7,
+            log_retention_days_overrides={"retention-test": 30},
+        )
+        gen.templates_dir = tmp_path / "hooks"
+        artifact = gen.render_all()[0]
+
+        content = json.loads(artifact.content)
+        action = content["hooks"]["postToolUse"][0]
+        # Verify retention_days override was applied to bash fallback
+        assert "${VSTACK_HOOKS_LOG_RETENTION_DAYS:-30}" in action["bash"]
+        # Verify retention_days override was applied to powershell fallback
+        assert 'else { "30" }' in action["powershell"]
+
+    def test_render_uses_project_default_log_dir_for_shell_fallbacks(self, tmp_path: Path) -> None:
+        """Configured project hook log directory is injected into shell fallbacks."""
+        tmpl_dir = tmp_path / "hooks" / "log-dir-test"
+        tmpl_dir.mkdir(parents=True)
+        (tmpl_dir / "hook.yaml").write_text(
+            "version: 20260510003\nmetadata:\n  name: log-dir-test\n"
+            "  description: 'test hook'\n  purpose: quality\n  security_level: low\n"
+            "  log:\n    name: log-dir-test.log\n"
+            "  mode_default: audit\n  execution_context: copilot-hook-runtime\n"
+            "  dependencies:\n    required: []\n    optional: []\n"
+            "hooks:\n  postToolUse:\n    - type: command\n"
+            "      bash: 'log_root=${VSTACK_HOOK_LOG_DIR:-.vstack/logs}'\n"
+            "      powershell: '$root = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { ''.vstack/logs'' }'\n",
+            encoding="utf-8",
+        )
+
+        gen = HookGenerator(default_log_dir=".vstack/custom-logs")
+        gen.templates_dir = tmp_path / "hooks"
+        artifact = gen.render_all()[0]
+
+        content = json.loads(artifact.content)
+        action = content["hooks"]["postToolUse"][0]
+        assert "${VSTACK_HOOK_LOG_DIR:-.vstack/custom-logs}" in action["bash"]
+        assert "else { '.vstack/custom-logs' }" in action["powershell"]
+
     def test_find_templates_skips_disabled_hook_names(self, tmp_path: Path) -> None:
         """Disabled hook names are excluded from rendering and validation."""
         enabled_dir = tmp_path / "hooks" / "enabled-hook"

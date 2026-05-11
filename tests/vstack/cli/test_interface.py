@@ -72,7 +72,13 @@ class _Service:
         workflow_stages=None,
         workflow_mode: str = "agentic",
         hook_default_mode: str = "audit",
+        hook_default_log_level: str = "minimal",
+        hook_log_retention_days: int = 7,
+        hook_log_dir: str = ".vstack/logs",
         hook_mode_overrides=None,
+        hook_log_level_overrides=None,
+        hook_log_name_overrides=None,
+        hook_log_retention_days_overrides=None,
         disabled_hook_names=None,
         excluded_names=None,
     ) -> None:
@@ -81,7 +87,13 @@ class _Service:
         self.workflow_stages = workflow_stages
         self.workflow_mode = workflow_mode
         self.hook_default_mode = hook_default_mode
+        self.hook_default_log_level = hook_default_log_level
+        self.hook_log_retention_days = hook_log_retention_days
+        self.hook_log_dir = hook_log_dir
         self.hook_mode_overrides = hook_mode_overrides
+        self.hook_log_level_overrides = hook_log_level_overrides
+        self.hook_log_name_overrides = hook_log_name_overrides
+        self.hook_log_retention_days_overrides = hook_log_retention_days_overrides
         self.disabled_hook_names = disabled_hook_names
         self.excluded_names = excluded_names
 
@@ -257,7 +269,13 @@ class TestReadItemsRoot:
                 workflow_stages=None,
                 workflow_mode: str = "agentic",
                 hook_default_mode: str = "audit",
+                hook_default_log_level: str = "minimal",
+                hook_log_retention_days: int = 7,
+                hook_log_dir: str = ".vstack/logs",
                 hook_mode_overrides=None,
+                hook_log_level_overrides=None,
+                hook_log_name_overrides=None,
+                hook_log_retention_days_overrides=None,
                 disabled_hook_names=None,
                 excluded_names=None,
             ) -> None:
@@ -266,7 +284,13 @@ class TestReadItemsRoot:
                     workflow_stages,
                     workflow_mode,
                     hook_default_mode,
+                    hook_default_log_level,
+                    hook_log_retention_days,
+                    hook_log_dir,
                     hook_mode_overrides,
+                    hook_log_level_overrides,
+                    hook_log_name_overrides,
+                    hook_log_retention_days_overrides,
                     disabled_hook_names,
                     excluded_names,
                 )
@@ -468,7 +492,13 @@ class TestReadWorkflowMode:
                 workflow_stages=None,
                 workflow_mode: str = "agentic",
                 hook_default_mode: str = "audit",
+                hook_default_log_level: str = "minimal",
+                hook_log_retention_days: int = 7,
+                hook_log_dir: str = ".vstack/logs",
                 hook_mode_overrides=None,
+                hook_log_level_overrides=None,
+                hook_log_name_overrides=None,
+                hook_log_retention_days_overrides=None,
                 disabled_hook_names=None,
                 excluded_names=None,
             ) -> None:
@@ -477,7 +507,13 @@ class TestReadWorkflowMode:
                     items_root,
                     workflow_stages,
                     hook_default_mode,
+                    hook_default_log_level,
+                    hook_log_retention_days,
+                    hook_log_dir,
                     hook_mode_overrides,
+                    hook_log_level_overrides,
+                    hook_log_name_overrides,
+                    hook_log_retention_days_overrides,
                     disabled_hook_names,
                     excluded_names,
                 )
@@ -504,7 +540,18 @@ class TestReadHookSettings:
 
     def test_returns_defaults_when_install_dir_is_none(self) -> None:
         """Missing install dir yields enabled audit defaults."""
-        assert CommandLineInterface._read_hook_settings(None) == (True, "audit", [], {})
+        assert CommandLineInterface._read_hook_settings(None) == (
+            True,
+            "audit",
+            "minimal",
+            7,
+            ".vstack/logs",
+            [],
+            {},
+            {},
+            {},
+            {},
+        )
 
     def test_reads_global_and_per_hook_settings(self, tmp_path: Path) -> None:
         """Reads hooks.enabled, hooks.mode, and per-hook overrides from config."""
@@ -514,22 +561,42 @@ class TestReadHookSettings:
             "hooks:\n"
             "  enabled: true\n"
             "  mode: enforce\n"
+            "  log_level: verbose\n"
+            "  log_retention_days: 14\n"
             "  hooks:\n"
             "    session-audit:\n"
             "      enabled: false\n"
             "    pre-tool-safety-gate:\n"
-            "      mode: audit\n",
+            "      mode: audit\n"
+            "      log:\n"
+            "        level: minimal\n"
+            "        name: custom-security.log\n",
             encoding="utf-8",
         )
 
-        enabled, mode, disabled_names, mode_overrides = CommandLineInterface._read_hook_settings(
-            tmp_path / ".github"
-        )
+        (
+            enabled,
+            mode,
+            log_level,
+            retention_days,
+            log_dir,
+            disabled_names,
+            mode_overrides,
+            log_level_overrides,
+            log_name_overrides,
+            retention_days_overrides,
+        ) = CommandLineInterface._read_hook_settings(tmp_path / ".github")
 
         assert enabled is True
         assert mode == "enforce"
+        assert log_level == "verbose"
+        assert retention_days == 14
+        assert log_dir == ".vstack/logs"
         assert disabled_names == ["session-audit"]
         assert mode_overrides == {"pre-tool-safety-gate": "audit"}
+        assert log_level_overrides == {"pre-tool-safety-gate": "minimal"}
+        assert log_name_overrides == {"pre-tool-safety-gate": "custom-security.log"}
+        assert retention_days_overrides == {}
 
     def test_run_applies_disabled_hooks_to_context_and_service(
         self, monkeypatch, tmp_path: Path
@@ -575,14 +642,62 @@ class TestReadHookSettings:
             encoding="utf-8",
         )
 
-        enabled, mode, disabled_names, mode_overrides = CommandLineInterface._read_hook_settings(
-            tmp_path / ".github"
-        )
+        (
+            enabled,
+            mode,
+            log_level,
+            retention_days,
+            log_dir,
+            disabled_names,
+            mode_overrides,
+            log_level_overrides,
+            log_name_overrides,
+            retention_days_overrides,
+        ) = CommandLineInterface._read_hook_settings(tmp_path / ".github")
 
         assert enabled is True
         assert mode == "audit"
+        assert log_level == "minimal"
+        assert retention_days == 7
+        assert log_dir == ".vstack/logs"
         assert disabled_names == []
         assert mode_overrides == {}
+        assert log_level_overrides == {}
+        assert log_name_overrides == {}
+        assert retention_days_overrides == {}
+
+    def test_invalid_log_retention_days_falls_back_to_default(self, tmp_path: Path) -> None:
+        """Invalid hooks.log_retention_days values fall back to seven days."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "hooks:\n  log_retention_days: not-a-number\n",
+            encoding="utf-8",
+        )
+
+        (
+            enabled,
+            mode,
+            log_level,
+            retention_days,
+            log_dir,
+            disabled_names,
+            mode_overrides,
+            log_level_overrides,
+            log_name_overrides,
+            retention_days_overrides,
+        ) = CommandLineInterface._read_hook_settings(tmp_path / ".github")
+
+        assert enabled is True
+        assert mode == "audit"
+        assert log_level == "minimal"
+        assert retention_days == 7
+        assert log_dir == ".vstack/logs"
+        assert disabled_names == []
+        assert mode_overrides == {}
+        assert log_level_overrides == {}
+        assert log_name_overrides == {}
+        assert retention_days_overrides == {}
 
     def test_run_disables_hook_type_when_hooks_enabled_is_false(
         self, monkeypatch, tmp_path: Path
@@ -614,6 +729,240 @@ class TestReadHookSettings:
 
         assert command.calls[0].only is not None
         assert "hook" not in command.calls[0].only
+
+    def test_per_hook_log_retention_days_override(self, tmp_path: Path) -> None:
+        """Per-hook log.retention_days overrides are parsed correctly."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "hooks:\n"
+            "  log_retention_days: 7\n"
+            "  hooks:\n"
+            "    post-commit-security-scan:\n"
+            "      log:\n"
+            "        retention_days: 30\n"
+            "    session-audit:\n"
+            "      log:\n"
+            "        retention_days: 14\n",
+            encoding="utf-8",
+        )
+
+        (
+            enabled,
+            mode,
+            log_level,
+            retention_days,
+            _log_dir,
+            disabled_names,
+            mode_overrides,
+            log_level_overrides,
+            log_name_overrides,
+            retention_days_overrides,
+        ) = CommandLineInterface._read_hook_settings(tmp_path / ".github")
+
+        assert enabled is True
+        assert retention_days == 7
+        assert retention_days_overrides == {
+            "post-commit-security-scan": 30,
+            "session-audit": 14,
+        }
+
+    def test_nested_per_hook_log_block_parses_name_level_and_retention(
+        self, tmp_path: Path
+    ) -> None:
+        """Nested hooks.hooks.<name>.log.* keys are parsed for overrides."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "hooks:\n"
+            "  hooks:\n"
+            "    post-commit-security-scan:\n"
+            "      log:\n"
+            "        name: nested-security.log\n"
+            "        level: verbose\n"
+            "        retention_days: 45\n",
+            encoding="utf-8",
+        )
+
+        (
+            enabled,
+            mode,
+            log_level,
+            retention_days,
+            log_dir,
+            disabled_names,
+            mode_overrides,
+            log_level_overrides,
+            log_name_overrides,
+            retention_days_overrides,
+        ) = CommandLineInterface._read_hook_settings(tmp_path / ".github")
+
+        assert enabled is True
+        assert mode == "audit"
+        assert log_level == "minimal"
+        assert retention_days == 7
+        assert log_dir == ".vstack/logs"
+        assert disabled_names == []
+        assert mode_overrides == {}
+        assert log_level_overrides == {"post-commit-security-scan": "verbose"}
+        assert log_name_overrides == {"post-commit-security-scan": "nested-security.log"}
+        assert retention_days_overrides == {"post-commit-security-scan": 45}
+
+    def test_flat_per_hook_log_keys_are_ignored(self, tmp_path: Path) -> None:
+        """Flat per-hook log keys are ignored; only hooks.hooks.<name>.log.* applies."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "hooks:\n"
+            "  hooks:\n"
+            "    pre-tool-safety-gate:\n"
+            "      log_level: minimal\n"
+            "      log_name: flat.log\n"
+            "      log_retention_days: 10\n",
+            encoding="utf-8",
+        )
+
+        (
+            enabled,
+            mode,
+            log_level,
+            retention_days,
+            log_dir,
+            disabled_names,
+            mode_overrides,
+            log_level_overrides,
+            log_name_overrides,
+            retention_days_overrides,
+        ) = CommandLineInterface._read_hook_settings(tmp_path / ".github")
+
+        assert enabled is True
+        assert mode == "audit"
+        assert log_level == "minimal"
+        assert retention_days == 7
+        assert log_dir == ".vstack/logs"
+        assert disabled_names == []
+        assert mode_overrides == {}
+        assert log_level_overrides == {}
+        assert log_name_overrides == {}
+        assert retention_days_overrides == {}
+
+    def test_per_hook_log_name_validation_accepts_only_safe_log_filenames(
+        self, tmp_path: Path
+    ) -> None:
+        """Only safe basename log names ending with .log are accepted."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "hooks:\n"
+            "  hooks:\n"
+            "    post-edit-format:\n"
+            "      log:\n"
+            "        name: quality-custom.log\n"
+            "    pre-tool-safety-gate:\n"
+            "      log:\n"
+            "        name: ../escape.log\n"
+            "    post-commit-security-scan:\n"
+            "      log:\n"
+            "        name: security/alerts.log\n"
+            "    session-audit:\n"
+            "      log:\n"
+            "        name: absolute.log.tmp\n"
+            "    post-edit-markdown-quality:\n"
+            "      log:\n"
+            "        name: bad*chars.log\n",
+            encoding="utf-8",
+        )
+
+        (
+            _enabled,
+            _mode,
+            _log_level,
+            _retention_days,
+            _log_dir,
+            _disabled_names,
+            _mode_overrides,
+            _log_level_overrides,
+            log_name_overrides,
+            _retention_days_overrides,
+        ) = CommandLineInterface._read_hook_settings(tmp_path / ".github")
+
+        assert log_name_overrides == {"post-edit-format": "quality-custom.log"}
+
+    def test_per_hook_log_name_strips_outer_whitespace(self, tmp_path: Path) -> None:
+        """Per-hook log.name values are trimmed before validation and storage."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "hooks:\n"
+            "  hooks:\n"
+            "    post-edit-format:\n"
+            "      log:\n"
+            "        name: '  windows-style.log  '\n",
+            encoding="utf-8",
+        )
+
+        (
+            _enabled,
+            _mode,
+            _log_level,
+            _retention_days,
+            _log_dir,
+            _disabled_names,
+            _mode_overrides,
+            _log_level_overrides,
+            log_name_overrides,
+            _retention_days_overrides,
+        ) = CommandLineInterface._read_hook_settings(tmp_path / ".github")
+
+        assert log_name_overrides == {"post-edit-format": "windows-style.log"}
+
+    def test_global_hook_log_dir_override_is_parsed(self, tmp_path: Path) -> None:
+        """hooks.log_dir overrides the default log root for generated hook scripts."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "hooks:\n  log_dir: .vstack/custom-logs\n",
+            encoding="utf-8",
+        )
+
+        (
+            _enabled,
+            _mode,
+            _log_level,
+            _retention_days,
+            log_dir,
+            _disabled_names,
+            _mode_overrides,
+            _log_level_overrides,
+            _log_name_overrides,
+            _retention_days_overrides,
+        ) = CommandLineInterface._read_hook_settings(tmp_path / ".github")
+
+        assert log_dir == ".vstack/custom-logs"
+
+    def test_global_hook_log_dir_invalid_value_falls_back_to_default(self, tmp_path: Path) -> None:
+        """Invalid hooks.log_dir values fall back to the default generated log root."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "hooks:\n  log_dir: []\n",
+            encoding="utf-8",
+        )
+
+        (
+            _enabled,
+            _mode,
+            _log_level,
+            _retention_days,
+            log_dir,
+            _disabled_names,
+            _mode_overrides,
+            _log_level_overrides,
+            _log_name_overrides,
+            _retention_days_overrides,
+        ) = CommandLineInterface._read_hook_settings(tmp_path / ".github")
+
+        assert log_dir == ".vstack/logs"
 
 
 class TestParseStageHandoffs:

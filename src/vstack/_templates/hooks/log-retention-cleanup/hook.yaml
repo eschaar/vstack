@@ -1,0 +1,108 @@
+version: 20260511003
+
+metadata:
+  name: log-retention-cleanup
+  description: |
+    Dedicated housekeeping hook that prunes dated log directories based on
+    VSTACK_HOOKS_LOG_RETENTION_DAYS. This stays active even if session-audit
+    is disabled. Set VSTACK_HOOKS_CLEANUP_LOG=1 to emit cleanup summary logs.
+  purpose: audit
+  security_level: low
+  mode_default: audit
+  execution_context: copilot-hook-runtime
+  dependencies:
+    required: []
+    optional: []
+
+hooks:
+  sessionStart:
+    - type: command
+      description: |
+        Prune dated log directories older than the configured retention window.
+      bash: |
+        retention_days="${VSTACK_HOOKS_LOG_RETENTION_DAYS:-7}"
+        cleanup_debug="${VSTACK_HOOKS_CLEANUP_LOG:-0}"
+        log_root="${VSTACK_HOOK_LOG_DIR:-.vstack/logs}"
+        mkdir -p "$log_root"
+        deleted_count=0
+        oldest_deleted_date=""
+        cleanup_error=""
+        if [ "$retention_days" -gt 0 ] 2>/dev/null; then
+          scan_file="${TMPDIR:-/tmp}/vstack-hook-retention-$$.list"
+          if find "$log_root" -mindepth 1 -maxdepth 1 -type d -mtime +"$retention_days" -print0 > "$scan_file" 2>/dev/null; then
+            while IFS= read -r -d '' dir; do
+              dir_name="$(basename "$dir")"
+              if [[ "$dir_name" =~ ^[0-9]{8}$ ]]; then
+                if rm -rf "$dir"; then
+                  deleted_count=$((deleted_count + 1))
+                  if [ -z "$oldest_deleted_date" ] || [ "$dir_name" -lt "$oldest_deleted_date" ]; then
+                    oldest_deleted_date="$dir_name"
+                  fi
+                else
+                  cleanup_error="delete-failed"
+                fi
+              fi
+            done < "$scan_file"
+          else
+            cleanup_error="find-failed"
+          fi
+          rm -f "$scan_file"
+        else
+          cleanup_error="invalid-retention-days"
+        fi
+
+        if [ "$cleanup_debug" = "1" ] || [ "$deleted_count" -gt 0 ] || [ -n "$cleanup_error" ]; then
+          log_name="hook-retention-cleanup.log"
+          log_dir="$log_root/$(date -u +%Y%m%d)"
+          mkdir -p "$log_dir"
+          log_path="$log_dir/$log_name"
+          ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          printf '%s\n' "{\"ts\":\"$ts\",\"event\":\"retention-cleanup\",\"retention_days\":$retention_days,\"deleted_count\":$deleted_count,\"oldest_deleted_date\":\"$oldest_deleted_date\",\"error\":\"$cleanup_error\"}" >> "$log_path"
+        fi
+      powershell: |
+        $retentionDays = if ($env:VSTACK_HOOKS_LOG_RETENTION_DAYS) { [int]$env:VSTACK_HOOKS_LOG_RETENTION_DAYS } else { '7' }
+        $cleanupDebug = if ($env:VSTACK_HOOKS_CLEANUP_LOG) { $env:VSTACK_HOOKS_CLEANUP_LOG } else { '0' }
+        $logRoot = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { '.vstack/logs' }
+        New-Item -ItemType Directory -Force -Path $logRoot | Out-Null
+        $deletedCount = 0
+        $oldestDeletedDate = ''
+        $cleanupError = ''
+        if ($retentionDays -gt 0) {
+          $threshold = (Get-Date).ToUniversalTime().Date.AddDays(-$retentionDays)
+          Get-ChildItem $logRoot -Directory -ErrorAction SilentlyContinue |
+            Where-Object {
+              $_.Name -match '^\d{8}$' -and
+              ([datetime]::ParseExact($_.Name, 'yyyyMMdd', [System.Globalization.CultureInfo]::InvariantCulture).Date -lt $threshold)
+            } |
+            ForEach-Object {
+              try {
+                Remove-Item -Path $_.FullName -Recurse -Force -ErrorAction Stop
+                $deletedCount++
+                if (-not $oldestDeletedDate -or $_.Name -lt $oldestDeletedDate) {
+                  $oldestDeletedDate = $_.Name
+                }
+              } catch {
+                $cleanupError = 'delete-failed'
+              }
+            }
+        } else {
+          $cleanupError = 'invalid-retention-days'
+        }
+
+        if ($cleanupDebug -eq '1' -or $deletedCount -gt 0 -or $cleanupError) {
+          $logName = 'hook-retention-cleanup.log'
+          $logDir = Join-Path $logRoot (Get-Date).ToUniversalTime().ToString('yyyyMMdd')
+          New-Item -ItemType Directory -Force -Path $logDir | Out-Null
+          $logPath = Join-Path $logDir $logName
+          $entry = @{
+            ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+            event = 'retention-cleanup'
+            retention_days = $retentionDays
+            deleted_count = $deletedCount
+            oldest_deleted_date = $oldestDeletedDate
+            error = $cleanupError
+          } | ConvertTo-Json -Compress
+          Add-Content -Path $logPath -Value $entry
+        }
+      cwd: "."
+      timeoutSec: 10

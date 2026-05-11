@@ -12,6 +12,7 @@ For the full CI/CD design and release model, see `docs/design/cicd.md`.
 | `check.yml` | push to non-main branches and PRs to `main` | Single-version unit test feedback (py3.11) |
 | `verify.yml` | pull_request to `main` | Required verification checks: cross-version test matrix + artifact verify |
 | `security.yml` | pull_request to `main` | Required security checks |
+| `codeql.yml` | push/pull_request to `main` + weekly schedule | Code scanning for Actions and Python with CodeQL |
 | `automerge.yml` | pull_request_target to `main` | Dependabot safe auto-merge policy |
 | `release.yml` | push to `main` | Release Please orchestration |
 | `publish.yml` | release published | Build and publish to PyPI |
@@ -20,7 +21,7 @@ For the full CI/CD design and release model, see `docs/design/cicd.md`.
 
 1. `commit.yml` handles commit policy and lint/typecheck on branch pushes and PRs.
 2. `check.yml` provides single-version test feedback on branch pushes and PRs.
-3. `verify.yml` and `security.yml` are the required PR gates.
+3. `verify.yml`, `security.yml`, and `codeql.yml` are the recommended PR security gates.
 4. `release.yml` is the only release orchestrator.
 5. `publish.yml` is publish-only and never computes versions.
 6. Ruleset on `main` should require `Commit`, `Check`, `Verify` (all jobs), and `Security` before merge.

@@ -96,6 +96,15 @@
 #
 # -----------------------------------------------------------------------------
 
+hooks:
+  enabled: true
+  mode: audit
+  log_level: minimal
+  log_retention_days: 7
+  hooks:
+    session-audit:
+      log_level: minimal
+
 workflow:
   mode: agentic
   version: 1

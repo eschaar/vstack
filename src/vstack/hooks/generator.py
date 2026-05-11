@@ -28,6 +28,7 @@ class HookGenerator(GenericArtifactGenerator):
     _ALLOWED_PURPOSES = {"audit", "security", "quality"}
     _ALLOWED_SECURITY_LEVELS = {"low", "high"}
     _ALLOWED_MODES = {"audit", "enforce"}
+    _ALLOWED_LOG_LEVELS = {"off", "minimal", "verbose"}
     _ALLOWED_ACTION_TYPES = {"command"}
 
     def __init__(
@@ -35,16 +36,46 @@ class HookGenerator(GenericArtifactGenerator):
         templates_root: Path | None = None,
         *,
         default_mode: str = "audit",
+        default_log_level: str = "minimal",
+        default_log_retention_days: int = 7,
+        default_log_dir: str = ".vstack/logs",
         mode_overrides: dict[str, str] | None = None,
+        log_level_overrides: dict[str, str] | None = None,
+        log_name_overrides: dict[str, str] | None = None,
+        log_retention_days_overrides: dict[str, int] | None = None,
         disabled_names: list[str] | None = None,
     ) -> None:
         """Create a hook generator bound to the built-in or provided template root."""
         super().__init__(HOOK_TYPE, templates_root or TEMPLATES_ROOT)
         self.default_mode = default_mode if default_mode in self._ALLOWED_MODES else "audit"
+        self.default_log_level = (
+            default_log_level if default_log_level in self._ALLOWED_LOG_LEVELS else "minimal"
+        )
+        self.default_log_retention_days = (
+            default_log_retention_days if default_log_retention_days >= 0 else 7
+        )
+        self.default_log_dir = (
+            default_log_dir.strip() if default_log_dir.strip() else ".vstack/logs"
+        )
         self.mode_overrides = {
             name: mode
             for name, mode in (mode_overrides or {}).items()
             if mode in self._ALLOWED_MODES
+        }
+        self.log_level_overrides = {
+            name: level
+            for name, level in (log_level_overrides or {}).items()
+            if level in self._ALLOWED_LOG_LEVELS
+        }
+        self.log_name_overrides = {
+            name: log_name
+            for name, log_name in (log_name_overrides or {}).items()
+            if isinstance(log_name, str) and log_name
+        }
+        self.log_retention_days_overrides = {
+            name: days
+            for name, days in (log_retention_days_overrides or {}).items()
+            if isinstance(days, int) and days >= 0
         }
         self.disabled_names = set(disabled_names or [])
 
@@ -66,19 +97,87 @@ class HookGenerator(GenericArtifactGenerator):
         """Resolve the configured default mode for one hook."""
         return self.mode_overrides.get(hook_name, self.default_mode)
 
-    def _apply_mode_defaults(self, text: str, *, mode: str) -> str:
-        """Replace audit fallbacks inside shell snippets with the configured mode."""
-        return (
+    def _log_level_for_hook(self, hook_name: str) -> str:
+        """Resolve the configured default log level for one hook."""
+        return self.log_level_overrides.get(hook_name, self.default_log_level)
+
+    def _retention_days_for_hook(self, hook_name: str) -> int:
+        """Resolve the configured retention days for one hook."""
+        return self.log_retention_days_overrides.get(hook_name, self.default_log_retention_days)
+
+    def _log_name_for_hook(self, hook_name: str) -> str | None:
+        """Resolve the configured log filename override for one hook."""
+        return self.log_name_overrides.get(hook_name)
+
+    def _apply_runtime_defaults(
+        self,
+        text: str,
+        *,
+        mode: str,
+        log_level: str,
+        retention_days: int,
+        log_dir: str,
+        log_name: str | None,
+        default_log_name: str | None,
+    ) -> str:
+        """Inject configured mode and log level fallbacks into shell snippets."""
+        rendered = (
             text.replace("${VSTACK_HOOKS_MODE:-audit}", f"${{VSTACK_HOOKS_MODE:-{mode}}}")
+            .replace(
+                "${VSTACK_HOOKS_LOG_LEVEL:-minimal}",
+                f"${{VSTACK_HOOKS_LOG_LEVEL:-{log_level}}}",
+            )
+            .replace(
+                "${VSTACK_HOOKS_LOG_RETENTION_DAYS:-7}",
+                f"${{VSTACK_HOOKS_LOG_RETENTION_DAYS:-{retention_days}}}",
+            )
+            .replace(
+                "${VSTACK_HOOK_LOG_DIR:-.vstack/logs}",
+                f"${{VSTACK_HOOK_LOG_DIR:-{log_dir}}}",
+            )
             .replace("else { 'audit' }", f"else {{ '{mode}' }}")
+            .replace("else { 'minimal' }", f"else {{ '{log_level}' }}")
+            .replace("else { '7' }", f"else {{ '{retention_days}' }}")
+            .replace("else { '.vstack/logs' }", f"else {{ '{log_dir}' }}")
             .replace('else { "audit" }', f'else {{ "{mode}" }}')
+            .replace('else { "minimal" }', f'else {{ "{log_level}" }}')
+            .replace('else { "7" }', f'else {{ "{retention_days}" }}')
+            .replace('else { ".vstack/logs" }', f'else {{ "{log_dir}" }}')
         )
+        if (
+            isinstance(log_name, str)
+            and log_name
+            and isinstance(default_log_name, str)
+            and default_log_name
+        ):
+            rendered = (
+                rendered.replace(
+                    f"${{VSTACK_HOOK_LOG_NAME:-{default_log_name}}}",
+                    f"${{VSTACK_HOOK_LOG_NAME:-{log_name}}}",
+                )
+                .replace(
+                    f"else {{ '{default_log_name}' }}",
+                    f"else {{ '{log_name}' }}",
+                )
+                .replace(
+                    f'else {{ "{default_log_name}" }}',
+                    f'else {{ "{log_name}" }}',
+                )
+            )
+        return rendered
 
     def _generate_json_from_yaml(self, yaml_data: dict) -> str:
         """Convert validated YAML data to the GitHub Copilot hooks envelope."""
         metadata = yaml_data.get("metadata", {})
         hook_name = str(metadata.get("name", ""))
         mode = self._mode_for_hook(hook_name)
+        log_level = self._log_level_for_hook(hook_name)
+        retention_days = self._retention_days_for_hook(hook_name)
+        log_name = self._log_name_for_hook(hook_name)
+        log_metadata = metadata.get("log", "")
+        default_log_name = ""
+        if isinstance(log_metadata, dict):
+            default_log_name = str(log_metadata.get("name", ""))
         hooks_dict = yaml_data.get("hooks", {})
 
         rendered_hooks: dict[str, list[dict]] = {}
@@ -89,7 +188,15 @@ class HookGenerator(GenericArtifactGenerator):
                 for shell_name in ("bash", "powershell"):
                     command = rendered_action.get(shell_name)
                     if isinstance(command, str):
-                        rendered_action[shell_name] = self._apply_mode_defaults(command, mode=mode)
+                        rendered_action[shell_name] = self._apply_runtime_defaults(
+                            command,
+                            mode=mode,
+                            log_level=log_level,
+                            retention_days=retention_days,
+                            log_dir=self.default_log_dir,
+                            log_name=log_name,
+                            default_log_name=str(default_log_name),
+                        )
                 rendered_actions.append(rendered_action)
             rendered_hooks[event] = rendered_actions
 

@@ -1,12 +1,32 @@
 {
   "version": 1,
   "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "description": "Centrally log tool call requests with size and estimated tokens.\n",
+        "bash": "input=\"$(cat)\"\nlog_level=\"${VSTACK_HOOKS_LOG_LEVEL:-minimal}\"\nlog_root=\"${VSTACK_HOOK_LOG_DIR:-.vstack/logs}\"\nlog_dir=\"$log_root/$(date -u +%Y%m%d)\"\nmkdir -p \"$log_dir\"\nif [ \"$log_level\" = \"off\" ]; then\n  exit 0\nfi\nif [ \"$log_level\" = \"verbose\" ]; then\n  printf '%s\\n' \"$input\" >> \"$log_dir/hook-tool-use.log\"\n  exit 0\nfi\nts=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"\nbytes=\"$(printf '%s' \"$input\" | wc -c | tr -d ' ')\"\nest_tokens=\"$(( (bytes + 3) / 4 ))\"\ntool_name=\"$(printf '%s' \"$input\" | sed -n 's/.*\"toolName\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p' | head -n1)\"\nif [ -z \"$tool_name\" ]; then\n  tool_name=\"unknown\"\nfi\nprintf '{\"timestamp\":\"%s\",\"event\":\"preToolUse\",\"tool_name\":\"%s\",\"size_bytes\":%s,\"estimated_tokens\":%s}\\n' \"$ts\" \"$tool_name\" \"$bytes\" \"$est_tokens\" >> \"$log_dir/hook-tool-use.log\"\n",
+        "powershell": "$inputText = [Console]::In.ReadToEnd()\n$logLevel = if ($env:VSTACK_HOOKS_LOG_LEVEL) { $env:VSTACK_HOOKS_LOG_LEVEL } else { 'minimal' }\n$logRoot = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { '.vstack/logs' }\n$logDir = Join-Path $logRoot (Get-Date).ToUniversalTime().ToString('yyyyMMdd')\nNew-Item -ItemType Directory -Force -Path $logDir | Out-Null\nif ($logLevel -eq 'off') {\n  exit 0\n}\nif ($logLevel -eq 'verbose') {\n  Add-Content -Path (Join-Path $logDir 'hook-tool-use.log') -Value $inputText\n  exit 0\n}\n$toolName = 'unknown'\ntry {\n  $payload = $inputText | ConvertFrom-Json -ErrorAction Stop\n  if ($payload.toolName) {\n    $toolName = [string]$payload.toolName\n  }\n} catch {\n}\n$record = @{\n  timestamp = (Get-Date).ToUniversalTime().ToString('o')\n  event = 'preToolUse'\n  tool_name = $toolName\n  size_bytes = $inputText.Length\n  estimated_tokens = [int][math]::Ceiling($inputText.Length / 4.0)\n} | ConvertTo-Json -Compress\nAdd-Content -Path (Join-Path $logDir 'hook-tool-use.log') -Value $record\n",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "description": "Centrally log tool responses with size and estimated tokens.\n",
+        "bash": "input=\"$(cat)\"\nlog_level=\"${VSTACK_HOOKS_LOG_LEVEL:-minimal}\"\nlog_root=\"${VSTACK_HOOK_LOG_DIR:-.vstack/logs}\"\nlog_dir=\"$log_root/$(date -u +%Y%m%d)\"\nmkdir -p \"$log_dir\"\nif [ \"$log_level\" = \"off\" ]; then\n  exit 0\nfi\nif [ \"$log_level\" = \"verbose\" ]; then\n  printf '%s\\n' \"$input\" >> \"$log_dir/hook-tool-use.log\"\n  exit 0\nfi\nts=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"\nbytes=\"$(printf '%s' \"$input\" | wc -c | tr -d ' ')\"\nest_tokens=\"$(( (bytes + 3) / 4 ))\"\ntool_name=\"$(printf '%s' \"$input\" | sed -n 's/.*\"toolName\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p' | head -n1)\"\nif [ -z \"$tool_name\" ]; then\n  tool_name=\"unknown\"\nfi\nprintf '{\"timestamp\":\"%s\",\"event\":\"postToolUse\",\"tool_name\":\"%s\",\"size_bytes\":%s,\"estimated_tokens\":%s}\\n' \"$ts\" \"$tool_name\" \"$bytes\" \"$est_tokens\" >> \"$log_dir/hook-tool-use.log\"\n",
+        "powershell": "$inputText = [Console]::In.ReadToEnd()\n$logLevel = if ($env:VSTACK_HOOKS_LOG_LEVEL) { $env:VSTACK_HOOKS_LOG_LEVEL } else { 'minimal' }\n$logRoot = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { '.vstack/logs' }\n$logDir = Join-Path $logRoot (Get-Date).ToUniversalTime().ToString('yyyyMMdd')\nNew-Item -ItemType Directory -Force -Path $logDir | Out-Null\nif ($logLevel -eq 'off') {\n  exit 0\n}\nif ($logLevel -eq 'verbose') {\n  Add-Content -Path (Join-Path $logDir 'hook-tool-use.log') -Value $inputText\n  exit 0\n}\n$toolName = 'unknown'\ntry {\n  $payload = $inputText | ConvertFrom-Json -ErrorAction Stop\n  if ($payload.toolName) {\n    $toolName = [string]$payload.toolName\n  }\n} catch {\n}\n$record = @{\n  timestamp = (Get-Date).ToUniversalTime().ToString('o')\n  event = 'postToolUse'\n  tool_name = $toolName\n  size_bytes = $inputText.Length\n  estimated_tokens = [int][math]::Ceiling($inputText.Length / 4.0)\n} | ConvertTo-Json -Compress\nAdd-Content -Path (Join-Path $logDir 'hook-tool-use.log') -Value $record\n",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ],
     "userPromptSubmitted": [
       {
         "type": "command",
-        "description": "Log prompt submission events for audit correlation.\n",
-        "bash": "mkdir -p .vstack/logs\ninput=\"$(cat)\"\nprintf '%s\\n' \"$input\" >> .vstack/logs/hook-user-prompt.jsonl\n",
-        "powershell": "New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null\n$inputText = [Console]::In.ReadToEnd()\nAdd-Content -Path .vstack/logs/hook-user-prompt.jsonl -Value $inputText\n",
+        "description": "Centrally log prompt events with configurable verbosity.\n",
+        "bash": "input=\"$(cat)\"\nlog_level=\"${VSTACK_HOOKS_LOG_LEVEL:-minimal}\"\nlog_root=\"${VSTACK_HOOK_LOG_DIR:-.vstack/logs}\"\nlog_dir=\"$log_root/$(date -u +%Y%m%d)\"\nmkdir -p \"$log_dir\"\nif [ \"$log_level\" = \"off\" ]; then\n  exit 0\nfi\nif [ \"$log_level\" = \"verbose\" ]; then\n  printf '%s\\n' \"$input\" >> \"$log_dir/hook-user-prompt.log\"\n  exit 0\nfi\nts=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"\nbytes=\"$(printf '%s' \"$input\" | wc -c | tr -d ' ')\"\nest_tokens=\"$(( (bytes + 3) / 4 ))\"\nprintf '{\"timestamp\":\"%s\",\"event\":\"userPromptSubmitted\",\"size_bytes\":%s,\"estimated_tokens\":%s}\\n' \"$ts\" \"$bytes\" \"$est_tokens\" >> \"$log_dir/hook-user-prompt.log\"\n",
+        "powershell": "$inputText = [Console]::In.ReadToEnd()\n$logLevel = if ($env:VSTACK_HOOKS_LOG_LEVEL) { $env:VSTACK_HOOKS_LOG_LEVEL } else { 'minimal' }\n$logRoot = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { '.vstack/logs' }\n$logDir = Join-Path $logRoot (Get-Date).ToUniversalTime().ToString('yyyyMMdd')\nNew-Item -ItemType Directory -Force -Path $logDir | Out-Null\nif ($logLevel -eq 'off') {\n  exit 0\n}\nif ($logLevel -eq 'verbose') {\n  Add-Content -Path (Join-Path $logDir 'hook-user-prompt.log') -Value $inputText\n  exit 0\n}\n$record = @{ timestamp = (Get-Date).ToUniversalTime().ToString('o'); event = 'userPromptSubmitted'; size_bytes = $inputText.Length; estimated_tokens = [int][math]::Ceiling($inputText.Length / 4.0) } | ConvertTo-Json -Compress\nAdd-Content -Path (Join-Path $logDir 'hook-user-prompt.log') -Value $record\n",
         "cwd": ".",
         "timeoutSec": 10
       }
@@ -14,9 +34,9 @@
     "sessionStart": [
       {
         "type": "command",
-        "description": "Log session start event with timestamp and context.\n",
-        "bash": "mkdir -p .vstack/logs\ninput=\"$(cat)\"\nprintf '%s\\n' \"$input\" >> .vstack/logs/hook-session-start.jsonl\n",
-        "powershell": "New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null\n$inputText = [Console]::In.ReadToEnd()\nAdd-Content -Path .vstack/logs/hook-session-start.jsonl -Value $inputText\n",
+        "description": "Centrally log session start with configurable verbosity.\n",
+        "bash": "input=\"$(cat)\"\nlog_level=\"${VSTACK_HOOKS_LOG_LEVEL:-minimal}\"\nlog_root=\"${VSTACK_HOOK_LOG_DIR:-.vstack/logs}\"\nlog_dir=\"$log_root/$(date -u +%Y%m%d)\"\nmkdir -p \"$log_dir\"\nif [ \"$log_level\" = \"off\" ]; then\n  exit 0\nfi\nif [ \"$log_level\" = \"verbose\" ]; then\n  printf '%s\\n' \"$input\" >> \"$log_dir/hook-session-start.log\"\n  exit 0\nfi\nts=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"\nbytes=\"$(printf '%s' \"$input\" | wc -c | tr -d ' ')\"\nest_tokens=\"$(( (bytes + 3) / 4 ))\"\nprintf '{\"timestamp\":\"%s\",\"event\":\"sessionStart\",\"size_bytes\":%s,\"estimated_tokens\":%s}\\n' \"$ts\" \"$bytes\" \"$est_tokens\" >> \"$log_dir/hook-session-start.log\"\n",
+        "powershell": "$inputText = [Console]::In.ReadToEnd()\n$logLevel = if ($env:VSTACK_HOOKS_LOG_LEVEL) { $env:VSTACK_HOOKS_LOG_LEVEL } else { 'minimal' }\n$logRoot = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { '.vstack/logs' }\n$logDir = Join-Path $logRoot (Get-Date).ToUniversalTime().ToString('yyyyMMdd')\nNew-Item -ItemType Directory -Force -Path $logDir | Out-Null\nif ($logLevel -eq 'off') {\n  exit 0\n}\nif ($logLevel -eq 'verbose') {\n  Add-Content -Path (Join-Path $logDir 'hook-session-start.log') -Value $inputText\n  exit 0\n}\n$record = @{ timestamp = (Get-Date).ToUniversalTime().ToString('o'); event = 'sessionStart'; size_bytes = $inputText.Length; estimated_tokens = [int][math]::Ceiling($inputText.Length / 4.0) } | ConvertTo-Json -Compress\nAdd-Content -Path (Join-Path $logDir 'hook-session-start.log') -Value $record\n",
         "cwd": ".",
         "timeoutSec": 10
       }
@@ -24,9 +44,9 @@
     "sessionEnd": [
       {
         "type": "command",
-        "description": "Log session end event for correlation with start.\n",
-        "bash": "mkdir -p .vstack/logs\ninput=\"$(cat)\"\nprintf '%s\\n' \"$input\" >> .vstack/logs/hook-session-end.jsonl\n",
-        "powershell": "New-Item -ItemType Directory -Force -Path .vstack/logs | Out-Null\n$inputText = [Console]::In.ReadToEnd()\nAdd-Content -Path .vstack/logs/hook-session-end.jsonl -Value $inputText\n",
+        "description": "Centrally log session end for correlation with start.\n",
+        "bash": "input=\"$(cat)\"\nlog_level=\"${VSTACK_HOOKS_LOG_LEVEL:-minimal}\"\nlog_root=\"${VSTACK_HOOK_LOG_DIR:-.vstack/logs}\"\nlog_dir=\"$log_root/$(date -u +%Y%m%d)\"\nmkdir -p \"$log_dir\"\nif [ \"$log_level\" = \"off\" ]; then\n  exit 0\nfi\nif [ \"$log_level\" = \"verbose\" ]; then\n  printf '%s\\n' \"$input\" >> \"$log_dir/hook-session-end.log\"\n  exit 0\nfi\nts=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"\nbytes=\"$(printf '%s' \"$input\" | wc -c | tr -d ' ')\"\nest_tokens=\"$(( (bytes + 3) / 4 ))\"\nprintf '{\"timestamp\":\"%s\",\"event\":\"sessionEnd\",\"size_bytes\":%s,\"estimated_tokens\":%s}\\n' \"$ts\" \"$bytes\" \"$est_tokens\" >> \"$log_dir/hook-session-end.log\"\n",
+        "powershell": "$inputText = [Console]::In.ReadToEnd()\n$logLevel = if ($env:VSTACK_HOOKS_LOG_LEVEL) { $env:VSTACK_HOOKS_LOG_LEVEL } else { 'minimal' }\n$logRoot = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { '.vstack/logs' }\n$logDir = Join-Path $logRoot (Get-Date).ToUniversalTime().ToString('yyyyMMdd')\nNew-Item -ItemType Directory -Force -Path $logDir | Out-Null\nif ($logLevel -eq 'off') {\n  exit 0\n}\nif ($logLevel -eq 'verbose') {\n  Add-Content -Path (Join-Path $logDir 'hook-session-end.log') -Value $inputText\n  exit 0\n}\n$record = @{ timestamp = (Get-Date).ToUniversalTime().ToString('o'); event = 'sessionEnd'; size_bytes = $inputText.Length; estimated_tokens = [int][math]::Ceiling($inputText.Length / 4.0) } | ConvertTo-Json -Compress\nAdd-Content -Path (Join-Path $logDir 'hook-session-end.log') -Value $record\n",
         "cwd": ".",
         "timeoutSec": 10
       }

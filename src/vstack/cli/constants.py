@@ -111,6 +111,7 @@ EXPECTED_INPUT_NAMES: dict[str, list[str]] = {
         "typescript",
     ],
     "hook": [
+        "log-retention-cleanup",
         "post-edit-markdown-quality",
         "post-edit-format",
         "post-commit-security-scan",
