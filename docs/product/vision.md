@@ -1,7 +1,7 @@
 # vstack — vision
 
 > Maintained by: **product** role\
-> Last updated: 2026-03-28
+> Last updated: 2026-05-13
 
 ## what is vstack
 
@@ -62,9 +62,9 @@ ______________________________________________________________________
    release) define who produces what. Each role owns a specific set of
    artifacts. Agents communicate through files on disk.
 
-1. **Pipeline-ready.** Today each skill runs in a single model call. If needed later,
-   the system can move to an orchestrated multi-role pipeline by adding a runner,
-   without rewriting skills.
+1. **Pipeline-ready.** The planner/DAG orchestration model now handles multi-role
+   execution inside VS Code. If coordination needs to evolve further, it should extend
+   the existing workflow contract rather than forcing a rewrite of skills.
 
 ______________________________________________________________________
 
