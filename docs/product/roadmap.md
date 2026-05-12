@@ -1,7 +1,7 @@
 # vstack — roadmap
 
 > Maintained by: **product** role\
-> Last updated: 2026-05-06
+> Last updated: 2026-05-12
 
 ______________________________________________________________________
 
@@ -31,7 +31,7 @@ ______________________________________________________________________
 | team customization layer                 | t.b.d.  | candidate   | Custompacks on top of vstack defaults; agents non-removable, skills fully overridable; overlay merge model                           |
 | workflow contract source-of-truth        | t.b.d.  | shipped     | `workflow:` block in `.vstack/config.yaml`; `gate`, `hitl`, `handoffs` schema; `vstack migrate` command (ADR-023, ADR-026)           |
 | optional orchestrated role pipeline      | v3.2.0  | shipped     | `planner` coordinator agent implemented with mode-aware generation; default mode is `agentic` (`manual` and `hybrid` also supported) |
-| parallel workflow via DAG model          | v3.3.0  | candidate   | Directed Acyclic Graph orchestration: run stages in parallel where safe; serialize only on data dependencies                         |
+| parallel workflow via DAG model          | v3.3.0  | shipped     | `depends_on` DAG semantics shipped with validation and backward-compatible sequential defaults                                       |
 | multi-IDE support (IntelliJ first)       | t.b.d.  | candidate   | Not planned before current model stabilizes                                                                                          |
 | heavy agent runtime framework            | —       | not planned | Keeps runtime lightweight and transparent                                                                                            |
 | cloud control plane dependency           | —       | not planned | Keeps operation local/offline-capable                                                                                                |
@@ -275,7 +275,7 @@ Not yet implemented (deferred to orchestrated pipeline milestone):
 - Generator-level cross-role validation of input/output chains
 - Central read-only contract export for external orchestrator consumption
 
-### parallel workflow via DAG model [candidate — v3.3.0]
+### parallel workflow via DAG model [shipped — v3.3.0]
 
 **What is DAG?** (Directed Acyclic Graph)
 
@@ -286,10 +286,19 @@ A DAG is a directed graph with no cycles that represents task dependencies. In t
 - **Parallel execution** happens when stages have no direct or transitive dependency between them
 - **Deterministic ordering** is preserved: a stage never starts until all its dependencies complete
 
-**Current limitation:**
+**Current behavior:**
 
-Today, vstack uses **linear/serial execution**: stages run strictly in canonical order (product → architect →
-designer → engineer → tester → release). This is safe and deterministic, but inefficient:
+vstack now supports DAG dependencies through optional `depends_on` in `workflow.stages`.
+When `depends_on` is omitted, behavior remains fully sequential and backward compatible.
+
+Validation and safety guarantees:
+
+- unknown dependency role references are rejected,
+- self-dependencies are rejected,
+- duplicate stage roles are rejected,
+- cyclic dependency graphs are rejected.
+
+Sequential compatibility mode (no `depends_on`):
 
 ```
 time →
@@ -327,33 +336,18 @@ product        ████
 
 Potential wall-clock reduction: 6 stages → 3 stages (~50% faster).
 
-**DAG-model implementation plan:**
+**Shipped scope in v3.3.0:**
 
-1. **Dependency schema** — extend `.vstack/config.yaml` `workflow.stages` with optional `depends_on: [list]` field
+1. Dependency schema support in `.vstack/config.yaml` via optional `depends_on` per stage.
+1. DAG validation in CLI parsing and workflow graph checks.
+1. Backward-compatible sequential defaults when `depends_on` is absent.
+1. DAG-aware handoff target resolution for worker agents.
 
-   - Default (omitted): inherits canonical ordering (backwards-compatible)
-   - Explicit deps: enables parallel scheduling
+**Remaining work beyond this release:**
 
-1. **Scheduling algorithm** — topological sort of the DAG
-
-   - `planner` agent computes the schedule at orchestration start
-   - Stages are grouped into "layers": all stages in layer N can run in parallel; layer N+1 starts after layer N completes
-
-1. **Artifact locking** — prevent concurrent modification of shared output files
-
-   - Manifest locks at the artifact type level (e.g., only one agent can write to `.github/agents/`)
-   - Staged writes: all agents in a layer write to temp files; `planner` merges after layer completes
-
-1. **Join semantics** — configurable failure policy per stage layer
-
-   - `all_success` (default): if any stage in a layer fails, the entire DAG fails
-   - `fail_fast`: same; no alternative in the initial version
-   - Future: `best_effort`, `skip_on_error` for optional quality gates
-
-1. **Output ordering** — ensure deterministic artifact ordering in generated files
-
-   - Agent output is sorted by role name; same for skills, instructions
-   - Reproducible builds remain a design principle
+1. Planner-level parallel dispatch scheduling and layer execution policy.
+1. Explicit runtime join/failure strategy controls for parallel stage groups.
+1. Additional integration tests for parallel orchestration execution traces.
 
 **Backwards compatibility:**
 
@@ -403,11 +397,10 @@ workflow:
 
 **Next steps:**
 
-1. Write ADR-027 (DAG-model orchestration with dependency schema)
-1. Design `depends_on` schema and topological sort algorithm
-1. Implement `planner` layer-grouping logic
-1. Add integration tests for parallel stage execution and failure scenarios
-1. Update config schema docs and examples
+1. Implement planner runtime layer scheduling for parallel-ready stages.
+1. Add explicit join policy knobs for DAG layer completion.
+1. Expand orchestration integration tests for multi-stage parallel traces.
+1. Add user-facing troubleshooting guidance for DAG misconfiguration recovery.
 
 ### optional orchestrated role pipeline [shipped — v3.2.0]
 
