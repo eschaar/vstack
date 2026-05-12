@@ -282,6 +282,27 @@ In `agentic` mode, `@planner` is the primary entry point. Start every session wi
 
 What planner does: reads `workflow.stages` and `depends_on`, invokes each role agent as a subagent at the right time, runs independent branches in parallel when `depends_on` permits, pauses at each gate for human approval, and reports a structured stage outcome after each step. Valid role names: `product`, `architect`, `designer`, `engineer`, `tester`, `release`.
 
+Agentic runbook (copy/paste):
+
+```text
+@planner Run the workflow for this repository change.
+@planner Show current stage status, ready stages, blocked stages, and next action.
+@planner Continue with all ready stages in parallel where workflow.depends_on allows it.
+@planner Pause at required HITL gates and ask for approval before advancing.
+@planner Finalize with a release-readiness summary and list changed artifacts.
+```
+
+Troubleshooting: why planner is not running stages in parallel
+
+- Check `workflow.mode` in `.vstack/config.yaml`: parallel orchestration requires `agentic` (or planner-led `hybrid`).
+- Validate stage dependencies: run `vstack validate` to catch invalid roles, self-dependencies, and cycles.
+- Inspect `depends_on` shape: a stage runs only when all listed predecessors are `ready` or `skipped`.
+- Check implicit sequential fallback: if `depends_on` is omitted, the stage depends on the previous stage.
+- Check optional stage behavior: `gate: optional` can be skipped when unaffected, reducing apparent parallel fan-out.
+- Check blockers in stage report: any `blocked` predecessor prevents dependent stages from becoming ready.
+- Check mixed execution path: in `hybrid`, mixing manual handoffs and planner in one session can mask parallel readiness.
+- Confirm you started with planner: in `agentic`, begin with `@planner`, not a worker role agent.
+
 Usage guidance:
 
 - Use `agentic` when you want one deterministic orchestration path.
