@@ -71,9 +71,46 @@ def _head_semver_tag() -> str | None:
     return max(tags, key=_version_tuple)
 
 
+def _nearest_semver_tag() -> str | None:
+    """Return the nearest plain semver tag reachable from HEAD, if available.
+
+    Uses ``git describe --tags --abbrev=0`` to find the most recent reachable
+    tag on any branch, not just tags that point exactly at HEAD.  This gives
+    a useful version string in development checkouts where HEAD is ahead of
+    the last release tag.
+
+    Only runs git inside the vstack source checkout.
+    """
+    repo_root = _vstack_repo_root()
+    if repo_root is None:
+        return None
+    try:
+        out = subprocess.check_output(  # nosec B603 B607
+            ["git", "-C", str(repo_root), "describe", "--tags", "--abbrev=0"],
+            stderr=subprocess.DEVNULL,
+            text=True,
+        ).strip()
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return None
+
+    return out if _SEMVER_TAG_RE.fullmatch(out) else None
+
+
 def _resolve_version() -> str:
-    """Resolve the package version from git tags, package metadata, or fallback."""
-    version = _head_semver_tag() or ""
+    """Resolve the package version from git tags, package metadata, or fallback.
+
+    Resolution order:
+
+    1. Exact semver tag on HEAD — used on release commits in the source checkout.
+    2. Nearest reachable semver tag (``git describe``) — gives the base version
+       on development branches where HEAD is ahead of the last release.
+    3. Installed package metadata — used when running from a built distribution
+       (``pip install vstack``) where ``poetry-dynamic-versioning`` has already
+       embedded the real version string.
+    4. Hard-coded ``"0.0.0"`` fallback — shallow clones, untagged repos, or
+       environments where neither git nor package metadata is available.
+    """
+    version = _head_semver_tag() or _nearest_semver_tag() or ""
     if version:
         return version
 
