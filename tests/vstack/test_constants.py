@@ -80,21 +80,70 @@ class TestConstants:
 
         assert constants_module._head_semver_tag() == "1.0.2"
 
-    def test_version_uses_installed_package_metadata_when_git_tag_missing(
+    def test_nearest_semver_tag_returns_none_outside_vstack_repo(self, monkeypatch) -> None:
+        """Test that git is not consulted for nearest tag outside the vstack source tree."""
+        monkeypatch.setattr(constants_module, "_vstack_repo_root", lambda: None)
+        called = []
+
+        def _record_call(*_args, **_kwargs) -> str:
+            called.append(1)
+            return ""
+
+        monkeypatch.setattr(subprocess, "check_output", _record_call)
+
+        assert constants_module._nearest_semver_tag() is None
+        assert not called, "git must not be invoked outside the vstack repo"
+
+    def test_nearest_semver_tag_returns_none_when_git_describe_fails(self, monkeypatch) -> None:
+        """Test that a failing git describe returns None cleanly."""
+        monkeypatch.setattr(constants_module, "_vstack_repo_root", lambda: Path("/fake/root"))
+
+        def _raise(*_args, **_kwargs) -> str:
+            raise subprocess.CalledProcessError(returncode=128, cmd=["git", "describe"])
+
+        monkeypatch.setattr(subprocess, "check_output", _raise)
+
+        assert constants_module._nearest_semver_tag() is None
+
+    def test_nearest_semver_tag_returns_none_for_non_semver_tag(self, monkeypatch) -> None:
+        """Test that a non-semver tag from git describe is ignored."""
+        monkeypatch.setattr(constants_module, "_vstack_repo_root", lambda: Path("/fake/root"))
+        monkeypatch.setattr(subprocess, "check_output", lambda *_a, **_kw: "v1.2.3\n")
+
+        assert constants_module._nearest_semver_tag() is None
+
+    def test_nearest_semver_tag_returns_plain_semver(self, monkeypatch) -> None:
+        """Test that a plain semver tag from git describe is returned."""
+        monkeypatch.setattr(constants_module, "_vstack_repo_root", lambda: Path("/fake/root"))
+        monkeypatch.setattr(subprocess, "check_output", lambda *_a, **_kw: "3.1.1\n")
+
+        assert constants_module._nearest_semver_tag() == "3.1.1"
+
+    def test_version_uses_installed_package_metadata_when_git_tags_missing(
         self, monkeypatch
     ) -> None:
-        """Test that installed metadata is used when no semver tag points at HEAD."""
+        """Test that installed metadata is used when no semver tag is reachable."""
         monkeypatch.setattr(constants_module, "_head_semver_tag", lambda: None)
+        monkeypatch.setattr(constants_module, "_nearest_semver_tag", lambda: None)
         monkeypatch.setattr(constants_module, "_pkg_version", lambda _name: "1.0.1")
 
         assert constants_module._resolve_version() == "1.0.1"
 
     def test_version_prefers_head_semver_tag(self, monkeypatch) -> None:
-        """Test that a semver tag on HEAD wins over package metadata."""
+        """Test that a semver tag on HEAD wins over nearest tag and package metadata."""
         monkeypatch.setattr(constants_module, "_head_semver_tag", lambda: "1.0.1")
+        monkeypatch.setattr(constants_module, "_nearest_semver_tag", lambda: "1.0.0")
         monkeypatch.setattr(constants_module, "_pkg_version", lambda _name: "9.9.9")
 
         assert constants_module._resolve_version() == "1.0.1"
+
+    def test_version_uses_nearest_tag_when_head_has_no_exact_tag(self, monkeypatch) -> None:
+        """Test that nearest reachable tag is used when HEAD has no exact semver tag."""
+        monkeypatch.setattr(constants_module, "_head_semver_tag", lambda: None)
+        monkeypatch.setattr(constants_module, "_nearest_semver_tag", lambda: "3.1.1")
+        monkeypatch.setattr(constants_module, "_pkg_version", lambda _name: "9.9.9")
+
+        assert constants_module._resolve_version() == "3.1.1"
 
     def test_version_fallback_when_package_metadata_missing(self, monkeypatch) -> None:
         """Test that version fallback when git and package metadata are unavailable."""
@@ -104,6 +153,7 @@ class TestConstants:
             raise importlib_metadata.PackageNotFoundError
 
         monkeypatch.setattr(constants_module, "_head_semver_tag", lambda: None)
+        monkeypatch.setattr(constants_module, "_nearest_semver_tag", lambda: None)
         monkeypatch.setattr(constants_module, "_pkg_version", _raise_not_found)
 
         assert constants_module._resolve_version() == "0.0.0"
