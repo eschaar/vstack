@@ -230,7 +230,38 @@ Execution semantics:
 
 - `workflow.stages` order is the canonical progression order.
 - `agentic` is stage-sequential by default: planner advances one stage at a time in configured order.
-- Parallelization is still possible inside a stage (independent subtasks), but cross-stage progression remains ordered.
+- Set `depends_on` to unlock a DAG topology and let planner run independent branches in parallel.
+
+**Parallel stages with `depends_on`:** By default each stage implicitly depends on the previous one. Add `depends_on` to declare explicit predecessors. The canonical vstack DAG (seeded automatically by `vstack install`):
+
+```yaml
+stages:
+  - role: product
+    gate: required
+    hitl: always
+  - role: architect
+    gate: required
+    hitl: always
+    depends_on: [product]
+  - role: designer
+    gate: optional
+    hitl: on-change
+    depends_on: [product]        # runs in parallel with architect
+  - role: engineer
+    gate: required
+    hitl: always
+    depends_on: [architect, designer]   # waits for both
+  - role: tester
+    gate: required
+    hitl: always
+    depends_on: [engineer]
+  - role: release
+    gate: required
+    hitl: always
+    depends_on: [tester]
+```
+
+`depends_on: []` marks a root stage. Absent `depends_on` falls back to sequential. Circular dependencies are caught at install/init time.
 
 Handoff target semantics:
 
@@ -241,11 +272,15 @@ Handoff target semantics:
 
 Mode quickstart in Copilot Agent Mode:
 
+In `agentic` mode, `@planner` is the primary entry point. Start every session with `@planner` and let it drive all stage transitions automatically.
+
 | Mode      | Start here               | First prompt example                                    |
 | --------- | ------------------------ | ------------------------------------------------------- |
 | `agentic` | `@planner`               | `@planner Run the workflow for this repository change.` |
 | `manual`  | `@product`               | `@product Define requirements for this change.`         |
 | `hybrid`  | `@planner` or `@product` | `@planner Run the workflow for this repository change.` |
+
+What planner does: reads `workflow.stages` and `depends_on`, invokes each role agent as a subagent at the right time, runs independent branches in parallel when `depends_on` permits, pauses at each gate for human approval, and reports a structured stage outcome after each step. Valid role names: `product`, `architect`, `designer`, `engineer`, `tester`, `release`.
 
 Usage guidance:
 
