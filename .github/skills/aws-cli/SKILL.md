@@ -374,4 +374,4 @@ aws ce get-cost-and-usage \
 - [AWS CLI named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"aws-cli","artifact_type":"skill","artifact_version":"20260502033","generator":"vstack","vstack_version":"3.1.1.post2.dev0+4d3419b"} -->
+<!-- VSTACK-META: {"artifact_name":"aws-cli","artifact_type":"skill","artifact_version":"20260502033","generator":"vstack","vstack_version":"0.0.0"} -->

@@ -192,15 +192,20 @@ workflow:
     - role: architect
       gate: required
       hitl: always
+      depends_on: [product]
     - role: designer
       gate: optional
       hitl: on-change
+      depends_on: [product]
     - role: engineer
       gate: required
       hitl: always
+      depends_on: [architect, designer]
     - role: tester
       gate: required
       hitl: always
+      depends_on: [engineer]
     - role: release
       gate: required
       hitl: always
+      depends_on: [tester]
