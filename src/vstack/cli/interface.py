@@ -192,9 +192,10 @@ class CommandLineInterface:
         contains no valid stages.
 
         Each returned dict has at minimum a ``role`` key.  Optional keys are
-        ``gate``, ``hitl``, and ``handoffs`` (a list of handoff dicts, each with
-        at minimum a ``prompt`` key and optionally ``agent`` and ``label``
-        overrides).  Unknown extra keys in the stage dict are silently ignored.
+        ``gate``, ``hitl``, ``depends_on``, and ``handoffs`` (a list of handoff
+        dicts, each with at minimum a ``prompt`` key and optionally ``agent``
+        and ``label`` overrides). Unknown extra keys in the stage dict are
+        silently ignored.
         """
         if install_dir is None:
             return []
@@ -220,6 +221,16 @@ class CommandLineInterface:
                 }
                 if "hitl" in item:
                     stage["hitl"] = str(item["hitl"])
+                if "depends_on" in item:
+                    raw_depends_on = item.get("depends_on", [])
+                    depends_on: list[str] = []
+                    if isinstance(raw_depends_on, list):
+                        for dep in raw_depends_on:
+                            if isinstance(dep, str):
+                                dep_name = dep.strip()
+                                if dep_name and dep_name not in depends_on:
+                                    depends_on.append(dep_name)
+                    stage["depends_on"] = depends_on
                 result.append(stage)
         CommandLineInterface._validate_workflow_stages(result)
         return result
@@ -261,16 +272,58 @@ class CommandLineInterface:
             roles.append(role)
 
         role_set = set(roles)
+        dependencies_by_role: dict[str, list[str]] = {}
         edges: dict[str, set[str]] = {role: set() for role in roles}
 
         for stage_index, stage in enumerate(stages):
+            stage_role = roles[stage_index]
+            if "depends_on" in stage:
+                raw_depends_on = stage.get("depends_on", [])
+                depends_on = raw_depends_on if isinstance(raw_depends_on, list) else []
+            else:
+                # Backward compatibility: without depends_on, keep canonical
+                # sequential dependency semantics.
+                depends_on = [roles[stage_index - 1]] if stage_index > 0 else []
+
+            normalized_depends_on: list[str] = []
+            for dep_index, dep in enumerate(depends_on):
+                dep_role = str(dep).strip()
+                if not dep_role:
+                    continue
+                if dep_role not in role_set:
+                    raise ValueError(
+                        "Invalid workflow config: "
+                        f"workflow.stages[{stage_index}].depends_on[{dep_index}] "
+                        f"references unknown stage role '{dep_role}'"
+                    )
+                if dep_role == stage_role:
+                    raise ValueError(
+                        "Invalid workflow config: "
+                        f"workflow.stages[{stage_index}].depends_on[{dep_index}] "
+                        "cannot reference the same stage role"
+                    )
+                if dep_role not in normalized_depends_on:
+                    normalized_depends_on.append(dep_role)
+
+            dependencies_by_role[stage_role] = normalized_depends_on
+            for dep_role in normalized_depends_on:
+                edges[dep_role].add(stage_role)
+
+        dependents_by_role: dict[str, list[str]] = {role: [] for role in roles}
+        for role in roles:
+            for dependent in roles:
+                if role in dependencies_by_role.get(dependent, []):
+                    dependents_by_role[role].append(dependent)
+
+        for stage_index, stage in enumerate(stages):
             source_role = roles[stage_index]
-            next_role = roles[stage_index + 1] if stage_index < len(roles) - 1 else ""
+            next_roles = dependents_by_role.get(source_role, [])
+            primary_next_role = next_roles[0] if next_roles else ""
             raw_handoffs = stage.get("handoffs", [])
             handoffs = raw_handoffs if isinstance(raw_handoffs, list) else []
 
             if not handoffs:
-                if next_role:
+                for next_role in next_roles:
                     edges[source_role].add(next_role)
                 continue
 
@@ -292,7 +345,7 @@ class CommandLineInterface:
                 if not prompt:
                     continue
 
-                target_role = target_override or next_role
+                target_role = target_override or primary_next_role
                 if target_role:
                     edges[source_role].add(target_role)
 
