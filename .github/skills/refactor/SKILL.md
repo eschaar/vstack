@@ -372,4 +372,4 @@ Behavior changed:   No
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"refactor","artifact_type":"skill","artifact_version":"20260421023","generator":"vstack","vstack_version":"0.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"refactor","artifact_type":"skill","artifact_version":"20260421023","generator":"vstack","vstack_version":"3.2.0"} -->

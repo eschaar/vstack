@@ -214,4 +214,4 @@ State conclusions with confidence level:
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"analyse","artifact_type":"skill","artifact_version":"20260421004","generator":"vstack","vstack_version":"0.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"analyse","artifact_type":"skill","artifact_version":"20260421004","generator":"vstack","vstack_version":"3.2.0"} -->

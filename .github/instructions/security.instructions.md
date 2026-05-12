@@ -42,4 +42,4 @@ Apply these security policies in this project.
 1. Isolate privileged logic; keep it minimal, auditable, and separate from business logic.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"security","artifact_type":"instruction","artifact_version":"20260502003","generator":"vstack","vstack_version":"0.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"security","artifact_type":"instruction","artifact_version":"20260502003","generator":"vstack","vstack_version":"3.2.0"} -->

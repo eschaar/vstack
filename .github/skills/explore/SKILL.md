@@ -224,4 +224,4 @@ Stack:   [language, framework, runtime versions]
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"explore","artifact_type":"skill","artifact_version":"20260421015","generator":"vstack","vstack_version":"0.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"explore","artifact_type":"skill","artifact_version":"20260421015","generator":"vstack","vstack_version":"3.2.0"} -->

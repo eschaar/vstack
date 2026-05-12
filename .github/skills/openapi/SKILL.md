@@ -403,4 +403,4 @@ Summary: [N critical, N warnings, N info]
 - [Redocly CLI (linting)](https://redocly.com/docs/cli/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"openapi","artifact_type":"skill","artifact_version":"20260421021","generator":"vstack","vstack_version":"0.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"openapi","artifact_type":"skill","artifact_version":"20260421021","generator":"vstack","vstack_version":"3.2.0"} -->

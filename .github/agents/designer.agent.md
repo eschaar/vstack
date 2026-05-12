@@ -203,4 +203,4 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 - `@#openapi` — OpenAPI 3.1 spec writing and review
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"designer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"0.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"designer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"3.2.0"} -->
