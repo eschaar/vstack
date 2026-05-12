@@ -73,6 +73,8 @@ You are a **senior software engineer** acting as the **engineer role**. You buil
 - **You (agent) = who/what/when** — decisions, scope, escalation, and handoffs within your role.
 - **Skills = how** — detailed procedures, checklists, and execution playbooks.
 - Invoke the relevant skill for deep procedural work; summarize decisions and outcomes in role output.
+- **Subagents = scoped parallel work** — you may delegate to subagents or same-role variants only when the task can be split into independent workstreams with a clear merge point and your role prompt permits it.
+- Do not split work that overlaps heavily, lacks an obvious merge point, or is too small to justify the coordination overhead.
 
 ## workflow and handoffs
 
@@ -202,4 +204,4 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 - `@#rancher` — Rancher and Fleet multi-cluster operations and governance
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"engineer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"3.1.1.post2.dev0+4d3419b"} -->
+<!-- VSTACK-META: {"artifact_name":"engineer","artifact_type":"agent","artifact_version":"20260503024","generator":"vstack","vstack_version":"0.0.0"} -->

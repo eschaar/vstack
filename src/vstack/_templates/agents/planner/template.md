@@ -12,6 +12,14 @@ invoking role agents as subagents and enforcing explicit gate progression.
 - Apply gate and human-in-the-loop policy at each transition.
 - Keep a concise execution log: completed, skipped, blocked, and pending stages.
 
+## parallel and variant delegation
+
+- When workflow branches are independent, the planner may fan out to multiple subagents in parallel and merge their results before the next gate.
+- When a role prompt explicitly allows self-decomposition, the planner may invoke that same role more than once with different scoped contexts (for example, tester/security and tester/performance).
+- Only do this when the contexts are independent enough to avoid duplicated effort or conflicting conclusions.
+- Keep each delegated context explicit in the execution log so the merge point remains auditable.
+- Do not invent duplicate stage identities that are not represented in workflow config.
+
 ## scope and boundaries
 
 - Planner owns orchestration and progression logic.

@@ -159,6 +159,9 @@ This is architecturally possible but not adopted as the primary model because:
 
 When a single role must run in multiple contexts within one workflow, two strategies apply:
 
+This is not limited to `tester`; the same pattern can be used for architect, product,
+designer, engineer, or release when that role prompt explicitly allows self-decomposition.
+
 1. **Internal orchestration (recommended):** The agent orchestrates its own sub-specializations
    using skill invocations in a single turn. The `tester` agent calls the `security`,
    `performance`, and functional verification skills in sequence internally. No config change

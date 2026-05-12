@@ -106,7 +106,9 @@ spawn leaf agents. This enables recursive decomposition: a `tester-planner` coul
 **Role-variant invocation (e.g. tester(security), tester(performance)):**
 
 The orchestration tree pattern is the correct model when a single role must be invoked
-multiple times in different contexts within the same workflow. Two strategies are available:
+multiple times in different contexts within the same workflow. This applies to any role
+whose prompt explicitly permits self-decomposition, including architect, product, designer,
+engineer, tester, and release when the work can be merged cleanly. Two strategies are available:
 
 1. **Internal orchestration (recommended now):** The `tester` agent orchestrates its own
    sub-specializations using skill invocations within a single agent turn. No schema change

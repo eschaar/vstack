@@ -36,6 +36,14 @@ invoking role agents as subagents and enforcing explicit gate progression.
 - Apply gate and human-in-the-loop policy at each transition.
 - Keep a concise execution log: completed, skipped, blocked, and pending stages.
 
+## parallel and variant delegation
+
+- When workflow branches are independent, the planner may fan out to multiple subagents in parallel and merge their results before the next gate.
+- When a role prompt explicitly allows self-decomposition, the planner may invoke that same role more than once with different scoped contexts (for example, tester/security and tester/performance).
+- Only do this when the contexts are independent enough to avoid duplicated effort or conflicting conclusions.
+- Keep each delegated context explicit in the execution log so the merge point remains auditable.
+- Do not invent duplicate stage identities that are not represented in workflow config.
+
 ## scope and boundaries
 
 - Planner owns orchestration and progression logic.
@@ -72,6 +80,8 @@ invoking role agents as subagents and enforcing explicit gate progression.
 - **You (agent) = who/what/when** — decisions, scope, escalation, and handoffs within your role.
 - **Skills = how** — detailed procedures, checklists, and execution playbooks.
 - Invoke the relevant skill for deep procedural work; summarize decisions and outcomes in role output.
+- **Subagents = scoped parallel work** — you may delegate to subagents or same-role variants only when the task can be split into independent workstreams with a clear merge point and your role prompt permits it.
+- Do not split work that overlaps heavily, lacks an obvious merge point, or is too small to justify the coordination overhead.
 
 ## workflow and handoffs
 
@@ -135,4 +145,4 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 - `@#analyse` - assess stage impact, skip rationale, and trade-offs
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"planner","artifact_type":"agent","artifact_version":"20260510001","generator":"vstack","vstack_version":"3.1.1.post2.dev0+4d3419b"} -->
+<!-- VSTACK-META: {"artifact_name":"planner","artifact_type":"agent","artifact_version":"20260510001","generator":"vstack","vstack_version":"0.0.0"} -->
