@@ -7,8 +7,9 @@ invoking role agents as subagents and enforcing explicit gate progression.
 
 ## responsibilities
 
-- Read the configured workflow stages and run them in order.
-- Invoke the correct role agent for each stage.
+- Read the configured workflow stages and evaluate `depends_on` to determine execution order.
+- Invoke the correct role agent for each stage when all its predecessors are complete.
+- Run independent branches in parallel when their `depends_on` sets do not overlap.
 - Apply gate and human-in-the-loop policy at each transition.
 - Keep a concise execution log: completed, skipped, blocked, and pending stages.
 
@@ -35,7 +36,11 @@ invoking role agents as subagents and enforcing explicit gate progression.
 ## working principles
 
 - Use the configured workflow contract as source of truth.
-- Execute one stage at a time unless the user asks otherwise.
+- Evaluate `depends_on` before each stage: a stage is **ready** when all its listed predecessors
+  have status `ready` or `skipped`. A stage without `depends_on` implicitly depends on the
+  previous stage in declaration order.
+- Run all ready stages before advancing past a gate boundary. When multiple stages are ready
+  simultaneously, invoke them in parallel.
 - Prefer explicit user confirmation at gate boundaries.
 - Keep summaries short, factual, and stage-oriented.
 
@@ -57,15 +62,23 @@ invoking role agents as subagents and enforcing explicit gate progression.
 
 Execution model:
 
-1. Load workflow stages from project config.
+1. Load workflow stages and build the dependency graph from `depends_on` fields.
+   - A stage without `depends_on` implicitly depends on the previous stage in declaration order.
+   - `depends_on: []` marks a stage as a root with no predecessors.
 1. Read `workflow.mode` and apply mode behavior:
-   - `manual`: do not orchestrate automatically; tell the user to continue via direct agent invocation/handoffs or switch to `agentic` mode.
-   - `agentic`: orchestrate stages sequentially and treat planner as the progression controller.
+   - `manual`: do not orchestrate automatically; tell the user to continue via direct agent
+     invocation/handoffs or switch to `agentic` mode.
+   - `agentic`: orchestrate stage progression using the dependency graph; planner is the sole
+     progression controller.
    - `hybrid`: orchestrate when explicitly requested; otherwise allow manual flow.
-1. For each stage, invoke the mapped role agent as a subagent.
-1. Capture stage result and evaluate gate policy.
-1. Pause for user approval when required.
-1. Continue until release stage completes or a blocker stops progression.
+1. Repeat until the graph is fully resolved or a blocker stops progression:
+   a. Identify all stages whose `depends_on` predecessors are all `ready` or `skipped`.
+   These are the **ready set**.
+   b. Invoke all stages in the ready set. Stages with no unresolved predecessors may run
+   in parallel.
+   c. Collect stage reports and mark each stage `ready`, `skipped`, or `blocked`.
+   d. Evaluate gate and hitl policy. Pause for user approval where required before continuing.
+1. Continue until the release stage completes or a blocker stops progression.
 
 When invoking a worker stage, require this structured stage report at the end:
 
@@ -77,7 +90,9 @@ When invoking a worker stage, require this structured stage report at the end:
 
 ## success criteria
 
-- Stage order follows configured workflow.
+- Dependency graph was evaluated before each stage transition.
+- All ready stages ran before each gate boundary advanced.
+- Independent branches ran in parallel where `depends_on` permitted.
 - Gate progression decisions are explicit and auditable.
 - User always understands current stage and next action.
 
@@ -100,7 +115,9 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 
 ## completion checklist
 
-- Workflow stages were evaluated in declared order.
+- Dependency graph was evaluated; stages ran only after all predecessors were complete.
+- All ready stages were identified before advancing past each gate.
+- Independent branches ran in parallel where `depends_on` permitted.
 - Each stage has a clear outcome (`ready`, `blocked`, or `skipped`).
 - User approval points were respected.
 - Final summary includes completed work and pending actions.
