@@ -251,4 +251,4 @@ Next: invoke @#rca and @#postmortem to produce written artifacts.
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"incident","artifact_type":"skill","artifact_version":"20260503002","generator":"vstack","vstack_version":"3.1.1.post2.dev0+4d3419b"} -->
+<!-- VSTACK-META: {"artifact_name":"incident","artifact_type":"skill","artifact_version":"20260503002","generator":"vstack","vstack_version":"0.0.0"} -->

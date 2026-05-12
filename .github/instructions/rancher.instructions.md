@@ -44,4 +44,4 @@ Use these Rancher conventions in this project.
 - [Fleet docs](https://fleet.rancher.io/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"rancher","artifact_type":"instruction","artifact_version":"20260502041","generator":"vstack","vstack_version":"3.1.1.post2.dev0+4d3419b"} -->
+<!-- VSTACK-META: {"artifact_name":"rancher","artifact_type":"instruction","artifact_version":"20260502041","generator":"vstack","vstack_version":"0.0.0"} -->

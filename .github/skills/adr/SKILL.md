@@ -180,4 +180,4 @@ is a kebab-case title.
 After writing, state the file path and summary so the architect or product role can review.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"adr","artifact_type":"skill","artifact_version":"20260421003","generator":"vstack","vstack_version":"3.1.1.post2.dev0+4d3419b"} -->
+<!-- VSTACK-META: {"artifact_name":"adr","artifact_type":"skill","artifact_version":"20260421003","generator":"vstack","vstack_version":"0.0.0"} -->
