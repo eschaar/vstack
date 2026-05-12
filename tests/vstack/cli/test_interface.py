@@ -577,6 +577,22 @@ class TestReadWorkflowStages:
         with pytest.raises(ValueError, match=r"depends_on\[0\].*unknown stage role 'missing'"):
             CommandLineInterface._read_workflow_stages(tmp_path / ".github")
 
+    def test_depends_on_error_reports_raw_yaml_stage_index(self, tmp_path: Path) -> None:
+        """depends_on shape errors use the YAML stage position even when earlier stages are skipped."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: 123\n"
+            "    - role: engineer\n"
+            "      depends_on: product\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"workflow\.stages\[1\]\.depends_on must be a list"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
     def test_raises_when_depends_on_self_reference(self, tmp_path: Path) -> None:
         """depends_on entries cannot reference the stage itself."""
         vstack_dir = tmp_path / ".vstack"
@@ -588,6 +604,19 @@ class TestReadWorkflowStages:
 
         with pytest.raises(ValueError, match=r"depends_on\[0\].*cannot reference the same stage"):
             CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_validate_sees_non_string_depends_on_entry(self) -> None:
+        """Validator rejects malformed non-string depends_on values."""
+        with pytest.raises(ValueError, match=r"depends_on\[0\].*must be a string"):
+            CommandLineInterface._validate_workflow_stages(
+                [
+                    {
+                        "role": "product",
+                        "handoffs": [],
+                        "depends_on": [123],
+                    },
+                ]
+            )
 
     def test_raises_when_depends_on_graph_contains_cycle(self, tmp_path: Path) -> None:
         """Dependency cycles in depends_on are rejected."""
