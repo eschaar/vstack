@@ -7,37 +7,37 @@ ______________________________________________________________________
 
 ## feature status table
 
-| Feature                                  | Version | Status      | Notes                                                                                                                                |
-| ---------------------------------------- | ------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| foundation                               | v1.0.0  | shipped     | Core template-driven install model is in place                                                                                       |
-| backend-first verification               | v1.0.0  | shipped     | Verify/inspect focus on contracts, observability, security                                                                           |
-| VS Code agent migration                  | v1.x    | shipped     | Native `.github/agents/*.agent.md` output format implemented                                                                         |
-| role model + doc restructure             | v1.1.0  | shipped     | 6-role model, agent templates, and docs baseline established                                                                         |
-| new skill scaffolding                    | v2.2.0  | shipped     | 42-skill set with canonical naming                                                                                                   |
-| agent skill wiring                       | v2.2.0  | shipped     | Role-to-skill mapping, handoffs, and concise modes wired into all agents                                                             |
-| CLI modularisation                       | v2.0.0  | shipped     | 12 focused CLI modules; BaseCommand + CommandContext contract                                                                        |
-| manifest package                         | v2.0.0  | shipped     | Dedicated `manifest/` package; atomic writes (ADR-016)                                                                               |
-| mypy type checking                       | v2.0.0  | shipped     | Full mypy coverage enforced in CI; 100% test coverage gate                                                                           |
-| manifest schema versioning               | v2.0.0  | shipped     | `manifest_version: 2`; upgrade path via `manifest upgrade` (ADR-014)                                                                 |
-| checksum backfill                        | v2.0.0  | shipped     | `manifest upgrade --backfill` adds SHA-256 for VSTACK-META-tagged files (ADR-017)                                                    |
-| conservative install                     | v2.0.0  | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015, superseded by ADR-020)                                            |
-| dry-run install                          | v2.1.0  | shipped     | `vstack install --dry-run` previews actions; type/name selectors in summary                                                          |
-| project-scope directory                  | v3.0.0  | shipped     | `.vstack/` directory: `config.yaml`, manifest, delta templates (ADR-019)                                                             |
-| install/init command semantics           | v3.0.0  | shipped     | `install` = first-run setup; `init` = idempotent CI regeneration (ADR-020, breaking change)                                          |
-| manifest relocation                      | v3.0.0  | shipped     | `vstack.json` moves from `.github/` to `.vstack/`; migration via `manifest upgrade` (ADR-014)                                        |
-| selective install                        | v3.0.0  | shipped     | Per-type and per-name exclusions via `exclude:` in `.vstack/config.yaml`; agents always installed (ADR-022)                          |
-| agent hooks support                      | t.b.d.  | shipped     | First-class `hook` artifact type: generate `.github/hooks/<name>.json` from templates and track in manifest                          |
-| new skills (next batch)                  | t.b.d.  | candidate   | `spaces`: set up Copilot Spaces; `copilot-admin`: manage Copilot settings via `gh api`                                               |
-| team customization layer                 | t.b.d.  | candidate   | Custompacks on top of vstack defaults; agents non-removable, skills fully overridable; overlay merge model                           |
-| workflow contract source-of-truth        | t.b.d.  | shipped     | `workflow:` block in `.vstack/config.yaml`; `gate`, `hitl`, `handoffs` schema; `vstack migrate` command (ADR-023, ADR-026)           |
-| optional orchestrated role pipeline      | v3.2.0  | shipped     | `planner` coordinator agent implemented with mode-aware generation; default mode is `agentic` (`manual` and `hybrid` also supported) |
-| parallel workflow via DAG model          | v3.3.0  | shipped     | `depends_on` DAG semantics shipped with validation and backward-compatible sequential defaults                                       |
-| multi-IDE support (IntelliJ first)       | t.b.d.  | candidate   | Not planned before current model stabilizes                                                                                          |
-| heavy agent runtime framework            | —       | not planned | Keeps runtime lightweight and transparent                                                                                            |
-| cloud control plane dependency           | —       | not planned | Keeps operation local/offline-capable                                                                                                |
-| VS Code extension packaging              | —       | not planned | Not required for current install model                                                                                               |
-| browser automation as default dependency | —       | not planned | Backend/microservice-first remains default                                                                                           |
-| install target directory override        | —       | not planned | Won't implement unless a concrete tool incompatibility with `.github/` arises                                                        |
+| Feature                                  | Version | Status      | Notes                                                                                                                                     |
+| ---------------------------------------- | ------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| foundation                               | v1.0.0  | shipped     | Core template-driven install model is in place                                                                                            |
+| backend-first verification               | v1.0.0  | shipped     | Verify/inspect focus on contracts, observability, security                                                                                |
+| VS Code agent migration                  | v1.x    | shipped     | Native `.github/agents/*.agent.md` output format implemented                                                                              |
+| role model + doc restructure             | v1.1.0  | shipped     | 6-role model, agent templates, and docs baseline established                                                                              |
+| new skill scaffolding                    | v2.2.0  | shipped     | 42-skill set with canonical naming                                                                                                        |
+| agent skill wiring                       | v2.2.0  | shipped     | Role-to-skill mapping, handoffs, and concise modes wired into all agents                                                                  |
+| CLI modularisation                       | v2.0.0  | shipped     | 12 focused CLI modules; BaseCommand + CommandContext contract                                                                             |
+| manifest package                         | v2.0.0  | shipped     | Dedicated `manifest/` package; atomic writes (ADR-016)                                                                                    |
+| mypy type checking                       | v2.0.0  | shipped     | Full mypy coverage enforced in CI; 100% test coverage gate                                                                                |
+| manifest schema versioning               | v2.0.0  | shipped     | `manifest_version: 2`; upgrade path via `manifest upgrade` (ADR-014)                                                                      |
+| checksum backfill                        | v2.0.0  | shipped     | `manifest upgrade --backfill` adds SHA-256 for VSTACK-META-tagged files (ADR-017)                                                         |
+| conservative install                     | v2.0.0  | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015, superseded by ADR-020)                                                 |
+| dry-run install                          | v2.1.0  | shipped     | `vstack install --dry-run` previews actions; type/name selectors in summary                                                               |
+| project-scope directory                  | v3.0.0  | shipped     | `.vstack/` directory: `config.yaml`, manifest, delta templates (ADR-019)                                                                  |
+| install/init command semantics           | v3.0.0  | shipped     | `install` = first-run setup; `init` = idempotent CI regeneration (ADR-020, breaking change)                                               |
+| manifest relocation                      | v3.0.0  | shipped     | `vstack.json` moves from `.github/` to `.vstack/`; migration via `manifest upgrade` (ADR-014)                                             |
+| selective install                        | v3.0.0  | shipped     | Per-type and per-name exclusions via `exclude:` in `.vstack/config.yaml`; agents always installed (ADR-022)                               |
+| agent hooks support                      | t.b.d.  | shipped     | First-class `hook` artifact type: generate `.github/hooks/<name>.json` from templates and track in manifest                               |
+| new skills (next batch)                  | t.b.d.  | candidate   | `spaces`: set up Copilot Spaces; `copilot-admin`: manage Copilot settings via `gh api`                                                    |
+| team customization layer                 | t.b.d.  | candidate   | Custompacks on top of vstack defaults; agents non-removable, skills fully overridable; overlay merge model                                |
+| workflow contract source-of-truth        | t.b.d.  | shipped     | `workflow:` block in `.vstack/config.yaml`; `gate`, `hitl`, `handoffs` schema; `vstack migrate` command (ADR-023, ADR-026)                |
+| optional orchestrated role pipeline      | v3.2.0  | shipped     | `planner` coordinator agent implemented with mode-aware generation; default mode is `agentic` (`manual` and `hybrid` also supported)      |
+| parallel workflow via DAG model          | v3.3.0  | shipped     | `depends_on` DAG semantics shipped with validation and backward-compatible sequential defaults                                            |
+| multi-IDE support (IntelliJ first)       | t.b.d.  | candidate   | Deferred until vstack proves stable in VS Code; likely a major follow-up because it needs separate targets, schemas, and more maintenance |
+| heavy agent runtime framework            | —       | not planned | Keeps runtime lightweight and transparent                                                                                                 |
+| cloud control plane dependency           | —       | not planned | Keeps operation local/offline-capable                                                                                                     |
+| VS Code extension packaging              | —       | not planned | Not required for current install model                                                                                                    |
+| browser automation as default dependency | —       | not planned | Backend/microservice-first remains default                                                                                                |
+| install target directory override        | —       | not planned | Won't implement unless a concrete tool incompatibility with `.github/` arises                                                             |
 
 ______________________________________________________________________
 
@@ -419,8 +419,23 @@ Shipped:
 
 ### multi-IDE support [candidate — t.b.d.]
 
-IntelliJ is the first candidate beyond VS Code. Not planned until after the current model stabilizes.
-Requires separate template sets, different generator targets, and different frontmatter schemas.
+This is a future major update, not a near-term roadmap item. vstack is intentionally
+VS Code-first, and the current model still needs to prove itself before we can judge
+whether support for other IDEs is worth the added complexity.
+
+IntelliJ is the first possible expansion target, but only after the VS Code model is
+stable and the product direction still makes the investment worthwhile.
+
+Why this is deferred:
+
+- It requires separate template sets and generator targets per IDE.
+- It likely needs IDE-specific frontmatter schemas and capability mapping.
+- It increases maintenance burden across every future agent, hook, and workflow change.
+- It raises the risk of breaking changes when the VS Code model evolves.
+- The AI tooling landscape may shift before a second IDE target becomes strategically useful.
+
+Current decision: keep this as a later, optional major update and revisit it only after
+vstack has established traction in the VS Code workflow first.
 
 ______________________________________________________________________
 
