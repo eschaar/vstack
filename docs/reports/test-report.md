@@ -1,8 +1,8 @@
 # Test Report
 
-**Branch:** `feat/workflow_update`\
-**Date:** 2026-05-06\
-**Scope:** Full repository — `.vstack/` project-scope directory (ADR-019); `vstack install`/`vstack init` command semantics (ADR-020); manifest relocation from `.github/` to `.vstack/` (ADR-021); selective install with `exclude:` filter (ADR-022); `artifacts.root` config override; `.vstack/.gitignore` seeding; agent `artifacts:` section generation; ADR terminology update (Option A/B → direct execution/orchestrated pipeline); roadmap cleanup (version column, candidate rationalisation); gh-issues skill MCP-first guidance. CLI refactor, manifest backfill, and test suite structure remain in scope as prior context.
+**Branch:** `feature/workflow-dag-validation`\
+**Date:** 2026-05-13\
+**Scope:** Full repository — workflow DAG semantics (`depends_on` validation, sequential fallback compatibility, planner-ready stage scheduling); agent parallel delegation policy; planner template orchestration; roadmap/version alignment; product/docs consistency updates; runtime version fallback fix; historical validation context retained for continuity.
 
 ______________________________________________________________________
 
@@ -10,7 +10,7 @@ ______________________________________________________________________
 
 | Dimension     | Result                                     |
 | ------------- | ------------------------------------------ |
-| Functional    | **PASS** — 428/428 tests green             |
+| Functional    | **PASS** — 635/635 tests green             |
 | Lint / Style  | **PASS** — ruff clean                      |
 | Type checking | **PASS** — mypy clean (51 files, 0 errors) |
 | Coverage      | **PASS** — 100.00% (fail-under=100)        |
@@ -27,7 +27,7 @@ ______________________________________________________________________
 platform: linux, Python 3.13.12-final-0
 runner: pytest 9.0.3 + pytest-cov 7.1.0
 command: pytest -q
-428 passed in 5.90s
+635 passed in 21.03s
 ```
 
 All tests pass. No flaky, skipped, or xfail tests observed.
@@ -36,7 +36,7 @@ ______________________________________________________________________
 
 ## Coverage Summary
 
-Total: 100.00% — 0 missed statements across 2,058 measured
+Total: 100.00% — 0 missed statements across 2,806 measured
 
 `fail-under=100` is configured in `pyproject.toml`. This gate is **passing**.
 
@@ -56,6 +56,8 @@ Blockage coverage findings were resolved by adding targeted unit tests for:
 - manifest-store defensive parsing branches
 - install/verify/uninstall error-path behavior
 - `manifest upgrade --backfill` branches: missing file, unreadable file, no VSTACK-META footer, existing checksum, unknown algorithm fallback
+
+Recent additions also covered malformed `depends_on` inputs at parse and validation time so the workflow DAG no longer degrades silently when config types are wrong.
 
 ______________________________________________________________________
 

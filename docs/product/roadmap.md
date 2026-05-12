@@ -1,7 +1,7 @@
 # vstack — roadmap
 
 > Maintained by: **product** role\
-> Last updated: 2026-05-12
+> Last updated: 2026-05-13
 
 ______________________________________________________________________
 
@@ -29,7 +29,7 @@ ______________________________________________________________________
 | workflow contract source-of-truth        | v3.1.0  | shipped     | `workflow:` block in `.vstack/config.yaml`; `gate`, `hitl`, `handoffs` schema; `vstack migrate` command (ADR-023, ADR-026)                              |
 | agent hooks support                      | v3.2.0  | shipped     | First-class `hook` artifact type: generate `.github/hooks/<name>.json` from templates and track in manifest                                             |
 | optional orchestrated role pipeline      | v3.2.0  | shipped     | `planner` coordinator agent implemented with mode-aware generation; default mode is `agentic` (`manual` and `hybrid` also supported)                    |
-| parallel workflow via DAG model          | v3.3.0  | shipped     | `depends_on` DAG semantics shipped with validation and backward-compatible sequential defaults                                                          |
+| parallel workflow via DAG model          | t.b.d.  | candidate   | `depends_on` DAG semantics implemented in code; awaiting a release tag before being promoted to shipped                                                 |
 | new skills (next batch)                  | t.b.d.  | candidate   | `spaces`: set up Copilot Spaces; `copilot-admin`: manage Copilot settings via `gh api`                                                                  |
 | team customization layer                 | t.b.d.  | candidate   | Deferred major update after VS Code-first model proves itself; custompacks, overlay merge rules, and install profiles all add major maintenance surface |
 | multi-IDE support (IntelliJ first)       | t.b.d.  | candidate   | Deferred until vstack proves stable in VS Code; likely a major follow-up because it needs separate targets, schemas, and more maintenance               |
@@ -289,7 +289,7 @@ Not yet implemented (deferred to orchestrated pipeline milestone):
 - Generator-level cross-role validation of input/output chains
 - Central read-only contract export for external orchestrator consumption
 
-### parallel workflow via DAG model [shipped — v3.3.0]
+### parallel workflow via DAG model [candidate — t.b.d.]
 
 **What is DAG?** (Directed Acyclic Graph)
 
@@ -350,7 +350,7 @@ product        ████
 
 Potential wall-clock reduction: 6 stages → 3 stages (~50% faster).
 
-**Shipped scope in v3.3.0:**
+**Current scope:**
 
 1. Dependency schema support in `.vstack/config.yaml` via optional `depends_on` per stage.
 1. DAG validation in CLI parsing and workflow graph checks.
