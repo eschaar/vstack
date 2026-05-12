@@ -436,6 +436,103 @@ class TestReadWorkflowStages:
         result = CommandLineInterface._read_workflow_stages(tmp_path / ".github")
         assert result == []
 
+    def test_raises_when_stage_role_is_blank(self, tmp_path: Path) -> None:
+        """Blank stage role values fail with an actionable validation error."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n  stages:\n    - role: '   '\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"workflow\.stages\[0\]\.role"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_stage_roles_are_duplicated(self, tmp_path: Path) -> None:
+        """Duplicate stage roles are rejected to avoid ambiguous graph edges."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n  stages:\n    - role: product\n    - role: product\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match="duplicate stage role 'product'"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_handoff_targets_unknown_stage(self, tmp_path: Path) -> None:
+        """Unknown explicit handoff agent targets are rejected."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "      handoffs:\n"
+            "        prompt: Next\n"
+            "        agent: nonexistent\n"
+            "    - role: architect\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"references unknown stage role 'nonexistent'"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_workflow_graph_contains_cycle(self, tmp_path: Path) -> None:
+        """Cycle detection rejects workflow handoff graphs that loop."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "      handoffs:\n"
+            "        prompt: To architect\n"
+            "        agent: architect\n"
+            "    - role: architect\n"
+            "      handoffs:\n"
+            "        prompt: Back to product\n"
+            "        agent: product\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"cycle detected in workflow graph"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+
+class TestValidateWorkflowStages:
+    """Tests for CommandLineInterface._validate_workflow_stages."""
+
+    def test_accepts_linear_workflow_without_explicit_handoffs(self) -> None:
+        """A plain stage list without handoffs is treated as a valid acyclic flow."""
+        CommandLineInterface._validate_workflow_stages(
+            [
+                {"role": "product", "handoffs": []},
+                {"role": "architect", "handoffs": []},
+            ]
+        )
+
+    def test_ignores_non_dict_handoff_entries(self) -> None:
+        """Non-dict handoff entries are ignored without failing validation."""
+        CommandLineInterface._validate_workflow_stages(
+            [
+                {"role": "product", "handoffs": ["invalid-entry"]},
+                {"role": "architect", "handoffs": []},
+            ]
+        )
+
+    def test_ignores_empty_prompt_handoff_edges(self) -> None:
+        """Handoffs with blank prompts do not contribute graph edges."""
+        CommandLineInterface._validate_workflow_stages(
+            [
+                {
+                    "role": "product",
+                    "handoffs": [{"prompt": "   ", "agent": "architect", "label": ""}],
+                },
+                {"role": "architect", "handoffs": []},
+            ]
+        )
+
 
 class TestReadWorkflowMode:
     """Tests for CommandLineInterface._read_workflow_mode."""
