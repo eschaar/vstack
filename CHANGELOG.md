@@ -2,6 +2,31 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.2.0](https://github.com/eschaar/vstack/compare/3.1.1...3.2.0) (2026-05-12)
+
+
+### Features
+
+* **config:** migrate items keys and stabilize workflow defaults ([0b77f68](https://github.com/eschaar/vstack/commit/0b77f68ff4940b9be44b9c901dceb83eb3bc154c))
+* **hooks:** add configurable baseline ([951c9c1](https://github.com/eschaar/vstack/commit/951c9c12e5d3afcb1ddca34a1c01f4c98297ce48))
+* **hooks:** add hooks ADR, design, and multi-template baseline ([2d46ac2](https://github.com/eschaar/vstack/commit/2d46ac21fed9b623915050356703d0336a89470f))
+
+
+### Fixes
+
+* **hooks:** decouple retention and harden ci automation ([375698f](https://github.com/eschaar/vstack/commit/375698fc2f658bd8f88c4a96b60b790d8b52cc55))
+
+
+### Maintenance
+
+* **artifacts:** regenerate installed github artifacts ([f5c44dd](https://github.com/eschaar/vstack/commit/f5c44dd9578f5942adf64fd4753df8c11f5b3b72))
+* **deps:** bump mypy and types-pyyaml ([2f2e459](https://github.com/eschaar/vstack/commit/2f2e459c538df3bfcb12218dbe859708dbc5498e))
+* **deps:** refresh dependency and action baselines ([2e5f0c0](https://github.com/eschaar/vstack/commit/2e5f0c046d3f52d17c01e5d13413470693470b6c))
+* **deps:** refresh poetry lockfile ([e182195](https://github.com/eschaar/vstack/commit/e1821957e88787a289effafaf18b7946205ccc32))
+* **gitignore:** drop legacy tmp-test-home ignore ([b031408](https://github.com/eschaar/vstack/commit/b03140808569e221cdd69325b801aa97cfcf7fb5))
+* **gitignore:** ignore local tmp test home ([4ef0cdf](https://github.com/eschaar/vstack/commit/4ef0cdf6e909a72889a1c1463faf6154ec6b2c2d))
+* regenerate generated artifacts ([aa206ba](https://github.com/eschaar/vstack/commit/aa206ba1ead62e34b72f523971fe08f51ffe3b1e))
+
 ## [3.1.1](https://github.com/eschaar/vstack/compare/3.1.0...3.1.1) (2026-05-10)
 
 ### Fixes
