@@ -436,6 +436,33 @@ class TestReadWorkflowStages:
         result = CommandLineInterface._read_workflow_stages(tmp_path / ".github")
         assert result == []
 
+    def test_parses_depends_on_list_when_present(self, tmp_path: Path) -> None:
+        """depends_on is parsed as a normalized string list when configured."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "    - role: designer\n"
+            "      depends_on:\n"
+            "        - product\n"
+            "        - ' product '\n"
+            "        - ''\n",
+            encoding="utf-8",
+        )
+
+        result = CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+        assert result == [
+            {"role": "product", "gate": "required", "handoffs": []},
+            {
+                "role": "designer",
+                "gate": "required",
+                "handoffs": [],
+                "depends_on": ["product"],
+            },
+        ]
+
     def test_raises_when_stage_role_is_blank(self, tmp_path: Path) -> None:
         """Blank stage role values fail with an actionable validation error."""
         vstack_dir = tmp_path / ".vstack"
@@ -499,6 +526,54 @@ class TestReadWorkflowStages:
         with pytest.raises(ValueError, match=r"cycle detected in workflow graph"):
             CommandLineInterface._read_workflow_stages(tmp_path / ".github")
 
+    def test_raises_when_depends_on_references_unknown_stage(self, tmp_path: Path) -> None:
+        """depends_on entries must reference known stage roles."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "    - role: engineer\n"
+            "      depends_on:\n"
+            "        - missing\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"depends_on\[0\].*unknown stage role 'missing'"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_depends_on_self_reference(self, tmp_path: Path) -> None:
+        """depends_on entries cannot reference the stage itself."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n  stages:\n    - role: tester\n      depends_on:\n        - tester\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"depends_on\[0\].*cannot reference the same stage"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_depends_on_graph_contains_cycle(self, tmp_path: Path) -> None:
+        """Dependency cycles in depends_on are rejected."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "      depends_on:\n"
+            "        - architect\n"
+            "    - role: architect\n"
+            "      depends_on:\n"
+            "        - product\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"cycle detected in workflow graph"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
 
 class TestValidateWorkflowStages:
     """Tests for CommandLineInterface._validate_workflow_stages."""
@@ -530,6 +605,15 @@ class TestValidateWorkflowStages:
                     "handoffs": [{"prompt": "   ", "agent": "architect", "label": ""}],
                 },
                 {"role": "architect", "handoffs": []},
+            ]
+        )
+
+    def test_ignores_blank_depends_on_entries(self) -> None:
+        """Blank depends_on entries are ignored during dependency normalization."""
+        CommandLineInterface._validate_workflow_stages(
+            [
+                {"role": "product", "handoffs": []},
+                {"role": "architect", "handoffs": [], "depends_on": ["  ", "product"]},
             ]
         )
 

@@ -519,6 +519,81 @@ class TestAgentGenerator:
             assert len(result) == 1
             assert result[0]["agent"] == "tester"
 
+        def test_depends_on_branching_falls_back_to_all_dependents(self) -> None:
+            """Without explicit handoffs, DAG branching returns one fallback handoff per dependent."""
+            stages: list[dict[str, Any]] = [
+                {"role": "product", "gate": "required", "handoffs": []},
+                {
+                    "role": "architect",
+                    "gate": "required",
+                    "depends_on": ["product"],
+                    "handoffs": [],
+                },
+                {
+                    "role": "designer",
+                    "gate": "required",
+                    "depends_on": ["product"],
+                    "handoffs": [],
+                },
+            ]
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
+            result = gen._resolve_handoffs("product", "Proceed.")
+            assert len(result) == 2
+            assert [entry["agent"] for entry in result] == ["architect", "designer"]
+
+        def test_depends_on_uses_primary_dependent_for_implicit_agent(self) -> None:
+            """Explicit handoff entries without agent default to the first dependent in stage order."""
+            stages: list[dict[str, Any]] = [
+                {
+                    "role": "product",
+                    "gate": "required",
+                    "handoffs": [{"prompt": "Go.", "agent": "", "label": ""}],
+                },
+                {
+                    "role": "architect",
+                    "gate": "required",
+                    "depends_on": ["product"],
+                    "handoffs": [],
+                },
+                {
+                    "role": "designer",
+                    "gate": "required",
+                    "depends_on": ["product"],
+                    "handoffs": [],
+                },
+            ]
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
+            result = gen._resolve_handoffs("product", "")
+            assert len(result) == 1
+            assert result[0]["agent"] == "architect"
+
+        def test_fallback_prompt_returns_empty_when_no_dependent_stage_exists(self) -> None:
+            """Fallback prompt returns no handoff when the DAG has no downstream dependent stage."""
+            stages: list[dict[str, Any]] = [
+                {"role": "product", "gate": "required", "handoffs": []},
+                {
+                    "role": "architect",
+                    "gate": "required",
+                    "depends_on": [],
+                    "handoffs": [],
+                },
+            ]
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
+            assert gen._resolve_handoffs("product", "Proceed") == []
+
+        def test_explicit_handoff_without_agent_is_skipped_without_dependent(self) -> None:
+            """Implicit target resolution skips explicit handoffs when no primary dependent exists."""
+            stages: list[dict[str, Any]] = [
+                {
+                    "role": "product",
+                    "gate": "required",
+                    "depends_on": [],
+                    "handoffs": [{"prompt": "Go.", "agent": "", "label": ""}],
+                }
+            ]
+            gen = AgentGenerator(workflow_stages=stages, workflow_mode="manual")
+            assert gen._resolve_handoffs("product", "") == []
+
     class TestBuildHandoffs:
         """Tests for AgentGenerator._build_handoffs (compatibility shim)."""
 

@@ -260,16 +260,37 @@ class AgentGenerator(GenericArtifactGenerator):
                 }
             ]
 
-        roles = [s["role"] for s in self.workflow_stages]
-        try:
-            idx = roles.index(agent_role)
-        except ValueError:
+        stage_by_role = {
+            str(stage.get("role", "")).strip(): stage for stage in self.workflow_stages
+        }
+        if agent_role not in stage_by_role:
             return []
-        if idx >= len(roles) - 1:
-            return []
-        next_role = roles[idx + 1]
 
-        stage_handoffs: list[dict[str, str]] = self.workflow_stages[idx].get("handoffs", [])
+        dependencies_by_role: dict[str, list[str]] = {}
+        ordered_roles = [str(stage.get("role", "")).strip() for stage in self.workflow_stages]
+        role_set = set(ordered_roles)
+        for index, role in enumerate(ordered_roles):
+            stage = stage_by_role.get(role, {})
+            if "depends_on" in stage:
+                raw_depends_on = stage.get("depends_on", [])
+                depends_on = raw_depends_on if isinstance(raw_depends_on, list) else []
+                normalized = []
+                for dep in depends_on:
+                    dep_role = str(dep).strip()
+                    if dep_role and dep_role in role_set and dep_role not in normalized:
+                        normalized.append(dep_role)
+                dependencies_by_role[role] = normalized
+            elif index > 0:
+                dependencies_by_role[role] = [ordered_roles[index - 1]]
+            else:
+                dependencies_by_role[role] = []
+
+        next_roles = [
+            role for role in ordered_roles if agent_role in dependencies_by_role.get(role, [])
+        ]
+        primary_next_role = next_roles[0] if next_roles else ""
+
+        stage_handoffs: list[dict[str, str]] = stage_by_role[agent_role].get("handoffs", [])
         if not isinstance(stage_handoffs, list):
             stage_handoffs = []
 
@@ -278,12 +299,15 @@ class AgentGenerator(GenericArtifactGenerator):
         if not stage_handoffs:
             if not handoff_prompt.strip():
                 return []
+            if not next_roles:
+                return []
             return [
                 {
                     "label": f"Go to next stage: {next_role.capitalize()}",
                     "agent": next_role,
                     "prompt": handoff_prompt.strip(),
                 }
+                for next_role in next_roles
             ]
 
         result: list[dict[str, str]] = []
@@ -293,7 +317,9 @@ class AgentGenerator(GenericArtifactGenerator):
             if not isinstance(h, dict):
                 continue
             h_agent = str(h.get("agent", "") or "").strip()
-            target_agent = h_agent or next_role
+            target_agent = h_agent or primary_next_role
+            if not target_agent:
+                continue
 
             # Apply per-agent handoff_prompt override to the first handoff that
             # targets the natural next stage (no explicit agent override).
