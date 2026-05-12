@@ -210,7 +210,7 @@ class CommandLineInterface:
         if not isinstance(stages_raw, list):
             return []
         result: list[dict] = []
-        for item in stages_raw:
+        for stage_index, item in enumerate(stages_raw):
             if isinstance(item, dict) and isinstance(item.get("role"), str):
                 handoffs = CommandLineInterface._parse_stage_handoffs(item)
                 normalized_role = item["role"].strip()
@@ -226,14 +226,14 @@ class CommandLineInterface:
                     if not isinstance(raw_depends_on, list):
                         raise ValueError(
                             "Invalid workflow config: "
-                            f"workflow.stages[{len(result)}].depends_on must be a list"
+                            f"workflow.stages[{stage_index}].depends_on must be a list"
                         )
                     depends_on: list[str] = []
                     for dep_index, dep in enumerate(raw_depends_on):
                         if not isinstance(dep, str):
                             raise ValueError(
                                 "Invalid workflow config: "
-                                f"workflow.stages[{len(result)}].depends_on[{dep_index}] must be a string"
+                                f"workflow.stages[{stage_index}].depends_on[{dep_index}] must be a string"
                             )
                         dep_name = dep.strip()
                         if dep_name and dep_name not in depends_on:
@@ -300,6 +300,11 @@ class CommandLineInterface:
 
             normalized_depends_on: list[str] = []
             for dep_index, dep in enumerate(depends_on):
+                if not isinstance(dep, str):
+                    raise ValueError(
+                        "Invalid workflow config: "
+                        f"workflow.stages[{stage_index}].depends_on[{dep_index}] must be a string"
+                    )
                 dep_role = str(dep).strip()
                 if not dep_role:
                     continue

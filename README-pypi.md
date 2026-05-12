@@ -235,30 +235,33 @@ Execution semantics:
 **Parallel stages with `depends_on`:** By default each stage implicitly depends on the previous one. Add `depends_on` to declare explicit predecessors. The canonical vstack DAG (seeded automatically by `vstack install`):
 
 ```yaml
-stages:
-  - role: product
-    gate: required
-    hitl: always
-  - role: architect
-    gate: required
-    hitl: always
-    depends_on: [product]
-  - role: designer
-    gate: optional
-    hitl: on-change
-    depends_on: [product]        # runs in parallel with architect
-  - role: engineer
-    gate: required
-    hitl: always
-    depends_on: [architect, designer]   # waits for both
-  - role: tester
-    gate: required
-    hitl: always
-    depends_on: [engineer]
-  - role: release
-    gate: required
-    hitl: always
-    depends_on: [tester]
+workflow:
+  mode: agentic
+  version: 1
+  stages:
+    - role: product
+      gate: required
+      hitl: always
+    - role: architect
+      gate: required
+      hitl: always
+      depends_on: [product]
+    - role: designer
+      gate: optional
+      hitl: on-change
+      depends_on: [product]        # runs in parallel with architect
+    - role: engineer
+      gate: required
+      hitl: always
+      depends_on: [architect, designer]   # waits for both
+    - role: tester
+      gate: required
+      hitl: always
+      depends_on: [engineer]
+    - role: release
+      gate: required
+      hitl: always
+      depends_on: [tester]
 ```
 
 `depends_on: []` marks a root stage. Absent `depends_on` falls back to sequential. Circular dependencies are caught at install/init time.
