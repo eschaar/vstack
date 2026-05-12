@@ -74,16 +74,16 @@ include = [
 version = "0.0.0"
 
 [tool.poetry.requires-plugins]
-poetry-dynamic-versioning = { version = ">=1.0.0,<2.0.0", extras = ["plugin"] }
+poetry-dynamic-versioning = { version = ">=1.10.0,<2.0.0", extras = ["plugin"] }
 
 [tool.poetry.group.dev.dependencies]
-pytest = ">=9.0"
-pytest-cov = ">=6.0"
+pytest = ">=9.0.3"
+pytest-cov = ">=7.1.0"
 ruff = ">=0.15.12"
-mypy = ">=1.20.2"
+mypy = ">=2.1.0"
 pre-commit = ">=4.6.0"
-tox = ">=4.15"
-types-PyYAML = ">=6.0"
+tox = ">=4.54.0"
+types-PyYAML = ">=6.0.12.20260510"
 
 
 # ---------------------------------------------------------------------------
@@ -146,7 +146,7 @@ py-version = "3.11"
 # ---------------------------------------------------------------------------
 
 [build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+requires = ["poetry-core>=2.4.0", "poetry-dynamic-versioning>=1.10.0,<2.0.0"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 # ---------------------------------------------------------------------------
@@ -177,7 +177,7 @@ extraPaths = ["scripts"]
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-min_version = 4.15
+min_version = 4.54.0
 env_list = py311, py312, py313, py314, lint, type
 skip_missing_interpreters = true
 
@@ -185,9 +185,9 @@ skip_missing_interpreters = true
 description = Run pytest for {env_name}
 package = skip
 deps =
-    pytest>=9.0
-    pytest-cov>=6.0
-    pyyaml>=6.0
+    pytest>=9.0.3
+    pytest-cov>=7.1.0
+    pyyaml>=6.0.3
 setenv =
     PYTHONPATH = {tox_root}/src
 commands =
@@ -197,7 +197,7 @@ commands =
 description = Run ruff lint checks
 package = skip
 deps =
-    ruff>=0.15
+    ruff>=0.15.12
 commands =
     ruff check src tests
 
@@ -205,8 +205,8 @@ commands =
 description = Run mypy type checks
 package = skip
 deps =
-    mypy>=1.20
-    types-PyYAML>=6.0
+    mypy>=2.1.0
+    types-PyYAML>=6.0.12.20260510
 commands =
     mypy src tests
 """

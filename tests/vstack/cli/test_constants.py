@@ -74,3 +74,15 @@ class TestCliConstants:
             "pre-tool-safety-gate",
             "session-audit",
         ]
+
+    def test_expected_agent_input_names_content(self) -> None:
+        """Verify source checks require all built-in agents including planner."""
+        assert EXPECTED_INPUT_NAMES["agent"] == [
+            "architect",
+            "designer",
+            "engineer",
+            "planner",
+            "product",
+            "release",
+            "tester",
+        ]

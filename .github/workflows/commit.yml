@@ -26,7 +26,7 @@ permissions:
 
 env:
   PYTHON_VERSION: "3.11"
-  POETRY_VERSION: "2.3.4"
+  POETRY_VERSION: "2.4.1"
   POETRY_VIRTUALENVS_IN_PROJECT: "true"
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
@@ -37,14 +37,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           # Full history is required to inspect the full pushed commit range.
           fetch-depth: 0
 
       - name: Validate commits with commit-check
         if: github.event_name == 'push'
-        uses: commit-check/commit-check-action@v2
+        uses: commit-check/commit-check-action@9b531e7dc071c3a7d92fd1bea4dec91119ca4890
         with:
           # Commit and branch policy is read from cchk.toml in repo root.
           message: true
@@ -56,7 +56,7 @@ jobs:
 
       - name: Validate commit messages with commit-check
         if: github.event_name == 'pull_request'
-        uses: commit-check/commit-check-action@v2
+        uses: commit-check/commit-check-action@9b531e7dc071c3a7d92fd1bea4dec91119ca4890
         with:
           # On PR events, validate commit messages only (branch refs are pull/*).
           message: true
@@ -131,13 +131,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Install Poetry
         run: pipx install "poetry==${POETRY_VERSION}"
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: poetry

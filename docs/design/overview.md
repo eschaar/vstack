@@ -20,7 +20,7 @@ ______________________________________________________________________
 
 ### 1.1 artifact lifecycle states
 
-An artifact (skill, agent, instruction, prompt) exists in one of these states relative
+An artifact (skill, agent, instruction, prompt, hook) exists in one of these states relative
 to the target `.github/` directory:
 
 ```text
@@ -77,6 +77,7 @@ stateDiagram-v2
       }
     ],
     "agents": [],
+    "hooks": [],
     "instructions": [],
     "prompts": []
   }

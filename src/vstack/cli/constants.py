@@ -95,7 +95,7 @@ class ArtifactState:
 # Names that must exist for each artifact type (used in verify --source).
 EXPECTED_INPUT_NAMES: dict[str, list[str]] = {
     "skill": EXPECTED_CANONICAL_NAMES,
-    "agent": ["architect", "designer", "engineer", "product", "release", "tester"],
+    "agent": ["architect", "designer", "engineer", "planner", "product", "release", "tester"],
     "instruction": [
         "git",
         "java",
