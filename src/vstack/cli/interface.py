@@ -212,15 +212,131 @@ class CommandLineInterface:
         for item in stages_raw:
             if isinstance(item, dict) and isinstance(item.get("role"), str):
                 handoffs = CommandLineInterface._parse_stage_handoffs(item)
+                normalized_role = item["role"].strip()
                 stage: dict = {
-                    "role": item["role"],
+                    "role": normalized_role,
                     "gate": str(item.get("gate", "required")),
                     "handoffs": handoffs,
                 }
                 if "hitl" in item:
                     stage["hitl"] = str(item["hitl"])
                 result.append(stage)
+        CommandLineInterface._validate_workflow_stages(result)
         return result
+
+    @staticmethod
+    def _validate_workflow_stages(stages: list[dict]) -> None:
+        """Validate parsed workflow stages for consistency and graph safety.
+
+        Validation rules:
+
+        - Every stage role must be a non-empty string after trimming.
+        - Stage roles must be unique.
+        - Explicit handoff targets (``handoffs[].agent``) must reference an
+          existing stage role.
+        - The implied workflow graph must be acyclic.
+
+        The graph includes explicit handoff edges and implicit sequential
+        fallback edges used when a stage has no explicit handoffs.
+        """
+        if not stages:
+            return
+
+        role_to_index: dict[str, int] = {}
+        roles: list[str] = []
+        for index, stage in enumerate(stages):
+            role = str(stage.get("role", "")).strip()
+            if not role:
+                raise ValueError(
+                    f"Invalid workflow config: workflow.stages[{index}].role must be a non-empty string"
+                )
+            if role in role_to_index:
+                previous_index = role_to_index[role]
+                raise ValueError(
+                    "Invalid workflow config: duplicate stage role "
+                    f"'{role}' at workflow.stages[{index}] "
+                    f"(already defined at workflow.stages[{previous_index}])"
+                )
+            role_to_index[role] = index
+            roles.append(role)
+
+        role_set = set(roles)
+        edges: dict[str, set[str]] = {role: set() for role in roles}
+
+        for stage_index, stage in enumerate(stages):
+            source_role = roles[stage_index]
+            next_role = roles[stage_index + 1] if stage_index < len(roles) - 1 else ""
+            raw_handoffs = stage.get("handoffs", [])
+            handoffs = raw_handoffs if isinstance(raw_handoffs, list) else []
+
+            if not handoffs:
+                if next_role:
+                    edges[source_role].add(next_role)
+                continue
+
+            for handoff_index, handoff in enumerate(handoffs):
+                if not isinstance(handoff, dict):
+                    continue
+
+                prompt = str(handoff.get("prompt", "") or "").strip()
+                target_override = str(handoff.get("agent", "") or "").strip()
+
+                if target_override and target_override not in role_set:
+                    raise ValueError(
+                        "Invalid workflow config: "
+                        f"workflow.stages[{stage_index}].handoffs[{handoff_index}].agent "
+                        f"references unknown stage role '{target_override}'"
+                    )
+
+                # Empty prompts do not generate handoff edges at runtime.
+                if not prompt:
+                    continue
+
+                target_role = target_override or next_role
+                if target_role:
+                    edges[source_role].add(target_role)
+
+        cycle = CommandLineInterface._find_workflow_cycle(edges)
+        if cycle:
+            cycle_path = " -> ".join(cycle)
+            raise ValueError(
+                f"Invalid workflow config: cycle detected in workflow graph: {cycle_path}"
+            )
+
+    @staticmethod
+    def _find_workflow_cycle(edges: dict[str, set[str]]) -> list[str]:
+        """Return a cycle path when the workflow graph contains a cycle."""
+        unvisited = 0
+        visiting = 1
+        visited = 2
+
+        state: dict[str, int] = {node: unvisited for node in edges}
+        path_stack: list[str] = []
+
+        def visit(node: str) -> list[str] | None:
+            state[node] = visiting
+            path_stack.append(node)
+
+            for neighbor in edges.get(node, set()):
+                neighbor_state = state.get(neighbor, unvisited)
+                if neighbor_state == visiting:
+                    start_index = path_stack.index(neighbor)
+                    return path_stack[start_index:] + [neighbor]
+                if neighbor_state == unvisited:
+                    cycle = visit(neighbor)
+                    if cycle is not None:
+                        return cycle
+
+            path_stack.pop()
+            state[node] = visited
+            return None
+
+        for node in edges:
+            if state[node] == unvisited:
+                cycle = visit(node)
+                if cycle is not None:
+                    return cycle
+        return []
 
     @staticmethod
     def _read_workflow_mode(install_dir: Path | None) -> str:
