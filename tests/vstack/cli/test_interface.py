@@ -463,6 +463,40 @@ class TestReadWorkflowStages:
             },
         ]
 
+    def test_raises_when_depends_on_is_not_a_list(self, tmp_path: Path) -> None:
+        """Scalar depends_on values fail fast instead of being treated as empty."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "    - role: designer\n"
+            "      depends_on: product\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"depends_on must be a list"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_depends_on_contains_non_string_entry(self, tmp_path: Path) -> None:
+        """Mixed-type depends_on lists are rejected instead of being partially ignored."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "    - role: designer\n"
+            "      depends_on:\n"
+            "        - product\n"
+            "        - 123\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"depends_on\[1\].*must be a string"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
     def test_raises_when_stage_role_is_blank(self, tmp_path: Path) -> None:
         """Blank stage role values fail with an actionable validation error."""
         vstack_dir = tmp_path / ".vstack"
@@ -616,6 +650,16 @@ class TestValidateWorkflowStages:
                 {"role": "architect", "handoffs": [], "depends_on": ["  ", "product"]},
             ]
         )
+
+    def test_raises_when_validate_sees_scalar_depends_on(self) -> None:
+        """Validator rejects malformed scalar depends_on values."""
+        with pytest.raises(ValueError, match=r"depends_on must be a list"):
+            CommandLineInterface._validate_workflow_stages(
+                [
+                    {"role": "product", "handoffs": []},
+                    {"role": "architect", "handoffs": [], "depends_on": "product"},
+                ]
+            )
 
 
 class TestReadWorkflowMode:

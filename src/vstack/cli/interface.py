@@ -223,13 +223,21 @@ class CommandLineInterface:
                     stage["hitl"] = str(item["hitl"])
                 if "depends_on" in item:
                     raw_depends_on = item.get("depends_on", [])
+                    if not isinstance(raw_depends_on, list):
+                        raise ValueError(
+                            "Invalid workflow config: "
+                            f"workflow.stages[{len(result)}].depends_on must be a list"
+                        )
                     depends_on: list[str] = []
-                    if isinstance(raw_depends_on, list):
-                        for dep in raw_depends_on:
-                            if isinstance(dep, str):
-                                dep_name = dep.strip()
-                                if dep_name and dep_name not in depends_on:
-                                    depends_on.append(dep_name)
+                    for dep_index, dep in enumerate(raw_depends_on):
+                        if not isinstance(dep, str):
+                            raise ValueError(
+                                "Invalid workflow config: "
+                                f"workflow.stages[{len(result)}].depends_on[{dep_index}] must be a string"
+                            )
+                        dep_name = dep.strip()
+                        if dep_name and dep_name not in depends_on:
+                            depends_on.append(dep_name)
                     stage["depends_on"] = depends_on
                 result.append(stage)
         CommandLineInterface._validate_workflow_stages(result)
@@ -279,7 +287,12 @@ class CommandLineInterface:
             stage_role = roles[stage_index]
             if "depends_on" in stage:
                 raw_depends_on = stage.get("depends_on", [])
-                depends_on = raw_depends_on if isinstance(raw_depends_on, list) else []
+                if not isinstance(raw_depends_on, list):
+                    raise ValueError(
+                        "Invalid workflow config: "
+                        f"workflow.stages[{stage_index}].depends_on must be a list"
+                    )
+                depends_on = raw_depends_on
             else:
                 # Backward compatibility: without depends_on, keep canonical
                 # sequential dependency semantics.
