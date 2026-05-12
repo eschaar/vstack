@@ -650,6 +650,27 @@ Which roles planner knows:
 `product`, `architect`, `designer`, `engineer`, `tester`, `release`.
 These are the only valid role names in `workflow.stages`.
 
+Agentic runbook (copy/paste):
+
+```text
+@planner Run the workflow for this repository change.
+@planner Show current stage status, ready stages, blocked stages, and next action.
+@planner Continue with all ready stages in parallel where workflow.depends_on allows it.
+@planner Pause at required HITL gates and ask for approval before advancing.
+@planner Finalize with a release-readiness summary and list changed artifacts.
+```
+
+Troubleshooting: why planner is not running stages in parallel
+
+- Check `workflow.mode` in `.vstack/config.yaml`: parallel orchestration requires `agentic` (or planner-led `hybrid`).
+- Validate stage dependencies: run `vstack validate` to catch invalid roles, self-dependencies, and cycles.
+- Inspect `depends_on` shape: a stage runs only when all listed predecessors are `ready` or `skipped`.
+- Check implicit sequential fallback: if `depends_on` is omitted, the stage depends on the previous stage.
+- Check optional stage behavior: `gate: optional` can be skipped when unaffected, reducing apparent parallel fan-out.
+- Check blockers in stage report: any `blocked` predecessor prevents dependent stages from becoming ready.
+- Check mixed execution path: in `hybrid`, mixing manual handoffs and planner in one session can mask parallel readiness.
+- Confirm you started with planner: in `agentic`, begin with `@planner`, not a worker role agent.
+
 Hybrid operating rule:
 
 - Choose one path per session (planner-led or manual handoffs) and stay on it.
