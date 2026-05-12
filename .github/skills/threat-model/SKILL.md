@@ -245,4 +245,4 @@ For each high-priority threat include:
 - Final report is written to `docs/architecture/threat-model.md`.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"threat-model","artifact_type":"skill","artifact_version":"20260502021","generator":"vstack","vstack_version":"0.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"threat-model","artifact_type":"skill","artifact_version":"20260502021","generator":"vstack","vstack_version":"3.2.0"} -->

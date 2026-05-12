@@ -190,4 +190,4 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 - `@#gdpr` — privacy by design and data processing architecture review
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"architect","artifact_type":"agent","artifact_version":"20260503022","generator":"vstack","vstack_version":"0.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"architect","artifact_type":"agent","artifact_version":"20260503022","generator":"vstack","vstack_version":"3.2.0"} -->

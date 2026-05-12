@@ -266,4 +266,4 @@ scope: [path/component/full]
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"verify","artifact_type":"skill","artifact_version":"20260421026","generator":"vstack","vstack_version":"0.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"verify","artifact_type":"skill","artifact_version":"20260421026","generator":"vstack","vstack_version":"3.2.0"} -->

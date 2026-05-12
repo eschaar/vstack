@@ -240,4 +240,4 @@ credential formats.
 - [Supported secret patterns](https://docs.github.com/en/code-security/secret-scanning/introduction/supported-secret-scanning-patterns)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"secret-scan","artifact_type":"skill","artifact_version":"20260502028","generator":"vstack","vstack_version":"0.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"secret-scan","artifact_type":"skill","artifact_version":"20260502028","generator":"vstack","vstack_version":"3.2.0"} -->
