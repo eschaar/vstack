@@ -227,6 +227,32 @@ class TestHookGenerator:
         assert "${VSTACK_HOOKS_MODE:-enforce}" in action["bash"]
         assert "else { 'enforce' }" in action["powershell"]
 
+    def test_render_replaces_mode_fallback_even_with_nonstandard_template_default(
+        self, tmp_path: Path
+    ) -> None:
+        """Mode replacement should not depend on one hard-coded source default value."""
+        tmpl_dir = tmp_path / "hooks" / "mode-default-variant"
+        tmpl_dir.mkdir(parents=True)
+        (tmpl_dir / "hook.yaml").write_text(
+            "version: 20260510003\nmetadata:\n  name: mode-default-variant\n"
+            "  description: 'test hook'\n  purpose: audit\n  security_level: low\n"
+            "  mode_default: audit\n  execution_context: copilot-hook-runtime\n"
+            "  dependencies:\n    required: []\n    optional: []\n"
+            "hooks:\n  postToolUse:\n    - type: command\n"
+            "      bash: 'mode=${VSTACK_HOOKS_MODE:-legacy-default}'\n"
+            "      powershell: '$mode = if ($env:VSTACK_HOOKS_MODE) { $env:VSTACK_HOOKS_MODE } else { ''legacy-default'' }'\n",
+            encoding="utf-8",
+        )
+
+        gen = HookGenerator(default_mode="enforce")
+        gen.templates_dir = tmp_path / "hooks"
+        artifact = gen.render_all()[0]
+
+        content = json.loads(artifact.content)
+        action = content["hooks"]["postToolUse"][0]
+        assert "${VSTACK_HOOKS_MODE:-enforce}" in action["bash"]
+        assert "else { 'enforce' }" in action["powershell"]
+
     def test_render_uses_project_default_log_level_for_shell_fallbacks(
         self, tmp_path: Path
     ) -> None:
@@ -278,6 +304,56 @@ class TestHookGenerator:
         assert "${VSTACK_HOOK_LOG_NAME:-custom-quality.log}" in action["bash"]
         assert "else { 'custom-quality.log' }" in action["powershell"]
 
+    def test_render_sanitizes_log_name_override_to_basename(self, tmp_path: Path) -> None:
+        """Configured log filename overrides should drop path traversal segments."""
+        tmpl_dir = tmp_path / "hooks" / "sanitize-log-name"
+        tmpl_dir.mkdir(parents=True)
+        (tmpl_dir / "hook.yaml").write_text(
+            "version: 20260510003\nmetadata:\n  name: sanitize-log-name\n"
+            "  description: 'test hook'\n  purpose: quality\n  security_level: low\n"
+            "  log:\n    name: hook-quality-alerts.log\n"
+            "  mode_default: audit\n  execution_context: copilot-hook-runtime\n"
+            "  dependencies:\n    required: []\n    optional: []\n"
+            "hooks:\n  postToolUse:\n    - type: command\n"
+            "      bash: 'log_name=${VSTACK_HOOK_LOG_NAME:-hook-quality-alerts.log}'\n"
+            "      powershell: '$name = if ($env:VSTACK_HOOK_LOG_NAME) { $env:VSTACK_HOOK_LOG_NAME } else { ''hook-quality-alerts.log'' }'\n",
+            encoding="utf-8",
+        )
+
+        gen = HookGenerator(log_name_overrides={"sanitize-log-name": "../unsafe.log"})
+        gen.templates_dir = tmp_path / "hooks"
+        artifact = gen.render_all()[0]
+
+        content = json.loads(artifact.content)
+        action = content["hooks"]["postToolUse"][0]
+        assert "${VSTACK_HOOK_LOG_NAME:-unsafe.log}" in action["bash"]
+        assert "else { 'unsafe.log' }" in action["powershell"]
+
+    def test_render_ignores_invalid_log_name_override(self, tmp_path: Path) -> None:
+        """Invalid basename results should be ignored and keep template defaults."""
+        tmpl_dir = tmp_path / "hooks" / "ignore-invalid-log-name"
+        tmpl_dir.mkdir(parents=True)
+        (tmpl_dir / "hook.yaml").write_text(
+            "version: 20260510003\nmetadata:\n  name: ignore-invalid-log-name\n"
+            "  description: 'test hook'\n  purpose: quality\n  security_level: low\n"
+            "  log:\n    name: hook-quality-alerts.log\n"
+            "  mode_default: audit\n  execution_context: copilot-hook-runtime\n"
+            "  dependencies:\n    required: []\n    optional: []\n"
+            "hooks:\n  postToolUse:\n    - type: command\n"
+            "      bash: 'log_name=${VSTACK_HOOK_LOG_NAME:-hook-quality-alerts.log}'\n"
+            "      powershell: '$name = if ($env:VSTACK_HOOK_LOG_NAME) { $env:VSTACK_HOOK_LOG_NAME } else { ''hook-quality-alerts.log'' }'\n",
+            encoding="utf-8",
+        )
+
+        gen = HookGenerator(log_name_overrides={"ignore-invalid-log-name": "../"})
+        gen.templates_dir = tmp_path / "hooks"
+        artifact = gen.render_all()[0]
+
+        content = json.loads(artifact.content)
+        action = content["hooks"]["postToolUse"][0]
+        assert "${VSTACK_HOOK_LOG_NAME:-hook-quality-alerts.log}" in action["bash"]
+        assert "else { 'hook-quality-alerts.log' }" in action["powershell"]
+
     def test_render_uses_per_hook_retention_days_override(self, tmp_path: Path) -> None:
         """Per-hook retention_days overrides are applied to shell fallbacks."""
         tmpl_dir = tmp_path / "hooks" / "retention-test"
@@ -305,7 +381,7 @@ class TestHookGenerator:
         # Verify retention_days override was applied to bash fallback
         assert "${VSTACK_HOOKS_LOG_RETENTION_DAYS:-30}" in action["bash"]
         # Verify retention_days override was applied to powershell fallback
-        assert 'else { "30" }' in action["powershell"]
+        assert "else { '30' }" in action["powershell"]
 
     def test_render_uses_project_default_log_dir_for_shell_fallbacks(self, tmp_path: Path) -> None:
         """Configured project hook log directory is injected into shell fallbacks."""

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import yaml
@@ -109,6 +110,30 @@ class HookGenerator(GenericArtifactGenerator):
         """Resolve the configured log filename override for one hook."""
         return self.log_name_overrides.get(hook_name)
 
+    @staticmethod
+    def _sanitize_log_name(log_name: str) -> str | None:
+        """Normalize configured log filename overrides to basename-only values."""
+        normalized = log_name.strip().replace("\\", "/")
+        basename = normalized.rsplit("/", 1)[-1]
+        if basename in {"", ".", ".."}:
+            return None
+        return basename
+
+    @staticmethod
+    def _replace_bash_fallback(text: str, env_name: str, value: str) -> str:
+        """Replace ${ENV:-default} fallback values for one shell variable."""
+        pattern = re.compile(r"\$\{" + re.escape(env_name) + r":-[^}]*\}")
+        return pattern.sub(f"${{{env_name}:-{value}}}", text)
+
+    @staticmethod
+    def _replace_powershell_fallback(text: str, env_name: str, value: str) -> str:
+        """Replace PowerShell fallback values for one environment variable."""
+        escaped_value = value.replace("'", "''")
+        pattern = re.compile(
+            rf"(if\s*\(\$env:{re.escape(env_name)}\)\s*\{{\s*\$env:{re.escape(env_name)}\s*\}}\s*else\s*\{{\s*)(['\"]).*?\2(\s*\}})",
+        )
+        return pattern.sub(rf"\1'{escaped_value}'\3", text)
+
     def _apply_runtime_defaults(
         self,
         text: str,
@@ -118,52 +143,22 @@ class HookGenerator(GenericArtifactGenerator):
         retention_days: int,
         log_dir: str,
         log_name: str | None,
-        default_log_name: str | None,
     ) -> str:
         """Inject configured mode and log level fallbacks into shell snippets."""
-        rendered = (
-            text.replace("${VSTACK_HOOKS_MODE:-audit}", f"${{VSTACK_HOOKS_MODE:-{mode}}}")
-            .replace(
-                "${VSTACK_HOOKS_LOG_LEVEL:-minimal}",
-                f"${{VSTACK_HOOKS_LOG_LEVEL:-{log_level}}}",
-            )
-            .replace(
-                "${VSTACK_HOOKS_LOG_RETENTION_DAYS:-7}",
-                f"${{VSTACK_HOOKS_LOG_RETENTION_DAYS:-{retention_days}}}",
-            )
-            .replace(
-                "${VSTACK_HOOK_LOG_DIR:-.vstack/logs}",
-                f"${{VSTACK_HOOK_LOG_DIR:-{log_dir}}}",
-            )
-            .replace("else { 'audit' }", f"else {{ '{mode}' }}")
-            .replace("else { 'minimal' }", f"else {{ '{log_level}' }}")
-            .replace("else { '7' }", f"else {{ '{retention_days}' }}")
-            .replace("else { '.vstack/logs' }", f"else {{ '{log_dir}' }}")
-            .replace('else { "audit" }', f'else {{ "{mode}" }}')
-            .replace('else { "minimal" }', f'else {{ "{log_level}" }}')
-            .replace('else { "7" }', f'else {{ "{retention_days}" }}')
-            .replace('else { ".vstack/logs" }', f'else {{ "{log_dir}" }}')
-        )
-        if (
-            isinstance(log_name, str)
-            and log_name
-            and isinstance(default_log_name, str)
-            and default_log_name
-        ):
-            rendered = (
-                rendered.replace(
-                    f"${{VSTACK_HOOK_LOG_NAME:-{default_log_name}}}",
-                    f"${{VSTACK_HOOK_LOG_NAME:-{log_name}}}",
-                )
-                .replace(
-                    f"else {{ '{default_log_name}' }}",
-                    f"else {{ '{log_name}' }}",
-                )
-                .replace(
-                    f'else {{ "{default_log_name}" }}',
-                    f'else {{ "{log_name}" }}',
-                )
-            )
+        rendered = text
+        runtime_defaults = {
+            "VSTACK_HOOKS_MODE": mode,
+            "VSTACK_HOOKS_LOG_LEVEL": log_level,
+            "VSTACK_HOOKS_LOG_RETENTION_DAYS": str(retention_days),
+            "VSTACK_HOOK_LOG_DIR": log_dir,
+        }
+        if isinstance(log_name, str) and log_name:
+            runtime_defaults["VSTACK_HOOK_LOG_NAME"] = log_name
+
+        for env_name, value in runtime_defaults.items():
+            rendered = self._replace_bash_fallback(rendered, env_name, value)
+            rendered = self._replace_powershell_fallback(rendered, env_name, value)
+
         return rendered
 
     def _generate_json_from_yaml(self, yaml_data: dict) -> str:
@@ -173,11 +168,12 @@ class HookGenerator(GenericArtifactGenerator):
         mode = self._mode_for_hook(hook_name)
         log_level = self._log_level_for_hook(hook_name)
         retention_days = self._retention_days_for_hook(hook_name)
-        log_name = self._log_name_for_hook(hook_name)
-        log_metadata = metadata.get("log", "")
-        default_log_name = ""
-        if isinstance(log_metadata, dict):
-            default_log_name = str(log_metadata.get("name", ""))
+        configured_log_name = self._log_name_for_hook(hook_name)
+        log_name = (
+            self._sanitize_log_name(configured_log_name)
+            if isinstance(configured_log_name, str)
+            else None
+        )
         hooks_dict = yaml_data.get("hooks", {})
 
         rendered_hooks: dict[str, list[dict]] = {}
@@ -195,7 +191,6 @@ class HookGenerator(GenericArtifactGenerator):
                             retention_days=retention_days,
                             log_dir=self.default_log_dir,
                             log_name=log_name,
-                            default_log_name=str(default_log_name),
                         )
                 rendered_actions.append(rendered_action)
             rendered_hooks[event] = rendered_actions

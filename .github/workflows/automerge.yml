@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Fetch Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v3
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -54,7 +54,7 @@ jobs:
 
       - name: Approve eligible PR
         if: steps.decision.outputs.should_automerge == 'true'
-        uses: actions/github-script@v9
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -83,7 +83,7 @@ jobs:
 
       - name: Update branch for eligible PR
         if: steps.decision.outputs.should_automerge == 'true'
-        uses: actions/github-script@v9
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -111,7 +111,7 @@ jobs:
 
       - name: Enable auto-merge for eligible PR
         if: steps.decision.outputs.should_automerge == 'true'
-        uses: actions/github-script@v9
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |

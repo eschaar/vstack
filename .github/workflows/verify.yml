@@ -21,7 +21,7 @@ env:
   # Shared interpreter version for reproducible CI behavior.
   PYTHON_VERSION: "3.11"
   # Pin Poetry CLI version for deterministic CI behavior.
-  POETRY_VERSION: "2.3.4"
+  POETRY_VERSION: "2.4.1"
   # Keep Poetry virtual environments inside the workspace for deterministic paths.
   POETRY_VIRTUALENVS_IN_PROJECT: "true"
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
@@ -39,13 +39,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Install Poetry
         run: pipx install "poetry==${POETRY_VERSION}"
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: ${{ matrix.python-version }}
           cache: poetry
@@ -64,13 +64,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Install Poetry
         run: pipx install "poetry==${POETRY_VERSION}"
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: poetry

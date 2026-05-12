@@ -6,7 +6,7 @@
 ## overview
 
 vstack is a VS Code–native AI engineering workflow system. It provides template-driven
-skills, agents, instructions, and prompts for planning, reviewing, verifying, and
+skills, agents, hooks, instructions, and prompts for planning, reviewing, verifying, and
 releasing software via GitHub Copilot Agent Mode.
 
 **System style:** `platform` — a standalone CLI tool and SDK. vstack installs
@@ -26,10 +26,11 @@ vstack/
 │   ├── agents/                  ← AGENT_SCHEMA, AGENT_TYPE
 │   ├── instructions/            ← instruction config and wrappers
 │   ├── prompts/                 ← prompt config and wrappers
+│   ├── hooks/                   ← hook config and YAML-to-JSON generator
 │   ├── manifest/                ← Manifest, ManifestFile, ArtifactEntry, checksums
 │   ├── cli/                     ← interface, registry, service, per-command handlers, helpers
 │   └── _templates/              ← source templates for all artifact types
-│       ├── skills/, agents/, instructions/, prompts/
+│       ├── skills/, agents/, hooks/, instructions/, prompts/
 │       ├── docs/                ← baseline doc stubs (seeded by vstack install)
 │       └── project/             ← .vstack/ config and artifact starter templates
 ├── docs/
@@ -45,6 +46,7 @@ vstack/
 ├── .github/                     ← generated Copilot artifacts (never edit directly)
 │   ├── skills/<name>/SKILL.md
 │   ├── agents/<name>.agent.md
+│   ├── hooks/<name>.json
 │   ├── instructions/<name>.instructions.md
 │   └── prompts/<name>.prompt.md
 └── README.md
@@ -105,7 +107,7 @@ have defined skill access and artifact ownership. See
 ### 5. manifest (`.vstack/vstack.json`)
 
 Generated at install time at `.vstack/vstack.json`. Tracks every `.github/` artifact
-installed by `vstack init` (skills, agents, instructions, and prompts), including a
+installed by `vstack init` (skills, agents, hooks, instructions, and prompts), including a
 per-file SHA-256 checksum, version, and algorithm so that:
 
 - `vstack uninstall` removes exactly the files it installed.
