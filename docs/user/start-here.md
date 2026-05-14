@@ -5,16 +5,20 @@ Choose the path that matches your goal, then follow the checklist in order.
 ## Quick commands
 
 ```bash
-- # Check current manifest status
-	vstack manifest status --target .
-- # Update hooks only
-	vstack init --only hook
-- # Force one artifact (example: agent/engineer)
-	vstack install --force-name agent/engineer
-- # Force update one type (hooks)
-	vstack init --only hook --force
-- # Verify manifest health
-	vstack manifest verify --target .
+# Check current manifest status
+vstack manifest status --target .
+
+# Update hooks only
+vstack init --only hook
+
+# Force one artifact (example: agent/engineer)
+vstack install --force-name agent/engineer
+
+# Force update one type (hooks)
+vstack init --only hook --force
+
+# Verify manifest health
+vstack manifest verify --target .
 ```
 
 ## 1. New User Path

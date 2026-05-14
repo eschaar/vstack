@@ -51,7 +51,7 @@ from pathlib import Path
 from vstack.agents.config import AGENT_TYPE
 from vstack.artifacts.generator import GenericArtifactGenerator
 from vstack.constants import ARTIFACTS_DOCS_ROOT, TEMPLATES_ROOT
-from vstack.models import CheckMessage
+from vstack.models import CheckMessage, ValidationResult
 
 
 class AgentGenerator(GenericArtifactGenerator):
@@ -116,7 +116,7 @@ class AgentGenerator(GenericArtifactGenerator):
             return templates
         return [p for p in templates if p.name != "planner"]
 
-    def verify_input(self, expected_names: list[str] | None = None):
+    def verify_input(self, expected_names: list[str] | None = None) -> ValidationResult:
         """Verify source templates and reject wildcard agent delegation policy."""
         result = super().verify_input(expected_names)
 
