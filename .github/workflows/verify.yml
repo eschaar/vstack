@@ -120,12 +120,14 @@ jobs:
       - name: Drift guard for generated artifacts
         run: |
           poetry run vstack install
-          if [[ -n "$(git status --porcelain -- .github)" ]]; then
+          # Ignore drift caused only by VSTACK-META vstack_version differences
+          # between local tagged checkouts and CI shallow clones.
+          if ! git --no-pager diff --quiet -I '"vstack_version":' -- .github; then
             echo "Generated artifact drift detected under .github/."
             echo "Run 'python3 -m vstack install' locally and commit the resulting changes."
             echo "Changed files:"
-            git --no-pager status --short -- .github
+            git --no-pager diff --name-only -I '"vstack_version":' -- .github
             echo "Diff:"
-            git --no-pager diff -- .github || true
+            git --no-pager diff -I '"vstack_version":' -- .github || true
             exit 1
           fi
