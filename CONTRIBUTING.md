@@ -73,8 +73,8 @@ change must be accompanied by tests that keep all checks green.
 
 ### Pytest temp files
 
-- Pytest temporary files are standardized under `.vstack/tmp/test`.
-- Avoid creating or relying on root-level temp directories for test runs.
+- Pytest temporary files are standardized under `.pytest-tmp` (configured via `--basetemp` in `pyproject.toml`).
+- Do not rely on the legacy `.vstack/tmp/test` location in scripts or local tooling.
 
 ## Commit Message Guidance
 

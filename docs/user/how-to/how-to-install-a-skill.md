@@ -17,9 +17,9 @@ Example exclusion block:
 
 ```yaml
 exclude:
-	skills:
-		- terraform
-		- helm
+  skills:
+    - terraform
+    - helm
 ```
 
 ## 2. Regenerate skill artifacts
