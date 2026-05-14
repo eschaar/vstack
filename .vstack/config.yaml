@@ -121,6 +121,7 @@ workflow:
     - role: architect
       gate: required
       hitl: always
+      depends_on: [product]
       handoffs:
         prompt: >
           Architecture outputs are approved. Assess the current state and produce
@@ -130,6 +131,7 @@ workflow:
     - role: designer
       gate: optional
       hitl: on-change
+      depends_on: [product]
       handoffs:
         prompt: >
           Design outputs are approved. Assess the current state and implement
@@ -140,6 +142,7 @@ workflow:
     - role: engineer
       gate: required
       hitl: always
+      depends_on: [architect, designer]
       handoffs:
         prompt: >
           Implementation is approved. Assess the current state and verify the
@@ -148,6 +151,7 @@ workflow:
     - role: tester
       gate: required
       hitl: always
+      depends_on: [engineer]
       handoffs:
         prompt: >
           Verification outputs are approved. Assess the current state and prepare
@@ -156,5 +160,6 @@ workflow:
     - role: release
       gate: required
       hitl: always
+      depends_on: [tester]
       handoffs:
         prompt: ""

@@ -1,7 +1,7 @@
 # vstack — agents
 
 > Maintained by: **designer** role\
-> Last updated: 2026-05-03\
+> Last updated: 2026-05-13\
 > VS Code docs: [custom agents](https://code.visualstudio.com/docs/copilot/customization/custom-agents) · [agents overview](https://code.visualstudio.com/docs/copilot/agents/overview)
 
 ## what are agents?
@@ -23,6 +23,20 @@ Generation is mode-aware via `.vstack/config.yaml` `workflow.mode`:
 
 In `hybrid`, the UI exposes both progression paths (planner and handoff buttons).
 Use it only when your process explicitly allows both.
+
+Planner orchestration also reads `workflow.stages[*].depends_on` when deciding which
+roles are ready. The generated agents remain VS Code custom agents, but the workflow
+controller can fan out independent stages in parallel when the DAG permits it.
+
+```mermaid
+flowchart LR
+  A[workflow.mode] --> B{mode}
+  B -->|agentic| C[planner generated]
+  B -->|manual| D[planner omitted]
+  B -->|hybrid| E[planner generated + worker handoffs]
+  C --> F[planner reads depends_on]
+  F --> G[ready set / parallel branches]
+```
 
 Canonical names are the source of truth. Historical or compatibility aliases should
 remain exceptional and temporary. See `docs/architecture/adr/002-artifact-naming-and-compatibility-policy.md`.

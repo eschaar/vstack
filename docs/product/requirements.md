@@ -94,7 +94,7 @@ ______________________________________________________________________
 
 - 6 delivery agent roles: `product`, `architect`, `designer`, `engineer`,
   `tester`, `release`, plus a `planner` coordinator agent.
-- 27 backend-oriented skills with canonical names enforced at source-verify time.
+- 42 skills across the role set with canonical names enforced at source-verify time.
 
 ### FR-11 — workflow mode semantics
 
@@ -104,13 +104,20 @@ ______________________________________________________________________
 - In `manual`, planner is not generated and worker handoff buttons are shown.
 - In `hybrid`, planner is generated and worker handoff buttons are shown.
 
+### FR-12 — workflow DAG semantics
+
+- `workflow.stages[*].depends_on` is optional and declares explicit stage prerequisites.
+- When `depends_on` is omitted, the stage falls back to sequential dependency on the previous stage.
+- Invalid dependency references, self-dependencies, duplicate stage roles, and cycles are rejected.
+- In `agentic`, the planner may schedule multiple ready stages in parallel when the DAG permits it.
+
 ______________________________________________________________________
 
 ## non-functional requirements
 
 | ID    | Requirement                                                                                            |
 | ----- | ------------------------------------------------------------------------------------------------------ |
-| NFR-1 | No runtime dependencies beyond the Python standard library.                                            |
+| NFR-1 | One runtime dependency only: PyYAML (`pyyaml>=6.0`) for YAML frontmatter parsing.                      |
 | NFR-2 | Python 3.11–3.14 compatibility.                                                                        |
 | NFR-3 | Manifest writes are atomic: write to a temporary file, then replace atomically.                        |
 | NFR-4 | All public behavior exercised by automated tests (pytest). CI gate enforces test pass.                 |
@@ -129,7 +136,7 @@ ______________________________________________________________________
 1. `vstack verify --target DIR` reports zero errors on a clean install.
 1. `vstack validate` exits 0 when all source templates resolve cleanly.
 1. Locally modified tracked files are preserved on re-install by default (FR-4).
-1. All 27 canonical skill names are present after a full install.
+1. All 42 canonical skill names are present after a full install.
 1. `vstack manifest upgrade` migrates a legacy manifest without data loss.
 
 ______________________________________________________________________

@@ -43,4 +43,4 @@ Use these testing conventions in this project.
 1. Treat flaky tests as bugs; do not merge code with known test reliability issues.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"testing","artifact_type":"instruction","artifact_version":"20260502004","generator":"vstack","vstack_version":"3.1.1.post2.dev0+4d3419b"} -->
+<!-- VSTACK-META: {"artifact_name":"testing","artifact_type":"instruction","artifact_version":"20260502004","generator":"vstack","vstack_version":"3.2.0"} -->

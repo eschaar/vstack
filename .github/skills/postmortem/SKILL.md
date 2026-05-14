@@ -184,4 +184,4 @@ Status:       Draft — ready for team review
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"postmortem","artifact_type":"skill","artifact_version":"20260503001","generator":"vstack","vstack_version":"3.1.1.post2.dev0+4d3419b"} -->
+<!-- VSTACK-META: {"artifact_name":"postmortem","artifact_type":"skill","artifact_version":"20260503001","generator":"vstack","vstack_version":"3.2.0"} -->

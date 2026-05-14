@@ -230,4 +230,4 @@ https://github.com/<org>/<repo>/issues/<number>
 - [GitHub Issues documentation](https://docs.github.com/en/issues)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"gh-issues","artifact_type":"skill","artifact_version":"20260502025","generator":"vstack","vstack_version":"3.1.1.post2.dev0+4d3419b"} -->
+<!-- VSTACK-META: {"artifact_name":"gh-issues","artifact_type":"skill","artifact_version":"20260502025","generator":"vstack","vstack_version":"3.2.0"} -->

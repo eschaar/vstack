@@ -192,9 +192,10 @@ class CommandLineInterface:
         contains no valid stages.
 
         Each returned dict has at minimum a ``role`` key.  Optional keys are
-        ``gate``, ``hitl``, and ``handoffs`` (a list of handoff dicts, each with
-        at minimum a ``prompt`` key and optionally ``agent`` and ``label``
-        overrides).  Unknown extra keys in the stage dict are silently ignored.
+        ``gate``, ``hitl``, ``depends_on``, and ``handoffs`` (a list of handoff
+        dicts, each with at minimum a ``prompt`` key and optionally ``agent``
+        and ``label`` overrides). Unknown extra keys in the stage dict are
+        silently ignored.
         """
         if install_dir is None:
             return []
@@ -209,18 +210,204 @@ class CommandLineInterface:
         if not isinstance(stages_raw, list):
             return []
         result: list[dict] = []
-        for item in stages_raw:
+        for stage_index, item in enumerate(stages_raw):
             if isinstance(item, dict) and isinstance(item.get("role"), str):
                 handoffs = CommandLineInterface._parse_stage_handoffs(item)
+                normalized_role = item["role"].strip()
                 stage: dict = {
-                    "role": item["role"],
+                    "role": normalized_role,
                     "gate": str(item.get("gate", "required")),
                     "handoffs": handoffs,
                 }
                 if "hitl" in item:
                     stage["hitl"] = str(item["hitl"])
+                if "depends_on" in item:
+                    raw_depends_on = item.get("depends_on", [])
+                    if not isinstance(raw_depends_on, list):
+                        raise ValueError(
+                            "Invalid workflow config: "
+                            f"workflow.stages[{stage_index}].depends_on must be a list"
+                        )
+                    depends_on: list[str] = []
+                    for dep_index, dep in enumerate(raw_depends_on):
+                        if not isinstance(dep, str):
+                            raise ValueError(
+                                "Invalid workflow config: "
+                                f"workflow.stages[{stage_index}].depends_on[{dep_index}] must be a string"
+                            )
+                        dep_name = dep.strip()
+                        if dep_name and dep_name not in depends_on:
+                            depends_on.append(dep_name)
+                    stage["depends_on"] = depends_on
                 result.append(stage)
+        CommandLineInterface._validate_workflow_stages(result)
         return result
+
+    @staticmethod
+    def _validate_workflow_stages(stages: list[dict]) -> None:
+        """Validate parsed workflow stages for consistency and graph safety.
+
+        Validation rules:
+
+        - Every stage role must be a non-empty string after trimming.
+        - Stage roles must be unique.
+        - Explicit handoff targets (``handoffs[].agent``) must reference an
+          existing stage role.
+        - The implied workflow graph must be acyclic.
+
+        The graph includes explicit handoff edges and implicit sequential
+        fallback edges used when a stage has no explicit handoffs.
+        """
+        if not stages:
+            return
+
+        role_to_index: dict[str, int] = {}
+        roles: list[str] = []
+        for index, stage in enumerate(stages):
+            role = str(stage.get("role", "")).strip()
+            if not role:
+                raise ValueError(
+                    f"Invalid workflow config: workflow.stages[{index}].role must be a non-empty string"
+                )
+            if role in role_to_index:
+                previous_index = role_to_index[role]
+                raise ValueError(
+                    "Invalid workflow config: duplicate stage role "
+                    f"'{role}' at workflow.stages[{index}] "
+                    f"(already defined at workflow.stages[{previous_index}])"
+                )
+            role_to_index[role] = index
+            roles.append(role)
+
+        role_set = set(roles)
+        dependencies_by_role: dict[str, list[str]] = {}
+        edges: dict[str, set[str]] = {role: set() for role in roles}
+
+        for stage_index, stage in enumerate(stages):
+            stage_role = roles[stage_index]
+            if "depends_on" in stage:
+                raw_depends_on = stage.get("depends_on", [])
+                if not isinstance(raw_depends_on, list):
+                    raise ValueError(
+                        "Invalid workflow config: "
+                        f"workflow.stages[{stage_index}].depends_on must be a list"
+                    )
+                depends_on = raw_depends_on
+            else:
+                # Backward compatibility: without depends_on, keep canonical
+                # sequential dependency semantics.
+                depends_on = [roles[stage_index - 1]] if stage_index > 0 else []
+
+            normalized_depends_on: list[str] = []
+            for dep_index, dep in enumerate(depends_on):
+                if not isinstance(dep, str):
+                    raise ValueError(
+                        "Invalid workflow config: "
+                        f"workflow.stages[{stage_index}].depends_on[{dep_index}] must be a string"
+                    )
+                dep_role = str(dep).strip()
+                if not dep_role:
+                    continue
+                if dep_role not in role_set:
+                    raise ValueError(
+                        "Invalid workflow config: "
+                        f"workflow.stages[{stage_index}].depends_on[{dep_index}] "
+                        f"references unknown stage role '{dep_role}'"
+                    )
+                if dep_role == stage_role:
+                    raise ValueError(
+                        "Invalid workflow config: "
+                        f"workflow.stages[{stage_index}].depends_on[{dep_index}] "
+                        "cannot reference the same stage role"
+                    )
+                if dep_role not in normalized_depends_on:
+                    normalized_depends_on.append(dep_role)
+
+            dependencies_by_role[stage_role] = normalized_depends_on
+            for dep_role in normalized_depends_on:
+                edges[dep_role].add(stage_role)
+
+        dependents_by_role: dict[str, list[str]] = {role: [] for role in roles}
+        for role in roles:
+            for dependent in roles:
+                if role in dependencies_by_role.get(dependent, []):
+                    dependents_by_role[role].append(dependent)
+
+        for stage_index, stage in enumerate(stages):
+            source_role = roles[stage_index]
+            next_roles = dependents_by_role.get(source_role, [])
+            primary_next_role = next_roles[0] if next_roles else ""
+            raw_handoffs = stage.get("handoffs", [])
+            handoffs = raw_handoffs if isinstance(raw_handoffs, list) else []
+
+            if not handoffs:
+                for next_role in next_roles:
+                    edges[source_role].add(next_role)
+                continue
+
+            for handoff_index, handoff in enumerate(handoffs):
+                if not isinstance(handoff, dict):
+                    continue
+
+                prompt = str(handoff.get("prompt", "") or "").strip()
+                target_override = str(handoff.get("agent", "") or "").strip()
+
+                if target_override and target_override not in role_set:
+                    raise ValueError(
+                        "Invalid workflow config: "
+                        f"workflow.stages[{stage_index}].handoffs[{handoff_index}].agent "
+                        f"references unknown stage role '{target_override}'"
+                    )
+
+                # Empty prompts do not generate handoff edges at runtime.
+                if not prompt:
+                    continue
+
+                target_role = target_override or primary_next_role
+                if target_role:
+                    edges[source_role].add(target_role)
+
+        cycle = CommandLineInterface._find_workflow_cycle(edges)
+        if cycle:
+            cycle_path = " -> ".join(cycle)
+            raise ValueError(
+                f"Invalid workflow config: cycle detected in workflow graph: {cycle_path}"
+            )
+
+    @staticmethod
+    def _find_workflow_cycle(edges: dict[str, set[str]]) -> list[str]:
+        """Return a cycle path when the workflow graph contains a cycle."""
+        unvisited = 0
+        visiting = 1
+        visited = 2
+
+        state: dict[str, int] = {node: unvisited for node in edges}
+        path_stack: list[str] = []
+
+        def visit(node: str) -> list[str] | None:
+            state[node] = visiting
+            path_stack.append(node)
+
+            for neighbor in edges.get(node, set()):
+                neighbor_state = state.get(neighbor, unvisited)
+                if neighbor_state == visiting:
+                    start_index = path_stack.index(neighbor)
+                    return path_stack[start_index:] + [neighbor]
+                if neighbor_state == unvisited:
+                    cycle = visit(neighbor)
+                    if cycle is not None:
+                        return cycle
+
+            path_stack.pop()
+            state[node] = visited
+            return None
+
+        for node in edges:
+            if state[node] == unvisited:
+                cycle = visit(node)
+                if cycle is not None:
+                    return cycle
+        return []
 
     @staticmethod
     def _read_workflow_mode(install_dir: Path | None) -> str:

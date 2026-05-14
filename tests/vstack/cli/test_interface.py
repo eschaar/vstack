@@ -436,6 +436,260 @@ class TestReadWorkflowStages:
         result = CommandLineInterface._read_workflow_stages(tmp_path / ".github")
         assert result == []
 
+    def test_parses_depends_on_list_when_present(self, tmp_path: Path) -> None:
+        """depends_on is parsed as a normalized string list when configured."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "    - role: designer\n"
+            "      depends_on:\n"
+            "        - product\n"
+            "        - ' product '\n"
+            "        - ''\n",
+            encoding="utf-8",
+        )
+
+        result = CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+        assert result == [
+            {"role": "product", "gate": "required", "handoffs": []},
+            {
+                "role": "designer",
+                "gate": "required",
+                "handoffs": [],
+                "depends_on": ["product"],
+            },
+        ]
+
+    def test_raises_when_depends_on_is_not_a_list(self, tmp_path: Path) -> None:
+        """Scalar depends_on values fail fast instead of being treated as empty."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "    - role: designer\n"
+            "      depends_on: product\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"depends_on must be a list"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_depends_on_contains_non_string_entry(self, tmp_path: Path) -> None:
+        """Mixed-type depends_on lists are rejected instead of being partially ignored."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "    - role: designer\n"
+            "      depends_on:\n"
+            "        - product\n"
+            "        - 123\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"depends_on\[1\].*must be a string"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_stage_role_is_blank(self, tmp_path: Path) -> None:
+        """Blank stage role values fail with an actionable validation error."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n  stages:\n    - role: '   '\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"workflow\.stages\[0\]\.role"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_stage_roles_are_duplicated(self, tmp_path: Path) -> None:
+        """Duplicate stage roles are rejected to avoid ambiguous graph edges."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n  stages:\n    - role: product\n    - role: product\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match="duplicate stage role 'product'"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_handoff_targets_unknown_stage(self, tmp_path: Path) -> None:
+        """Unknown explicit handoff agent targets are rejected."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "      handoffs:\n"
+            "        prompt: Next\n"
+            "        agent: nonexistent\n"
+            "    - role: architect\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"references unknown stage role 'nonexistent'"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_workflow_graph_contains_cycle(self, tmp_path: Path) -> None:
+        """Cycle detection rejects workflow handoff graphs that loop."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "      handoffs:\n"
+            "        prompt: To architect\n"
+            "        agent: architect\n"
+            "    - role: architect\n"
+            "      handoffs:\n"
+            "        prompt: Back to product\n"
+            "        agent: product\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"cycle detected in workflow graph"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_depends_on_references_unknown_stage(self, tmp_path: Path) -> None:
+        """depends_on entries must reference known stage roles."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "    - role: engineer\n"
+            "      depends_on:\n"
+            "        - missing\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"depends_on\[0\].*unknown stage role 'missing'"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_depends_on_error_reports_raw_yaml_stage_index(self, tmp_path: Path) -> None:
+        """depends_on shape errors use the YAML stage position even when earlier stages are skipped."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: 123\n"
+            "    - role: engineer\n"
+            "      depends_on: product\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"workflow\.stages\[1\]\.depends_on must be a list"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_depends_on_self_reference(self, tmp_path: Path) -> None:
+        """depends_on entries cannot reference the stage itself."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n  stages:\n    - role: tester\n      depends_on:\n        - tester\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"depends_on\[0\].*cannot reference the same stage"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    def test_raises_when_validate_sees_non_string_depends_on_entry(self) -> None:
+        """Validator rejects malformed non-string depends_on values."""
+        with pytest.raises(ValueError, match=r"depends_on\[0\].*must be a string"):
+            CommandLineInterface._validate_workflow_stages(
+                [
+                    {
+                        "role": "product",
+                        "handoffs": [],
+                        "depends_on": [123],
+                    },
+                ]
+            )
+
+    def test_raises_when_depends_on_graph_contains_cycle(self, tmp_path: Path) -> None:
+        """Dependency cycles in depends_on are rejected."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            "workflow:\n"
+            "  stages:\n"
+            "    - role: product\n"
+            "      depends_on:\n"
+            "        - architect\n"
+            "    - role: architect\n"
+            "      depends_on:\n"
+            "        - product\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=r"cycle detected in workflow graph"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+
+class TestValidateWorkflowStages:
+    """Tests for CommandLineInterface._validate_workflow_stages."""
+
+    def test_accepts_linear_workflow_without_explicit_handoffs(self) -> None:
+        """A plain stage list without handoffs is treated as a valid acyclic flow."""
+        CommandLineInterface._validate_workflow_stages(
+            [
+                {"role": "product", "handoffs": []},
+                {"role": "architect", "handoffs": []},
+            ]
+        )
+
+    def test_ignores_non_dict_handoff_entries(self) -> None:
+        """Non-dict handoff entries are ignored without failing validation."""
+        CommandLineInterface._validate_workflow_stages(
+            [
+                {"role": "product", "handoffs": ["invalid-entry"]},
+                {"role": "architect", "handoffs": []},
+            ]
+        )
+
+    def test_ignores_empty_prompt_handoff_edges(self) -> None:
+        """Handoffs with blank prompts do not contribute graph edges."""
+        CommandLineInterface._validate_workflow_stages(
+            [
+                {
+                    "role": "product",
+                    "handoffs": [{"prompt": "   ", "agent": "architect", "label": ""}],
+                },
+                {"role": "architect", "handoffs": []},
+            ]
+        )
+
+    def test_ignores_blank_depends_on_entries(self) -> None:
+        """Blank depends_on entries are ignored during dependency normalization."""
+        CommandLineInterface._validate_workflow_stages(
+            [
+                {"role": "product", "handoffs": []},
+                {"role": "architect", "handoffs": [], "depends_on": ["  ", "product"]},
+            ]
+        )
+
+    def test_raises_when_validate_sees_scalar_depends_on(self) -> None:
+        """Validator rejects malformed scalar depends_on values."""
+        with pytest.raises(ValueError, match=r"depends_on must be a list"):
+            CommandLineInterface._validate_workflow_stages(
+                [
+                    {"role": "product", "handoffs": []},
+                    {"role": "architect", "handoffs": [], "depends_on": "product"},
+                ]
+            )
+
 
 class TestReadWorkflowMode:
     """Tests for CommandLineInterface._read_workflow_mode."""

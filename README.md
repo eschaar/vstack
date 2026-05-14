@@ -573,7 +573,51 @@ Execution semantics:
 
 - `workflow.stages` order is the canonical progression order.
 - `agentic` is stage-sequential by default: planner advances one stage at a time in configured order.
-- Parallelization is still possible inside a stage (independent subtasks), but cross-stage progression remains ordered.
+- Parallelization is still possible inside a stage (independent subtasks), but cross-stage progression remains ordered by default.
+- Set `depends_on` to unlock a DAG topology and let planner run independent branches in parallel.
+
+**Parallel stages with `depends_on`:**
+
+By default, each stage implicitly depends on the one before it (fully sequential). Add `depends_on` to any stage to declare explicit predecessors and create a dependency graph. Planner evaluates which stages are ready and can run independent branches in parallel.
+
+The canonical vstack DAG — seeded automatically by `vstack install`:
+
+```yaml
+workflow:
+  mode: agentic
+  version: 1
+  stages:
+    - role: product
+      gate: required
+      hitl: always
+    - role: architect
+      gate: required
+      hitl: always
+      depends_on: [product]
+    - role: designer
+      gate: optional
+      hitl: on-change
+      depends_on: [product]        # runs in parallel with architect
+    - role: engineer
+      gate: required
+      hitl: always
+      depends_on: [architect, designer]   # waits for both
+    - role: tester
+      gate: required
+      hitl: always
+      depends_on: [engineer]
+    - role: release
+      gate: required
+      hitl: always
+      depends_on: [tester]
+```
+
+Rules:
+
+- `depends_on: []` — marks the stage as a root (no predecessors).
+- `depends_on` absent — stage implicitly depends on the previous stage (sequential fallback).
+- Planner reads `depends_on` at runtime; no code change needed.
+- Circular dependencies are detected at install/init time.
 
 Handoff target semantics:
 
@@ -584,11 +628,48 @@ Handoff target semantics:
 
 Mode quickstart in Copilot Agent Mode:
 
+> **In `agentic` mode, `@planner` is the primary entry point.** Start every session
+> with `@planner` and let it drive all stage transitions automatically.
+
 | Mode      | Start here               | First prompt example                                    |
 | --------- | ------------------------ | ------------------------------------------------------- |
 | `agentic` | `@planner`               | `@planner Run the workflow for this repository change.` |
 | `manual`  | `@product`               | `@product Define requirements for this change.`         |
 | `hybrid`  | `@planner` or `@product` | `@planner Run the workflow for this repository change.` |
+
+What planner does:
+
+- Reads `workflow.stages` and `depends_on` from your project config.
+- Invokes each role agent as a subagent at the right time.
+- Runs independent branches in parallel when `depends_on` permits.
+- Pauses at each gate for human-in-the-loop approval (when `hitl: always` or `hitl: on-change`).
+- Skips `gate: optional` stages that are not affected by the current change.
+- Reports a structured stage outcome after each step: status, changes made, blockers, next action.
+
+Which roles planner knows:
+`product`, `architect`, `designer`, `engineer`, `tester`, `release`.
+These are the only valid role names in `workflow.stages`.
+
+Agentic runbook (copy/paste):
+
+```text
+@planner Run the workflow for this repository change.
+@planner Show current stage status, ready stages, blocked stages, and next action.
+@planner Continue with all ready stages in parallel where workflow.depends_on allows it.
+@planner Pause at required HITL gates and ask for approval before advancing.
+@planner Finalize with a release-readiness summary and list changed artifacts.
+```
+
+Troubleshooting: why planner is not running stages in parallel
+
+- Check `workflow.mode` in `.vstack/config.yaml`: parallel orchestration requires `agentic` (or planner-led `hybrid`).
+- Validate stage dependencies: run `vstack validate` to catch invalid roles, self-dependencies, and cycles.
+- Inspect `depends_on` shape: a stage runs only when all listed predecessors are `ready` or `skipped`.
+- Check implicit sequential fallback: if `depends_on` is omitted, the stage depends on the previous stage.
+- Check optional stage behavior: `gate: optional` can be skipped when unaffected, reducing apparent parallel fan-out.
+- Check blockers in stage report: any `blocked` predecessor prevents dependent stages from becoming ready.
+- Check mixed execution path: in `hybrid`, mixing manual handoffs and planner in one session can mask parallel readiness.
+- Confirm you started with planner: in `agentic`, begin with `@planner`, not a worker role agent.
 
 Hybrid operating rule:
 

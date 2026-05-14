@@ -1,7 +1,7 @@
 # vstack — architecture
 
 > Maintained by: **architect** role\
-> Last updated: 2026-04-26
+> Last updated: 2026-05-12
 
 ## overview
 
@@ -208,6 +208,15 @@ flowchart LR
 Each role is a separate model call. Output artifacts from one role become the input context
 for the next, and progression only happens after explicit user approval at each stage gate.
 
+Workflow dependency semantics:
+
+- `workflow.stages` defines the canonical role order.
+- `depends_on` (optional) defines explicit DAG prerequisites per stage.
+- Missing `depends_on` preserves sequential compatibility by depending on the previous stage.
+- Invalid references, self-dependencies, duplicate stage roles, and graph cycles are rejected.
+- In `agentic` mode, planner orchestration can schedule multiple ready stages when the
+  dependency graph allows parallel progression.
+
 ```mermaid
 flowchart TD
   P[product] --> GP{User approves Product output}
@@ -225,6 +234,7 @@ flowchart TD
 ```
 
 See `docs/architecture/adr/023-workflow-contract.md`, `docs/architecture/adr/024-subagent-orchestration.md`,
+`docs/architecture/adr/028-dag-dependency-semantics.md`, `docs/architecture/adr/029-multi-agentic-execution-model.md`,
 `docs/architecture/adr/010-artifact-flow.md`, and `docs/design/workflow.md` for pipeline and gate detail.
 
 ______________________________________________________________________
@@ -234,30 +244,34 @@ ______________________________________________________________________
 All significant architectural decisions are recorded in `docs/architecture/adr/`.
 See individual files for context, decision, alternatives, and rationale.
 
-| ADR | Title                                                | Status     | Notes                                   |
-| --- | ---------------------------------------------------- | ---------- | --------------------------------------- |
-| 001 | VS Code-native variant                               | accepted   |                                         |
-| 002 | Artifact naming and compatibility policy             | accepted   |                                         |
-| 003 | Backend-first verify                                 | accepted   |                                         |
-| 004 | Direct execution and orchestrated pipeline           | superseded | Superseded by ADR-024                   |
-| 005 | VS Code prompt format                                | accepted   |                                         |
-| 006 | No runtime dependency on external binaries           | accepted   |                                         |
-| 007 | Python runtime                                       | accepted   |                                         |
-| 008 | Agents over prompts                                  | accepted   |                                         |
-| 009 | 6-role agent model                                   | accepted   |                                         |
-| 010 | Artifact flow                                        | accepted   |                                         |
-| 011 | Skill restructure                                    | accepted   |                                         |
-| 012 | Flat templates and install-time generation           | accepted   |                                         |
-| 013 | Policy vs procedure boundary for instructions/skills | accepted   |                                         |
-| 014 | Manifest schema versioning and explicit upgrade gate | accepted   |                                         |
-| 015 | Conservative install-by-default                      | superseded | Superseded by ADR-020                   |
-| 016 | Atomic manifest writes                               | accepted   |                                         |
-| 017 | Checksum backfill on upgrade                         | accepted   |                                         |
-| 018 | Skill genericity boundary                            | accepted   |                                         |
-| 019 | `.vstack/` project-scope directory                   | accepted   | Introduced `.vstack/` directory         |
-| 020 | `install` and `init` command semantics               | accepted   | Breaking change; supersedes ADR-015     |
-| 021 | Config-driven artifact paths in agent config         | accepted   | Machine-readable artifact ownership     |
-| 022 | Selective exclude filter in `.vstack/config.yaml`    | accepted   | Agents cannot be excluded (atomic unit) |
-| 023 | Workflow contract in `.vstack/config.yaml`           | accepted   | Pipeline order, gate, hitl, handoffs    |
-| 024 | Subagent orchestration via VS Code native subagents  | accepted   | Supersedes ADR-004; planner coordinator |
-| 025 | PyYAML as sole runtime dependency                    | accepted   | Replaces hand-rolled frontmatter parser |
+| ADR | Title                                                | Status     | Notes                                      |
+| --- | ---------------------------------------------------- | ---------- | ------------------------------------------ |
+| 001 | VS Code-native variant                               | accepted   |                                            |
+| 002 | Artifact naming and compatibility policy             | accepted   |                                            |
+| 003 | Backend-first verify                                 | accepted   |                                            |
+| 004 | Direct execution and orchestrated pipeline           | superseded | Superseded by ADR-024                      |
+| 005 | VS Code prompt format                                | accepted   |                                            |
+| 006 | No runtime dependency on external binaries           | accepted   |                                            |
+| 007 | Python runtime                                       | accepted   |                                            |
+| 008 | Agents over prompts                                  | accepted   |                                            |
+| 009 | 6-role agent model                                   | accepted   |                                            |
+| 010 | Artifact flow                                        | accepted   |                                            |
+| 011 | Skill restructure                                    | accepted   |                                            |
+| 012 | Flat templates and install-time generation           | accepted   |                                            |
+| 013 | Policy vs procedure boundary for instructions/skills | accepted   |                                            |
+| 014 | Manifest schema versioning and explicit upgrade gate | accepted   |                                            |
+| 015 | Conservative install-by-default                      | superseded | Superseded by ADR-020                      |
+| 016 | Atomic manifest writes                               | accepted   |                                            |
+| 017 | Checksum backfill on upgrade                         | accepted   |                                            |
+| 018 | Skill genericity boundary                            | accepted   |                                            |
+| 019 | `.vstack/` project-scope directory                   | accepted   | Introduced `.vstack/` directory            |
+| 020 | `install` and `init` command semantics               | accepted   | Breaking change; supersedes ADR-015        |
+| 021 | Config-driven artifact paths in agent config         | accepted   | Machine-readable artifact ownership        |
+| 022 | Selective exclude filter in `.vstack/config.yaml`    | accepted   | Agents cannot be excluded (atomic unit)    |
+| 023 | Workflow contract in `.vstack/config.yaml`           | accepted   | Pipeline order, gate, hitl, handoffs       |
+| 024 | Subagent orchestration via VS Code native subagents  | accepted   | Supersedes ADR-004; planner coordinator    |
+| 025 | PyYAML as sole runtime dependency                    | accepted   | Replaces hand-rolled frontmatter parser    |
+| 026 | Docs artifact migration policy                       | accepted   | Versioned docs relocation maps             |
+| 027 | Repository hooks as first-class artifact type        | accepted   | Hook templates and manifest ownership      |
+| 028 | DAG dependency semantics for workflow stages         | accepted   | `depends_on`, cycle safety, compatibility  |
+| 029 | Multi-agentic execution model                        | accepted   | DAG chosen; event-driven and tree compared |

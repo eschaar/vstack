@@ -135,9 +135,12 @@
 #
 # Execution order:
 # - Stage order in workflow.stages is the canonical progression order.
-# - agentic is stage-sequential by default (planner advances per stage in order).
-# - Parallel work can still happen inside a stage (for independent subtasks),
-#   but cross-stage progression remains ordered by workflow.stages.
+# - Without depends_on, each stage implicitly depends on the previous stage
+#   (fully sequential, backward-compatible behavior).
+# - Set depends_on explicitly to enable DAG orchestration and parallel branches.
+#   Example: architect and designer can both depend on product.
+# - Use depends_on: [] to make a stage an independent root.
+# - In agentic mode planner can evaluate ready stages from dependency completion.
 #
 # Handoffs:
 # - handoffs.prompt is the message used when transitioning to the next stage.
@@ -156,6 +159,7 @@
 # gate: required   — stage always runs
 # gate: optional   — stage may be skipped when its domain is unaffected
 # gate: skip        — stage is never executed (explicit opt-out)
+# depends_on: []    — optional list of prerequisite stage roles
 #
 # hitl: always     — pipeline pauses for human approval before handoff (default for required)
 # hitl: on-change  — pipeline pauses only when the stage made changes (default for optional)
@@ -188,15 +192,20 @@ workflow:
     - role: architect
       gate: required
       hitl: always
+      depends_on: [product]
     - role: designer
       gate: optional
       hitl: on-change
+      depends_on: [product]
     - role: engineer
       gate: required
       hitl: always
+      depends_on: [architect, designer]
     - role: tester
       gate: required
       hitl: always
+      depends_on: [engineer]
     - role: release
       gate: required
       hitl: always
+      depends_on: [tester]

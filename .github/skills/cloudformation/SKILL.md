@@ -344,4 +344,4 @@ AppSecurityGroup:
 - [AWS SAM documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"cloudformation","artifact_type":"skill","artifact_version":"20260502032","generator":"vstack","vstack_version":"3.1.1.post2.dev0+4d3419b"} -->
+<!-- VSTACK-META: {"artifact_name":"cloudformation","artifact_type":"skill","artifact_version":"20260502032","generator":"vstack","vstack_version":"3.2.0"} -->

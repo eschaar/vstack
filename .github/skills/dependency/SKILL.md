@@ -318,4 +318,4 @@ Action items (priority order):
 - [PyPI / npm / crates.io / Maven Central](https://pypi.org) (replace with the relevant registry)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"dependency","artifact_type":"skill","artifact_version":"20260421012","generator":"vstack","vstack_version":"3.1.1.post2.dev0+4d3419b"} -->
+<!-- VSTACK-META: {"artifact_name":"dependency","artifact_type":"skill","artifact_version":"20260421012","generator":"vstack","vstack_version":"3.2.0"} -->

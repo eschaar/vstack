@@ -55,4 +55,4 @@ List fields or objects that are missing required constraints, descriptions, or e
 - top priority fix in one sentence
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"api-design-review","artifact_type":"prompt","artifact_version":"20260502006","generator":"vstack","vstack_version":"3.1.1.post2.dev0+4d3419b"} -->
+<!-- VSTACK-META: {"artifact_name":"api-design-review","artifact_type":"prompt","artifact_version":"20260502006","generator":"vstack","vstack_version":"3.2.0"} -->
