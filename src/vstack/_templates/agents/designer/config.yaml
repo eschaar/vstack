@@ -1,5 +1,5 @@
 name: designer
-version: 20260503024
+version: 20260514001
 description: >
   Senior interaction designer. Translates architecture blueprint into
   developer-ready specifications: API contracts, event schemas, data flows,
@@ -16,9 +16,16 @@ tools:
   - todo
   - agent
 model:
+  - auto
   - Claude Sonnet 4.6 (copilot)
   - GPT-5.3-Codex (copilot)
-agents: ["*"]
+agents:
+  - product
+  - architect
+  - designer
+  - engineer
+  - tester
+  - release
 target: vscode
 defaults:
   handoffs:

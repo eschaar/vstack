@@ -51,6 +51,7 @@ class TestAgentGeneration:
 
         assert parsed.metadata.get("name") == "architect"
         assert parsed.metadata.get("model") == [
+            "auto",
             "Claude Sonnet 4.6 (copilot)",
             "GPT-5.3-Codex (copilot)",
             "Claude Opus 4.7 (copilot)",

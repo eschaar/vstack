@@ -16,324 +16,57 @@ vstack installs structured agents, skills, instructions, and prompts into `.gith
 
 It provides six delivery roles for end-to-end software work: `product`, `architect`, `designer`, `engineer`, `tester`, and `release`, coordinated by `planner`.
 
-## Best for
-
-- Backend and API teams using GitHub Copilot Agent Mode in VS Code
-- Repositories that want consistent planning, implementation, verification, and release flow
-- Teams that want reusable AI workflows instead of one-off prompt crafting
-
-## What you get
-
-- Fixed role model: six delivery roles plus a planner coordinator
-- Template-driven install model from `src/vstack/_templates/`
-- Backend-first verification, security, and release discipline
-- One runtime dependency: PyYAML
-
-## Building blocks
-
-| Artifact type | Purpose                                                    | Typical invocation     |
-| ------------- | ---------------------------------------------------------- | ---------------------- |
-| Agents        | Main operating interface for role-based work               | `@product`, `@tester`  |
-| Skills        | Reusable task procedures                                   | `/verify`, `/security` |
-| Instructions  | Baseline policy and repository guardrails                  | auto-loaded by context |
-| Prompts       | Reusable prompt artifacts where direct prompting is useful | explicit prompt use    |
-
-## Prompt catalog
-
-Prompts are `.prompt.md` files installed to `.github/prompts/`. Invoke them via the
-VS Code command palette (`Chat: Run Prompt File`) or the Copilot Chat attach button.
-
-| Prompt              | Purpose                                                   |
-| ------------------- | --------------------------------------------------------- |
-| `api-design-review` | Review an API design or OpenAPI spec for correctness      |
-| `architecture-risk` | Identify architectural risks and mitigation priorities    |
-| `code-review`       | Review a change for bugs, regressions, and missing tests  |
-| `dependency-audit`  | Audit dependencies for vulnerabilities and licence risks  |
-| `incident-timeline` | Build an evidence-based incident timeline and post-mortem |
-| `migration-safety`  | Review DB migration safety, rollback, and zero-downtime   |
-| `release-readiness` | Evaluate release readiness from reports and open blockers |
-
-## Quickstart — fresh install
-
-Install with `pipx`, then install vstack artifacts into your repository:
+## Quickstart
 
 ```bash
-# Install the CLI once, globally
 pipx install vstack
-
-# Move to your repository root and run install — no --target needed
 cd /path/to/your/project
-vstack install        # seeds .vstack/config.yaml and generates .github/ in the current directory
-vstack validate       # confirm no errors
+vstack install
+vstack validate
 ```
 
-When you omit `--target`, vstack uses the current working directory. The equivalent
-explicit form is `vstack install --target /path/to/your/project`.
-
-Run a first task in Copilot Agent Mode:
-
-```text
-@tester /verify Check this repository and summarize findings
-```
-
-Expected result:
-
-- `vstack validate` reports no unresolved template tokens
-- Agent command returns a concrete verification summary for your repository
+Then open Copilot Chat, switch to Agent mode, and select the `planner` agent.
 
 ## Quick upgrade
 
-### Patch or minor version (e.g. v3.1 → v3.2, same major)
-
-Docs paths never change within a major version. Only `.github/` artifacts are updated.
+Patch or minor upgrade:
 
 ```bash
 pipx upgrade vstack
-
 cd /path/to/your/project
-vstack init           # idempotent — safe to run in CI
+vstack init
 ```
 
-### Major version (e.g. v2 → v3)
-
-Docs paths may change on a major version bump. Run `vstack migrate` before `vstack init`.
+Major upgrade:
 
 ```bash
 pipx upgrade vstack
-
 cd /path/to/your/project
-vstack migrate        # moves docs files to their new paths (auto-detects installed version)
-vstack init           # regenerates .github/ artifacts
-
-# Only if you see "Legacy manifest schema detected" in the output above:
-vstack manifest upgrade
-vstack init
-```
-
-Preview the docs moves without touching any files:
-
-```bash
-vstack migrate --dry-run
-```
-
-For upgrades spanning multiple major versions (e.g. v1 → v3), `vstack migrate` chains
-all intermediate steps automatically. Use `--from` and `--to` to specify the range
-explicitly if auto-detection from the manifest fails:
-
-```bash
-vstack migrate --from 1 --to 3
-vstack init
-```
-
-### Force reinstall (overwrite local edits)
-
-```bash
-vstack install --force                       # overwrite all managed artifacts
-vstack install --force-name agent/engineer   # overwrite one specific artifact
-```
-
-## Why this helps
-
-- Consistent role boundaries for planning, implementation, validation, and release
-- Reusable skills and instructions instead of ad hoc prompts
-- Better release hygiene with documented workflows and CI alignment
-
-## Core commands
-
-```bash
-vstack --version
-vstack validate
-
-# Run from your repository root (--target defaults to the current directory)
-vstack install
-vstack init
 vstack migrate
-vstack manifest verify
-vstack manifest status
-vstack manifest upgrade
-
-# Or specify a path explicitly
-vstack install --target /path/to/your/project
-```
-
-## Common usage patterns
-
-Repository-scoped install (recommended for teams):
-
-```bash
-# Move to your repository root and install there
-cd /path/to/your/project
-vstack install
-
-# Or specify a path explicitly from any directory
-vstack install --target /path/to/your/project
-```
-
-Profile-wide install (optional defaults for all projects):
-
-```bash
-vstack install --global
-```
-
-`vstack install` is the first-run command: it seeds `.vstack/config.yaml` in your project (never overwrites), then generates `.github/` artifacts from templates. `vstack init` re-runs generation idempotently — safe to use in CI after upgrading vstack.
-
-By default, `vstack install` preserves existing unmanaged files and local edits to tracked files by comparing the current file contents with the SHA-256 checksum recorded in `.vstack/vstack.json`. Use `--adopt-name <name>` to start tracking one existing unmanaged file without overwriting it. `vstack uninstall` also preserves locally modified tracked files unless you explicitly pass `--force` or `--force-name <name>`. Use `vstack manifest status --target ...` (or `vstack status --target ...`) to see what still matches the manifest. If a legacy manifest schema is detected, run `vstack manifest upgrade --target ...` first.
-
-To skip artifact types or individual artifacts you do not need, edit `.vstack/config.yaml`:
-
-```yaml
-exclude:
-  skills:
-    - terraform
-    - helm
-  instructions: all   # skip the entire type
-```
-
-If you already have agents, skills, or other files in `.github/`, run a dry-run first to see what would be preserved before committing:
-
-```bash
-# Run from your repository root
-vstack install --dry-run
-```
-
-The summary lists preserved files as `type/name` selectors (e.g. `agent/engineer`). Resolve each conflict with `--force-name type/name` to overwrite, `--adopt-name type/name` to take ownership without overwriting, or `--force` to overwrite everything.
-
-## Reading `.vstack/config.yaml`
-
-- Lines starting with `#` are comments, explanation, or example configuration and are not active.
-- Only uncommented YAML keys are active configuration.
-- To enable an example block, remove `#` from that block and keep valid YAML indentation.
-- After any config change, run `vstack init` to apply it to generated `.github/` artifacts.
-
-## Workflow modes
-
-vstack supports three workflow modes via `.vstack/config.yaml`:
-
-```yaml
-workflow:
-  mode: agentic  # default
-```
-
-After changing `workflow.mode`, regenerate artifacts:
-
-```bash
 vstack init
 ```
 
-| Mode      | Behavior                                                     | Planner file  | Worker handoff buttons |
-| --------- | ------------------------------------------------------------ | ------------- | ---------------------- |
-| `agentic` | Planner orchestrates stage progression using subagents       | generated     | omitted                |
-| `manual`  | User progresses stage-by-stage manually                      | not generated | shown                  |
-| `hybrid`  | Both planner orchestration and manual handoffs are available | generated     | shown                  |
+If you see a legacy manifest schema warning:
 
-Execution semantics:
-
-- `workflow.stages` order is the canonical progression order.
-- `agentic` is stage-sequential by default: planner advances one stage at a time in configured order.
-- Set `depends_on` to unlock a DAG topology and let planner run independent branches in parallel.
-
-**Parallel stages with `depends_on`:** By default each stage implicitly depends on the previous one. Add `depends_on` to declare explicit predecessors. The canonical vstack DAG (seeded automatically by `vstack install`):
-
-```yaml
-workflow:
-  mode: agentic
-  version: 1
-  stages:
-    - role: product
-      gate: required
-      hitl: always
-    - role: architect
-      gate: required
-      hitl: always
-      depends_on: [product]
-    - role: designer
-      gate: optional
-      hitl: on-change
-      depends_on: [product]        # runs in parallel with architect
-    - role: engineer
-      gate: required
-      hitl: always
-      depends_on: [architect, designer]   # waits for both
-    - role: tester
-      gate: required
-      hitl: always
-      depends_on: [engineer]
-    - role: release
-      gate: required
-      hitl: always
-      depends_on: [tester]
+```bash
+vstack manifest upgrade
+vstack init
 ```
 
-`depends_on: []` marks a root stage. Absent `depends_on` falls back to sequential. Circular dependencies are caught at install/init time.
+## Try it now
 
-Handoff target semantics:
-
-- `handoffs.prompt` is the transition prompt text.
-- If `handoffs.agent` is omitted, the target defaults to the next role in `workflow.stages`.
-- You can set `handoffs.agent` explicitly to override that default target in `manual`/`hybrid`.
-- In `agentic`, worker handoff buttons are hidden; planner controls progression.
-
-Mode quickstart in Copilot Agent Mode:
-
-In `agentic` mode, `@planner` is the primary entry point. Start every session with `@planner` and let it drive all stage transitions automatically.
-
-| Mode      | Start here               | First prompt example                                    |
-| --------- | ------------------------ | ------------------------------------------------------- |
-| `agentic` | `@planner`               | `@planner Run the workflow for this repository change.` |
-| `manual`  | `@product`               | `@product Define requirements for this change.`         |
-| `hybrid`  | `@planner` or `@product` | `@planner Run the workflow for this repository change.` |
-
-What planner does: reads `workflow.stages` and `depends_on`, invokes each role agent as a subagent at the right time, runs independent branches in parallel when `depends_on` permits, pauses at each gate for human approval, and reports a structured stage outcome after each step. Valid role names: `product`, `architect`, `designer`, `engineer`, `tester`, `release`.
-
-Agentic runbook (copy/paste):
+In Copilot Chat after selecting `planner`:
 
 ```text
-@planner Run the workflow for this repository change.
-@planner Show current stage status, ready stages, blocked stages, and next action.
-@planner Continue with all ready stages in parallel where workflow.depends_on allows it.
-@planner Pause at required HITL gates and ask for approval before advancing.
-@planner Finalize with a release-readiness summary and list changed artifacts.
+Run the workflow for this repository change.
 ```
 
-Troubleshooting: why planner is not running stages in parallel
+## Full docs on GitHub
 
-- Check `workflow.mode` in `.vstack/config.yaml`: parallel orchestration requires `agentic` (or planner-led `hybrid`).
-- Validate stage dependencies: run `vstack validate` to catch invalid roles, self-dependencies, and cycles.
-- Inspect `depends_on` shape: a stage runs only when all listed predecessors are `ready` or `skipped`.
-- Check implicit sequential fallback: if `depends_on` is omitted, the stage depends on the previous stage.
-- Check optional stage behavior: `gate: optional` can be skipped when unaffected, reducing apparent parallel fan-out.
-- Check blockers in stage report: any `blocked` predecessor prevents dependent stages from becoming ready.
-- Check mixed execution path: in `hybrid`, mixing manual handoffs and planner in one session can mask parallel readiness.
-- Confirm you started with planner: in `agentic`, begin with `@planner`, not a worker role agent.
-
-Usage guidance:
-
-- Use `agentic` when you want one deterministic orchestration path.
-- Use `manual` when your team prefers explicit user-controlled stage transitions.
-- Use `hybrid` only when your team intentionally wants both options.
-
-Hybrid operating rule:
-
-- Choose one path per session (planner-led or manual handoffs) and stay on it.
-- Mixing both paths in one session increases the chance of duplicate stage transitions.
-
-Hybrid warning:
-
-- In `hybrid`, users can click handoff buttons while a planner-led flow is also available.
-- This can cause unintended progression jumps or duplicated transitions if your process assumes one strict path.
-
-## Fast troubleshooting
-
-- Command not found after install: ensure your `pipx` binary path is in `PATH`
-- Validation error: rerun `vstack install` from your repository root and then `vstack validate`
-- Agent results look generic: explicitly invoke a role (for example `@tester`) before a skill
-
-## Full documentation
-
-For complete documentation (including architecture details, workflow diagrams, and contributor guides), use GitHub:
-
-- [GitHub repository](https://github.com/eschaar/vstack)
-- [Full README](https://github.com/eschaar/vstack/blob/main/README.md)
-- [Documentation](https://github.com/eschaar/vstack/tree/main/docs)
-- [Contributing guide](https://github.com/eschaar/vstack/blob/main/CONTRIBUTING.md)
-- [Security policy](https://github.com/eschaar/vstack/blob/main/SECURITY.md)
+- User docs index: <https://github.com/eschaar/vstack/blob/main/docs/user/README.md>
+- Install and upgrade: <https://github.com/eschaar/vstack/blob/main/docs/user/how-to/install-and-upgrade.md>
+- Troubleshooting: <https://github.com/eschaar/vstack/blob/main/docs/user/how-to/troubleshooting.md>
+- CLI commands reference: <https://github.com/eschaar/vstack/blob/main/docs/user/reference/cli-commands.md>
+- Configuration reference: <https://github.com/eschaar/vstack/blob/main/docs/user/reference/configuration.md>
+- Workflow modes explanation: <https://github.com/eschaar/vstack/blob/main/docs/user/explanation/workflow-modes.md>
+- Full repository docs: <https://github.com/eschaar/vstack/tree/main/docs>

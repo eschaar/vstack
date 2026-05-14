@@ -147,7 +147,8 @@ tools:
   - vscode
   - todo
   - agent
-agents: ["*"]
+agents:
+  - architect
 target: vscode
 user-invocable: true
 ---
@@ -170,6 +171,8 @@ dispatch flow.
 | `BaseCommand`            | ABC contract: all handlers implement `run(*, context: CommandContext) → int`                |
 | Per-command modules      | `install`, `init`, `verify`, `status`, `uninstall`, `validate`, `manifest` — one class each |
 | `helpers.py`             | Shared install/uninstall utilities (name normalization, manifest preservation)              |
+
+For the full component table and dispatch flow, see `docs/design/overview.md`.
 
 ______________________________________________________________________
 
@@ -233,9 +236,12 @@ flowchart TD
   GR --> PR[PR opened]
 ```
 
-See `docs/architecture/adr/023-workflow-contract.md`, `docs/architecture/adr/024-subagent-orchestration.md`,
-`docs/architecture/adr/028-dag-dependency-semantics.md`, `docs/architecture/adr/029-multi-agentic-execution-model.md`,
-`docs/architecture/adr/010-artifact-flow.md`, and `docs/design/workflow.md` for pipeline and gate detail.
+See [docs/architecture/adr/023-workflow-contract.md](adr/023-workflow-contract.md),
+[docs/architecture/adr/024-subagent-orchestration.md](adr/024-subagent-orchestration.md),
+[docs/architecture/adr/028-dag-dependency-semantics.md](adr/028-dag-dependency-semantics.md),
+[docs/architecture/adr/029-multi-agentic-execution-model.md](adr/029-multi-agentic-execution-model.md),
+[docs/architecture/adr/010-artifact-flow.md](adr/010-artifact-flow.md), and
+[docs/design/workflow.md](../design/workflow.md) for pipeline and gate detail.
 
 ______________________________________________________________________
 
@@ -250,7 +256,7 @@ See individual files for context, decision, alternatives, and rationale.
 | 002 | Artifact naming and compatibility policy             | accepted   |                                            |
 | 003 | Backend-first verify                                 | accepted   |                                            |
 | 004 | Direct execution and orchestrated pipeline           | superseded | Superseded by ADR-024                      |
-| 005 | VS Code prompt format                                | accepted   |                                            |
+| 005 | VS Code prompt format                                | superseded | Superseded by ADR-009                      |
 | 006 | No runtime dependency on external binaries           | accepted   |                                            |
 | 007 | Python runtime                                       | accepted   |                                            |
 | 008 | Agents over prompts                                  | accepted   |                                            |

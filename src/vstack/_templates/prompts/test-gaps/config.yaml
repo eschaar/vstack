@@ -1,0 +1,9 @@
+name: test-gaps
+description: Identify missing behavioral coverage and prioritize test additions by production risk.
+argument-hint: "[component, feature, or repository scope]"
+agent: tester
+model: GPT-5.3-Codex (copilot)
+tools:
+  - read
+  - search
+version: 20260513007

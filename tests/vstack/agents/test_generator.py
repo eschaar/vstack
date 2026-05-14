@@ -309,6 +309,69 @@ class TestAgentGenerator:
             assert "handoffs" in config
             assert config["handoffs"][0]["agent"] == "designer"
 
+    class TestVerifyInput:
+        """Tests for AgentGenerator.verify_input custom policy checks."""
+
+        def test_ignores_policy_checks_when_agents_field_is_not_a_list(
+            self, tmp_path: Path
+        ) -> None:
+            """Non-list ``agents`` values skip custom wildcard/planner policy checks."""
+            tmpl_dir = tmp_path / "agents" / "designer"
+            tmpl_dir.mkdir(parents=True)
+            (tmpl_dir / "template.md").write_text("# designer\nbody\n", encoding="utf-8")
+            (tmpl_dir / "config.yaml").write_text(
+                "name: designer\ndescription: test\ntools: [read, agent]\nagents: planner\n",
+                encoding="utf-8",
+            )
+
+            gen = AgentGenerator(tmp_path)
+            result = gen.verify_input(expected_names=["designer"])
+
+            fail_messages = [msg.message for msg in result.messages if msg.level == "fail"]
+            assert all("wildcard delegation agents ['*']" not in msg for msg in fail_messages)
+            assert all("planner delegation is forbidden" not in msg for msg in fail_messages)
+
+        def test_rejects_wildcard_delegation_agents(self, tmp_path: Path) -> None:
+            """Agent config with wildcard delegation must fail source verification."""
+            tmpl_dir = tmp_path / "agents" / "wild"
+            tmpl_dir.mkdir(parents=True)
+            (tmpl_dir / "template.md").write_text("# wild\nbody\n", encoding="utf-8")
+            (tmpl_dir / "config.yaml").write_text(
+                'name: wild\ndescription: test\ntools: [read, agent]\nagents: ["*"]\n',
+                encoding="utf-8",
+            )
+
+            gen = AgentGenerator(tmp_path)
+            result = gen.verify_input(expected_names=["wild"])
+
+            assert result.failures >= 1
+            assert any(
+                "wildcard delegation agents ['*']" in msg.message
+                for msg in result.messages
+                if msg.level == "fail"
+            )
+
+        def test_rejects_planner_delegation_for_worker_agents(self, tmp_path: Path) -> None:
+            """Non-planner agent config delegating to planner must fail verification."""
+            tmpl_dir = tmp_path / "agents" / "engineer"
+            tmpl_dir.mkdir(parents=True)
+            (tmpl_dir / "template.md").write_text("# engineer\nbody\n", encoding="utf-8")
+            (tmpl_dir / "config.yaml").write_text(
+                "name: engineer\ndescription: test\ntools: [read, agent]\nagents: [planner, tester]\n",
+                encoding="utf-8",
+            )
+
+            gen = AgentGenerator(tmp_path)
+            result = gen.verify_input(expected_names=["engineer"])
+
+            assert result.failures >= 1
+            assert any(
+                "planner delegation is forbidden for worker agents to avoid recursion/cycles"
+                in msg.message
+                for msg in result.messages
+                if msg.level == "fail"
+            )
+
     class TestResolveOutputEntries:
         """Tests for AgentGenerator._resolve_output_entries."""
 

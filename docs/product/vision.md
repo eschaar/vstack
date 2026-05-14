@@ -1,7 +1,7 @@
 # vstack — vision
 
 > Maintained by: **product** role\
-> Last updated: 2026-05-13
+> Last updated: 2026-05-14
 
 ## what is vstack
 
@@ -54,9 +54,10 @@ ______________________________________________________________________
    `skills/<name>/template.md` and `agents/<name>/{config.yaml,template.md}`.
    Generated files are overwritten on each build. Edit templates, then regenerate.
 
-1. **Minimal runtime dependencies.** The runtime core is Python 3 stdlib only
-   (no Bun/Node runtime required). Developer workflow may use Poetry and dev tooling
-   (ruff, mypy, pytest) for quality checks.
+1. **Minimal runtime dependencies.** The runtime core uses Python 3 stdlib plus
+   one external runtime dependency: `pyyaml>=6.0` (no Bun/Node runtime dependency).
+   Developer workflow may use Poetry and dev tooling (ruff, mypy, pytest) for
+   quality checks.
 
 1. **Role model.** Six fixed roles (product, architect, designer, engineer, tester,
    release) define who produces what. Each role owns a specific set of
@@ -101,4 +102,4 @@ Scope is not fixed by vstack — it is set by the product vision for each projec
 - No browser binary required by default
 - No VS Code extension packaging
 - No cloud service dependencies
-- No external runtime Python packages
+- No Node/Bun runtime dependency

@@ -46,10 +46,35 @@ make check
 | `make typecheck`  | Type-check with mypy                                    |
 | `make format`     | Auto-format Python and Markdown                         |
 
+### Layered verify profiles
+
+- Use `make verify-fast` during active development for deterministic checks: `format-check`, `lint`, `typecheck`, and `test-local`.
+- Use `make verify-full` before opening or updating a PR to run the full local gate: `check` plus `vstack-validate`.
+- CI `Verify` also includes a generated artifact drift guard. It runs `vstack install` and fails if `.github/` generated outputs are out of sync with committed files.
+
+### Change-to-check matrix
+
+Use this table to find the minimum set of checks to run after each type of change.
+Run `make check` before opening a PR when your change touches multiple areas.
+
+| Change type                                                             | Required checks                                                        |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `src/vstack/_templates/agents/`, `skills/`, `instructions/`, `prompts/` | `python3 -m vstack install`, `make test-local`, `make markdown-format` |
+| `src/vstack/_templates/hooks/`                                          | `python3 -m vstack install`, `make test-local`                         |
+| `docs/**/*.md`                                                          | `make markdown-format`                                                 |
+| `src/**/*.py` or `tests/**/*.py`                                        | `make test-local` (run `make check` before merge)                      |
+| CLI behavior, manifest logic, or workflow contract                      | `make check`                                                           |
+| `pyproject.toml`, `Makefile`, or CI workflow files                      | `make check`                                                           |
+
 ### Coverage requirement
 
 Test coverage is enforced at **100%** (`--cov-fail-under=100`). Every behavioral
 change must be accompanied by tests that keep all checks green.
+
+### Pytest temp files
+
+- Pytest temporary files are standardized under `.vstack/tmp/test`.
+- Avoid creating or relying on root-level temp directories for test runs.
 
 ## Commit Message Guidance
 

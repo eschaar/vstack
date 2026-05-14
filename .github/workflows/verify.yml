@@ -57,6 +57,31 @@ jobs:
       - name: Test
         run: make test-local
 
+  fixture-tests-fast:
+    # Fast deterministic feedback for fixture drift and defect harness checks.
+    name: Fixture Tests (fast)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - name: Install Poetry
+        run: pipx install "poetry==${POETRY_VERSION}"
+
+      - name: Setup Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: poetry
+          cache-dependency-path: poetry.lock
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Run fixture-only golden and defect tests
+        run: make test-fixtures
+
   vstack-verify:
     # Ensures generated artifacts can be installed and validated in an isolated target.
     name: Artifact Install Verify
@@ -91,3 +116,16 @@ jobs:
 
       - name: Verify source and installed output
         run: poetry run vstack verify --target "${TARGET_DIR}"
+
+      - name: Drift guard for generated artifacts
+        run: |
+          poetry run vstack install
+          if [[ -n "$(git status --porcelain -- .github)" ]]; then
+            echo "Generated artifact drift detected under .github/."
+            echo "Run 'python3 -m vstack install' locally and commit the resulting changes."
+            echo "Changed files:"
+            git --no-pager status --short -- .github
+            echo "Diff:"
+            git --no-pager diff -- .github || true
+            exit 1
+          fi

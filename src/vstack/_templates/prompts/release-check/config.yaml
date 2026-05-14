@@ -1,0 +1,9 @@
+name: release-check
+description: Evaluate release gate readiness using required reports, artifacts, and sign-off evidence.
+argument-hint: "[release scope or target branch]"
+agent: release
+model: GPT-5.3-Codex (copilot)
+tools:
+  - read
+  - search
+version: 20260513004

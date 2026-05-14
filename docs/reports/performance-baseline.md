@@ -1,55 +1,67 @@
 # Performance Baseline
 
-**Branch:** `feat/workflow_update`\
-**Date:** 2026-05-06\
-**Scope:** CLI hot-path operations — parser build, target resolution, registry build; `.vstack/` project-scope directory (ADR-019); `vstack install`/`vstack init` command semantics (ADR-020); manifest relocation (ADR-021); selective install with `exclude:` filter (ADR-022); `artifacts.root` config override; `.vstack/.gitignore` seeding; agent `artifacts:` section generation; ADR terminology update (Option A/B → direct execution/orchestrated pipeline); roadmap cleanup and gh-issues skill MCP-first guidance\
-**Method:** `timeit.repeat` micro-benchmarks (Python 3.13.12, Linux)
+**Branch:** `chore/split-docs-and-hardening`\
+**Date:** 2026-05-14\
+**Scope:** CLI hot-path operations baseline for parser build, target resolution, registry build, and cold import.\
+**Method:** `timeit.repeat` micro-benchmarks (Python 3.13.12, Linux).
 
 ______________________________________________________________________
 
 ## Verdict
 
-> **No regressions detected.** All measured operations are sub-2ms. The CLI is a local dev tool with no throughput or latency SLAs — these baselines exist to catch accidental regressions from future changes.
+> **Baseline refreshed.** New measurements were captured after test and security remediation on this branch.
 
 ______________________________________________________________________
 
 ## Benchmark Results
 
+Latest benchmark capture window (UTC): **2026-05-14T14:23:18+00:00 → 2026-05-14T14:23:38+00:00**.
+
+Command used:
+
+```bash
+source .venv/bin/activate
+python - <<'PY'
+# timeit.repeat for parser build+parse, resolve_targets, build_command_registry,
+# plus subprocess-based cold import timing (5 repeats)
+PY
+```
+
 All times in **milliseconds (ms)** per single call.
 
-| Operation                                      | Mean     | Min      | Max      | Stdev | Iterations |
-| ---------------------------------------------- | -------- | -------- | -------- | ----- | ---------- |
-| `CommandLineParser().build()` + `parse_args()` | 1.852 ms | 1.783 ms | 2.018 ms | —     | 5 × 1000   |
-| `parser.resolve_targets(args)`                 | 0.009 ms | 0.008 ms | 0.012 ms | —     | 5 × 1000   |
-| `build_command_registry(svc)`                  | 0.002 ms | 0.002 ms | 0.002 ms | —     | 5 × 1000   |
-| Cold `import vstack`                           | 69.6 ms  | 66.0 ms  | 75.9 ms  | —     | 5 × 1      |
+| Operation                                      | Mean       | Min        | Max        | Stdev | Iterations |
+| ---------------------------------------------- | ---------- | ---------- | ---------- | ----- | ---------- |
+| `CommandLineParser().build()` + `parse_args()` | 2.953 ms   | 2.552 ms   | 3.608 ms   | 0.385 | 5 × 1000   |
+| `parser.resolve_targets(args)`                 | 0.022 ms   | 0.020 ms   | 0.025 ms   | 0.002 | 5 × 1000   |
+| `build_command_registry(svc)`                  | 0.003 ms   | 0.002 ms   | 0.003 ms   | 0.000 | 5 × 1000   |
+| Cold `import vstack`                           | 142.279 ms | 134.769 ms | 155.209 ms | 8.994 | 5 × 1      |
 
 ______________________________________________________________________
 
 ## Notes
 
-### CLI parser build + parse (~1.85 ms)
+### CLI parser build + parse (~2.95 ms)
 
-`CommandLineParser().build()` constructs the full argparse tree — 6 top-level commands and all manifest subcommands — followed by `parse_args()`. The `CommandLineParser()` constructor itself is essentially a no-op (\<0.001 ms); the build step is what dominates. At ~1.85 ms end-to-end, this remains well within acceptable startup overhead for an interactive CLI.
+`CommandLineParser().build()` constructs the full argparse tree and `parse_args(['validate'])` parses a minimal command path. At ~2.95 ms end-to-end, this remains under the configured regression threshold.
 
-No regression from the backfill feature addition: the new `--backfill` flag on the `manifest upgrade` subcommand adds one `add_argument` call, which is negligible at this scale.
+No threshold breach detected.
 
-### Target resolution (\<0.01 ms)
+### Target resolution (~0.02 ms)
 
-`resolve_targets` is essentially free — filesystem path manipulation with a single `Path.exists()` check in the `--global` path. No blocking I/O in the default (CWD) path.
+`resolve_targets` remains effectively free for CLI use.
 
-### Registry build (\<0.01 ms)
+### Registry build (~0.003 ms)
 
-`build_command_registry` constructs the command map from the catalog. The catalog-driven approach (dict comprehension over ~8 entries) is negligible.
+`build_command_registry` remains negligible.
 
-### Cold import (~70 ms)
+### Cold import (~142 ms)
 
-The first `import vstack` in a fresh Python process takes ~70 ms on average (59–80 ms observed across 5 runs). This includes:
+The first `import vstack` in a fresh Python process now measures ~142 ms on average. This includes:
 
 - `subprocess` call to `git tag --points-at HEAD` (in `constants.py`) for version detection
-- Stdlib imports (`pathlib`, `argparse`, `importlib.metadata`, `re`, `subprocess`, `yaml`)
+- stdlib and package import overhead
 
-This is the dominant startup cost. The git subprocess call is the likely bottleneck. For a CLI tool this is acceptable — it runs once at startup.
+This is still the dominant startup cost, but it remains below the 500 ms threshold.
 
 ______________________________________________________________________
 
@@ -71,10 +83,12 @@ ______________________________________________________________________
 ## Test Suite Wall Time
 
 ```
-428 tests passed in 5.90s (pytest, with coverage)
+Final verification run (UTC): 2026-05-14T14:21:41Z → 2026-05-14T14:22:04Z
+command: pytest -q
+result: 656 passed in 21.51s
 ```
 
-Acceptable. No slow test outliers observed.
+This is now a green run and can be used as the current wall-time reference for this branch.
 
 ______________________________________________________________________
 

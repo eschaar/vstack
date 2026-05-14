@@ -1,0 +1,9 @@
+name: workflow-check
+description: Review workflow stage flow, gate usage, and handoff integrity across role artifacts.
+argument-hint: "[workflow scope or stage list]"
+agent: planner
+model: GPT-5.3-Codex (copilot)
+tools:
+  - read
+  - search
+version: 20260513003

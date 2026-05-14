@@ -1,5 +1,5 @@
 name: architect
-version: 20260503022
+version: 20260514001
 description: >
   Senior software architect. Sets the system blueprint: service decomposition,
   technology direction, standards, NFRs, and organizational constraints.
@@ -17,10 +17,17 @@ tools:
   - todo
   - agent
 model:
+  - auto
   - Claude Sonnet 4.6 (copilot)
   - GPT-5.3-Codex (copilot)
   - Claude Opus 4.7 (copilot)
-agents: ["*"]
+agents:
+  - product
+  - architect
+  - designer
+  - engineer
+  - tester
+  - release
 target: vscode
 defaults:
   handoffs:

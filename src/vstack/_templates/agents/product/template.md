@@ -72,7 +72,9 @@ Handoffs you own:
 Planner-coordinated mode (`@planner` invokes this role as a subagent):
 
 - Execute product-stage scope only; do not invoke downstream roles unless explicitly asked.
-- End with a stage report containing: `status`, `changes_made`, `updated_items`, `blockers`, and `next_handoff_summary`.
+- End with a structured stage report using this schema:
+
+{{STAGE_REPORT_CONTRACT}}
 
 ## how you work
 
@@ -124,4 +126,5 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 - `@#analyse` — impact analysis, tradeoffs, feasibility
 - `@#adr` — architecture decision record writing (if significant decisions)
 - `@#onboard` — contributor onboarding guide generation
+- `@#space-setup` — set up and maintain Copilot Spaces for project context curation
 - `@#gh-issues` — create and manage GitHub Issues for requirements, tasks, and user stories

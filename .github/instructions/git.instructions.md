@@ -41,4 +41,4 @@ Use these Git and release hygiene conventions in this project.
 1. Prefer local verification before pushing release-impacting changes.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"git","artifact_type":"instruction","artifact_version":"20260421001","generator":"vstack","vstack_version":"3.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"git","artifact_type":"instruction","artifact_version":"20260421001","generator":"vstack","vstack_version":"3.3.0"} -->

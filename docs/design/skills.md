@@ -1,7 +1,7 @@
 # vstack — skills
 
 > Maintained by: **designer** role\
-> Last updated: 2026-05-02\
+> Last updated: 2026-05-14\
 > VS Code docs: [agent skills](https://code.visualstudio.com/docs/copilot/customization/agent-skills)
 
 ## what are skills?
@@ -75,9 +75,11 @@ ______________________________________________________________________
 | `openapi`             | Write and review OpenAPI 3.1 specifications. Resource naming, HTTP semantics, status codes, error conventions, pagination, security schemes.         | designer, engineer                                      | `openapi.yaml`                              |
 | `refactor`            | Structured refactoring without behavior change. Identify smells, plan incremental steps, execute, verify correctness.                                | engineer                                                | refactored code + green tests               |
 | `onboard`             | Generate a contributor onboarding guide. Prerequisites, setup, tests, env vars, architecture overview, good first issues.                            | product                                                 | `CONTRIBUTING.md` + README dev section      |
+| `space-setup`         | Set up and maintain a GitHub Copilot Space for a repository. Scope curation, refresh cadence, and context quality checks.                            | product                                                 | Space setup and maintenance checklist       |
 | `dependency`          | Dependency health audit. Vulnerability scanning, outdated packages, licence compliance, transitive risk, pinning policy, supply chain hygiene.       | engineer, tester                                        | dependency audit report                     |
 | `incident`            | Incident analysis and blameless post-mortem writing. Timeline reconstruction, 5-Whys root cause, contributing factors, action items.                 | tester, engineer                                        | `docs/postmortems/YYYY-MM-DD-*.md`          |
 | `gh-issues`           | Create, update, and manage GitHub Issues via gh CLI. Covers bug/feature/task templates, labels, assignees, milestones, and sub-issues.               | release, product                                        | GitHub Issues                               |
+| `copilot-ops`         | Operate and govern GitHub Copilot settings. Policy checks, configuration drift, usage visibility, and safe change rollout.                           | release                                                 | Copilot governance operations report        |
 | `codeql`              | Set up CodeQL code scanning via GitHub Actions or CLI. Language matrix, query suites, monorepo config, alert triage.                                 | tester                                                  | `.github/workflows/codeql.yml`              |
 | `dependabot`          | Create or optimize `.github/dependabot.yml`. Ecosystem detection, grouping strategies, monorepo patterns, schedule, and PR customization.            | engineer, tester                                        | `.github/dependabot.yml`                    |
 | `secret-scan`         | Configure GitHub secret scanning and push protection. Path exclusions, custom patterns, alert triage, and credential remediation.                    | tester, engineer                                        | `.github/secret_scanning.yml`               |
@@ -100,7 +102,7 @@ ______________________________________________________________________
 | `src/vstack/_templates/skills/<name>/template.md` | Source of truth — skill instructions body                                      |
 | `src/vstack/_templates/skills/_partials/*.md`     | Shared partials injected via `{{TOKEN}}`                                       |
 | `.github/skills/<name>/SKILL.md`                  | Generated output — what VS Code loads                                          |
-| `.github/vstack.json`                             | Generated install manifest and artifact index for all installed artifact types |
+| `.vstack/vstack.json`                             | Generated install manifest and artifact index for all installed artifact types |
 
 **Never edit `.github/skills/` directly.** Regenerate after every change:
 
@@ -176,7 +178,7 @@ Template revision format is `YYYYMMDDNNN` (for example `20260502001`):
 1. `NNN` is a zero-padded sequence for multiple updates on the same day.
 1. The value is treated as an opaque, monotonically increasing revision token (not semantic versioning).
 
-`allowed-tools` is currently not emitted by vstack because support is inconsistent across target agents.
+`allowed-tools` is supported by vstack and emitted as plain frontmatter text when provided in `config.yaml`.
 
 `name` must satisfy the Agent Skills naming rules enforced by vstack: lowercase kebab-case, no leading/trailing hyphen, max 64 characters.
 

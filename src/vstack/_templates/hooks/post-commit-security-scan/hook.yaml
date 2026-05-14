@@ -26,47 +26,52 @@ hooks:
         Check staged diffs for secrets and log only security alerts.
       bash: |
         input="$(cat)"
-        log_name="${VSTACK_HOOK_LOG_NAME:-hook-security-alerts.log}"
-        log_root="${VSTACK_HOOK_LOG_DIR:-.vstack/logs}"
-        log_dir="$log_root/$(date -u +%Y%m%d)"
-        mkdir -p "$log_dir"
-        log_path="$log_dir/$log_name"
+        append_log() {
+          log_name="${VSTACK_HOOK_LOG_NAME:-hook-security-alerts.log}"
+          log_root="${VSTACK_HOOK_LOG_DIR:-.vstack/logs}"
+          log_dir="$log_root/$(date -u +%Y%m%d)"
+          mkdir -p "$log_dir"
+          printf '%s\n' "$1" >> "$log_dir/$log_name"
+        }
         if ! printf '%s' "$input" | grep -Eiq 'git (commit|push|merge|rebase)'; then
           exit 0
         fi
         if git rev-parse --git-dir >/dev/null 2>&1 && \
            git diff --cached 2>/dev/null | grep -Eiq 'AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36,}|-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----'; then
-           printf '%s\n' 'possible-secrets-detected-in-staged-diff' >> "$log_path"
+           append_log 'possible-secrets-detected-in-staged-diff'
         fi
         if [ "${VSTACK_HOOKS_MODE:-audit}" = "enforce" ]; then
           if command -v gitleaks >/dev/null 2>&1; then
-            gitleaks dir . --no-banner --redact >/dev/null 2>&1 || printf '%s\n' 'gitleaks-reported-findings' >> "$log_path"
+            gitleaks dir . --no-banner --redact >/dev/null 2>&1 || append_log 'gitleaks-reported-findings'
           else
-            printf '%s\n' 'gitleaks-not-installed' >> "$log_path"
+            append_log 'gitleaks-not-installed'
           fi
         fi
       powershell: |
         $inputText = [Console]::In.ReadToEnd()
-        $logName = if ($env:VSTACK_HOOK_LOG_NAME) { $env:VSTACK_HOOK_LOG_NAME } else { 'hook-security-alerts.log' }
-        $logRoot = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { '.vstack/logs' }
-        $logDir = Join-Path $logRoot (Get-Date).ToUniversalTime().ToString('yyyyMMdd')
-        New-Item -ItemType Directory -Force -Path $logDir | Out-Null
-        $logPath = Join-Path $logDir $logName
+        function Write-HookLog {
+          param([string]$Message)
+          $logName = if ($env:VSTACK_HOOK_LOG_NAME) { $env:VSTACK_HOOK_LOG_NAME } else { 'hook-security-alerts.log' }
+          $logRoot = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { '.vstack/logs' }
+          $logDir = Join-Path $logRoot (Get-Date).ToUniversalTime().ToString('yyyyMMdd')
+          New-Item -ItemType Directory -Force -Path $logDir | Out-Null
+          Add-Content -Path (Join-Path $logDir $logName) -Value $Message
+        }
         if ($inputText -notmatch 'git (commit|push|merge|rebase)') {
           exit 0
         }
         if ((git rev-parse --git-dir 2>$null) -and (git diff --cached | Select-String -Pattern 'AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36,}|-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----' -Quiet)) {
-           Add-Content -Path $logPath -Value 'possible-secrets-detected-in-staged-diff'
+           Write-HookLog 'possible-secrets-detected-in-staged-diff'
         }
         $mode = if ($env:VSTACK_HOOKS_MODE) { $env:VSTACK_HOOKS_MODE } else { 'audit' }
         if ($mode -eq 'enforce') {
           if (Get-Command gitleaks -ErrorAction SilentlyContinue) {
             gitleaks dir . --no-banner --redact *> $null
             if ($LASTEXITCODE -ne 0) {
-              Add-Content -Path $logPath -Value 'gitleaks-reported-findings'
+              Write-HookLog 'gitleaks-reported-findings'
             }
           } else {
-            Add-Content -Path $logPath -Value 'gitleaks-not-installed'
+            Write-HookLog 'gitleaks-not-installed'
           }
         }
       cwd: "."

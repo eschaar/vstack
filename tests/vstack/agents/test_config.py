@@ -20,7 +20,11 @@ class TestAgentSchemas:
                 "name": "architect",
                 "description": "An architect agent",
                 "tools": ["read", "edit"],
-                "model": ["Claude Sonnet 4.5 (copilot)", "GPT-5.3-Codex (copilot)"],
+                "model": [
+                    "auto",
+                    "Claude Sonnet 4.6 (copilot)",
+                    "GPT-5.3-Codex (copilot)",
+                ],
                 "handoffs": [
                     {
                         "label": "Continue",

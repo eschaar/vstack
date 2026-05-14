@@ -50,6 +50,8 @@ EXPECTED_CLI_NAMES = [
     "k8s",
     "helm",
     "rancher",
+    "space-setup",
+    "copilot-ops",
 ]
 
 
@@ -67,6 +69,7 @@ class TestCliConstants:
     def test_expected_hook_input_names_content(self) -> None:
         """Verify source checks require the complete built-in hook set."""
         assert EXPECTED_INPUT_NAMES["hook"] == [
+            "agent-call-audit",
             "log-retention-cleanup",
             "post-edit-markdown-quality",
             "post-edit-format",

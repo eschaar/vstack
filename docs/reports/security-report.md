@@ -1,23 +1,23 @@
 # Security Report
 
-**Branch:** `feat/workflow_update`\
-**Date:** 2026-05-06\
-**Scope:** Full source tree — `.vstack/` project-scope directory (ADR-019); `vstack install`/`vstack init` command semantics (ADR-020); manifest relocation from `.github/` to `.vstack/` (ADR-021); selective install with `exclude:` filter (ADR-022); `artifacts.root` config override; `.vstack/.gitignore` seeding; agent `artifacts:` section generation; ADR terminology update (Option A/B → direct execution/orchestrated pipeline); roadmap cleanup and gh-issues skill MCP-first guidance. Static analysis (bandit) + dependency audit (pip-audit); security fixes for S-001 (assert guards) and S-002 (subprocess nosec)\
-**Method:** OWASP Top 10 + STRIDE (static analysis on a local CLI tool; no network surface, no auth surface, no DB)
+**Branch:** `chore/split-docs-and-hardening`\
+**Date:** 2026-05-14\
+**Scope:** Current repository snapshot using static analysis and dependency audit.\
+**Method:** OWASP Top 10 + STRIDE framing for a local CLI tool (no network/auth/database surface), with local dependency remediation and re-audit.
 
 ______________________________________________________________________
 
 ## Verdict
 
-| Category                 | Findings                    | Blocking                                 |
-| ------------------------ | --------------------------- | ---------------------------------------- |
-| Static analysis (bandit) | 1 LOW                       | No — informational; import advisory only |
-| Dependency CVEs          | 1 (pip, LOW)                | No — dev/build tooling only              |
-| Secrets in source        | None                        | —                                        |
-| Injection risk           | None identified             | —                                        |
-| Auth / access control    | N/A (local CLI, no network) | —                                        |
+| Category                 | Findings                          | Blocking                                 |
+| ------------------------ | --------------------------------- | ---------------------------------------- |
+| Static analysis (bandit) | 1 LOW                             | No — informational; import advisory only |
+| Dependency CVEs          | 0 known CVEs in current local env | No                                       |
+| Secrets in source        | None                              | —                                        |
+| Injection risk           | None identified                   | —                                        |
+| Auth / access control    | N/A (local CLI, no network)       | —                                        |
 
-> **Ship readiness: PASS with notes** — no blocking security findings. Advisory items documented below.
+> **Ship readiness: PASS** — no blocking security findings and local tooling advisories were remediated.
 
 ______________________________________________________________________
 
@@ -25,18 +25,18 @@ ______________________________________________________________________
 
 This is a **local CLI tool** — no web server, no user sessions, no database, no network endpoints. Most OWASP categories are not applicable. Relevant categories are assessed below.
 
-| #   | Category                  | Status   | Notes                                                                       |
-| --- | ------------------------- | -------- | --------------------------------------------------------------------------- |
-| A01 | Broken Access Control     | N/A      | Local filesystem operations only                                            |
-| A02 | Cryptographic Failures    | PASS     | No cryptographic operations in source                                       |
-| A03 | Injection                 | PASS     | Subprocess uses fixed list args (no shell=True, no user-interpolated input) |
-| A04 | Insecure Design           | PASS     | No privileged operations, no credential storage                             |
-| A05 | Security Misconfiguration | PASS     | No config files with secrets; no exposed ports                              |
-| A06 | Vulnerable Components     | ADVISORY | pip 26.0.1 has CVE-2026-3219 (dev tooling, not shipped)                     |
-| A07 | Auth / Identity Failures  | N/A      | No authentication surface                                                   |
-| A08 | Software/Data Integrity   | PASS     | Checksums used for artifact validation in install/uninstall                 |
-| A09 | Logging Failures          | PASS     | No sensitive data logged                                                    |
-| A10 | SSRF                      | N/A      | No HTTP client usage                                                        |
+| #   | Category                  | Status | Notes                                                                       |
+| --- | ------------------------- | ------ | --------------------------------------------------------------------------- |
+| A01 | Broken Access Control     | N/A    | Local filesystem operations only                                            |
+| A02 | Cryptographic Failures    | PASS   | No cryptographic operations in source                                       |
+| A03 | Injection                 | PASS   | Subprocess uses fixed list args (no shell=True, no user-interpolated input) |
+| A04 | Insecure Design           | PASS   | No privileged operations, no credential storage                             |
+| A05 | Security Misconfiguration | PASS   | No config files with secrets; no exposed ports                              |
+| A06 | Vulnerable Components     | PASS   | Local environment advisories remediated and re-verified                     |
+| A07 | Auth / Identity Failures  | N/A    | No authentication surface                                                   |
+| A08 | Software/Data Integrity   | PASS   | Checksums used for artifact validation in install/uninstall                 |
+| A09 | Logging Failures          | PASS   | No sensitive data logged                                                    |
+| A10 | SSRF                      | N/A    | No HTTP client usage                                                        |
 
 ______________________________________________________________________
 
@@ -44,29 +44,12 @@ ______________________________________________________________________
 
 ```
 bandit -r src/
+Run started: 2026-05-14 14:22:20+00:00
 Issues: 1  HIGH=0  MED=0  LOW=1
   [LOW] B404  vstack/constants.py:6 — Consider possible security implications associated with the subprocess module.
 ```
 
-### S-001 — `assert` used for runtime validation (RESOLVED)
-
-**File:** `src/vstack/cli/report.py:224, 241, 243` (fixed)
-
-**Resolution:** Replaced all three `assert isinstance(...)` guards with explicit `if not isinstance(...): raise TypeError(...)` guards. These now execute correctly in optimised builds (`python -O`) and are no longer flagged by bandit.
-
-______________________________________________________________________
-
-### S-002 — subprocess call flagged (RESOLVED)
-
-**File:** `src/vstack/constants.py:53` (fixed)
-
-**Resolution:** Added `# nosec B603 B607` comment at the `subprocess.check_output(...)` call to suppress the advisory and make the review decision explicit. The call uses a fixed argument list (`["git", "-C", str(repo_root), "tag", "--points-at", "HEAD"]`), no `shell=True`, and no user-controlled input. It remains safe.
-
-The remaining bandit finding (B404 at line 6) is an **import-level advisory** with no associated code risk. It cannot be suppressed without disabling B404 globally.
-
-______________________________________________________________________
-
-### S-003 (residual) — B404 subprocess import (LOW, informational)
+### S-001 — B404 subprocess import (LOW, informational)
 
 **File:** `src/vstack/constants.py:6`
 
@@ -74,7 +57,7 @@ ______________________________________________________________________
 import subprocess
 ```
 
-Bandit flags any file that imports `subprocess`. This is a blanket informational note, not a finding tied to unsafe usage. The actual call (line 53) is safe and suppressed via `# nosec B603 B607`.
+Bandit flags any file that imports `subprocess`. This is a blanket informational note, not a finding tied to unsafe usage. The actual call site remains guarded (`# nosec B603 B607`) and uses a fixed arg list.
 
 **Severity:** LOW — informational; not actionable.
 
@@ -82,21 +65,54 @@ ______________________________________________________________________
 
 ## Dependency Audit (pip-audit)
 
+Path note:
+
+- CI workflow uses `pip-audit --requirement <(poetry export --without-hashes -f requirements.txt)`.
+- In this local environment, `poetry export` is unavailable (`The requested command export does not exist`).
+- Closest repo-used equivalent for local verification: direct `pip-audit` against the active virtualenv.
+
+### Initial reproduction (before remediation)
+
+```bash
+source .venv/bin/activate
+pip-audit
 ```
-pip-audit result:
-  Name  Version  ID             Fix Versions
-  pip   26.0.1   CVE-2026-3219  (none listed)
+
+```text
+Found 4 known vulnerabilities in 2 packages
+pip 26.0.1     CVE-2026-3219
+pip 26.0.1     CVE-2026-6357  fixed in 26.1
+urllib3 2.6.3  CVE-2026-44431 fixed in 2.7.0
+urllib3 2.6.3  CVE-2026-44432 fixed in 2.7.0
 ```
 
-### CVE-2026-3219 — pip tar+ZIP dual-format handling
+### Remediation applied
 
-pip processes concatenated tar+ZIP archives as ZIP regardless of filename, potentially leading to incorrect file installation from ambiguous archives.
+```bash
+source .venv/bin/activate
+python -m pip install --upgrade 'pip>=26.1' 'urllib3>=2.7.0'
+```
 
-**Assessment:** This affects `pip` itself as a **build/dev tool**, not vstack's shipped package or any runtime dependency. vstack has no runtime dependencies beyond Python stdlib. Users installing vstack from PyPI are not exposed by this CVE in any production path.
+Installed versions:
 
-**Recommendation:** Upgrade pip in the development virtualenv (`pip install --upgrade pip`) once a fixed version is released. Track the CVE for a fix version.
+- `pip 26.1.1`
+- `urllib3 2.7.0`
 
-**Severity:** LOW — dev tooling only; not a shipping blocker.
+### Final verification
+
+```
+security check window (UTC): 2026-05-14T14:22:18Z → 2026-05-14T14:22:20Z
+command: pip-audit
+result: No known vulnerabilities found
+
+note: pip-audit reports one non-blocking skip item for local package `vstack (0.0.0)` because it is not published on PyPI.
+```
+
+### S-002 — dependency advisories in local tooling environment (RESOLVED)
+
+`pip-audit` initially reported advisories in local tooling packages (`pip`, `urllib3`). Those packages were upgraded in the active virtual environment and re-audited.
+
+**Final status:** resolved.
 
 ______________________________________________________________________
 
@@ -125,10 +141,9 @@ ______________________________________________________________________
 
 ## Summary of Advisory Items
 
-| ID    | Severity | File                        | Action                                                             |
-| ----- | -------- | --------------------------- | ------------------------------------------------------------------ |
-| S-001 | LOW      | `cli/report.py:224,241,243` | Replace `assert` with explicit `TypeError` guards                  |
-| S-002 | LOW      | `constants.py:53`           | Add `# nosec B603 B607` to suppress false-positive bandit advisory |
-| S-003 | LOW      | `pip 26.0.1`                | Upgrade pip in dev venv when fix is available                      |
+| ID    | Severity | Location / package         | Action                                                         |
+| ----- | -------- | -------------------------- | -------------------------------------------------------------- |
+| S-001 | LOW      | `src/vstack/constants.py`  | Keep B404 import advisory documented; no unsafe subprocess use |
+| S-002 | LOW      | `pip`, `urllib3` (dev env) | **Resolved** by upgrading to `pip 26.1.1` and `urllib3 2.7.0`  |
 
-None of these items block release.
+No remaining dependency CVEs were detected in the audited local environment. No security item blocks release.

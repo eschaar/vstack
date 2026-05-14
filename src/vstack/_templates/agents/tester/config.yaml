@@ -1,5 +1,5 @@
 name: tester
-version: 20260503026
+version: 20260514001
 description: >
   Senior QA, security, and reliability engineer. Runs functional, security,
   and performance tests. Produces verification reports based on the approved
@@ -15,9 +15,16 @@ tools:
   - todo
   - agent
 model:
+  - auto
   - Claude Sonnet 4.6 (copilot)
   - GPT-5.3-Codex (copilot)
-agents: ["*"]
+agents:
+  - product
+  - architect
+  - designer
+  - engineer
+  - tester
+  - release
 target: vscode
 defaults:
   handoffs:
