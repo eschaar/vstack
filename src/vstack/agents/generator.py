@@ -51,6 +51,7 @@ from pathlib import Path
 from vstack.agents.config import AGENT_TYPE
 from vstack.artifacts.generator import GenericArtifactGenerator
 from vstack.constants import ARTIFACTS_DOCS_ROOT, TEMPLATES_ROOT
+from vstack.models import CheckMessage
 
 
 class AgentGenerator(GenericArtifactGenerator):
@@ -114,6 +115,36 @@ class AgentGenerator(GenericArtifactGenerator):
         if self.workflow_mode != "manual":
             return templates
         return [p for p in templates if p.name != "planner"]
+
+    def verify_input(self, expected_names: list[str] | None = None):
+        """Verify source templates and reject wildcard agent delegation policy."""
+        result = super().verify_input(expected_names)
+
+        for tmpl_dir in self.find_templates():
+            rel_path = f"templates/{self.config.templates_dir}/{tmpl_dir.name}/{self.config.config_filename}"
+            config = self.load_artifact_config(tmpl_dir)
+            agents = config.get("agents")
+            if not isinstance(agents, list):
+                continue
+            if any(isinstance(agent, str) and agent.strip() == "*" for agent in agents):
+                result.messages.append(
+                    CheckMessage(
+                        "fail",
+                        f"{rel_path} contains wildcard delegation agents ['*']; use explicit allowlist",
+                    )
+                )
+            if tmpl_dir.name != "planner" and any(
+                isinstance(agent, str) and agent.strip() == "planner" for agent in agents
+            ):
+                result.messages.append(
+                    CheckMessage(
+                        "fail",
+                        f"{rel_path} contains forbidden planner delegation in agents; "
+                        "planner delegation is forbidden for worker agents to avoid recursion/cycles",
+                    )
+                )
+
+        return result
 
     def template_partials(self, tmpl_dir: Path) -> dict[str, str]:
         """Inject per-template work-item placeholder tokens.

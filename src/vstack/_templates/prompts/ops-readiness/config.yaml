@@ -1,0 +1,9 @@
+name: ops-readiness
+description: Assess operational readiness across observability, runbooks, failure handling, and supportability.
+argument-hint: "[service, component, or release scope]"
+agent: tester
+model: GPT-5.3-Codex (copilot)
+tools:
+  - read
+  - search
+version: 20260513009

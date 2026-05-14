@@ -1,7 +1,7 @@
 # vstack — workflow
 
 > Maintained by: **designer** role\
-> Last updated: 2026-05-12
+> Last updated: 2026-05-14
 
 ## overview
 
@@ -28,6 +28,12 @@ Default mode:
 
 - `agentic`
 
+Copilot Agent Mode entry point:
+
+- In `agentic` mode, select the `planner` agent in the Copilot Chat agent picker as the primary entry point.
+- Use the `tester` agent and other role agents when you want a direct specialist pass rather than planner-led orchestration.
+- Copilot Chat uses the mode selector and agent picker to choose the active agent. If the UI suggests mentions or other completions, ignore them and select the agent from the picker.
+
 Mode semantics:
 
 | Mode      | Primary progression model                      | Planner generated | Worker handoff buttons |
@@ -44,6 +50,23 @@ Execution semantics:
 - When `depends_on` is set, it is the source of truth for stage prerequisites.
 - A stage becomes ready only when all dependencies are complete.
 - Multiple ready stages can be orchestrated in parallel by the planner in `agentic` mode.
+
+Planner correlation semantics:
+
+- Planner creates one `PLANNER_RUN_ID` per orchestration run.
+- Planner forwards the same `PLANNER_RUN_ID` to every delegated worker stage.
+- Worker stage reports must echo this value in `planner_run_id`.
+
+Stage report schema (planner and workers):
+
+- `status`: `ready` or `blocked`
+- `changes_made`: `yes` or `no`
+- `updated_items`: list of paths (or `none`)
+- `blockers`: list (or `none`)
+- `next_handoff_summary`: one short paragraph
+- `planner_run_id`: correlation id from planner (or `none` outside planner orchestration)
+- `model_used`: model identifier used for the stage
+- `subagents_invoked`: list of delegated subagents used by that stage (or `none`)
 
 Dependency semantics (`depends_on`):
 
@@ -265,8 +288,8 @@ flowchart TD
 
 ### flow principles
 
-1. **User-gated progression:** every stage output is reviewed by the user before the next stage starts.
-1. **All roles in every pipeline:** every use case runs through all six roles. Roles that are not affected by a change assess impact and pass through explicitly rather than being skipped.
+1. **User-gated progression is configurable:** gate behavior follows `workflow.stages[*].hitl` (`always`, `on-change`, `never`).
+1. **Stage participation is configurable:** stage execution follows `workflow.stages[*].gate` (`required`, `optional`, `skip`).
 1. **Happy-path handoffs only:** handoff buttons are limited to one forward action named `Go to next stage: <stage>`.
 1. **No automatic backtracking:** non-happy paths (`NOK`, blockers, missing artifacts) do not use handoff buttons; the user decides the next action.
 1. **Subagent delegation mid-role:** engineer may invoke architect or designer as subagents to clarify constraints or contracts during implementation without going back to a full gate cycle.
@@ -302,7 +325,7 @@ ______________________________________________________________________
 
 ## user gate moments
 
-There are **6 explicit user gate moments** where the pipeline pauses for human input:
+The default six-stage pipeline has **up to 6 user gate moments**. Effective gate count depends on per-stage `gate` and `hitl` settings:
 
 | Gate                             | When                                  | Who signs off |
 | -------------------------------- | ------------------------------------- | ------------- |
@@ -313,9 +336,8 @@ There are **6 explicit user gate moments** where the pipeline pauses for human i
 | **5. Verification approval**     | After tester reports are ready        | User          |
 | **6. Final merge approval**      | After release readiness is complete   | User          |
 
-Gates prevent automated pipelines from deploying without human review.
 In the current model, the user implicitly gates by choosing which skill to invoke next.
-In the orchestrated model, the orchestrator pauses and waits for explicit confirmation.
+In the orchestrated model, the planner pauses according to `hitl` policy and waits for explicit confirmation when required.
 
 ### handoff button convention
 

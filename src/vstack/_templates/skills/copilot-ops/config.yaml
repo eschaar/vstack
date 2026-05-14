@@ -1,0 +1,15 @@
+name: copilot-ops
+version: 20260513012
+description: |
+  Operate and govern GitHub Copilot settings with an audit-first workflow.
+  Covers policy checks, configuration drift, usage visibility, and safe change rollout.
+allowed-tools: 'execute read search'
+argument-hint: '[org/repo scope or ops objective]'
+
+license: MIT
+compatibility: Requires admin-level GitHub permissions and gh CLI authentication for governance operations.
+metadata:
+  owner: vstack
+  maturity: candidate
+user-invocable: true
+disable-model-invocation: false

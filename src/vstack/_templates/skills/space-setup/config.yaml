@@ -1,0 +1,15 @@
+name: space-setup
+version: 20260513011
+description: |
+  Set up and maintain a GitHub Copilot Space for a repository. Covers scope
+  selection, source curation, refresh cadence, and context quality checks.
+allowed-tools: 'execute read search'
+argument-hint: '[repo scope, docs set, or space objective]'
+
+license: MIT
+compatibility: Requires GitHub Copilot Spaces access in the target organization/repository.
+metadata:
+  owner: vstack
+  maturity: candidate
+user-invocable: true
+disable-model-invocation: false

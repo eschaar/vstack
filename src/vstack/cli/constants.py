@@ -53,6 +53,8 @@ EXPECTED_CANONICAL_NAMES = [
     "k8s",
     "helm",
     "rancher",
+    "space-setup",
+    "copilot-ops",
 ]
 
 
@@ -111,6 +113,7 @@ EXPECTED_INPUT_NAMES: dict[str, list[str]] = {
         "typescript",
     ],
     "hook": [
+        "agent-call-audit",
         "log-retention-cleanup",
         "post-edit-markdown-quality",
         "post-edit-format",
@@ -121,10 +124,19 @@ EXPECTED_INPUT_NAMES: dict[str, list[str]] = {
     "prompt": [
         "api-design-review",
         "architecture-risk",
+        "artifact-integrity",
+        "ci-triage",
         "code-review",
         "dependency-audit",
         "incident-timeline",
+        "migration-plan",
         "migration-safety",
-        "release-readiness",
+        "ops-readiness",
+        "release-check",
+        "repo-assessment",
+        "template-impact",
+        "test-gaps",
+        "upgrade-plan",
+        "workflow-check",
     ],
 }

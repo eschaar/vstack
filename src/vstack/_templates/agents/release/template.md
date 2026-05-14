@@ -68,7 +68,9 @@ and wait for explicit user routing decisions.
 Planner-coordinated mode (`@planner` invokes this role as a subagent):
 
 - Execute release-stage scope only.
-- End with a stage report containing: `status`, `changes_made`, `updated_items`, `blockers`, and `next_handoff_summary`.
+- End with a structured stage report using this schema:
+
+{{STAGE_REPORT_CONTRACT}}
 
 ## how you work
 
@@ -123,3 +125,4 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 - `@#explore` — codebase discovery and mapping
 - `@#code-review` — final review before PR is opened
 - `@#gh-issues` — create and manage GitHub Issues for tracking work and bug reports
+- `@#copilot-ops` — operate Copilot governance settings with audit-first change control

@@ -51,4 +51,4 @@ Use these Kubernetes conventions in this project.
 - [Kubernetes API reference](https://kubernetes.io/docs/reference/kubernetes-api/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"k8s","artifact_type":"instruction","artifact_version":"20260502039","generator":"vstack","vstack_version":"3.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"k8s","artifact_type":"instruction","artifact_version":"20260502039","generator":"vstack","vstack_version":"3.3.0"} -->

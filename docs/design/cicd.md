@@ -1,7 +1,7 @@
 # vstack CI/CD Pipeline
 
 > Maintained by: **designer** role\
-> Last updated: 2026-04-27
+> Last updated: 2026-05-14
 
 ## Overview
 
@@ -19,16 +19,16 @@ Their jobs are merge-blocking when configured as required status checks in the `
 
 ## What Runs On Which Event
 
-| Workflow                          | Trigger                                           | Responsibility                                                                     |
-| --------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `.github/workflows/commit.yml`    | push to non-main branches, pull_request to `main` | Commit/branch policy and lint/typecheck                                            |
-| `.github/workflows/check.yml`     | push to non-main branches, pull_request to `main` | Single-version unit tests (py3.11)                                                 |
-| `.github/workflows/verify.yml`    | pull_request to `main`                            | Cross-version test matrix (py3.11–3.14) and artifact install verify                |
-| `.github/workflows/security.yml`  | pull_request to `main`                            | Dependency vulnerability scan and secret scan                                      |
-| `.github/workflows/codeql.yml`    | push/pull_request to `main` + weekly schedule     | Code scanning for GitHub Actions and Python                                        |
-| `.github/workflows/automerge.yml` | pull_request_target to `main`                     | Dependabot auto-approve/auto-merge policy gate                                     |
-| `.github/workflows/release.yml`   | push to `main`, workflow_dispatch                 | Release Please orchestration: release PR lifecycle, changelog, tag, GitHub release |
-| `.github/workflows/publish.yml`   | release `published`                               | Build artifacts from release tag and publish to PyPI                               |
+| Workflow                          | Trigger                                           | Responsibility                                                                      |
+| --------------------------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `.github/workflows/commit.yml`    | push to non-main branches, pull_request to `main` | Commit/branch policy and lint/typecheck                                             |
+| `.github/workflows/check.yml`     | push to non-main branches, pull_request to `main` | Single-version unit tests (py3.11)                                                  |
+| `.github/workflows/verify.yml`    | pull_request to `main`                            | Cross-version test matrix (py3.11–3.14), fixture tests, and artifact install verify |
+| `.github/workflows/security.yml`  | pull_request to `main`                            | Dependency vulnerability scan and secret scan                                       |
+| `.github/workflows/codeql.yml`    | push/pull_request to `main` + weekly schedule     | Code scanning for GitHub Actions and Python                                         |
+| `.github/workflows/automerge.yml` | pull_request_target to `main`                     | Dependabot auto-approve/auto-merge policy gate                                      |
+| `.github/workflows/release.yml`   | push to `main`, workflow_dispatch                 | Release Please orchestration: release PR lifecycle, changelog, tag, GitHub release  |
+| `.github/workflows/publish.yml`   | release `published`                               | Build artifacts from release tag and publish to PyPI                                |
 
 ## Human Sequence (Primary)
 
@@ -51,7 +51,7 @@ sequenceDiagram
    GH->>GH: [4a] commit.yml / Validate Commit Messages
    GH->>GH: [4b] commit.yml / Format Lint Typecheck
    GH->>GH: [4c] check.yml / Unit Tests (py3.11)
-   GH->>GH: [4d] verify.yml / Tests (py3.11) — Tests (py3.14) [matrix ×4]
+   GH->>GH: [4d] verify.yml / Tests (py3.11) — Tests (py3.14) [matrix ×4] + Fixture Tests (fast)
    GH->>GH: [4e] verify.yml / Artifact Install Verify
    GH->>GH: [4f] security.yml / Dependency and Secret Scan
    Dev->>GH: [5] Approve and merge PR
@@ -59,7 +59,7 @@ sequenceDiagram
    GH->>GH: [6] Push to main triggers release.yml
    GH->>RP: [7] release.yml / Release Please (PR + Tag + Notes)
    RP-->>GH: [8] Create or update release PR branch + PR
-   GH->>GH: [9a] verify.yml / Tests (py3.11) — Tests (py3.14) [matrix ×4]
+   GH->>GH: [9a] verify.yml / Tests (py3.11) — Tests (py3.14) [matrix ×4] + Fixture Tests (fast)
    GH->>GH: [9b] verify.yml / Artifact Install Verify
    GH->>GH: [9c] security.yml / Dependency and Secret Scan
 
@@ -82,7 +82,7 @@ sequenceDiagram
 1. `[4a]` `commit.yml / Validate Commit Messages` — validates commit messages, branch policy, and reserved `docs(changelog)` scope.
 1. `[4b]` `commit.yml / Format Lint Typecheck` — runs `make format-check`, `make lint`, `make typecheck` on py3.11.
 1. `[4c]` `check.yml / Unit Tests` — runs `make test-local` on py3.11.
-1. `[4d]` `verify.yml / Tests (py3.11)` through `Tests (py3.14)` — 4 parallel matrix jobs run `make test-local`.
+1. `[4d]` `verify.yml / Tests (py3.11)` through `Tests (py3.14)` plus `Fixture Tests (fast)` — matrix jobs run `make test-local`; fixture job runs `make test-fixtures`.
 1. `[4e]` `verify.yml / Artifact Install Verify` — installs vstack into a temp dir and runs `vstack verify`.
 1. `[4f]` `security.yml / Dependency and Secret Scan` — pip-audit + trufflehog diff scan.
 1. `[5]` Approve and merge PR.
@@ -94,7 +94,7 @@ sequenceDiagram
 1. `[11]` Push to `main` triggers `release.yml` again.
 1. `[12]` `release.yml / Release Please (PR + Tag + Notes)` creates the tag and GitHub release.
 1. `[13]` `release: published` triggers `publish.yml`. Job runs only if `prerelease == false`, tag matches `X.Y.Z`, and release actor is trusted.
-1. `[14]` `publish.yml / Build and Publish to PyPI` — builds wheel + sdist, smoke tests, validates artifact version, publishes via OIDC.
+1. `[14]` `publish.yml / Build and Publish to PyPI` — builds wheel + sdist, smoke tests, validates artifact version, publishes via OIDC with API-token fallback when configured.
 
 ## Dependabot Sequence
 
@@ -135,7 +135,7 @@ sequenceDiagram
    GH->>GH: [11] Push to main triggers release.yml
    GH->>RP: [12] release.yml / Release Please (PR + Tag + Notes)
    RP-->>GH: [13] Create or update release PR branch + PR
-   GH->>GH: [14a] verify.yml / Tests (py3.11) — Tests (py3.14) [matrix ×4]
+   GH->>GH: [14a] verify.yml / Tests (py3.11) — Tests (py3.14) [matrix ×4] + Fixture Tests (fast)
    GH->>GH: [14b] verify.yml / Artifact Install Verify
    GH->>GH: [14c] security.yml / Dependency and Secret Scan
 
@@ -158,7 +158,7 @@ sequenceDiagram
 1. `[4a]` `commit.yml / Validate Commit Messages` — commit message policy on PR commits.
 1. `[4b]` `commit.yml / Format Lint Typecheck`.
 1. `[4c]` `check.yml / Unit Tests`.
-1. `[4d]` `verify.yml / Tests (py3.11)` through `Tests (py3.14)` — 4 parallel matrix jobs.
+1. `[4d]` `verify.yml / Tests (py3.11)` through `Tests (py3.14)` plus `Fixture Tests (fast)`.
 1. `[4e]` `verify.yml / Artifact Install Verify`.
 1. `[4f]` `security.yml / Dependency and Secret Scan`.
 1. `[5]` `automerge.yml` job runs only when `github.actor == 'dependabot[bot]'`.
@@ -170,7 +170,7 @@ sequenceDiagram
 1. `[11]-[13]` Push to `main` triggers `release.yml / Release Please (PR + Tag + Notes)`, release PR created/updated.
 1. `[14a]`–`[14c]` `verify.yml` and `security.yml` run on the release PR — GitHub App token triggers `pull_request` events normally.
 1. `[15]-[17]` Release PR manually approved and merged, then tag and GitHub release created.
-1. `[18]-[19]` `publish.yml / Build and Publish to PyPI` runs if `prerelease == false`, SemVer tag, and trusted actor.
+1. `[18]-[19]` `publish.yml / Build and Publish to PyPI` runs if `prerelease == false`, SemVer tag, and trusted actor, with API-token fallback if trusted publishing fails.
 
 ## Failure and Retry Behavior
 
@@ -193,6 +193,7 @@ Configure via **Settings → Rules → Rulesets** on GitHub.
 - `Commit / Format Lint Typecheck`
 - `Check / Unit Tests`
 - `Verify / Tests (py3.11)`, `Verify / Tests (py3.12)`, `Verify / Tests (py3.13)`, `Verify / Tests (py3.14)`
+- `Verify / Fixture Tests (fast)`
 - `Verify / Artifact Install Verify`
 - `Security / Dependency and Secret Scan`
 - `CodeQL / Analyze (actions)`, `CodeQL / Analyze (python)`
@@ -226,7 +227,7 @@ Configure via **Settings → Environments**.
 
 ### Release PR checks (`verify.yml` / `security.yml`)
 
-Release-please uses a GitHub App token (`APP_ID` + `APP_PRIVATE_KEY` secrets in `release.yml`).
+Release-please uses a GitHub App token (`APP_CLIENT_ID` + `APP_PRIVATE_KEY` secrets in `release.yml`).
 PRs created via a GitHub App token are treated by GitHub as external-actor events, so
 `pull_request` triggers fire normally. As a result, `verify.yml` and `security.yml` run on
 release PRs the same as on any other PR to `main`.
@@ -235,13 +236,11 @@ Release PRs only modify `CHANGELOG.md` and version metadata (e.g. version in `py
 The test matrix and artifact verify will pass as normal; the security diff scan will cover only
 the changelog and version file changes. No special Ruleset bypass configuration is needed.
 
-### `pypa/gh-action-pypi-publish@release/v1`
+### `pypa/gh-action-pypi-publish` pinning policy
 
-This action intentionally uses a rolling `release/v1` branch reference, as PyPA's own
-documented recommendation. Security patches (OIDC, attestation fixes) are delivered via
-this rolling branch without requiring a separately versioned release from PyPA. Dependabot
-monitors the `github-actions` ecosystem and opens a PR when the branch advances to a newer
-commit. No manual tracking is needed.
+`publish.yml` pins `pypa/gh-action-pypi-publish` to an immutable commit SHA.
+This keeps supply-chain behavior deterministic while still allowing controlled updates
+through Dependabot PRs.
 
 ## Related Files
 

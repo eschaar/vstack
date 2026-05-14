@@ -1,7 +1,7 @@
 # vstack — agents
 
 > Maintained by: **designer** role\
-> Last updated: 2026-05-13\
+> Last updated: 2026-05-14\
 > VS Code docs: [custom agents](https://code.visualstudio.com/docs/copilot/customization/custom-agents) · [agents overview](https://code.visualstudio.com/docs/copilot/agents/overview)
 
 ## what are agents?
@@ -61,27 +61,27 @@ ______________________________________________________________________
 
 ## config.yaml fields
 
-`config.yaml` is plain YAML (no `---` markers). vstack reads it at generation time and emits only recognised schema fields to the `.agent.md` frontmatter. Unknown fields (`version`, `handoffs`, …) are silently dropped from output.
+`config.yaml` is plain YAML (no `---` markers). vstack reads it at generation time and emits only recognised schema fields to the `.agent.md` frontmatter. Unknown fields (for example `version`) are silently dropped from output.
 
 Style rule: long `description` and `handoffs.prompt` values should use YAML block scalars (`>`). A test enforces this when inline text exceeds 100 characters.
 
 ### emitted to frontmatter
 
-| Field                      | Type           | Required | Notes                                                                                                                                                                            |
-| -------------------------- | -------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                     | string         | no       | Overrides filename as picker label                                                                                                                                               |
-| `description`              | string         | no       | Shown as placeholder text in chat input                                                                                                                                          |
-| `argument-hint`            | string         | no       | Hint text shown after `@agent` in chat                                                                                                                                           |
-| `tools`                    | list           | no       | Tools available to this agent (see below)                                                                                                                                        |
-| `agents`                   | list           | no       | Subagents this agent may invoke; `["*"]` = all                                                                                                                                   |
-| `model`                    | string or list | no       | Force one or more model IDs. In this repo, model values are pinned in templates and validated by tests; change only after verifying support in your VS Code/Copilot environment. |
-| `user-invocable`           | bool           | no       | `true` = show in agents dropdown (default)                                                                                                                                       |
-| `disable-model-invocation` | bool           | no       | `true` = prevent other agents from calling this one                                                                                                                              |
-| `target`                   | string         | no       | `vscode` (default) or `github-copilot`                                                                                                                                           |
-| `handoffs`                 | object-list    | no       | Sequential workflow handoffs — see [handoffs](#handoffs) below                                                                                                                   |
-| `mcp-servers`              | raw YAML       | no       | MCP server config (`github-copilot` target only)                                                                                                                                 |
-| `hooks`                    | raw YAML       | no       | Chat hooks (Preview — requires `chat.useCustomAgentHooks` setting)                                                                                                               |
-| `metadata`                 | raw YAML       | no       | String key/value annotations (`github-copilot` target only)                                                                                                                      |
+| Field                      | Type        | Required | Notes                                                                                                                                                                     |
+| -------------------------- | ----------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                     | string      | no       | Overrides filename as picker label                                                                                                                                        |
+| `description`              | string      | no       | Shown as placeholder text in chat input                                                                                                                                   |
+| `argument-hint`            | string      | no       | Hint text shown after `@agent` in chat                                                                                                                                    |
+| `tools`                    | list        | no       | Tools available to this agent (see below)                                                                                                                                 |
+| `agents`                   | list        | no       | Subagents this agent may invoke; wildcard delegation (`["*"]`) is rejected by source verification, so use an explicit allowlist                                           |
+| `model`                    | list        | no       | Ordered model fallbacks (for example `auto` first, then role-appropriate pinned IDs). This preserves role intent while staying resilient to policy or availability drift. |
+| `user-invocable`           | bool        | no       | `true` = show in agents dropdown (default)                                                                                                                                |
+| `disable-model-invocation` | bool        | no       | `true` = prevent other agents from calling this one                                                                                                                       |
+| `target`                   | string      | no       | `vscode` (default) or `github-copilot`                                                                                                                                    |
+| `handoffs`                 | object-list | no       | Sequential workflow handoffs — see [handoffs](#handoffs) below                                                                                                            |
+| `mcp-servers`              | raw YAML    | no       | MCP server config (`github-copilot` target only)                                                                                                                          |
+| `hooks`                    | raw YAML    | no       | Chat hooks (Preview — requires `chat.useCustomAgentHooks` setting)                                                                                                        |
+| `metadata`                 | raw YAML    | no       | String key/value annotations (`github-copilot` target only)                                                                                                               |
 
 ### vstack-internal only (not emitted)
 
@@ -308,7 +308,7 @@ ______________________________________________________________________
 1. Create `src/vstack/_templates/agents/<name>/config.yaml` with at minimum `name` and `description`.
 1. Create `src/vstack/_templates/agents/<name>/template.md` with the agent instructions.
 1. Regenerate: `vstack install`
-1. Verify: `vstack verify` or `python3 -m pytest test/ -q`
+1. Verify: `vstack verify` or `python3 -m pytest tests/ -q`
 
 ______________________________________________________________________
 
@@ -327,7 +327,8 @@ tools:
   - vscode
   - todo
   - agent
-agents: ["*"]
+agents:
+  - architect
 items:
   dir: architecture
   input:

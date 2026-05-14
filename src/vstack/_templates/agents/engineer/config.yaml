@@ -1,5 +1,5 @@
 name: engineer
-version: 20260503024
+version: 20260514001
 description: >
   Senior software engineer. Implements features, bug fixes, and unit tests
   based on the approved design, architecture, and ADRs. Reviews code for
@@ -16,9 +16,16 @@ tools:
   - todo
   - agent
 model:
+  - auto
   - GPT-5.3-Codex (copilot)
   - Claude Sonnet 4.6 (copilot)
-agents: ["*"]
+agents:
+  - product
+  - architect
+  - designer
+  - engineer
+  - tester
+  - release
 target: vscode
 defaults:
   handoffs:

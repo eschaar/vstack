@@ -24,36 +24,41 @@ hooks:
       description: |
         Run markdown formatting in enforce mode and log only failures/skips.
       bash: |
-        input="$(cat)"
-        log_name="${VSTACK_HOOK_LOG_NAME:-hook-markdown-quality-alerts.log}"
-        log_root="${VSTACK_HOOK_LOG_DIR:-.vstack/logs}"
-        log_dir="$log_root/$(date -u +%Y%m%d)"
-        mkdir -p "$log_dir"
-        log_path="$log_dir/$log_name"
         mode="${VSTACK_HOOKS_MODE:-audit}"
         if [ "$mode" != "enforce" ]; then
           exit 0
         fi
+        input="$(cat)"
+        append_log() {
+          log_name="${VSTACK_HOOK_LOG_NAME:-hook-markdown-quality-alerts.log}"
+          log_root="${VSTACK_HOOK_LOG_DIR:-.vstack/logs}"
+          log_dir="$log_root/$(date -u +%Y%m%d)"
+          mkdir -p "$log_dir"
+          printf '%s\n' "$1" >> "$log_dir/$log_name"
+        }
         if ! printf '%s' "$input" | grep -Eiq '\.md|docs/|\.github/|\.vstack/templates/|adr/|prompt\.md|instructions\.md|SKILL\.md'; then
           exit 0
         fi
         if [ -f Makefile ] && command -v make >/dev/null 2>&1; then
           make markdown-format >/dev/null 2>&1 || \
             make format >/dev/null 2>&1 || \
-            printf '%s\n' 'markdown-format-run-failed' >> "$log_path"
+            append_log 'markdown-format-run-failed'
         else
-          printf '%s\n' 'markdown-format-skipped-missing-make-or-makefile' >> "$log_path"
+          append_log 'markdown-format-skipped-missing-make-or-makefile'
         fi
       powershell: |
-        $inputText = [Console]::In.ReadToEnd()
-        $logName = if ($env:VSTACK_HOOK_LOG_NAME) { $env:VSTACK_HOOK_LOG_NAME } else { 'hook-markdown-quality-alerts.log' }
-        $logRoot = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { '.vstack/logs' }
-        $logDir = Join-Path $logRoot (Get-Date).ToUniversalTime().ToString('yyyyMMdd')
-        New-Item -ItemType Directory -Force -Path $logDir | Out-Null
-        $logPath = Join-Path $logDir $logName
         $mode = if ($env:VSTACK_HOOKS_MODE) { $env:VSTACK_HOOKS_MODE } else { 'audit' }
         if ($mode -ne 'enforce') {
           exit 0
+        }
+        $inputText = [Console]::In.ReadToEnd()
+        function Write-HookLog {
+          param([string]$Message)
+          $logName = if ($env:VSTACK_HOOK_LOG_NAME) { $env:VSTACK_HOOK_LOG_NAME } else { 'hook-markdown-quality-alerts.log' }
+          $logRoot = if ($env:VSTACK_HOOK_LOG_DIR) { $env:VSTACK_HOOK_LOG_DIR } else { '.vstack/logs' }
+          $logDir = Join-Path $logRoot (Get-Date).ToUniversalTime().ToString('yyyyMMdd')
+          New-Item -ItemType Directory -Force -Path $logDir | Out-Null
+          Add-Content -Path (Join-Path $logDir $logName) -Value $Message
         }
         if ($inputText -notmatch '\.md|docs/|\.github/|\.vstack/templates/|adr/|prompt\.md|instructions\.md|SKILL\.md') {
           exit 0
@@ -64,10 +69,10 @@ hooks:
             make format *> $null
           }
           if ($LASTEXITCODE -ne 0) {
-            Add-Content -Path $logPath -Value 'markdown-format-run-failed'
+            Write-HookLog 'markdown-format-run-failed'
           }
         } else {
-           Add-Content -Path $logPath -Value 'markdown-format-skipped-missing-make-or-makefile'
+           Write-HookLog 'markdown-format-skipped-missing-make-or-makefile'
         }
       cwd: "."
       timeoutSec: 30

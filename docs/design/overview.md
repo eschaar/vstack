@@ -1,7 +1,7 @@
 # vstack — design
 
 > Maintained by: **designer** role\
-> Last updated: 2026-05-03
+> Last updated: 2026-05-14
 
 ## overview
 
@@ -58,7 +58,7 @@ stateDiagram-v2
 
 ### 1.2 manifest JSON schema
 
-`vstack.json` — written by `install`, read by all other commands.
+`.vstack/vstack.json` — written by `install`, read by all other commands.
 
 ```json
 {
@@ -110,7 +110,7 @@ Per-artifact entry (`ArtifactEntry`) field contracts:
 value differs from `CURRENT_MANIFEST_VERSION`, the operation fails with:
 
 ```text
-ERROR: Legacy manifest schema detected in vstack.json.
+ERROR: Legacy manifest schema detected in .vstack/vstack.json.
   Run: vstack manifest upgrade --target <project-root>.
 ```
 
@@ -185,8 +185,8 @@ class ManifestFile:
   # Stores message in read_error for user-facing diagnostics.
 
     def write(self, manifest: Manifest) -> None: ...
-    # Atomic write: stages to <path>.tmp, then os.replace → <path>.
-    # Never leaves vstack.json in a partially-written state on POSIX.
+    # Atomic write: stages to <path>.tmp, then os.replace -> <path>.
+    # Never leaves .vstack/vstack.json in a partially-written state on POSIX.
 
     def exists(self) -> bool: ...
 ```
@@ -280,7 +280,19 @@ class CommandLineInterface:
 
 
 class CommandService:
-    def __init__(self, templates_root: Path) -> None: ...
+    def __init__(
+      self,
+      templates_root: Path,
+      *,
+      items_root: str = ARTIFACTS_DOCS_ROOT,
+      workflow_stages: list[dict[str, str]] | None = None,
+      workflow_mode: str = "agentic",
+      hook_default_mode: str = "audit",
+      hook_default_log_level: str = "minimal",
+      hook_log_retention_days: int = 7,
+      hook_log_dir: str = ".vstack/logs",
+      ...
+    ) -> None: ...
 
   generators: list[GenericArtifactGenerator]
 
@@ -288,7 +300,7 @@ class CommandService:
   # Returns path relative to template root when possible.
 
     def manifest_for(self, install_dir: Path) -> ManifestFile: ...
-    # Returns ManifestFile handle for <install_dir>/vstack.json
+    # Returns ManifestFile handle for .vstack/vstack.json in project installs.
 
     def artifact_control_state(
     self,
@@ -315,8 +327,8 @@ class BaseCommand(ABC):
   # CommandContext carries args, install_dir, and only.
 
 
-def build_command_registry(service: CommandService) -> dict[str, BaseCommand]: ...
-# Returns {"install": InstallCommand, "verify": VerifyCommand, ...}
+COMMAND_CATALOG: dict[str, CommandConfig]
+# Declares parser registration and command factories for install/verify/status/...
 ```
 
 ______________________________________________________________________
@@ -333,18 +345,18 @@ guidance, field semantics, examples, and template structure, see the dedicated d
 
 ### 3.1 skill frontmatter (`config.yaml`)
 
-| Field                      | Type   | Required | Constraints                                                                 |
-| -------------------------- | ------ | -------- | --------------------------------------------------------------------------- |
-| `name`                     | string | **yes**  | Lowercase kebab-case; max 64 chars; must match directory name               |
-| `version`                  | string | **yes**  | Semver; used for manifest tracking only — not emitted to generated SKILL.md |
-| `description`              | string | **yes**  | Max 1024 chars; what the skill does and when to invoke it                   |
-| `license`                  | string | no       | SPDX identifier                                                             |
-| `compatibility`            | string | no       | Free text compatibility note                                                |
-| `metadata.owner`           | string | no       | —                                                                           |
-| `metadata.maturity`        | string | no       | `"stable"` \| `"beta"` \| `"experimental"`                                  |
-| `argument-hint`            | string | no       | Shown after `/skill-name` in chat input                                     |
-| `user-invocable`           | bool   | no       | Default `true`; `false` hides skill from slash-command menu                 |
-| `disable-model-invocation` | bool   | no       | Default `false`; `true` prevents Copilot from auto-loading this skill       |
+| Field                      | Type   | Required | Constraints                                                                                                  |
+| -------------------------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------ |
+| `name`                     | string | **yes**  | Lowercase kebab-case; max 64 chars; must match directory name                                                |
+| `version`                  | string | **yes**  | Template revision token (`YYYYMMDDNNN`); used for manifest tracking only — not emitted to generated SKILL.md |
+| `description`              | string | **yes**  | Max 1024 chars; what the skill does and when to invoke it                                                    |
+| `license`                  | string | no       | SPDX identifier                                                                                              |
+| `compatibility`            | string | no       | Free text compatibility note                                                                                 |
+| `metadata.owner`           | string | no       | —                                                                                                            |
+| `metadata.maturity`        | string | no       | `"stable"` \| `"beta"` \| `"experimental"`                                                                   |
+| `argument-hint`            | string | no       | Shown after `/skill-name` in chat input                                                                      |
+| `user-invocable`           | bool   | no       | Default `true`; `false` hides skill from slash-command menu                                                  |
+| `disable-model-invocation` | bool   | no       | Default `false`; `true` prevents Copilot from auto-loading this skill                                        |
 
 ### 3.2 agent frontmatter (`config.yaml`)
 
@@ -353,7 +365,7 @@ guidance, field semantics, examples, and template structure, see the dedicated d
 | `name`                     | string         | no       | Overrides filename as picker label                                     |
 | `description`              | string         | no       | Placeholder text in chat input                                         |
 | `argument-hint`            | string         | no       | Hint text shown after `@agent` in chat                                 |
-| `tools`                    | list           | no       | `read`, `search`, `edit`, `web`, `vscode`, `todo`, `agent`             |
+| `tools`                    | list           | no       | `read`, `search`, `edit`, `execute`, `web`, `vscode`, `todo`, `agent`  |
 | `agents`                   | list           | no       | Subagents this agent may invoke; `["*"]` = all                         |
 | `model`                    | string or list | no       | Force a specific model or list of models; omit to allow user selection |
 | `user-invocable`           | bool           | no       | Default `true`                                                         |
@@ -386,7 +398,8 @@ ______________________________________________________________________
 ## 4. placeholder resolver
 
 Placeholders use `{{TOKEN}}` syntax. Resolution is literal string substitution — no
-logic, no loops. Unresolved tokens are treated as errors by `validate` and `install`.
+logic, no loops. Unresolved tokens are errors in `validate` and in output verification
+for types with `fail_on_unresolved=true`; install logs unresolved tokens as warnings.
 
 Partials live in `src/vstack/_templates/skills/_partials/*.md`. File stem is converted
 from lowercase-kebab to `UPPER_SNAKE` to form the token:
@@ -531,7 +544,7 @@ Exit 0 = all artifacts clean; exit 1 = any artifact not clean.
 
 ### `install`
 
-Write artifact files to the target directory and record checksums in `vstack.json`.
+Write artifact files to the target directory and record checksums in `.vstack/vstack.json`.
 
 ```bash
 vstack install [--target <dir>] [--global] [--only <type>...]
@@ -555,7 +568,7 @@ would have happened.
 
 ### `uninstall`
 
-Remove artifacts recorded in `vstack.json`. Modified files are preserved by default.
+Remove artifacts recorded in `.vstack/vstack.json`. Modified files are preserved by default.
 
 ```bash
 vstack uninstall [--target <dir>] [--global] [--only <type>...]
@@ -574,7 +587,7 @@ Same contracts as top-level `status` and `verify`, scoped to manifest-tracked ar
 
 ### `manifest upgrade`
 
-Migrate legacy `vstack.json` (version < 2) to `manifest_version: 2`.
+Migrate legacy `.vstack/vstack.json` (version < 2) to `manifest_version: 2`.
 
 ```bash
 vstack manifest upgrade [--target <dir>] [--backfill]
@@ -607,14 +620,14 @@ ______________________________________________________________________
 
 ### 7.1 exception table
 
-| Condition                     | Runtime behavior                                                            |
-| ----------------------------- | --------------------------------------------------------------------------- |
-| Missing `vstack.json`         | `ManifestFile.read()` returns `None`; `read_error` is `None`                |
-| Invalid `vstack.json` JSON    | `ManifestFile.read()` returns `None`; `read_error` = invalid format message |
-| Legacy schema on read         | `ManifestFile.read()` returns `None`; `read_error` = upgrade guidance       |
-| Unknown artifact type lookup  | `CommandService.gen_for()` returns `None`                                   |
-| File I/O during state checks  | `artifact_control_state()` returns `("unknown", message)`                   |
-| CLI scope validation failures | `ValueError` raised in scope resolver; handled in `src/vstack/main.py`      |
+| Condition                          | Runtime behavior                                                            |
+| ---------------------------------- | --------------------------------------------------------------------------- |
+| Missing `.vstack/vstack.json`      | `ManifestFile.read()` returns `None`; `read_error` is `None`                |
+| Invalid `.vstack/vstack.json` JSON | `ManifestFile.read()` returns `None`; `read_error` = invalid format message |
+| Legacy schema on read              | `ManifestFile.read()` returns `None`; `read_error` = upgrade guidance       |
+| Unknown artifact type lookup       | `CommandService.gen_for()` returns `None`                                   |
+| File I/O during state checks       | `artifact_control_state()` returns `("unknown", message)`                   |
+| CLI scope validation failures      | `ValueError` raised in scope resolver; handled in `src/vstack/main.py`      |
 
 Top-level error mapping for CLI process exit lives in `src/vstack/main.py`.
 
@@ -652,7 +665,7 @@ flowchart TD
   A[sys.argv] --> B[CommandLineParser.build]
   B --> C[args = parser.parse_args]
   C --> D[CommandService created with templates_root]
-  D --> E[build_command_registry → name→BaseCommand map]
+  D --> E[COMMAND_CATALOG → name→BaseCommand map]
   C --> F[resolve install_dir and only scope]
   E --> G[command.run&#40;&#42;, context=CommandContext&#40;args, install_dir, only&#41;&#41;]
   F --> G
@@ -667,7 +680,7 @@ ______________________________________________________________________
 | Module         | Class / function           | Responsibility                                                                          |
 | -------------- | -------------------------- | --------------------------------------------------------------------------------------- |
 | `interface.py` | `CommandLineInterface`     | Facade: parser construction, service creation, target/scope resolution, dispatch        |
-| `registry.py`  | `build_command_registry`   | Maps command names to `BaseCommand` instances                                           |
+| `catalog.py`   | `COMMAND_CATALOG`          | Maps command names to parser metadata and `BaseCommand` factories                       |
 | `service.py`   | `CommandService`           | Shared coordinator: generators, path labelling, manifest access, artifact state         |
 | `base.py`      | `BaseCommand`              | ABC: all handlers implement `run(*, context: CommandContext) → int`                     |
 | `install.py`   | `InstallCommand`           | Install flow: per-artifact write, checksum recording, dry-run, force/adopt/update modes |
@@ -684,11 +697,11 @@ ______________________________________________________________________
 
 ## 11. design principles
 
-1. **stdlib only at runtime.** No runtime dependencies beyond Python ≥ 3.11 stdlib — `pyyaml`, `jinja2`, etc. are intentionally absent.
+1. **Minimal runtime dependencies.** Runtime uses Python >= 3.11 stdlib plus one external dependency: `pyyaml>=6.0`.
 1. **Templates are source of truth.** No generated files live in `src/vstack/_templates/`.
 1. **Flat resolver.** No template inheritance, no conditionals — literal substitution only.
 1. **Install-time output.** Generated artifacts belong under `.github/`; never committed to the vstack source repo.
 1. **Idempotent.** Running the generator twice with the same `--target` produces identical output.
 1. **Conservative by default.** Untracked and modified files are never overwritten without an explicit escape-hatch flag.
-1. **Atomic manifest writes.** `vstack.json` is never left in a partially-written state (staged via `.tmp` + `os.replace`).
+1. **Atomic manifest writes.** `.vstack/vstack.json` is never left in a partially-written state (staged via `.tmp` + `os.replace`).
 1. **Explicit upgrade gate.** Legacy manifest schemas are rejected with an actionable hint; never silently migrated.

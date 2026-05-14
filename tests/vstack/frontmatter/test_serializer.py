@@ -226,3 +226,14 @@ class TestFrontmatterSerializer:
         )
         assert "applyTo: '**/*.{ts,tsx,js,jsx}'" in output
         assert "applyTo: **/*.{ts,tsx,js,jsx}" not in output
+
+    def test_list_field_quotes_values_with_yaml_special_leading_characters(self) -> None:
+        """List items starting with YAML special chars are single-quoted."""
+        schema = FrontmatterSchema([FieldSpec("tools", type="list")])
+        output = FrontmatterSerializer().serialize(
+            {"tools": ["*expand", "&anchor", "!tag"]},
+            schema,
+        )
+        assert "- '*expand'" in output
+        assert "- '&anchor'" in output
+        assert "- '!tag'" in output

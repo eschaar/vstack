@@ -1,9 +1,0 @@
-name: release-readiness
-description: Evaluate release readiness from reports, risks, and unresolved blockers.
-argument-hint: "[scope, release date, or branch]"
-agent: release
-model: GPT-5.3-Codex (copilot)
-tools:
-  - read
-  - search
-version: 20260502012

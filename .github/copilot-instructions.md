@@ -12,6 +12,16 @@ vstack provides structured skills for backend/microservice development, executab
 - **VS Code native.** Skills run in Copilot Chat / Agent Mode. No assumptions about Claude Code or CLI-only flows.
 - **Backend first.** Prioritize API correctness, reliability, observability, CI/CD, contracts, performance, and security. Browser automation is optional and pluggable.
 
+## Artifact Choice Policy
+
+- Agents are for roles and handoffs.
+- Skills are for reusable procedures.
+- Instructions are for always-on policies.
+- Prompts are for one-shot task framing.
+- Hooks are for repository-level automation.
+
+When proposals span multiple artifact types, split them into small independent changes.
+
 ## System Structure
 
 ```

@@ -307,4 +307,4 @@ Use `--terragrunt-non-interactive` in CI to prevent hanging on prompts.
 - [Gruntwork module registry](https://www.gruntwork.io/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"terragrunt","artifact_type":"skill","artifact_version":"20260502031","generator":"vstack","vstack_version":"3.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"terragrunt","artifact_type":"skill","artifact_version":"20260502031","generator":"vstack","vstack_version":"3.3.0"} -->

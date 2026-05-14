@@ -16,8 +16,14 @@ tools:
   - todo
   - agent
 agents:
-  - '*'
+  - product
+  - architect
+  - designer
+  - engineer
+  - tester
+  - release
 model:
+  - auto
   - Claude Sonnet 4.6 (copilot)
   - GPT-5.3-Codex (copilot)
 user-invocable: true
@@ -99,7 +105,18 @@ and wait for explicit user routing decisions.
 Planner-coordinated mode (`@planner` invokes this role as a subagent):
 
 - Execute release-stage scope only.
-- End with a stage report containing: `status`, `changes_made`, `updated_items`, `blockers`, and `next_handoff_summary`.
+- End with a structured stage report using this schema:
+
+Use this exact stage report schema at the end of your response:
+
+- `status`: `ready` or `blocked`
+- `changes_made`: `yes` or `no`
+- `updated_items`: list of paths (or `none`)
+- `blockers`: list (or `none`)
+- `next_handoff_summary`: one short paragraph
+- `planner_run_id`: value received in `PLANNER_RUN_ID` (or `none` when not provided)
+- `model_used`: model identifier used for this stage (or `unknown`)
+- `subagents_invoked`: list of delegated subagents called during this stage (or `none`)
 
 ## how you work
 
@@ -162,6 +179,7 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 - `@#explore` — codebase discovery and mapping
 - `@#code-review` — final review before PR is opened
 - `@#gh-issues` — create and manage GitHub Issues for tracking work and bug reports
+- `@#copilot-ops` — operate Copilot governance settings with audit-first change control
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"release","artifact_type":"agent","artifact_version":"20260503020","generator":"vstack","vstack_version":"3.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"release","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.3.0"} -->

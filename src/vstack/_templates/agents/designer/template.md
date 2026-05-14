@@ -85,7 +85,9 @@ Handoffs you own:
 Planner-coordinated mode (`@planner` invokes this role as a subagent):
 
 - Execute designer-stage scope only; do not invoke downstream roles unless explicitly asked.
-- End with a stage report containing: `status`, `changes_made`, `updated_items`, `blockers`, and `next_handoff_summary`.
+- End with a structured stage report using this schema:
+
+{{STAGE_REPORT_CONTRACT}}
 
 ## assess current state
 

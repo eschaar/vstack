@@ -1,4 +1,4 @@
-version: 20260511004
+version: 20260514002
 
 metadata:
   name: session-audit
@@ -21,6 +21,10 @@ hooks:
       description: |
         Centrally log tool call requests with size and estimated tokens.
       bash: |
+        script_start_ms="$(date +%s%3N 2>/dev/null || true)"
+        if [ -z "$script_start_ms" ]; then
+          script_start_ms="$(( $(date +%s) * 1000 ))"
+        fi
         input="$(cat)"
         log_level="${VSTACK_HOOKS_LOG_LEVEL:-minimal}"
         log_root="${VSTACK_HOOK_LOG_DIR:-.vstack/logs}"
@@ -36,11 +40,63 @@ hooks:
         ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
         bytes="$(printf '%s' "$input" | wc -c | tr -d ' ')"
         est_tokens="$(( (bytes + 3) / 4 ))"
-        tool_name="$(printf '%s' "$input" | sed -n 's/.*"toolName"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        extract_json_string() {
+          key="$1"
+          printf '%s' "$input" | sed -n "s/.*\"${key}\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p" | head -n1
+        }
+        tool_name="$(extract_json_string toolName)"
+        if [ -z "$tool_name" ]; then
+          tool_name="$(extract_json_string tool_name)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(extract_json_string recipient_name)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(printf '%s' "$input" | sed -n 's/.*"tool"[[:space:]]*:[[:space:]]*{[^}]*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(printf '%s' "$input" | sed -n 's/.*"toolCall"[[:space:]]*:[[:space:]]*{[^}]*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(printf '%s' "$input" | sed -n 's/.*"toolCall"[[:space:]]*:[[:space:]]*{[^}]*"toolName"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(printf '%s' "$input" | sed -n 's/.*"tool_call"[[:space:]]*:[[:space:]]*{[^}]*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(printf '%s' "$input" | sed -n 's/.*"tool_call"[[:space:]]*:[[:space:]]*{[^}]*"tool_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(printf '%s' "$input" | grep -Eo '[A-Za-z_][A-Za-z0-9_]*\.[A-Za-z_][A-Za-z0-9_]*' | head -n1)"
+        fi
         if [ -z "$tool_name" ]; then
           tool_name="unknown"
         fi
-        printf '{"timestamp":"%s","event":"preToolUse","tool_name":"%s","size_bytes":%s,"estimated_tokens":%s}\n' "$ts" "$tool_name" "$bytes" "$est_tokens" >> "$log_dir/hook-tool-use.log"
+        tool_call_id="$(extract_json_string toolCallId)"
+        if [ -z "$tool_call_id" ]; then
+          tool_call_id="$(extract_json_string tool_call_id)"
+        fi
+        if [ -z "$tool_call_id" ]; then
+          tool_call_id="$(extract_json_string callId)"
+        fi
+        if [ -z "$tool_call_id" ]; then
+          tool_call_id="$(extract_json_string call_id)"
+        fi
+        if [ -z "$tool_call_id" ]; then
+          tool_call_id="$(printf '%s' "$input" | sed -n 's/.*"toolCall"[[:space:]]*:[[:space:]]*{[^}]*"id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_call_id" ]; then
+          tool_call_id="$(printf '%s' "$input" | sed -n 's/.*"tool_call"[[:space:]]*:[[:space:]]*{[^}]*"id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_call_id" ]; then
+          tool_call_id="unknown"
+        fi
+        script_end_ms="$(date +%s%3N 2>/dev/null || true)"
+        if [ -z "$script_end_ms" ]; then
+          script_end_ms="$(( $(date +%s) * 1000 ))"
+        fi
+        hook_execution_ms="$((script_end_ms - script_start_ms))"
+        printf '{"timestamp":"%s","event":"preToolUse","tool_name":"%s","tool_call_id":"%s","size_bytes":%s,"estimated_tokens":%s,"hook_execution_ms":%s}\n' "$ts" "$tool_name" "$tool_call_id" "$bytes" "$est_tokens" "$hook_execution_ms" >> "$log_dir/hook-tool-use.log"
       powershell: |
         $inputText = [Console]::In.ReadToEnd()
         $logLevel = if ($env:VSTACK_HOOKS_LOG_LEVEL) { $env:VSTACK_HOOKS_LOG_LEVEL } else { 'minimal' }
@@ -54,30 +110,75 @@ hooks:
           Add-Content -Path (Join-Path $logDir 'hook-tool-use.log') -Value $inputText
           exit 0
         }
+        $scriptStart = Get-Date
+        function Get-PathValue {
+          param([object]$Object, [string]$Path)
+          $current = $Object
+          foreach ($part in $Path.Split('.')) {
+            if ($null -eq $current) {
+              return $null
+            }
+            $prop = $current.PSObject.Properties[$part]
+            if ($null -eq $prop) {
+              return $null
+            }
+            $current = $prop.Value
+          }
+          return $current
+        }
+        function Get-FirstString {
+          param([object]$Object, [string[]]$Paths)
+          foreach ($path in $Paths) {
+            $value = Get-PathValue -Object $Object -Path $path
+            if ($null -ne $value -and [string]$value -ne '') {
+              return [string]$value
+            }
+          }
+          return $null
+        }
         $toolName = 'unknown'
+        $toolCallId = 'unknown'
         try {
           $payload = $inputText | ConvertFrom-Json -ErrorAction Stop
-          if ($payload.toolName) {
-            $toolName = [string]$payload.toolName
+          $toolNameCandidate = Get-FirstString -Object $payload -Paths @('toolName', 'tool_name', 'recipient_name', 'tool.name', 'toolCall.name', 'toolCall.toolName', 'tool_call.name', 'tool_call.tool_name')
+          if ($toolNameCandidate) {
+            $toolName = $toolNameCandidate
+          }
+          $toolCallIdCandidate = Get-FirstString -Object $payload -Paths @('toolCallId', 'tool_call_id', 'callId', 'call_id', 'toolCall.id', 'tool_call.id')
+          if ($toolCallIdCandidate) {
+            $toolCallId = $toolCallIdCandidate
           }
         } catch {
         }
+        if ($toolName -eq 'unknown') {
+          $toolNameMatch = [regex]::Match($inputText, '[A-Za-z_][A-Za-z0-9_]*\.[A-Za-z_][A-Za-z0-9_]*')
+          if ($toolNameMatch.Success) {
+            $toolName = $toolNameMatch.Value
+          }
+        }
+        $hookExecutionMs = [int][Math]::Max(0, ((Get-Date) - $scriptStart).TotalMilliseconds)
         $record = @{
           timestamp = (Get-Date).ToUniversalTime().ToString('o')
           event = 'preToolUse'
           tool_name = $toolName
+          tool_call_id = $toolCallId
           size_bytes = $inputText.Length
           estimated_tokens = [int][math]::Ceiling($inputText.Length / 4.0)
+          hook_execution_ms = $hookExecutionMs
         } | ConvertTo-Json -Compress
         Add-Content -Path (Join-Path $logDir 'hook-tool-use.log') -Value $record
       cwd: "."
-      timeoutSec: 10
+      timeoutSec: 5
 
   postToolUse:
     - type: command
       description: |
         Centrally log tool responses with size and estimated tokens.
       bash: |
+        script_start_ms="$(date +%s%3N 2>/dev/null || true)"
+        if [ -z "$script_start_ms" ]; then
+          script_start_ms="$(( $(date +%s) * 1000 ))"
+        fi
         input="$(cat)"
         log_level="${VSTACK_HOOKS_LOG_LEVEL:-minimal}"
         log_root="${VSTACK_HOOK_LOG_DIR:-.vstack/logs}"
@@ -93,11 +194,63 @@ hooks:
         ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
         bytes="$(printf '%s' "$input" | wc -c | tr -d ' ')"
         est_tokens="$(( (bytes + 3) / 4 ))"
-        tool_name="$(printf '%s' "$input" | sed -n 's/.*"toolName"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        extract_json_string() {
+          key="$1"
+          printf '%s' "$input" | sed -n "s/.*\"${key}\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p" | head -n1
+        }
+        tool_name="$(extract_json_string toolName)"
+        if [ -z "$tool_name" ]; then
+          tool_name="$(extract_json_string tool_name)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(extract_json_string recipient_name)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(printf '%s' "$input" | sed -n 's/.*"tool"[[:space:]]*:[[:space:]]*{[^}]*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(printf '%s' "$input" | sed -n 's/.*"toolCall"[[:space:]]*:[[:space:]]*{[^}]*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(printf '%s' "$input" | sed -n 's/.*"toolCall"[[:space:]]*:[[:space:]]*{[^}]*"toolName"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(printf '%s' "$input" | sed -n 's/.*"tool_call"[[:space:]]*:[[:space:]]*{[^}]*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(printf '%s' "$input" | sed -n 's/.*"tool_call"[[:space:]]*:[[:space:]]*{[^}]*"tool_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_name" ]; then
+          tool_name="$(printf '%s' "$input" | grep -Eo '[A-Za-z_][A-Za-z0-9_]*\.[A-Za-z_][A-Za-z0-9_]*' | head -n1)"
+        fi
         if [ -z "$tool_name" ]; then
           tool_name="unknown"
         fi
-        printf '{"timestamp":"%s","event":"postToolUse","tool_name":"%s","size_bytes":%s,"estimated_tokens":%s}\n' "$ts" "$tool_name" "$bytes" "$est_tokens" >> "$log_dir/hook-tool-use.log"
+        tool_call_id="$(extract_json_string toolCallId)"
+        if [ -z "$tool_call_id" ]; then
+          tool_call_id="$(extract_json_string tool_call_id)"
+        fi
+        if [ -z "$tool_call_id" ]; then
+          tool_call_id="$(extract_json_string callId)"
+        fi
+        if [ -z "$tool_call_id" ]; then
+          tool_call_id="$(extract_json_string call_id)"
+        fi
+        if [ -z "$tool_call_id" ]; then
+          tool_call_id="$(printf '%s' "$input" | sed -n 's/.*"toolCall"[[:space:]]*:[[:space:]]*{[^}]*"id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_call_id" ]; then
+          tool_call_id="$(printf '%s' "$input" | sed -n 's/.*"tool_call"[[:space:]]*:[[:space:]]*{[^}]*"id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        if [ -z "$tool_call_id" ]; then
+          tool_call_id="unknown"
+        fi
+        script_end_ms="$(date +%s%3N 2>/dev/null || true)"
+        if [ -z "$script_end_ms" ]; then
+          script_end_ms="$(( $(date +%s) * 1000 ))"
+        fi
+        hook_execution_ms="$((script_end_ms - script_start_ms))"
+        printf '{"timestamp":"%s","event":"postToolUse","tool_name":"%s","tool_call_id":"%s","size_bytes":%s,"estimated_tokens":%s,"hook_execution_ms":%s}\n' "$ts" "$tool_name" "$tool_call_id" "$bytes" "$est_tokens" "$hook_execution_ms" >> "$log_dir/hook-tool-use.log"
       powershell: |
         $inputText = [Console]::In.ReadToEnd()
         $logLevel = if ($env:VSTACK_HOOKS_LOG_LEVEL) { $env:VSTACK_HOOKS_LOG_LEVEL } else { 'minimal' }
@@ -111,30 +264,75 @@ hooks:
           Add-Content -Path (Join-Path $logDir 'hook-tool-use.log') -Value $inputText
           exit 0
         }
+        $scriptStart = Get-Date
+        function Get-PathValue {
+          param([object]$Object, [string]$Path)
+          $current = $Object
+          foreach ($part in $Path.Split('.')) {
+            if ($null -eq $current) {
+              return $null
+            }
+            $prop = $current.PSObject.Properties[$part]
+            if ($null -eq $prop) {
+              return $null
+            }
+            $current = $prop.Value
+          }
+          return $current
+        }
+        function Get-FirstString {
+          param([object]$Object, [string[]]$Paths)
+          foreach ($path in $Paths) {
+            $value = Get-PathValue -Object $Object -Path $path
+            if ($null -ne $value -and [string]$value -ne '') {
+              return [string]$value
+            }
+          }
+          return $null
+        }
         $toolName = 'unknown'
+        $toolCallId = 'unknown'
         try {
           $payload = $inputText | ConvertFrom-Json -ErrorAction Stop
-          if ($payload.toolName) {
-            $toolName = [string]$payload.toolName
+          $toolNameCandidate = Get-FirstString -Object $payload -Paths @('toolName', 'tool_name', 'recipient_name', 'tool.name', 'toolCall.name', 'toolCall.toolName', 'tool_call.name', 'tool_call.tool_name')
+          if ($toolNameCandidate) {
+            $toolName = $toolNameCandidate
+          }
+          $toolCallIdCandidate = Get-FirstString -Object $payload -Paths @('toolCallId', 'tool_call_id', 'callId', 'call_id', 'toolCall.id', 'tool_call.id')
+          if ($toolCallIdCandidate) {
+            $toolCallId = $toolCallIdCandidate
           }
         } catch {
         }
+        if ($toolName -eq 'unknown') {
+          $toolNameMatch = [regex]::Match($inputText, '[A-Za-z_][A-Za-z0-9_]*\.[A-Za-z_][A-Za-z0-9_]*')
+          if ($toolNameMatch.Success) {
+            $toolName = $toolNameMatch.Value
+          }
+        }
+        $hookExecutionMs = [int][Math]::Max(0, ((Get-Date) - $scriptStart).TotalMilliseconds)
         $record = @{
           timestamp = (Get-Date).ToUniversalTime().ToString('o')
           event = 'postToolUse'
           tool_name = $toolName
+          tool_call_id = $toolCallId
           size_bytes = $inputText.Length
           estimated_tokens = [int][math]::Ceiling($inputText.Length / 4.0)
+          hook_execution_ms = $hookExecutionMs
         } | ConvertTo-Json -Compress
         Add-Content -Path (Join-Path $logDir 'hook-tool-use.log') -Value $record
       cwd: "."
-      timeoutSec: 10
+      timeoutSec: 5
 
   userPromptSubmitted:
     - type: command
       description: |
         Centrally log prompt events with configurable verbosity.
       bash: |
+        script_start_ms="$(date +%s%3N 2>/dev/null || true)"
+        if [ -z "$script_start_ms" ]; then
+          script_start_ms="$(( $(date +%s) * 1000 ))"
+        fi
         input="$(cat)"
         log_level="${VSTACK_HOOKS_LOG_LEVEL:-minimal}"
         log_root="${VSTACK_HOOK_LOG_DIR:-.vstack/logs}"
@@ -150,7 +348,36 @@ hooks:
         ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
         bytes="$(printf '%s' "$input" | wc -c | tr -d ' ')"
         est_tokens="$(( (bytes + 3) / 4 ))"
-        printf '{"timestamp":"%s","event":"userPromptSubmitted","size_bytes":%s,"estimated_tokens":%s}\n' "$ts" "$bytes" "$est_tokens" >> "$log_dir/hook-user-prompt.log"
+        extract_json_string() {
+          key="$1"
+          printf '%s' "$input" | sed -n "s/.*\"${key}\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p" | head -n1
+        }
+        prompt_text="$(extract_json_string prompt)"
+        if [ -z "$prompt_text" ]; then
+          prompt_text="$(extract_json_string userPrompt)"
+        fi
+        if [ -z "$prompt_text" ]; then
+          prompt_text="$(extract_json_string user_prompt)"
+        fi
+        if [ -z "$prompt_text" ]; then
+          prompt_text="$(extract_json_string text)"
+        fi
+        if [ -z "$prompt_text" ]; then
+          prompt_text="$(printf '%s' "$input" | sed -n 's/.*"prompt"[[:space:]]*:[[:space:]]*{[^}]*"text"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+        fi
+        slash_command="none"
+        if [ -n "$prompt_text" ]; then
+          slash_command_candidate="$(printf '%s' "$prompt_text" | sed -n 's#^/\([^[:space:]]*\).*$#/\1#p' | head -n1)"
+          if [ -n "$slash_command_candidate" ]; then
+            slash_command="$slash_command_candidate"
+          fi
+        fi
+        script_end_ms="$(date +%s%3N 2>/dev/null || true)"
+        if [ -z "$script_end_ms" ]; then
+          script_end_ms="$(( $(date +%s) * 1000 ))"
+        fi
+        hook_execution_ms="$((script_end_ms - script_start_ms))"
+        printf '{"timestamp":"%s","event":"userPromptSubmitted","slash_command":"%s","size_bytes":%s,"estimated_tokens":%s,"hook_execution_ms":%s}\n' "$ts" "$slash_command" "$bytes" "$est_tokens" "$hook_execution_ms" >> "$log_dir/hook-user-prompt.log"
       powershell: |
         $inputText = [Console]::In.ReadToEnd()
         $logLevel = if ($env:VSTACK_HOOKS_LOG_LEVEL) { $env:VSTACK_HOOKS_LOG_LEVEL } else { 'minimal' }
@@ -164,16 +391,56 @@ hooks:
           Add-Content -Path (Join-Path $logDir 'hook-user-prompt.log') -Value $inputText
           exit 0
         }
-        $record = @{ timestamp = (Get-Date).ToUniversalTime().ToString('o'); event = 'userPromptSubmitted'; size_bytes = $inputText.Length; estimated_tokens = [int][math]::Ceiling($inputText.Length / 4.0) } | ConvertTo-Json -Compress
+        $scriptStart = Get-Date
+        function Get-PathValue {
+          param([object]$Object, [string]$Path)
+          $current = $Object
+          foreach ($part in $Path.Split('.')) {
+            if ($null -eq $current) {
+              return $null
+            }
+            $prop = $current.PSObject.Properties[$part]
+            if ($null -eq $prop) {
+              return $null
+            }
+            $current = $prop.Value
+          }
+          return $current
+        }
+        function Get-FirstString {
+          param([object]$Object, [string[]]$Paths)
+          foreach ($path in $Paths) {
+            $value = Get-PathValue -Object $Object -Path $path
+            if ($null -ne $value -and [string]$value -ne '') {
+              return [string]$value
+            }
+          }
+          return $null
+        }
+        $slashCommand = 'none'
+        try {
+          $payload = $inputText | ConvertFrom-Json -ErrorAction Stop
+          $promptText = Get-FirstString -Object $payload -Paths @('prompt', 'userPrompt', 'user_prompt', 'text', 'message.text', 'prompt.text')
+          if ($promptText -and $promptText -match '^/([^\s]+)') {
+            $slashCommand = "/$($Matches[1])"
+          }
+        } catch {
+        }
+        $hookExecutionMs = [int][Math]::Max(0, ((Get-Date) - $scriptStart).TotalMilliseconds)
+        $record = @{ timestamp = (Get-Date).ToUniversalTime().ToString('o'); event = 'userPromptSubmitted'; slash_command = $slashCommand; size_bytes = $inputText.Length; estimated_tokens = [int][math]::Ceiling($inputText.Length / 4.0); hook_execution_ms = $hookExecutionMs } | ConvertTo-Json -Compress
         Add-Content -Path (Join-Path $logDir 'hook-user-prompt.log') -Value $record
       cwd: "."
-      timeoutSec: 10
+      timeoutSec: 5
 
   sessionStart:
     - type: command
       description: |
         Centrally log session start with configurable verbosity.
       bash: |
+        script_start_ms="$(date +%s%3N 2>/dev/null || true)"
+        if [ -z "$script_start_ms" ]; then
+          script_start_ms="$(( $(date +%s) * 1000 ))"
+        fi
         input="$(cat)"
         log_level="${VSTACK_HOOKS_LOG_LEVEL:-minimal}"
         log_root="${VSTACK_HOOK_LOG_DIR:-.vstack/logs}"
@@ -189,7 +456,12 @@ hooks:
         ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
         bytes="$(printf '%s' "$input" | wc -c | tr -d ' ')"
         est_tokens="$(( (bytes + 3) / 4 ))"
-        printf '{"timestamp":"%s","event":"sessionStart","size_bytes":%s,"estimated_tokens":%s}\n' "$ts" "$bytes" "$est_tokens" >> "$log_dir/hook-session-start.log"
+        script_end_ms="$(date +%s%3N 2>/dev/null || true)"
+        if [ -z "$script_end_ms" ]; then
+          script_end_ms="$(( $(date +%s) * 1000 ))"
+        fi
+        hook_execution_ms="$((script_end_ms - script_start_ms))"
+        printf '{"timestamp":"%s","event":"sessionStart","size_bytes":%s,"estimated_tokens":%s,"hook_execution_ms":%s}\n' "$ts" "$bytes" "$est_tokens" "$hook_execution_ms" >> "$log_dir/hook-session-start.log"
       powershell: |
         $inputText = [Console]::In.ReadToEnd()
         $logLevel = if ($env:VSTACK_HOOKS_LOG_LEVEL) { $env:VSTACK_HOOKS_LOG_LEVEL } else { 'minimal' }
@@ -203,16 +475,22 @@ hooks:
           Add-Content -Path (Join-Path $logDir 'hook-session-start.log') -Value $inputText
           exit 0
         }
-        $record = @{ timestamp = (Get-Date).ToUniversalTime().ToString('o'); event = 'sessionStart'; size_bytes = $inputText.Length; estimated_tokens = [int][math]::Ceiling($inputText.Length / 4.0) } | ConvertTo-Json -Compress
+        $scriptStart = Get-Date
+        $hookExecutionMs = [int][Math]::Max(0, ((Get-Date) - $scriptStart).TotalMilliseconds)
+        $record = @{ timestamp = (Get-Date).ToUniversalTime().ToString('o'); event = 'sessionStart'; size_bytes = $inputText.Length; estimated_tokens = [int][math]::Ceiling($inputText.Length / 4.0); hook_execution_ms = $hookExecutionMs } | ConvertTo-Json -Compress
         Add-Content -Path (Join-Path $logDir 'hook-session-start.log') -Value $record
       cwd: "."
-      timeoutSec: 10
+      timeoutSec: 5
 
   sessionEnd:
     - type: command
       description: |
         Centrally log session end for correlation with start.
       bash: |
+        script_start_ms="$(date +%s%3N 2>/dev/null || true)"
+        if [ -z "$script_start_ms" ]; then
+          script_start_ms="$(( $(date +%s) * 1000 ))"
+        fi
         input="$(cat)"
         log_level="${VSTACK_HOOKS_LOG_LEVEL:-minimal}"
         log_root="${VSTACK_HOOK_LOG_DIR:-.vstack/logs}"
@@ -228,7 +506,12 @@ hooks:
         ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
         bytes="$(printf '%s' "$input" | wc -c | tr -d ' ')"
         est_tokens="$(( (bytes + 3) / 4 ))"
-        printf '{"timestamp":"%s","event":"sessionEnd","size_bytes":%s,"estimated_tokens":%s}\n' "$ts" "$bytes" "$est_tokens" >> "$log_dir/hook-session-end.log"
+        script_end_ms="$(date +%s%3N 2>/dev/null || true)"
+        if [ -z "$script_end_ms" ]; then
+          script_end_ms="$(( $(date +%s) * 1000 ))"
+        fi
+        hook_execution_ms="$((script_end_ms - script_start_ms))"
+        printf '{"timestamp":"%s","event":"sessionEnd","size_bytes":%s,"estimated_tokens":%s,"hook_execution_ms":%s}\n' "$ts" "$bytes" "$est_tokens" "$hook_execution_ms" >> "$log_dir/hook-session-end.log"
       powershell: |
         $inputText = [Console]::In.ReadToEnd()
         $logLevel = if ($env:VSTACK_HOOKS_LOG_LEVEL) { $env:VSTACK_HOOKS_LOG_LEVEL } else { 'minimal' }
@@ -242,7 +525,9 @@ hooks:
           Add-Content -Path (Join-Path $logDir 'hook-session-end.log') -Value $inputText
           exit 0
         }
-        $record = @{ timestamp = (Get-Date).ToUniversalTime().ToString('o'); event = 'sessionEnd'; size_bytes = $inputText.Length; estimated_tokens = [int][math]::Ceiling($inputText.Length / 4.0) } | ConvertTo-Json -Compress
+        $scriptStart = Get-Date
+        $hookExecutionMs = [int][Math]::Max(0, ((Get-Date) - $scriptStart).TotalMilliseconds)
+        $record = @{ timestamp = (Get-Date).ToUniversalTime().ToString('o'); event = 'sessionEnd'; size_bytes = $inputText.Length; estimated_tokens = [int][math]::Ceiling($inputText.Length / 4.0); hook_execution_ms = $hookExecutionMs } | ConvertTo-Json -Compress
         Add-Content -Path (Join-Path $logDir 'hook-session-end.log') -Value $record
       cwd: "."
-      timeoutSec: 10
+      timeoutSec: 5

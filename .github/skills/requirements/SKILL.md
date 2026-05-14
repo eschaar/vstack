@@ -199,4 +199,4 @@ Write all findings to `docs/product/requirements.md`:
 After writing, summarize what was decided so the architect role can start.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"requirements","artifact_type":"skill","artifact_version":"20260421024","generator":"vstack","vstack_version":"3.2.0"} -->
+<!-- VSTACK-META: {"artifact_name":"requirements","artifact_type":"skill","artifact_version":"20260421024","generator":"vstack","vstack_version":"3.3.0"} -->

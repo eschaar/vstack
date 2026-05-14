@@ -4,37 +4,33 @@
 
 ## [3.3.0](https://github.com/eschaar/vstack/compare/3.2.0...3.3.0) (2026-05-12)
 
-
 ### Features
 
-* **agents:** add parallel delegation policy to all role prompts ([8aaf8c7](https://github.com/eschaar/vstack/commit/8aaf8c7a586aca572f914d26209c4d2bf6321366))
-* **config:** add depends_on to default workflow stages ([e5b7cf1](https://github.com/eschaar/vstack/commit/e5b7cf1c8d0c2301b3aafdbcea2260d942a590ae))
-* **planner:** add depends_on DAG execution model ([bedae77](https://github.com/eschaar/vstack/commit/bedae7752e8b4220dbbaf9b79ddf4c1661c9fcab))
-* **workflow:** add DAG dependency support ([ccfcb35](https://github.com/eschaar/vstack/commit/ccfcb354e66253aaa9455618d20b4c232851fe51))
-* **workflow:** validate stage graph and detect cycles ([165dab4](https://github.com/eschaar/vstack/commit/165dab4f2eeb8595b79eadc41cc1f443a2f929ff))
-
+- **agents:** add parallel delegation policy to all role prompts ([8aaf8c7](https://github.com/eschaar/vstack/commit/8aaf8c7a586aca572f914d26209c4d2bf6321366))
+- **config:** add depends_on to default workflow stages ([e5b7cf1](https://github.com/eschaar/vstack/commit/e5b7cf1c8d0c2301b3aafdbcea2260d942a590ae))
+- **planner:** add depends_on DAG execution model ([bedae77](https://github.com/eschaar/vstack/commit/bedae7752e8b4220dbbaf9b79ddf4c1661c9fcab))
+- **workflow:** add DAG dependency support ([ccfcb35](https://github.com/eschaar/vstack/commit/ccfcb354e66253aaa9455618d20b4c232851fe51))
+- **workflow:** validate stage graph and detect cycles ([165dab4](https://github.com/eschaar/vstack/commit/165dab4f2eeb8595b79eadc41cc1f443a2f929ff))
 
 ### Fixes
 
-* **cli:** reject malformed workflow depends_on ([3b23981](https://github.com/eschaar/vstack/commit/3b239812c3074669c2a3d641e70952d35a470aea))
-* **cli:** tighten workflow dependency validation ([9aec187](https://github.com/eschaar/vstack/commit/9aec187af621a55e50c4cbb62c56b2d16f97536f))
-* **version:** add nearest-tag fallback for dev checkouts ([5971ad0](https://github.com/eschaar/vstack/commit/5971ad0600f26326d235745766582a49c3c81d9e))
-
+- **cli:** reject malformed workflow depends_on ([3b23981](https://github.com/eschaar/vstack/commit/3b239812c3074669c2a3d641e70952d35a470aea))
+- **cli:** tighten workflow dependency validation ([9aec187](https://github.com/eschaar/vstack/commit/9aec187af621a55e50c4cbb62c56b2d16f97536f))
+- **version:** add nearest-tag fallback for dev checkouts ([5971ad0](https://github.com/eschaar/vstack/commit/5971ad0600f26326d235745766582a49c3c81d9e))
 
 ### Documentation
 
-* add depends_on DAG section and planner entry-point guidance ([25c37d8](https://github.com/eschaar/vstack/commit/25c37d890aa68cdc5518768a0c07af33e4f81b9d))
-* **maintenance:** normalize markdown list formatting ([1d0b5e3](https://github.com/eschaar/vstack/commit/1d0b5e3f55c0400518080fe79f85d6e9c7225dbd))
-* **product:** align roadmap and workflow docs ([d4346cd](https://github.com/eschaar/vstack/commit/d4346cd2cc84629dcd30442897f778ef43f85cc8))
-* **readme:** add agentic runbook and parallel troubleshooting ([d51a1d3](https://github.com/eschaar/vstack/commit/d51a1d32ac8aeb9c430db85716980a17e35facaf))
-* **roadmap:** defer multi-IDE support behind VS Code stability ([1fd26a3](https://github.com/eschaar/vstack/commit/1fd26a304365cc38394e9bf1520c4c69ac6b1c8b))
-* **roadmap:** reorder roadmap chronologically by release tag ([1236d38](https://github.com/eschaar/vstack/commit/1236d385d4b83bfbbe542b9e37c1d44331b55fbd))
-* **workflow:** document DAG and multi-agentic model ([4c3e947](https://github.com/eschaar/vstack/commit/4c3e947280f57432ba248fce84c8e0e595d7f244))
-
+- add depends_on DAG section and planner entry-point guidance ([25c37d8](https://github.com/eschaar/vstack/commit/25c37d890aa68cdc5518768a0c07af33e4f81b9d))
+- **maintenance:** normalize markdown list formatting ([1d0b5e3](https://github.com/eschaar/vstack/commit/1d0b5e3f55c0400518080fe79f85d6e9c7225dbd))
+- **product:** align roadmap and workflow docs ([d4346cd](https://github.com/eschaar/vstack/commit/d4346cd2cc84629dcd30442897f778ef43f85cc8))
+- **readme:** add agentic runbook and parallel troubleshooting ([d51a1d3](https://github.com/eschaar/vstack/commit/d51a1d32ac8aeb9c430db85716980a17e35facaf))
+- **roadmap:** defer multi-IDE support behind VS Code stability ([1fd26a3](https://github.com/eschaar/vstack/commit/1fd26a304365cc38394e9bf1520c4c69ac6b1c8b))
+- **roadmap:** reorder roadmap chronologically by release tag ([1236d38](https://github.com/eschaar/vstack/commit/1236d385d4b83bfbbe542b9e37c1d44331b55fbd))
+- **workflow:** document DAG and multi-agentic model ([4c3e947](https://github.com/eschaar/vstack/commit/4c3e947280f57432ba248fce84c8e0e595d7f244))
 
 ### Maintenance
 
-* **artifacts:** refresh generated metadata for vstack 3.2.0 ([d728977](https://github.com/eschaar/vstack/commit/d7289771d8753be4c9c673e04aa8a94bd4f441cf))
+- **artifacts:** refresh generated metadata for vstack 3.2.0 ([d728977](https://github.com/eschaar/vstack/commit/d7289771d8753be4c9c673e04aa8a94bd4f441cf))
 
 ## [3.2.0](https://github.com/eschaar/vstack/compare/3.1.1...3.2.0) (2026-05-12)
 

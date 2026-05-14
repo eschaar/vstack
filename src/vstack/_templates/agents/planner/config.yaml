@@ -1,5 +1,5 @@
 name: planner
-version: 20260510001
+version: 20260514001
 description: >
   vstack orchestration coordinator. Reads workflow stages from project config,
   invokes role subagents in sequence, applies gate and human-approval policy,
@@ -11,6 +11,7 @@ tools:
   - todo
   - agent
 model:
+  - auto
   - GPT-5.3-Codex (copilot)
   - Claude Sonnet 4.6 (copilot)
 agents:

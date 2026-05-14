@@ -1,8 +1,8 @@
 # Test Report
 
-**Branch:** `feature/workflow-dag-validation`\
-**Date:** 2026-05-13\
-**Scope:** Full repository — workflow DAG semantics (`depends_on` validation, sequential fallback compatibility, planner-ready stage scheduling); agent parallel delegation policy; planner template orchestration; roadmap/version alignment; product/docs consistency updates; runtime version fallback fix; historical validation context retained for continuity.
+**Branch:** `chore/split-docs-and-hardening`\
+**Date:** 2026-05-14\
+**Scope:** Full repository verification snapshot after resolving open report points.
 
 ______________________________________________________________________
 
@@ -10,82 +10,76 @@ ______________________________________________________________________
 
 | Dimension     | Result                                     |
 | ------------- | ------------------------------------------ |
-| Functional    | **PASS** — 635/635 tests green             |
+| Functional    | **PASS** — 656 passed                      |
 | Lint / Style  | **PASS** — ruff clean                      |
-| Type checking | **PASS** — mypy clean (51 files, 0 errors) |
-| Coverage      | **PASS** — 100.00% (fail-under=100)        |
+| Type checking | **PASS** — mypy clean (119 source files)   |
+| Coverage      | **PASS** — 100.00%                         |
 | Security      | See `docs/reports/security-report.md`      |
 | Performance   | See `docs/reports/performance-baseline.md` |
 
-> **Ship readiness: READY** — all verification gates currently pass.
+> **Ship readiness: READY** — test gate is green.
 
 ______________________________________________________________________
 
-## Test Execution
+## Reproduction of Previous Failures
 
-```
-platform: linux, Python 3.13.12-final-0
-runner: pytest 9.0.3 + pytest-cov 7.1.0
-command: pytest -q
-635 passed in 21.03s
+Initial reproduction command:
+
+```bash
+source .venv/bin/activate
+pytest -q
 ```
 
-All tests pass. No flaky, skipped, or xfail tests observed.
+Reproduced result:
+
+- 8 failed, 646 passed
+- Failures were all golden-fixture drift checks in `tests/vstack/artifacts/test_generator.py`
+- Coverage gate also failed at 99.93% because the failing run stopped before complete branch coverage
 
 ______________________________________________________________________
 
-## Coverage Summary
+## Fixes Applied
 
-Total: 100.00% — 0 missed statements across 2,806 measured
+1. Updated golden fixtures to match current generated artifacts for:
+   - instructions: `security`, `testing`
+   - skills: `concise`, `verify`
+   - agents: `planner`, `product`
+   - prompts: `code-review`, `api-design-review`
+1. Corrected agent golden tests to use `AgentGenerator` (agent templates now require agent-specific placeholder expansion).
+1. Added targeted regression tests to close coverage gaps introduced during failure remediation:
+   - `tests/vstack/agents/test_generator.py` for non-list `agents` verification path
+   - `tests/vstack/frontmatter/test_serializer.py` for YAML-special list-item quoting
 
-`fail-under=100` is configured in `pyproject.toml`. This gate is **passing**.
+## Final Verification Run
 
-All modules are now at 100% statement coverage.
+```bash
+source .venv/bin/activate
+pytest -q
+```
 
-### Resolution summary
+Run window (UTC):
 
-Blockage coverage findings were resolved by adding targeted unit tests for:
+- started: `2026-05-14T14:21:41Z`
+- finished: `2026-05-14T14:22:04Z`
 
-- per-module test files replacing the `test_commands.py` / `test_coverage_blockers.py` catch-all (test count: 288 → 428)
-- manifest subcommand dispatch and missing-action path
-- service wrappers and `manifest_upgrade` success/error branches
-- parser config guard rails (`scope_help` / `only_help` validation)
-- interface scope resolution edge cases
-- report YAML/JSON/text rendering branches
-- command `run()` wrappers and context forwarding
-- manifest-store defensive parsing branches
-- install/verify/uninstall error-path behavior
-- `manifest upgrade --backfill` branches: missing file, unreadable file, no VSTACK-META footer, existing checksum, unknown algorithm fallback
+Result:
 
-Recent additions also covered malformed `depends_on` inputs at parse and validation time so the workflow DAG no longer degrades silently when config types are wrong.
+- 656 passed in 21.51s
+- Coverage: 100.00% (fail-under=100 satisfied)
 
 ______________________________________________________________________
 
-## Lint and Type Checking
+## Lint and Type Checks
 
 ```
-ruff check src tests  →  All checks passed!
-python -m mypy src tests  →  Success: no issues found in 51 source files
+ruff check src tests                 -> All checks passed
+python -m mypy src tests             -> Success: no issues found in 119 source files
 ```
 
-No lint or type findings.
-
-______________________________________________________________________
-
-## Syntax
-
-```
-python -m py_compile  →  All checked files compile cleanly
-```
-
-______________________________________________________________________
-
-## Blocking Issues
-
-No blocking test findings remain.
+No lint or type issues were introduced by the test-fix changes.
 
 ______________________________________________________________________
 
 ## Handoff
 
-Continue monitoring this area by extending tests whenever new command branches or parser flags are introduced, to preserve the 100% coverage gate.
+Open test-failure point is fully resolved. Use this report as the new green baseline for this branch.

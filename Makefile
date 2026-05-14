@@ -14,7 +14,7 @@ DEV_PACKAGES := pip setuptools wheel pytest pytest-cov ruff mypy pre-commit tox
 
 .PHONY: help help-all preflight bootstrap venv install build clean clean-deep format format-check lint lint-fix \
 	deps pre-commit-install setup all markdown-format markdown-format-check markdown-lint \
-	typecheck test test-local check ci tox tox-all vstack-validate vstack-install vstack-install-global vstack-verify
+	typecheck test test-local test-fixtures check verify-fast verify-full ci tox tox-all vstack-validate vstack-install vstack-install-global vstack-verify
 
 preflight:
 	@command -v $(POETRY) >/dev/null 2>&1 || { echo "Poetry not found. Install from https://python-poetry.org/docs/"; exit 1; }
@@ -32,7 +32,10 @@ help:
 	@echo "  make lint         - lint Python"
 	@echo "  make test         - run tests on Python 3.11-3.14 via tox"
 	@echo "  make test-local   - run pytest on current interpreter only"
+	@echo "  make test-fixtures - run fixture-only generator tests without coverage"
 	@echo "  make check        - full local quality gate"
+	@echo "  make verify-fast  - fast deterministic checks: format-check + lint + typecheck + test-local"
+	@echo "  make verify-full  - full verification profile: check + vstack-validate"
 	@echo "  make ci           - check + vstack template validation"
 	@echo "  make tox          - run pytest across Python 3.11-3.14 (if interpreters are available)"
 	@echo "  make clean        - remove build/cache artifacts"
@@ -61,7 +64,10 @@ help-all:
 	@echo "  make typecheck           - run mypy on src/ and tests/"
 	@echo "  make test                - run pytest matrix via tox (py311, py312, py313, py314)"
 	@echo "  make test-local          - run pytest on current interpreter only"
+	@echo "  make test-fixtures       - run fixture-only generator tests without coverage"
 	@echo "  make check               - run format-check + markdown checks + lint + typecheck + test"
+	@echo "  make verify-fast         - run format-check + lint + typecheck + test-local"
+	@echo "  make verify-full         - run check + vstack-validate"
 	@echo "  make ci                  - run check + vstack-validate"
 	@echo "  make tox                 - run tox pytest matrix (py311, py312, py313, py314)"
 	@echo "  make tox-all             - run all tox envs (tests + lint + type)"
@@ -125,10 +131,17 @@ typecheck:
 test-local:
 	$(VENV_PYTHON) -m pytest -q
 
+test-fixtures:
+	$(VENV_PYTHON) -m pytest -q tests/vstack/artifacts/test_generator.py -k "golden_fixture or defect_fixture" --no-cov
+
 test:
 	$(TOX_PYTHON) -m tox -e py311,py312,py313,py314
 
 check: format-check markdown-lint lint typecheck test
+
+verify-fast: format-check lint typecheck test-local
+
+verify-full: check vstack-validate
 
 ci: check vstack-validate
 
