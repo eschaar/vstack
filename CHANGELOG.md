@@ -2,6 +2,24 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.4.0](https://github.com/eschaar/vstack/compare/3.3.0...3.4.0) (2026-05-14)
+
+
+### Features
+
+* **workflow:** improve planner routing and stabilize artifact generation ([0cf4bd2](https://github.com/eschaar/vstack/commit/0cf4bd2db4e62774d958363cd3b3c9c89a24d666))
+
+
+### Fixes
+
+* **ci:** ignore vstack metadata version-only drift in verify guard ([41bac6f](https://github.com/eschaar/vstack/commit/41bac6f87dd5c54abda580dfad2d5c1e523a877f))
+* **docs:** align examples and pytest temp path guidance ([7d26d52](https://github.com/eschaar/vstack/commit/7d26d5219f08368d8f62990cc999c143ad7c5e55))
+
+
+### Maintenance
+
+* **ci:** bump trufflesecurity/trufflehog ([722d74e](https://github.com/eschaar/vstack/commit/722d74eacf73e1bd4f193beccf74ada8858b6b5f))
+
 ## [3.3.0](https://github.com/eschaar/vstack/compare/3.2.0...3.3.0) (2026-05-12)
 
 ### Features
