@@ -2,6 +2,15 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.4.1](https://github.com/eschaar/vstack/compare/3.4.0...3.4.1) (2026-05-19)
+
+
+### Maintenance
+
+* **ci:** bump actions/create-github-app-token ([351e2cb](https://github.com/eschaar/vstack/commit/351e2cb1c312b4a5406bbf698e73ed0b81ee1137))
+* **ci:** bump actions/github-script ([e17ddb0](https://github.com/eschaar/vstack/commit/e17ddb0a5b5d75b6c59580b6f50c254964774a5d))
+* **ci:** bump googleapis/release-please-action ([805e319](https://github.com/eschaar/vstack/commit/805e3194eec77c83a6dc6c2ab7572f3e8fbeb293))
+
 ## [3.4.0](https://github.com/eschaar/vstack/compare/3.3.0...3.4.0) (2026-05-14)
 
 
