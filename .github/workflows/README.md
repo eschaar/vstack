@@ -25,3 +25,4 @@ For the full CI/CD design and release model, see `docs/design/cicd.md`.
 4. `release.yml` is the only release orchestrator.
 5. `publish.yml` is publish-only and never computes versions.
 6. Ruleset on `main` should require `Commit`, `Check`, `Verify` (all jobs), and `Security` before merge.
+7. `automerge.yml` only auto-enables Dependabot squash merge when repository auto-merge is enabled; otherwise it emits a warning and leaves the PR for manual merge.

@@ -162,7 +162,7 @@ sequenceDiagram
 1. `[4e]` `verify.yml / Artifact Install Verify`.
 1. `[4f]` `security.yml / Dependency and Secret Scan`.
 1. `[5]` `automerge.yml` job runs only when `github.actor == 'dependabot[bot]'`.
-1. `[6a]/[7a]` Eligible (pip patch or GHA patch/minor): auto-merge enabled with SQUASH method.
+1. `[6a]/[7a]` Eligible (pip patch or GHA patch/minor): auto-merge is enabled with SQUASH when repository auto-merge is enabled; otherwise the workflow logs a warning and leaves the PR on the manual merge path.
 1. `[6b]/[7b]` Not eligible: manual merge path stays active.
 1. `[8]` Merge requested against Ruleset.
 1. `[9a]/[10a]` Required checks green → merge to `main`.
@@ -213,7 +213,7 @@ Configure via **Settings → Actions → General**.
 
 Configure via **Settings → General**.
 
-- Enabled at repository level (required for Dependabot auto-merge path).
+- Enabled at repository level to activate the automatic merge path. If disabled, the workflow skips the enable step and warns instead of failing.
 
 ### PyPI environment
 

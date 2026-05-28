@@ -116,6 +116,19 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             try {
+              const repository = await github.rest.repos.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo
+              })
+
+              if (!repository.data.allow_auto_merge) {
+                core.warning(
+                  "Skipping auto-merge: repository auto-merge is disabled. " +
+                  "Enable repository auto-merge in Settings > General to restore this step."
+                )
+                return
+              }
+
               await github.graphql(
                 `mutation($pullRequestId: ID!) {
                   enablePullRequestAutoMerge(input: {pullRequestId: $pullRequestId, mergeMethod: SQUASH}) {
@@ -125,9 +138,18 @@ jobs:
                 { pullRequestId: context.payload.pull_request.node_id }
               )
             } catch (error) {
+              const msg = String(error.message || "")
+              if (msg.includes("Auto merge is not allowed for this repository")) {
+                core.warning(
+                  "Skipping auto-merge: repository auto-merge is disabled. " +
+                  "Enable repository auto-merge in Settings > General to restore this step."
+                )
+                return
+              }
+
               core.setFailed(
                 "Could not enable auto-merge. Ensure repository auto-merge is enabled and branch protections are satisfied.\n" +
-                error.message
+                msg
               )
             }
 
