@@ -2,6 +2,14 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.4.2](https://github.com/eschaar/vstack/compare/3.4.1...3.4.2) (2026-05-28)
+
+
+### Maintenance
+
+* **ci:** handle disabled auto-merge gracefully ([ac91e78](https://github.com/eschaar/vstack/commit/ac91e780f1e6e9c0746683f186a47716a8c8ca12))
+* **ci:** updated dependencies ([576d27d](https://github.com/eschaar/vstack/commit/576d27db9e296da685c3849347453de2e0a13a03))
+
 ## [3.4.1](https://github.com/eschaar/vstack/compare/3.4.0...3.4.1) (2026-05-19)
 
 
