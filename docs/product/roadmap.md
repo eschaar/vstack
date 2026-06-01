@@ -1,54 +1,54 @@
 # vstack — roadmap
 
 > Maintained by: **product** role\
-> Last updated: 2026-06-02
+> Last updated: 2026-06-01
 
 ______________________________________________________________________
 
 ## feature status table
 
-| Feature                                       | Version | Status      | Notes                                                                                                                                                    |
-| --------------------------------------------- | ------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| foundation                                    | v1.0.0  | shipped     | Core template-driven install model is in place                                                                                                           |
-| backend-first verification                    | v1.0.0  | shipped     | Verify/inspect focus on contracts, observability, security                                                                                               |
-| VS Code agent migration                       | v1.x    | shipped     | Native `.github/agents/*.agent.md` output format implemented                                                                                             |
-| role model + doc restructure                  | v1.1.0  | shipped     | 6-role model, agent templates, and docs baseline established                                                                                             |
-| docs information architecture (Diataxis)      | t.b.d.  | candidate   | Adopt `docs/user/` with segmented tutorials/how-to/reference/explanation routes; scaffold first, migration later                                         |
-| new skill scaffolding                         | v2.2.0  | shipped     | 42-skill set with canonical naming                                                                                                                       |
-| agent skill wiring                            | v2.2.0  | shipped     | Role-to-skill mapping, handoffs, and concise modes wired into all agents                                                                                 |
-| CLI modularisation                            | v2.0.0  | shipped     | 12 focused CLI modules; BaseCommand + CommandContext contract                                                                                            |
-| manifest package                              | v2.0.0  | shipped     | Dedicated `manifest/` package; atomic writes (ADR-016)                                                                                                   |
-| mypy type checking                            | v2.0.0  | shipped     | Full mypy coverage enforced in CI; 100% test coverage gate                                                                                               |
-| manifest schema versioning                    | v2.0.0  | shipped     | `manifest_version: 2`; upgrade path via `manifest upgrade` (ADR-014)                                                                                     |
-| checksum backfill                             | v2.0.0  | shipped     | `manifest upgrade --backfill` adds SHA-256 for VSTACK-META-tagged files (ADR-017)                                                                        |
-| conservative install                          | v2.0.0  | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015, superseded by ADR-020)                                                                |
-| dry-run install                               | v2.1.0  | shipped     | `vstack install --dry-run` previews actions; type/name selectors in summary                                                                              |
-| project-scope directory                       | v3.0.0  | shipped     | `.vstack/` directory: `config.yaml`, manifest, delta templates (ADR-019)                                                                                 |
-| install/init command semantics                | v3.0.0  | shipped     | `install` = first-run setup; `init` = idempotent CI regeneration (ADR-020, breaking change)                                                              |
-| manifest relocation                           | v3.0.0  | shipped     | `vstack.json` moves from `.github/` to `.vstack/`; migration via `manifest upgrade` (ADR-014)                                                            |
-| selective install                             | v3.0.0  | shipped     | Per-type and per-name exclusions via `exclude:` in `.vstack/config.yaml`; agents always installed (ADR-022)                                              |
-| workflow contract source-of-truth             | v3.1.0  | shipped     | `workflow:` block in `.vstack/config.yaml`; `gate`, `hitl`, `handoffs` schema; `vstack migrate` command (ADR-023, ADR-026)                               |
-| agent hooks support                           | v3.2.0  | shipped     | First-class `hook` artifact type: generate `.github/hooks/<name>.json` from templates and track in manifest                                              |
-| optional orchestrated role pipeline           | v3.2.0  | shipped     | `planner` coordinator agent implemented with mode-aware generation; default mode is `agentic` (`manual` and `hybrid` also supported)                     |
-| parallel workflow via DAG model               | t.b.d.  | candidate   | `depends_on` DAG semantics implemented in code; awaiting a release tag before being promoted to shipped                                                  |
-| Homebrew distribution (private tap)           | t.b.d.  | candidate   | `brew install eschaar/vstack/vstack` on macOS and Linux; private tap wrapping PyPI sdist; automated formula updates via `publish.yml` after PyPI publish |
-| new skills (next batch)                       | t.b.d.  | candidate   | `space-setup`: set up Copilot Spaces; `copilot-ops`: operate Copilot governance settings with audit-first checks                                         |
-| team customization layer                      | t.b.d.  | candidate   | Deferred major update after VS Code-first model proves itself; custompacks, overlay merge rules, and install profiles all add major maintenance surface  |
-| multi-IDE support (IntelliJ first)            | t.b.d.  | candidate   | Deferred until vstack proves stable in VS Code; likely a major follow-up because it needs separate targets, schemas, and more maintenance                |
-| plugin/bundle distribution model              | t.b.d.  | candidate   | A self-contained, versioned bundle of vstack artifacts as a distribution model with no external registry or repository mapping                           |
-| artifact integrity and verification hardening | t.b.d.  | candidate   | Layered checks, generated-artifact drift detection, and deterministic fixtures to reduce release risk.                                                   |
-| hook telemetry parser hardening (P2)          | t.b.d.  | candidate   | Optional deeper payload normalization for actor/tool/model extraction across broader event shapes without adding runtime dependencies.                   |
-| planner analytics enrichment (P2)             | t.b.d.  | candidate   | Optional aggregation/reporting on stage-report telemetry (`planner_run_id`, `model_used`, `subagents_invoked`) for post-run analysis.                    |
-| golden-fixture coverage expansion             | t.b.d.  | candidate   | Extend deterministic golden fixtures to cover additional high-impact templates per artifact type.                                                        |
-| defect-fixture matrix expansion               | t.b.d.  | candidate   | Expand defect fixtures across artifact types and failure classes with stable expected error assertions.                                                  |
-| template-change-aware fixture CI gate         | t.b.d.  | candidate   | Require fixture drift checks automatically in CI whenever template sources are modified.                                                                 |
-| fixture update policy in PR workflow          | t.b.d.  | candidate   | Enforce contributor guidance that intended generated-output changes include fixture updates in the same pull request.                                    |
-| deeper targeted verify tier                   | t.b.d.  | candidate   | Define and run a deeper pre-merge/release verification tier covering integration, fixture, and contract checks.                                          |
-| heavy agent runtime framework                 | —       | not planned | Keeps runtime lightweight and transparent                                                                                                                |
-| cloud control plane dependency                | —       | not planned | Keeps operation local/offline-capable                                                                                                                    |
-| VS Code extension packaging                   | —       | not planned | Not required for current install model                                                                                                                   |
-| browser automation as default dependency      | —       | not planned | Backend/microservice-first remains default                                                                                                               |
-| install target directory override             | —       | not planned | Won't implement unless a concrete tool incompatibility with `.github/` arises                                                                            |
+| Feature                                       | Version | Status      | Notes                                                                                                                                                              |
+| --------------------------------------------- | ------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| foundation                                    | v1.0.0  | shipped     | Core template-driven install model is in place                                                                                                                     |
+| backend-first verification                    | v1.0.0  | shipped     | Verify/inspect focus on contracts, observability, security                                                                                                         |
+| VS Code agent migration                       | v1.x    | shipped     | Native `.github/agents/*.agent.md` output format implemented                                                                                                       |
+| role model + doc restructure                  | v1.1.0  | shipped     | 6-role model, agent templates, and docs baseline established                                                                                                       |
+| CLI modularisation                            | v2.0.0  | shipped     | 12 focused CLI modules; BaseCommand + CommandContext contract                                                                                                      |
+| manifest package                              | v2.0.0  | shipped     | Dedicated `manifest/` package; atomic writes (ADR-016)                                                                                                             |
+| mypy type checking                            | v2.0.0  | shipped     | Full mypy coverage enforced in CI; 100% test coverage gate                                                                                                         |
+| manifest schema versioning                    | v2.0.0  | shipped     | `manifest_version: 2`; upgrade path via `manifest upgrade` (ADR-014)                                                                                               |
+| checksum backfill                             | v2.0.0  | shipped     | `manifest upgrade --backfill` adds SHA-256 for VSTACK-META-tagged files (ADR-017)                                                                                  |
+| conservative install                          | v2.0.0  | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015, superseded by ADR-020)                                                                          |
+| dry-run install                               | v2.1.0  | shipped     | `vstack install --dry-run` previews actions; type/name selectors in summary                                                                                        |
+| new skill scaffolding                         | v2.2.0  | shipped     | 42-skill set with canonical naming                                                                                                                                 |
+| agent skill wiring                            | v2.2.0  | shipped     | Role-to-skill mapping, handoffs, and concise modes wired into all agents                                                                                           |
+| project-scope directory                       | v3.0.0  | shipped     | `.vstack/` directory: `config.yaml`, manifest, delta templates (ADR-019)                                                                                           |
+| install/init command semantics                | v3.0.0  | shipped     | `install` = first-run setup; `init` = idempotent CI regeneration (ADR-020, breaking change)                                                                        |
+| manifest relocation                           | v3.0.0  | shipped     | `vstack.json` moves from `.github/` to `.vstack/`; migration via `manifest upgrade` (ADR-014)                                                                      |
+| selective install                             | v3.0.0  | shipped     | Per-type and per-name exclusions via `exclude:` in `.vstack/config.yaml`; agents always installed (ADR-022)                                                        |
+| workflow contract source-of-truth             | v3.1.0  | shipped     | `workflow:` block in `.vstack/config.yaml`; `gate`, `hitl`, `handoffs` schema; `vstack migrate` command (ADR-023, ADR-026)                                         |
+| agent hooks support                           | v3.2.0  | shipped     | First-class `hook` artifact type: generate `.github/hooks/<name>.json` from templates and track in manifest                                                        |
+| optional orchestrated role pipeline           | v3.2.0  | shipped     | `planner` coordinator agent implemented with mode-aware generation; default mode is `agentic` (`manual` and `hybrid` also supported)                               |
+| parallel workflow via DAG model               | v3.3.0  | shipped     | `depends_on` DAG semantics and planner parallel scheduling are shipped in v3.3.0                                                                                   |
+| new skills (next batch)                       | v3.3.0  | shipped     | `space-setup`: set up Copilot Spaces; `copilot-ops`: operate Copilot governance settings with audit-first checks                                                   |
+| golden-fixture coverage expansion             | v3.3.0  | shipped     | Extend deterministic golden fixtures to cover additional high-impact templates per artifact type.                                                                  |
+| defect-fixture matrix expansion               | v3.3.0  | shipped     | Expand defect fixtures across artifact types and failure classes with stable expected error assertions.                                                            |
+| planner routing refinement                    | v3.4.0  | shipped     | Planner/orchestrator routing follow-up to the DAG work                                                                                                             |
+| docs information architecture (Diataxis)      | t.b.d.  | candidate   | `docs/user/` scaffold and navigation are in place with segmented tutorials/how-to/reference/explanation routes; broader migration and fully realized IA come later |
+| team customization layer                      | t.b.d.  | candidate   | Deferred major update after VS Code-first model proves itself; custompacks, overlay merge rules, and install profiles all add major maintenance surface            |
+| multi-IDE support (IntelliJ first)            | t.b.d.  | candidate   | Deferred until vstack proves stable in VS Code; likely a major follow-up because it needs separate targets, schemas, and more maintenance                          |
+| plugin/bundle distribution model              | t.b.d.  | candidate   | A self-contained, versioned bundle of vstack artifacts as a distribution model with no external registry or repository mapping                                     |
+| artifact integrity and verification hardening | t.b.d.  | candidate   | Layered checks, generated-artifact drift detection, and deterministic fixtures to reduce release risk.                                                             |
+| hook telemetry parser hardening (P2)          | t.b.d.  | candidate   | Optional deeper payload normalization for actor/tool/model extraction across broader event shapes without adding runtime dependencies.                             |
+| planner analytics enrichment (P2)             | t.b.d.  | candidate   | Optional aggregation/reporting on stage-report telemetry (`planner_run_id`, `model_used`, `subagents_invoked`) for post-run analysis.                              |
+| template-change-aware fixture CI gate         | t.b.d.  | candidate   | Require fixture drift checks automatically in CI whenever template sources are modified.                                                                           |
+| fixture update policy in PR workflow          | t.b.d.  | candidate   | Enforce contributor guidance that intended generated-output changes include fixture updates in the same pull request.                                              |
+| deeper targeted verify tier                   | t.b.d.  | candidate   | Define and run a deeper pre-merge/release verification tier covering integration, fixture, and contract checks.                                                    |
+| heavy agent runtime framework                 | —       | not planned | Keeps runtime lightweight and transparent                                                                                                                          |
+| cloud control plane dependency                | —       | not planned | Keeps operation local/offline-capable                                                                                                                              |
+| VS Code extension packaging                   | —       | not planned | Not required for current install model                                                                                                                             |
+| browser automation as default dependency      | —       | not planned | Backend/microservice-first remains default                                                                                                                         |
+| install target directory override             | —       | not planned | Won't implement unless a concrete tool incompatibility with `.github/` arises                                                                                      |
 
 ______________________________________________________________________
 
@@ -220,9 +220,9 @@ Migration path:
 
 Ref: [GitHub — Customize agent workflows with hooks](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/use-hooks)
 
-### new skills (next batch) [candidate — t.b.d.]
+### new skills (next batch) [shipped — v3.3.0]
 
-Two new skills planned for the next skill expansion:
+Two new skills now ship in the current baseline:
 
 #### `space-setup`
 
@@ -246,6 +246,10 @@ Operational skill for Copilot governance and admin workflows. Covers audit-first
 - **Observability** — pull adoption and usage metrics via API; define operational KPIs and escalation triggers
 
 Ref: [GitHub — Administer GitHub Copilot for your team](https://docs.github.com/en/copilot/how-tos/administer-copilot)
+
+### planner routing refinement [shipped — v3.4.0]
+
+- Planner/orchestrator routing follow-up to the DAG work.
 
 ### team customization layer [candidate — t.b.d.]
 
@@ -313,7 +317,7 @@ Not yet implemented (deferred to orchestrated pipeline milestone):
 - Generator-level cross-role validation of input/output chains
 - Central read-only contract export for external orchestrator consumption
 
-### parallel workflow via DAG model [candidate — t.b.d.]
+### parallel workflow via DAG model [shipped — v3.3.0]
 
 **What is DAG?** (Directed Acyclic Graph)
 
@@ -440,53 +444,6 @@ workflow:
 1. Expand orchestration integration tests for multi-stage parallel traces.
 1. Add user-facing troubleshooting guidance for DAG misconfiguration recovery.
 
-### Homebrew distribution (private tap) [candidate — t.b.d.]
-
-Provide a `brew install` path for macOS and Linux users who prefer not to manage Python
-tooling directly. PyPI remains the canonical package source; the Homebrew formula wraps
-the PyPI sdist in an isolated virtualenv.
-
-**Scope:**
-
-- Create `github.com/eschaar/homebrew-vstack` public tap repository with
-  `Formula/vstack.rb`.
-- Add a `publish-homebrew` job to `publish.yml` that runs after the PyPI job succeeds.
-- Automate formula version and sha256 updates via `repository_dispatch` to the tap repo.
-- Require dual sha256 verification (PyPI JSON API + local recompute) before dispatching.
-- Gate on `TRUSTED_RELEASE_ACTORS` and `prerelease == false` (matching existing publish guards).
-- Use a fine-grained PAT (`HOMEBREW_TAP_TOKEN`) scoped to `contents: write` on the tap
-  repo only. Store in the `pypi` Actions environment.
-
-**Install UX (after bootstrap):**
-
-```bash
-brew tap eschaar/vstack
-brew install vstack
-```
-
-**Acceptance criteria:**
-
-- `brew install eschaar/vstack/vstack` succeeds on a clean macOS/Linux Actions runner.
-- `vstack --version` and `vstack --help` run without errors after install.
-- A new release automatically updates the tap formula within one workflow run.
-- The PyPI job is unaffected if the Homebrew job fails (independent failure domain).
-
-**Risks and mitigations:**
-
-| Risk                                           | Mitigation                                                                   |
-| ---------------------------------------------- | ---------------------------------------------------------------------------- |
-| Tap token leakage                              | Fine-grained PAT scoped to tap repo only; rotated on any exposure            |
-| sha256 mismatch after formula update           | Dual verification in workflow; Homebrew re-verifies at install time          |
-| Formula update triggers before PyPI propagates | Retry loop in dispatch workflow; Homebrew fetches from PyPI at install time  |
-| PyPI dependency drift in formula               | `resource` blocks in formula updated in step; gated by formula test workflow |
-
-**Next steps:**
-
-1. Architect to produce implementation-ready workflow changes to `publish.yml`.
-1. Create tap repo and bootstrap the initial formula from the latest release.
-1. Validate the end-to-end flow with a dry-run release trigger.
-1. Update `README.md` with Homebrew install instructions once bootstrap is validated.
-
 ### optional orchestrated role pipeline [shipped — v3.2.0]
 
 ADR-024 is implemented.
@@ -577,7 +534,7 @@ guidance on which checks apply after each class of change.
 **Phase B — generated-artifact drift guard:**
 
 - Baseline shipped (2026-05-13): golden fixture drift tests added for
-  `instruction/security`, `agent/planner`, and `prompt/quick-review` rendering in
+  `instruction/security`, `agent/planner`, and `prompt/code-review` rendering in
   `tests/vstack/artifacts/test_generator.py`.
 
 - Expansion shipped (2026-05-13): golden fixture coverage now includes additional
@@ -620,7 +577,7 @@ guidance on which checks apply after each class of change.
 
 #### Next follow-up steps
 
-Tracked as dedicated candidate items in the feature status table: golden-fixture coverage expansion, defect-fixture matrix expansion, template-change-aware fixture CI gate, fixture update policy in PR workflow, and deeper targeted verify tier.
+Tracked as dedicated candidate items in the feature status table: template-change-aware fixture CI gate, fixture update policy in PR workflow, and deeper targeted verify tier.
 
 **Expected outcomes:**
 
