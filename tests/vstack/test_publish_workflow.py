@@ -54,7 +54,7 @@ class TestPublishWorkflow:
         app_token_step = next(step for step in steps if step.get("id") == "create_tap_token")
         assert (
             app_token_step["uses"]
-            == "actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349"
+            == "actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1"
         )
         assert app_token_step["with"]["client-id"] == "${{ env.HOMEBREW_TAP_APP_CLIENT_ID }}"
         assert app_token_step["with"]["private-key"] == "${{ env.HOMEBREW_TAP_APP_PRIVATE_KEY }}"
