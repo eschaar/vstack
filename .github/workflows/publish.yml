@@ -155,7 +155,7 @@ jobs:
     # HOMEBREW_TAP_ENABLED (value: "true" to enable). Default/absent keeps this disabled.
     if: needs.publish.result == 'success' && github.event.release.prerelease == false && vars.HOMEBREW_TAP_ENABLED == 'true'
     runs-on: ubuntu-latest
-    environment: pypi
+    environment: homebrew
     env:
       HOMEBREW_TAP_APP_CLIENT_ID: ${{ secrets.HOMEBREW_TAP_APP_CLIENT_ID }}
       HOMEBREW_TAP_APP_PRIVATE_KEY: ${{ secrets.HOMEBREW_TAP_APP_PRIVATE_KEY }}
