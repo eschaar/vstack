@@ -228,7 +228,13 @@ and easy to reason about.
 | `.github/workflows/codeql.yml`    | Push/pull request to `main` + weekly schedule         | Code scanning for GitHub Actions and Python.                                     |
 | `.github/workflows/automerge.yml` | Pull request target to `main`                         | Dependabot safe auto-merge policy for eligible updates.                          |
 | `.github/workflows/release.yml`   | Push to `main`                                        | Run release-please to maintain release PRs and create tags/releases when merged. |
-| `.github/workflows/publish.yml`   | GitHub release published                              | Build package artifacts from the release tag and publish to PyPI.                |
+| `.github/workflows/publish.yml`   | GitHub release published                              | Build package artifacts from the release tag, publish to PyPI, and optionally update the Homebrew tap. |
+
+Homebrew install UX constraints for the private tap path:
+
+- First-time users run `brew tap eschaar/vstack && brew install vstack`.
+- Returning users with the tap configured can use `brew install vstack`.
+- Universal plain `brew install vstack` without a tap requires acceptance into `Homebrew/homebrew-core`.
 
 For trigger conditions, execution sequences, commit policy details, and release versioning
 rules, see `docs/design/cicd.md`.

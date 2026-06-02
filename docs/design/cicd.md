@@ -1,7 +1,7 @@
 # vstack CI/CD Pipeline
 
 > Maintained by: **designer** role\
-> Last updated: 2026-05-14
+> Last updated: 2026-06-02
 
 ## Overview
 
@@ -28,7 +28,7 @@ Their jobs are merge-blocking when configured as required status checks in the `
 | `.github/workflows/codeql.yml`    | push/pull_request to `main` + weekly schedule     | Code scanning for GitHub Actions and Python                                         |
 | `.github/workflows/automerge.yml` | pull_request_target to `main`                     | Dependabot auto-approve/auto-merge policy gate                                      |
 | `.github/workflows/release.yml`   | push to `main`, workflow_dispatch                 | Release Please orchestration: release PR lifecycle, changelog, tag, GitHub release  |
-| `.github/workflows/publish.yml`   | release `published`                               | Build artifacts from release tag and publish to PyPI                                |
+| `.github/workflows/publish.yml`   | release `published`                               | Build artifacts from release tag, publish to PyPI, and update Homebrew tap formula  |
 
 ## Human Sequence (Primary)
 
@@ -41,6 +41,7 @@ sequenceDiagram
    participant GH as GitHub Actions
    participant RP as Release Please
    participant PyPI as PyPI
+   participant TAP as homebrew-vstack (tap)
 
    Dev->>GH: [1] Push commit to feature branch
    GH->>GH: [2a] commit.yml / Validate Commit Messages
@@ -70,6 +71,11 @@ sequenceDiagram
    GH->>GH: [13] release: published triggers publish.yml
    Note over GH: [13] Condition: prerelease == false AND tag matches X.Y.Z AND trusted actor
    GH->>PyPI: [14] publish.yml / Build and Publish to PyPI
+   GH->>GH: [15] publish.yml / Update Homebrew Tap (needs: publish)
+   Note over GH: [15] Condition: HOMEBREW_TAP_ENABLED == "true" AND prerelease == false
+   GH->>GH: [16] Fetch sdist from PyPI, verify sha256
+   GH->>TAP: [17] repository_dispatch update-formula
+   TAP->>TAP: [18] formula-update.yml / Update Formula/vstack.rb + commit + push
 ```
 
 ## Human Checklist
@@ -95,6 +101,10 @@ sequenceDiagram
 1. `[12]` `release.yml / Release Please (PR + Tag + Notes)` creates the tag and GitHub release.
 1. `[13]` `release: published` triggers `publish.yml`. Job runs only if `prerelease == false`, tag matches `X.Y.Z`, and release actor is trusted.
 1. `[14]` `publish.yml / Build and Publish to PyPI` — builds wheel + sdist, smoke tests, validates artifact version, publishes via OIDC with API-token fallback when configured.
+1. `[15]` `publish.yml / Update Homebrew Tap` — runs only when `HOMEBREW_TAP_ENABLED == "true"` and `prerelease == false`; fetches the sdist tarball from PyPI using the release tag version, verifies the local sha256 against the PyPI JSON API metadata sha256, then dispatches `update-formula` to the tap repo.
+1. `[16]` Local sha256 verification — the step exits non-zero if the locally computed sha256 does not match the value returned by the PyPI JSON API. This abort is intentional; a mismatch indicates a supply-chain anomaly.
+1. `[17]` `repository_dispatch update-formula` — sends event to `eschaar/homebrew-vstack` carrying `version`, `sdist_url`, and verified `sha256`.
+1. `[18]` `formula-update.yml / Update Formula/vstack.rb` — tap repo workflow receives the event, applies `url` and `sha256` updates to the top-level formula fields, commits, and pushes to `main` of `eschaar/homebrew-vstack`.
 
 ## Dependabot Sequence
 
@@ -178,6 +188,8 @@ sequenceDiagram
 1. If `commit.yml`, `check.yml`, `verify.yml`, or `security.yml` fails on a PR, merge is blocked.
 1. If `release.yml` fails due to manifest/tag drift, align `.release-please-manifest.json` with latest SemVer tag and rerun.
 1. If `publish.yml` fails, fix publish issue and rerun publish from the same release/tag context.
+1. If `publish.yml / Update Homebrew Tap` fails after PyPI publish succeeds, rerun only the Homebrew job from the GitHub Actions UI. The Homebrew job is safe to rerun; PyPI rejects duplicate uploads for the same version, so only the Homebrew job re-executes.
+1. If `formula-update.yml` in the tap repo fails, rerun the workflow directly in the `eschaar/homebrew-vstack` repository, or re-trigger by rerunning the dispatch job in this repository.
 
 ## Required Repository Configuration
 
@@ -222,6 +234,60 @@ Configure via **Settings → Environments**.
 - `pypi` environment exists.
 - OIDC trusted publishing configured.
 - Reviewer policy aligns with release expectations.
+- `HOMEBREW_TAP_TOKEN` secret: fine-grained PAT with `contents: write` scope limited to `eschaar/homebrew-vstack` only; used by the Homebrew publish job to dispatch `repository_dispatch` events to the tap repo. Do not reuse the release-please app token — that token has write access to this repository.
+- `HOMEBREW_TAP_ENABLED` environment variable: set to `"true"` to activate the Homebrew publish job; omit or set to any other value to skip the job. Intended for safe rollout — leave disabled until the tap repo bootstrap is complete.
+
+## Homebrew Publish Event Contract
+
+The `publish-homebrew` job dispatches a `repository_dispatch` event to `eschaar/homebrew-vstack`
+after PyPI publish succeeds and checksum verification passes.
+
+### Event type
+
+`update-formula`
+
+### Payload schema
+
+| Field       | Type   | Source                                                                  | Description                                                        |
+| ----------- | ------ | ----------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `version`   | string | `github.event.release.tag_name`                                         | Release tag (e.g. `v1.4.0`); used in the tap commit message only   |
+| `sdist_url` | string | PyPI JSON API `.urls[].url` where `packagetype == "sdist"`               | Canonical PyPI download URL embedded in the formula `url` field    |
+| `sha256`    | string | Computed locally from downloaded tarball; cross-checked against PyPI API | SHA-256 digest of the sdist tarball; embedded in formula `sha256`  |
+
+Example:
+
+```json
+{
+  "version": "v1.4.0",
+  "sdist_url": "https://files.pythonhosted.org/packages/source/v/vstack/vstack-1.4.0.tar.gz",
+  "sha256": "a1b2c3d4e5f6..."
+}
+```
+
+### Trust model
+
+- Payload values are computed by the workflow from trusted sources (PyPI JSON API + local download).
+- The tap repo `formula-update.yml` must not accept `version` or `sha256` values from any untrusted external source.
+- The `HOMEBREW_TAP_TOKEN` PAT scope is limited to the tap repo and stored in a protected environment, so no additional HMAC header is required.
+
+### Idempotency
+
+- Re-dispatching the same version and sha256 produces identical formula content — the tap repo commit is a no-op for content already in place.
+- Homebrew validates the embedded sha256 at install time; an incorrect value causes `brew install` to fail.
+
+### Formula update contract
+
+`formula-update.yml` applies exactly two field updates to `Formula/vstack.rb`:
+
+| Field    | Scope                           | Replacement behavior                        |
+| -------- | ------------------------------- | ------------------------------------------- |
+| `url`    | Top-level formula `url` line    | Replaced with the dispatched `sdist_url`    |
+| `sha256` | Top-level formula `sha256` line | Replaced with the dispatched `sha256`       |
+
+The `resource` blocks for runtime dependencies (currently `pyyaml`) contain their own
+`sha256` lines. The update script must target only the top-level formula fields and must
+not alter `resource` block sha256 values. Resource dependency sha256 values are updated
+manually when runtime dependencies in `pyproject.toml` change.
 
 ## Design Notes
 
@@ -254,3 +320,4 @@ through Dependabot PRs.
 - `.github/workflows/release.yml`
 - `.github/workflows/publish.yml`
 - `docs/design/workflow.md`
+- `eschaar/homebrew-vstack` tap repository: `Formula/vstack.rb`, `formula-update.yml`, `test.yml`
