@@ -2,6 +2,13 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.5.1](https://github.com/eschaar/vstack/compare/3.5.0...3.5.1) (2026-06-02)
+
+
+### Fixes
+
+* **ci:** fix Homebrew token action for publish workflow ([#69](https://github.com/eschaar/vstack/issues/69)) ([f2bd2b1](https://github.com/eschaar/vstack/commit/f2bd2b1e0ee4a7d21b4c73e1bc1971caee7ea474))
+
 ## [3.5.0](https://github.com/eschaar/vstack/compare/3.4.2...3.5.0) (2026-06-02)
 
 
