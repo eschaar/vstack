@@ -7,6 +7,18 @@
 
 ### Features
 
+* add Homebrew distribution channel for vstack ([#66](https://github.com/eschaar/vstack/issues/66)) ([6939f31](https://github.com/eschaar/vstack/commit/6939f31e5f9c09492bcd0532dd7626823e8e0f7a))
+
+
+### Fixes
+
+* **ci:** harden Homebrew publish workflow auth and environment separation ([#68](https://github.com/eschaar/vstack/issues/68)) ([3651714](https://github.com/eschaar/vstack/commit/3651714997f6b6c3988f974c8985ec6a6fd0d463))
+
+## [3.5.0](https://github.com/eschaar/vstack/compare/3.4.2...3.5.0) (2026-06-02)
+
+
+### Features
+
 * **ci:** add homebrew private tap publish job ([feature/publish_in_homebrew](https://github.com/eschaar/vstack/tree/feature/publish_in_homebrew))
 
 
