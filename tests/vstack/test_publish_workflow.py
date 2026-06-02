@@ -53,9 +53,14 @@ class TestPublishWorkflow:
         assert step_env["SDIST_URL"] == "${{ steps.verify_sdist.outputs.sdist_url }}"
         assert step_env["SDIST_SHA256"] == "${{ steps.verify_sdist.outputs.sdist_sha256 }}"
 
-        summary_step = next(step for step in steps if step["name"] == "Publish Homebrew install UX summary")
+        summary_step = next(
+            step for step in steps if step["name"] == "Publish Homebrew install UX summary"
+        )
         summary_script = summary_step["run"]
-        assert "brew tap ${HOMEBREW_TAP_NAME} && brew install ${HOMEBREW_FORMULA_NAME}" in summary_script
+        assert (
+            "brew tap ${HOMEBREW_TAP_NAME} && brew install ${HOMEBREW_FORMULA_NAME}"
+            in summary_script
+        )
         assert "brew install ${HOMEBREW_FORMULA_NAME}" in summary_script
         assert "brew install ${HOMEBREW_FULLY_QUALIFIED_FORMULA}" in summary_script
         assert "Homebrew/homebrew-core" in summary_script
