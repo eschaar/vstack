@@ -29,7 +29,7 @@ class TestPublishWorkflow:
         job_if = homebrew_job["if"]
         assert "needs.publish.result == 'success'" in job_if
         assert "github.event.release.prerelease == false" in job_if
-        assert "env.HOMEBREW_TAP_ENABLED == 'true'" in job_if
+        assert "vars.HOMEBREW_TAP_ENABLED == 'true'" in job_if
 
     def test_homebrew_job_verifies_sdist_and_dispatches_update(self) -> None:
         """Homebrew publish should verify sdist checksum before repository dispatch."""

@@ -149,7 +149,9 @@ jobs:
   publish-homebrew:
     name: Update Homebrew Tap
     needs: publish
-    if: needs.publish.result == 'success' && github.event.release.prerelease == false && env.HOMEBREW_TAP_ENABLED == 'true'
+    # NOTE: job-level `if` cannot use the `env` context. Toggle via repository variable
+    # HOMEBREW_TAP_ENABLED (value: "true" to enable). Default/absent keeps this disabled.
+    if: needs.publish.result == 'success' && github.event.release.prerelease == false && vars.HOMEBREW_TAP_ENABLED == 'true'
     runs-on: ubuntu-latest
     environment: pypi
     env:
