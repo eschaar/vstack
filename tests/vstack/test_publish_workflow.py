@@ -47,7 +47,7 @@ class TestPublishWorkflow:
             step for step in steps if step["name"] == "Verify Homebrew tap dispatch configuration"
         )
         config_script = config_step["run"]
-        assert "HOMEBREW_TAP_APP_ID" in config_script
+        assert "HOMEBREW_TAP_APP_CLIENT_ID" in config_script
         assert "HOMEBREW_TAP_APP_PRIVATE_KEY" in config_script
         assert "HOMEBREW_TAP_DISPATCH_SECRET" in config_script
 
@@ -56,7 +56,7 @@ class TestPublishWorkflow:
             app_token_step["uses"]
             == "actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349"
         )
-        assert app_token_step["with"]["app-id"] == "${{ env.HOMEBREW_TAP_APP_ID }}"
+        assert app_token_step["with"]["client-id"] == "${{ env.HOMEBREW_TAP_APP_CLIENT_ID }}"
         assert app_token_step["with"]["private-key"] == "${{ env.HOMEBREW_TAP_APP_PRIVATE_KEY }}"
         assert app_token_step["with"]["owner"] == "${{ env.HOMEBREW_TAP_REPOSITORY_OWNER }}"
         assert app_token_step["with"]["repositories"] == "${{ env.HOMEBREW_TAP_REPOSITORY_NAME }}"

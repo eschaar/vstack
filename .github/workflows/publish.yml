@@ -157,7 +157,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: pypi
     env:
-      HOMEBREW_TAP_APP_ID: ${{ secrets.HOMEBREW_TAP_APP_ID }}
+      HOMEBREW_TAP_APP_CLIENT_ID: ${{ secrets.HOMEBREW_TAP_APP_CLIENT_ID }}
       HOMEBREW_TAP_APP_PRIVATE_KEY: ${{ secrets.HOMEBREW_TAP_APP_PRIVATE_KEY }}
       HOMEBREW_TAP_DISPATCH_SECRET: ${{ secrets.HOMEBREW_TAP_DISPATCH_SECRET }}
 
@@ -186,8 +186,8 @@ jobs:
       - name: Verify Homebrew tap dispatch configuration
         shell: bash
         run: |
-          if [[ -z "$HOMEBREW_TAP_APP_ID" ]]; then
-            echo "ERROR: HOMEBREW_TAP_APP_ID is not configured in the pypi environment."
+          if [[ -z "$HOMEBREW_TAP_APP_CLIENT_ID" ]]; then
+            echo "ERROR: HOMEBREW_TAP_APP_CLIENT_ID is not configured in the pypi environment."
             exit 1
           fi
 
@@ -205,7 +205,7 @@ jobs:
         id: create_tap_token
         uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349
         with:
-          app-id: ${{ env.HOMEBREW_TAP_APP_ID }}
+          client-id: ${{ env.HOMEBREW_TAP_APP_CLIENT_ID }}
           private-key: ${{ env.HOMEBREW_TAP_APP_PRIVATE_KEY }}
           owner: ${{ env.HOMEBREW_TAP_REPOSITORY_OWNER }}
           repositories: ${{ env.HOMEBREW_TAP_REPOSITORY_NAME }}
