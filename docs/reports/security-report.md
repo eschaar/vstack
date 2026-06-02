@@ -1,23 +1,24 @@
 # Security Report
 
-**Branch:** `chore/split-docs-and-hardening`\
-**Date:** 2026-05-14\
-**Scope:** Current repository snapshot using static analysis and dependency audit.\
-**Method:** OWASP Top 10 + STRIDE framing for a local CLI tool (no network/auth/database surface), with local dependency remediation and re-audit.
+**Branch:** `feature/publish_in_homebrew`\
+**Date:** 2026-06-02\
+**Scope:** Repository snapshot including the new `publish-homebrew` workflow job. Python source analysis unchanged; CI/CD workflow security assessment added.\
+**Method:** OWASP Top 10 + STRIDE framing for a local CLI tool plus supply-chain controls for the new release pipeline job.
 
 ______________________________________________________________________
 
 ## Verdict
 
-| Category                 | Findings                          | Blocking                                 |
-| ------------------------ | --------------------------------- | ---------------------------------------- |
-| Static analysis (bandit) | 1 LOW                             | No — informational; import advisory only |
-| Dependency CVEs          | 0 known CVEs in current local env | No                                       |
-| Secrets in source        | None                              | —                                        |
-| Injection risk           | None identified                   | —                                        |
-| Auth / access control    | N/A (local CLI, no network)       | —                                        |
+| Category                             | Findings                                    | Blocking                                 |
+| ------------------------------------ | ------------------------------------------- | ---------------------------------------- |
+| Static analysis (bandit)             | 1 LOW                                       | No — informational; import advisory only |
+| Dependency CVEs                      | 0 known CVEs in current local env           | No                                       |
+| Secrets in source                    | None                                        | —                                        |
+| Injection risk                       | None identified                             | —                                        |
+| Auth / access control                | N/A (local CLI, no network)                 | —                                        |
+| CI/CD workflow (publish-homebrew)    | See W-001 – W-004 below                     | No — all informational or design notes   |
 
-> **Ship readiness: PASS** — no blocking security findings and local tooling advisories were remediated.
+> **Ship readiness: PASS** — no blocking security findings; workflow security controls verified.
 
 ______________________________________________________________________
 
@@ -141,9 +142,64 @@ ______________________________________________________________________
 
 ## Summary of Advisory Items
 
-| ID    | Severity | Location / package         | Action                                                         |
-| ----- | -------- | -------------------------- | -------------------------------------------------------------- |
-| S-001 | LOW      | `src/vstack/constants.py`  | Keep B404 import advisory documented; no unsafe subprocess use |
-| S-002 | LOW      | `pip`, `urllib3` (dev env) | **Resolved** by upgrading to `pip 26.1.1` and `urllib3 2.7.0`  |
+| ID    | Severity      | Location / package                  | Action                                                                                                  |
+| ----- | ------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| S-001 | LOW           | `src/vstack/constants.py`           | Keep B404 import advisory documented; no unsafe subprocess use                                          |
+| S-002 | LOW           | `pip`, `urllib3` (dev env)          | **Resolved** by upgrading to `pip 26.1.1` and `urllib3 2.7.0`                                           |
+| W-001 | PASS          | `publish-homebrew` feature flag     | Committed as `false`; enabled by explicit maintainer change only                                        |
+| W-002 | PASS          | `publish-homebrew` actor check      | Mirrors `publish` job guard; no change needed                                                           |
+| W-003 | PASS          | `publish-homebrew` sdist checksum   | Double-pinned: PyPI API vs downloaded tarball; formula embeds verified sha256                           |
+| W-004 | INFORMATIONAL | `publish-homebrew` dispatch signing | Configure `HOMEBREW_TAP_DISPATCH_SECRET` and enforce verification in tap repo before enabling the flag  |
+| W-005 | PASS          | `publish-homebrew` curl dispatch    | No shell injection; JSON built via Python, passed as file to curl                                       |
+| W-006 | PASS          | `publish-homebrew` token handling   | Token consumed from `secrets.*`; GitHub Actions masks it in logs                                        |
 
 No remaining dependency CVEs were detected in the audited local environment. No security item blocks release.
+
+______________________________________________________________________
+
+## Workflow Security Assessment — `publish-homebrew` job
+
+New job added to `.github/workflows/publish.yml` as part of Homebrew distribution support.
+
+### W-001 — Feature flag gate (PASS)
+
+`HOMEBREW_TAP_ENABLED: "false"` in workflow-level `env`. Job condition enforces
+`env.HOMEBREW_TAP_ENABLED == 'true'`. The flag is committed as `false`, making the live job
+inert until explicitly enabled by a maintainer commit.
+
+### W-002 — Trusted actor validation (PASS)
+
+The job repeats the same `TRUSTED_RELEASE_ACTORS` check already used in the `publish` job.
+Untrusted release authors cannot trigger Homebrew dispatch.
+
+### W-003 — Checksum verification (PASS)
+
+The job fetches the sdist tarball from PyPI, computes `sha256sum` locally, and compares it
+against the PyPI JSON API digest. The two values must match before the `repository_dispatch`
+is sent. The formula in the tap repo will embed this verified sha256; Homebrew verifies it
+again at install time (double-pinning).
+
+### W-004 — Dispatch payload signing (INFORMATIONAL)
+
+HMAC-SHA256 signing of the dispatch payload is implemented but gated behind the optional
+`HOMEBREW_TAP_DISPATCH_SECRET` secret. If the secret is not configured the payload is sent
+unsigned, and the tap repo's `formula-update.yml` should enforce signature verification before
+accepting the event. Until the tap repo enforces signature checking, an attacker with
+`HOMEBREW_TAP_TOKEN` access could send an unsigned `repository_dispatch` directly.
+
+**Severity:** INFORMATIONAL — no exploit path exists within this repo; depends on tap repo
+hardening. Action: configure `HOMEBREW_TAP_DISPATCH_SECRET` and enforce signature validation
+in `formula-update.yml` before setting `HOMEBREW_TAP_ENABLED: "true"`.
+
+### W-005 — Shell injection via environment variables (PASS)
+
+The dispatch-body JSON is built by a Python script using `json.dumps` with explicit
+`sort_keys=True` and `separators` — no shell interpolation of user-controlled values.
+The curl step passes `--data-binary @dispatch-body.json` reading from a file, not from inline
+shell expansion. No injection vector.
+
+### W-006 — Token exposure (PASS)
+
+`HOMEBREW_TAP_TOKEN` is consumed from `${{ secrets.HOMEBREW_TAP_TOKEN }}`. GitHub Actions
+automatically masks registered secrets in log output. The token is never echoed or written
+to disk.

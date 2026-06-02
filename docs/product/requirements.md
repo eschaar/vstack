@@ -1,7 +1,7 @@
 # requirements
 
 > Maintained by: **product** role\
-> Last updated: 2026-05-10
+> Last updated: 2026-06-02
 
 ______________________________________________________________________
 
@@ -10,8 +10,10 @@ ______________________________________________________________________
 vstack is a VS Code-native AI engineering workflow system. It installs structured
 agents, skills, instructions, and prompts into `.github/` so GitHub Copilot Agent
 Mode has a clear operating model. vstack is distributed as a standalone Python CLI
-tool (`pipx install vstack`) with a single runtime dependency (`pyyaml>=6.0`)
-for YAML frontmatter parsing (see ADR-025).
+tool via PyPI (`pipx install vstack`) with a single runtime dependency
+(`pyyaml>=6.0`) for YAML frontmatter parsing (see ADR-025). A Homebrew private tap
+(`brew install eschaar/vstack/vstack`) is a second distribution channel targeting
+macOS and Linux users who prefer not to manage Python tooling directly.
 
 ______________________________________________________________________
 
@@ -124,6 +126,7 @@ ______________________________________________________________________
 | NFR-5 | CLI operates standalone; no VS Code process required for `install`, `verify`, or `validate`.           |
 | NFR-6 | Lint (ruff) and type checking pass on every commit. CI gate enforces zero violations.                  |
 | NFR-7 | Generated output lives under `.github/` only; source templates under `_templates/` are never modified. |
+| NFR-8 | macOS and Linux users can install via `brew install eschaar/vstack/vstack` without Python or pip awareness. The formula wraps the PyPI sdist in an isolated virtualenv. Formula updates are automated: triggered after each successful PyPI publish, with dual sha256 verification before the tap formula is updated. |
 
 ______________________________________________________________________
 
@@ -138,6 +141,8 @@ ______________________________________________________________________
 1. Locally modified tracked files are preserved on re-install by default (FR-4).
 1. All 42 canonical skill names are present after a full install.
 1. `vstack manifest upgrade` migrates a legacy manifest without data loss.
+1. `brew install eschaar/vstack/vstack` installs and runs `vstack --help` and
+   `vstack --version` without errors on a supported macOS or Linux runner.
 
 ______________________________________________________________________
 

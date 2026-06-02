@@ -2,6 +2,26 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.5.0](https://github.com/eschaar/vstack/compare/3.4.2...3.5.0) (2026-06-02)
+
+
+### Features
+
+* **ci:** add homebrew private tap publish job ([feature/publish_in_homebrew](https://github.com/eschaar/vstack/tree/feature/publish_in_homebrew))
+
+
+### Documentation
+
+* **architecture:** add ADR-030 and homebrew distribution plan
+* **cicd:** extend workflow table and sequence diagram with homebrew tap stage
+* **design:** update workflow.md publish.yml description
+* **product:** add FR-8 homebrew distribution requirement; align roadmap
+
+
+### Tests
+
+* **ci:** add publish workflow contract tests for homebrew job
+
 ## [3.4.2](https://github.com/eschaar/vstack/compare/3.4.1...3.4.2) (2026-05-28)
 
 

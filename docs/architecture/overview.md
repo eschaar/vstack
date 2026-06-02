@@ -1,7 +1,7 @@
 # vstack — architecture
 
 > Maintained by: **architect** role\
-> Last updated: 2026-05-12
+> Last updated: 2026-06-02
 
 ## overview
 
@@ -12,6 +12,13 @@ releasing software via GitHub Copilot Agent Mode.
 **System style:** `platform` — a standalone CLI tool and SDK. vstack installs
 structured role artifacts into a project's `.github/` directory; it does not itself
 implement the software being built.
+
+**Distribution channels:** PyPI (`pipx install vstack`) is the primary distribution
+channel and canonical release artifact. A private Homebrew tap
+(`brew install eschaar/vstack/vstack`) is the second channel, targeting macOS and
+Linux users who prefer not to manage Python tooling directly. The tap formula wraps
+the PyPI sdist inside an isolated virtualenv and is updated automatically after each
+PyPI publish. See ADR-030.
 
 ______________________________________________________________________
 
@@ -189,6 +196,7 @@ These bind architecture decisions. Full list in `docs/product/requirements.md`.
 | NFR-5 | CLI operates standalone; no VS Code process required for CLI operations           | ADR-006; only `pyyaml` required at runtime (ADR-025)       |
 | NFR-6 | Lint and type checking pass on every commit; CI gate enforces zero violations     | `pyproject.toml` ruff + mypy config                        |
 | NFR-7 | Generated output lives under `.github/` only; templates never modified at runtime | ADR-012                                                    |
+| NFR-8 | Homebrew formula updates require dual SHA-256 verification (PyPI metadata vs downloaded tarball); pre-release tags are excluded from Homebrew publish | ADR-030 |
 
 ______________________________________________________________________
 
@@ -281,3 +289,4 @@ See individual files for context, decision, alternatives, and rationale.
 | 027 | Repository hooks as first-class artifact type        | accepted   | Hook templates and manifest ownership      |
 | 028 | DAG dependency semantics for workflow stages         | accepted   | `depends_on`, cycle safety, compatibility  |
 | 029 | Multi-agentic execution model                        | accepted   | DAG chosen; event-driven and tree compared |
+| 030 | Homebrew distribution via private tap                | accepted   | Private tap now; homebrew-core optional later |

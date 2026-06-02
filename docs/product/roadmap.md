@@ -1,7 +1,7 @@
 # vstack — roadmap
 
 > Maintained by: **product** role\
-> Last updated: 2026-05-14
+> Last updated: 2026-06-02
 
 ______________________________________________________________________
 
@@ -31,6 +31,7 @@ ______________________________________________________________________
 | agent hooks support                           | v3.2.0  | shipped     | First-class `hook` artifact type: generate `.github/hooks/<name>.json` from templates and track in manifest                                             |
 | optional orchestrated role pipeline           | v3.2.0  | shipped     | `planner` coordinator agent implemented with mode-aware generation; default mode is `agentic` (`manual` and `hybrid` also supported)                    |
 | parallel workflow via DAG model               | t.b.d.  | candidate   | `depends_on` DAG semantics implemented in code; awaiting a release tag before being promoted to shipped                                                 |
+| Homebrew distribution (private tap)           | t.b.d.  | candidate   | `brew install eschaar/vstack/vstack` on macOS and Linux; private tap wrapping PyPI sdist; automated formula updates via `publish.yml` after PyPI publish |
 | new skills (next batch)                       | t.b.d.  | candidate   | `space-setup`: set up Copilot Spaces; `copilot-ops`: operate Copilot governance settings with audit-first checks                                        |
 | team customization layer                      | t.b.d.  | candidate   | Deferred major update after VS Code-first model proves itself; custompacks, overlay merge rules, and install profiles all add major maintenance surface |
 | multi-IDE support (IntelliJ first)            | t.b.d.  | candidate   | Deferred until vstack proves stable in VS Code; likely a major follow-up because it needs separate targets, schemas, and more maintenance               |
@@ -438,6 +439,53 @@ workflow:
 1. Add explicit join policy knobs for DAG layer completion.
 1. Expand orchestration integration tests for multi-stage parallel traces.
 1. Add user-facing troubleshooting guidance for DAG misconfiguration recovery.
+
+### Homebrew distribution (private tap) [candidate — t.b.d.]
+
+Provide a `brew install` path for macOS and Linux users who prefer not to manage Python
+tooling directly. PyPI remains the canonical package source; the Homebrew formula wraps
+the PyPI sdist in an isolated virtualenv.
+
+**Scope:**
+
+- Create `github.com/eschaar/homebrew-vstack` public tap repository with
+  `Formula/vstack.rb`.
+- Add a `publish-homebrew` job to `publish.yml` that runs after the PyPI job succeeds.
+- Automate formula version and sha256 updates via `repository_dispatch` to the tap repo.
+- Require dual sha256 verification (PyPI JSON API + local recompute) before dispatching.
+- Gate on `TRUSTED_RELEASE_ACTORS` and `prerelease == false` (matching existing publish guards).
+- Use a fine-grained PAT (`HOMEBREW_TAP_TOKEN`) scoped to `contents: write` on the tap
+  repo only. Store in the `pypi` Actions environment.
+
+**Install UX (after bootstrap):**
+
+```bash
+brew tap eschaar/vstack
+brew install vstack
+```
+
+**Acceptance criteria:**
+
+- `brew install eschaar/vstack/vstack` succeeds on a clean macOS/Linux Actions runner.
+- `vstack --version` and `vstack --help` run without errors after install.
+- A new release automatically updates the tap formula within one workflow run.
+- The PyPI job is unaffected if the Homebrew job fails (independent failure domain).
+
+**Risks and mitigations:**
+
+| Risk | Mitigation |
+| --- | --- |
+| Tap token leakage | Fine-grained PAT scoped to tap repo only; rotated on any exposure |
+| sha256 mismatch after formula update | Dual verification in workflow; Homebrew re-verifies at install time |
+| Formula update triggers before PyPI propagates | Retry loop in dispatch workflow; Homebrew fetches from PyPI at install time |
+| PyPI dependency drift in formula | `resource` blocks in formula updated in step; gated by formula test workflow |
+
+**Next steps:**
+
+1. Architect to produce implementation-ready workflow changes to `publish.yml`.
+1. Create tap repo and bootstrap the initial formula from the latest release.
+1. Validate the end-to-end flow with a dry-run release trigger.
+1. Update `README.md` with Homebrew install instructions once bootstrap is validated.
 
 ### optional orchestrated role pipeline [shipped — v3.2.0]
 

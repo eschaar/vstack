@@ -22,6 +22,11 @@ env:
   POETRY_VERSION: "2.4.1"
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   TRUSTED_RELEASE_ACTORS: "vstack-release-bot[bot],eschaar"
+  HOMEBREW_TAP_ENABLED: "false"
+  HOMEBREW_TAP_NAME: "eschaar/vstack"
+  HOMEBREW_TAP_REPOSITORY: "eschaar/homebrew-vstack"
+  HOMEBREW_FORMULA_NAME: "vstack"
+  HOMEBREW_FULLY_QUALIFIED_FORMULA: "eschaar/vstack/vstack"
 
 jobs:
   publish:
@@ -140,3 +145,140 @@ jobs:
           echo "ERROR: trusted publishing failed and secret PYPI_API_TOKEN is not configured."
           echo "Either fix PyPI trusted publisher mapping or add PYPI_API_TOKEN as a fallback."
           exit 1
+
+  publish-homebrew:
+    name: Update Homebrew Tap
+    needs: publish
+    if: needs.publish.result == 'success' && github.event.release.prerelease == false && env.HOMEBREW_TAP_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: pypi
+    env:
+      HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+      HOMEBREW_TAP_DISPATCH_SECRET: ${{ secrets.HOMEBREW_TAP_DISPATCH_SECRET }}
+
+    steps:
+      - name: Validate release actor
+        # Restrict dispatch to trusted release automation/maintainers only.
+        shell: bash
+        run: |
+          ACTOR="${{ github.event.release.author.login }}"
+          IFS=',' read -r -a ALLOWED <<< "$TRUSTED_RELEASE_ACTORS"
+
+          TRUSTED=false
+          for allowed_actor in "${ALLOWED[@]}"; do
+            if [[ "$ACTOR" == "$allowed_actor" ]]; then
+              TRUSTED=true
+              break
+            fi
+          done
+
+          if [[ "$TRUSTED" != "true" ]]; then
+            echo "ERROR: release created by '$ACTOR' which is not in the trusted actor list."
+            echo "Allowed: $TRUSTED_RELEASE_ACTORS"
+            exit 1
+          fi
+
+      - name: Verify Homebrew tap dispatch configuration
+        shell: bash
+        run: |
+          if [[ -z "$HOMEBREW_TAP_TOKEN" ]]; then
+            echo "ERROR: HOMEBREW_TAP_TOKEN is not configured in the pypi environment."
+            exit 1
+          fi
+
+      - name: Fetch sdist metadata and verify checksum
+        id: verify_sdist
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          import sys
+          import urllib.request
+
+          version = os.environ["GITHUB_REF_NAME"]
+          pypi_json_url = f"https://pypi.org/pypi/vstack/{version}/json"
+
+          with urllib.request.urlopen(pypi_json_url) as response:
+              metadata = json.load(response)
+
+          sdist = next((item for item in metadata.get("urls", []) if item.get("packagetype") == "sdist"), None)
+          if sdist is None:
+              print("ERROR: no sdist artifact found in PyPI metadata for the release version.", file=sys.stderr)
+              sys.exit(1)
+
+          sdist_url = sdist["url"]
+          pypi_sha = sdist.get("digests", {}).get("sha256", "")
+          if not pypi_sha:
+              print("ERROR: PyPI metadata did not provide an sdist sha256 digest.", file=sys.stderr)
+              sys.exit(1)
+
+          with urllib.request.urlopen(sdist_url) as response:
+              content = response.read()
+
+          local_sha = hashlib.sha256(content).hexdigest()
+          if local_sha != pypi_sha:
+              print("ERROR: sha256 mismatch between PyPI metadata and downloaded tarball.", file=sys.stderr)
+              sys.exit(1)
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"sdist_url={sdist_url}\n")
+              output.write(f"sdist_sha256={local_sha}\n")
+          PY
+        env:
+          GITHUB_REF_NAME: ${{ github.event.release.tag_name }}
+
+      - name: Dispatch formula update to Homebrew tap
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ github.event.release.tag_name }}
+          SDIST_URL: ${{ steps.verify_sdist.outputs.sdist_url }}
+          SDIST_SHA256: ${{ steps.verify_sdist.outputs.sdist_sha256 }}
+        run: |
+          python - <<'PY'
+          import hmac
+          import json
+          import os
+          from hashlib import sha256
+
+          payload = {
+              "version": os.environ["RELEASE_VERSION"],
+              "sdist_url": os.environ["SDIST_URL"],
+              "sha256": os.environ["SDIST_SHA256"],
+          }
+
+          secret = os.environ.get("HOMEBREW_TAP_DISPATCH_SECRET", "")
+          if secret:
+              canonical = json.dumps(payload, separators=(",", ":"), sort_keys=True)
+              payload["signature"] = hmac.new(secret.encode("utf-8"), canonical.encode("utf-8"), sha256).hexdigest()
+
+          request_body = {
+              "event_type": "update-formula",
+              "client_payload": payload,
+          }
+
+          with open("dispatch-body.json", "w", encoding="utf-8") as output:
+              json.dump(request_body, output, separators=(",", ":"))
+          PY
+
+          curl -fsS -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${HOMEBREW_TAP_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${HOMEBREW_TAP_REPOSITORY}/dispatches" \
+            --data-binary @dispatch-body.json
+
+      - name: Publish Homebrew install UX summary
+        shell: bash
+        run: |
+          {
+            echo "## Homebrew install UX"
+            echo
+            echo "- First-time users (private tap): \`brew tap ${HOMEBREW_TAP_NAME} && brew install ${HOMEBREW_FORMULA_NAME}\`"
+            echo "- Returning users (tap already configured): \`brew install ${HOMEBREW_FORMULA_NAME}\`"
+            echo "- Fully-qualified one-liner (no prior tap): \`brew install ${HOMEBREW_FULLY_QUALIFIED_FORMULA}\`"
+            echo
+            echo "Plain \`brew install ${HOMEBREW_FORMULA_NAME}\` without tapping cannot be guaranteed while distribution is private-tap only."
+            echo "That UX becomes universal only after acceptance into Homebrew/homebrew-core."
+          } >> "$GITHUB_STEP_SUMMARY"
