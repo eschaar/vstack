@@ -41,6 +41,13 @@ class TestPublishWorkflow:
         assert "https://pypi.org/pypi/vstack/" in verify_script
         assert "sha256 mismatch between PyPI metadata and downloaded tarball" in verify_script
 
+        config_step = next(
+            step for step in steps if step["name"] == "Verify Homebrew tap dispatch configuration"
+        )
+        config_script = config_step["run"]
+        assert "HOMEBREW_TAP_TOKEN" in config_script
+        assert "HOMEBREW_TAP_DISPATCH_SECRET" in config_script
+
         dispatch_step = next(
             step for step in steps if step["name"] == "Dispatch formula update to Homebrew tap"
         )

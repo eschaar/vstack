@@ -188,6 +188,11 @@ jobs:
             exit 1
           fi
 
+          if [[ -z "$HOMEBREW_TAP_DISPATCH_SECRET" ]]; then
+            echo "ERROR: HOMEBREW_TAP_DISPATCH_SECRET is not configured in the pypi environment."
+            exit 1
+          fi
+
       - name: Fetch sdist metadata and verify checksum
         id: verify_sdist
         shell: bash
