@@ -20,6 +20,8 @@ class TestPublishWorkflow:
         assert env["HOMEBREW_TAP_ENABLED"] == "false"
         assert env["HOMEBREW_TAP_NAME"] == "eschaar/vstack"
         assert env["HOMEBREW_TAP_REPOSITORY"] == "eschaar/homebrew-vstack"
+        assert env["HOMEBREW_TAP_REPOSITORY_OWNER"] == "eschaar"
+        assert env["HOMEBREW_TAP_REPOSITORY_NAME"] == "homebrew-vstack"
         assert env["HOMEBREW_FORMULA_NAME"] == "vstack"
         assert env["HOMEBREW_FULLY_QUALIFIED_FORMULA"] == "eschaar/vstack/vstack"
 
@@ -29,7 +31,7 @@ class TestPublishWorkflow:
         job_if = homebrew_job["if"]
         assert "needs.publish.result == 'success'" in job_if
         assert "github.event.release.prerelease == false" in job_if
-        assert "env.HOMEBREW_TAP_ENABLED == 'true'" in job_if
+        assert "vars.HOMEBREW_TAP_ENABLED == 'true'" in job_if
 
     def test_homebrew_job_verifies_sdist_and_dispatches_update(self) -> None:
         """Homebrew publish should verify sdist checksum before repository dispatch."""
@@ -41,12 +43,31 @@ class TestPublishWorkflow:
         assert "https://pypi.org/pypi/vstack/" in verify_script
         assert "sha256 mismatch between PyPI metadata and downloaded tarball" in verify_script
 
+        config_step = next(
+            step for step in steps if step["name"] == "Verify Homebrew tap dispatch configuration"
+        )
+        config_script = config_step["run"]
+        assert "HOMEBREW_TAP_APP_CLIENT_ID" in config_script
+        assert "HOMEBREW_TAP_APP_PRIVATE_KEY" in config_script
+        assert "HOMEBREW_TAP_DISPATCH_SECRET" in config_script
+
+        app_token_step = next(step for step in steps if step.get("id") == "create_tap_token")
+        assert (
+            app_token_step["uses"]
+            == "actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349"
+        )
+        assert app_token_step["with"]["client-id"] == "${{ env.HOMEBREW_TAP_APP_CLIENT_ID }}"
+        assert app_token_step["with"]["private-key"] == "${{ env.HOMEBREW_TAP_APP_PRIVATE_KEY }}"
+        assert app_token_step["with"]["owner"] == "${{ env.HOMEBREW_TAP_REPOSITORY_OWNER }}"
+        assert app_token_step["with"]["repositories"] == "${{ env.HOMEBREW_TAP_REPOSITORY_NAME }}"
+
         dispatch_step = next(
             step for step in steps if step["name"] == "Dispatch formula update to Homebrew tap"
         )
         dispatch_script = dispatch_step["run"]
         assert "/dispatches" in dispatch_script
         assert "dispatch-body.json" in dispatch_script
+        assert "steps.create_tap_token.outputs.token" in dispatch_script
 
         step_env = dispatch_step["env"]
         assert step_env["RELEASE_VERSION"] == "${{ github.event.release.tag_name }}"
