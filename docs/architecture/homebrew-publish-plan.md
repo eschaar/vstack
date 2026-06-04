@@ -120,8 +120,8 @@ class Vstack < Formula
   depends_on "python@3.11"
 
   resource "pyyaml" do
-    url "https://files.pythonhosted.org/packages/source/P/PyYAML/PyYAML-6.0.2.tar.gz"
-    sha256 "<sha256-of-pyyaml-sdist>"
+    url "https://files.pythonhosted.org/packages/05/8e/961c0007c59b8dd7729d542c61a4d537767a59645b82a0b521206e1e25c2/pyyaml-6.0.3.tar.gz"
+    sha256 "d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f"
   end
 
   def install
@@ -244,11 +244,51 @@ jobs:
       - name: Update formula version and sha256
         shell: bash
         run: |
-          VERSION="${{ github.event.client_payload.version }}"
-          SHA256="${{ github.event.client_payload.sha256 }}"
-          URL="${{ github.event.client_payload.sdist_url }}"
-          sed -i "s|url \".*\"|url \"${URL}\"|" Formula/vstack.rb
-          sed -i "s|sha256 \".*\"|sha256 \"${SHA256}\"|" Formula/vstack.rb
+          python3 - <<'PY'
+          import re
+          import os
+
+          url        = os.environ["SDIST_URL"]
+          sha256     = os.environ["SDIST_SHA256"]
+          pyyaml_url = os.environ["PYYAML_URL"]
+          pyyaml_sha = os.environ["PYYAML_SHA256"]
+
+          with open("Formula/vstack.rb") as f:
+              content = f.read()
+
+          # Replace top-level vstack sdist url (first url line only).
+          content = re.sub(
+              r'(^  url ")[^"]*(")' ,
+              rf'\g<1>{url}\2',
+              content, count=1, flags=re.MULTILINE,
+          )
+          # Replace top-level vstack sha256 (first sha256 line only).
+          content = re.sub(
+              r'^  sha256 "[0-9a-f]+"',
+              f'  sha256 "{sha256}"',
+              content, count=1, flags=re.MULTILINE,
+          )
+          # Replace pyyaml resource url.
+          content = re.sub(
+              r'(resource "pyyaml" do\n    url ")[^"]*(")' ,
+              rf'\g<1>{pyyaml_url}\2',
+              content,
+          )
+          # Replace pyyaml resource sha256.
+          content = re.sub(
+              r'(resource "pyyaml" do\n    url "[^"]*"\n    sha256 ")[0-9a-f]+(")',
+              rf'\g<1>{pyyaml_sha}\2',
+              content,
+          )
+
+          with open("Formula/vstack.rb", "w") as f:
+              f.write(content)
+          PY
+        env:
+          SDIST_URL: ${{ github.event.client_payload.sdist_url }}
+          SDIST_SHA256: ${{ github.event.client_payload.sha256 }}
+          PYYAML_URL: ${{ github.event.client_payload.pyyaml_url }}
+          PYYAML_SHA256: ${{ github.event.client_payload.pyyaml_sha256 }}
       - name: Commit and push
         run: |
           git config user.name "vstack-release-bot"

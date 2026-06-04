@@ -246,9 +246,48 @@ jobs:
               print("ERROR: sha256 mismatch between PyPI metadata and downloaded tarball.", file=sys.stderr)
               sys.exit(1)
 
+          # Resolve the latest PyYAML release satisfying >=6.0.3.
+          def parse_ver(v):
+              try:
+                  return tuple(int(x) for x in v.split("."))
+              except ValueError:
+                  return (0,)
+
+          pyyaml_json_url = "https://pypi.org/pypi/PyYAML/json"
+          with urllib.request.urlopen(pyyaml_json_url) as response:
+              pyyaml_meta = json.load(response)
+
+          pyyaml_min = (6, 0, 3)
+          pyyaml_candidates = [
+              v for v in pyyaml_meta.get("releases", {})
+              if not any(c in v for c in ("a", "b", "rc", "dev"))
+              and parse_ver(v) >= pyyaml_min
+          ]
+          if not pyyaml_candidates:
+              print("ERROR: no PyYAML release satisfying >=6.0.3 found on PyPI.", file=sys.stderr)
+              sys.exit(1)
+
+          pyyaml_version = max(pyyaml_candidates, key=parse_ver)
+          pyyaml_release_assets = pyyaml_meta["releases"][pyyaml_version]
+          pyyaml_sdist = next(
+              (item for item in pyyaml_release_assets if item.get("packagetype") == "sdist"),
+              None,
+          )
+          if pyyaml_sdist is None:
+              print(f"ERROR: no sdist found for PyYAML {pyyaml_version}.", file=sys.stderr)
+              sys.exit(1)
+
+          pyyaml_url = pyyaml_sdist["url"]
+          pyyaml_sha = pyyaml_sdist.get("digests", {}).get("sha256", "")
+          if not pyyaml_sha:
+              print(f"ERROR: PyPI metadata did not provide a sha256 for PyYAML {pyyaml_version}.", file=sys.stderr)
+              sys.exit(1)
+
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
               output.write(f"sdist_url={sdist_url}\n")
               output.write(f"sdist_sha256={local_sha}\n")
+              output.write(f"pyyaml_url={pyyaml_url}\n")
+              output.write(f"pyyaml_sha256={pyyaml_sha}\n")
           PY
         env:
           GITHUB_REF_NAME: ${{ github.event.release.tag_name }}
@@ -259,6 +298,8 @@ jobs:
           RELEASE_VERSION: ${{ github.event.release.tag_name }}
           SDIST_URL: ${{ steps.verify_sdist.outputs.sdist_url }}
           SDIST_SHA256: ${{ steps.verify_sdist.outputs.sdist_sha256 }}
+          PYYAML_URL: ${{ steps.verify_sdist.outputs.pyyaml_url }}
+          PYYAML_SHA256: ${{ steps.verify_sdist.outputs.pyyaml_sha256 }}
         run: |
           python - <<'PY'
           import hmac
@@ -270,6 +311,8 @@ jobs:
               "version": os.environ["RELEASE_VERSION"],
               "sdist_url": os.environ["SDIST_URL"],
               "sha256": os.environ["SDIST_SHA256"],
+              "pyyaml_url": os.environ["PYYAML_URL"],
+              "pyyaml_sha256": os.environ["PYYAML_SHA256"],
           }
 
           secret = os.environ.get("HOMEBREW_TAP_DISPATCH_SECRET", "")
