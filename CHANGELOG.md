@@ -2,6 +2,14 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.5.2](https://github.com/eschaar/vstack/compare/3.5.1...3.5.2) (2026-06-09)
+
+
+### Maintenance
+
+* **ci:** bump the gha-patch-minor group with 2 updates ([#73](https://github.com/eschaar/vstack/issues/73)) ([7c322ec](https://github.com/eschaar/vstack/commit/7c322ec62c4d75f453f415b8e1603ff6e8385ed9))
+* **deps:** bump the pip-patch-minor group with 2 updates ([#72](https://github.com/eschaar/vstack/issues/72)) ([45801fe](https://github.com/eschaar/vstack/commit/45801fe7192ab90032ddfec99e2e7c3dd679096e))
+
 ## [3.5.1](https://github.com/eschaar/vstack/compare/3.5.0...3.5.1) (2026-06-02)
 
 
