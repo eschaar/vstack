@@ -1,6 +1,6 @@
 ---
 name: explore
-description: 'Repository and system discovery. Maps the architecture, understands the codebase, identifies technical debt, and produces a structured onboarding summary. Use at the start of any engagement with an unfamiliar codebase, when asked to "understand this codebase", "map the architecture", "explore the repo", or "what does this service do?".'
+description: 'Fast codebase exploration and technical Q&A. Uses broad-to-narrow search, parallel context gathering, and depth modes (`quick`, `medium`, `thorough`) to map architecture, find reusable patterns, and answer targeted questions without making code changes. Use when asked to "explore the repo", "where is X implemented", "how does this system work", or "find examples to reuse".'
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
@@ -33,195 +33,120 @@ the format is supported and improves clarity. Use ASCII as a fallback when
 Mermaid is unsupported or would be less readable. Keep ASCII/text trees for
 directory structures and other scan-friendly hierarchies.
 
-# explore — Codebase & Architecture Discovery
+# explore — Fast Repository Exploration & Reuse Discovery
 
-Map an unfamiliar codebase and produce a structured onboarding summary.
-Report findings; do not change code.
+Answer codebase questions quickly and accurately.
+Map architecture, find reusable patterns, and return targeted evidence.
+Do not change files.
 
 ## Out of scope
 
-- Fixing issues found during exploration (use `debug` or `verify`)
-- Architecture recommendations (use `architecture`)
-- Performance analysis (use `performance` or `analyse`)
+- Implementing or fixing code (use `engineer`, `debug`, or `verify` workflows)
+- Full architecture decisioning (use `architecture`)
+- Deep security/performance audits (use `security` or `performance`)
 
-## Phase 1: Project Overview
+## Operating modes
+
+Choose depth based on user intent.
+
+- `quick` (2-5 minutes): answer one focused question with minimal reads.
+- `medium` (5-15 minutes): map the relevant subsystem and provide reuse candidates.
+- `thorough` (15+ minutes): broader architecture map with risks, dependencies, and integration points.
+
+If the user does not specify a depth, default to `medium`.
+
+## Search strategy (broad -> narrow)
+
+1. Start broad to find candidate areas quickly.
+1. Narrow to concrete symbols, endpoints, and call paths.
+1. Read only the files needed to answer confidently.
+1. Stop when evidence is sufficient; avoid exhaustive sweeps by default.
+
+Prefer parallel discovery for independent branches.
+Examples:
+
+- API layer + data layer + job/worker layer
+- frontend feature + backend endpoint
+- primary implementation + analogous implementation template
+
+## Recommended command patterns
 
 ```bash
-# Identify project type and tech stack
+# 1) Inventory project shape quickly
 ls -la
-cat README.md 2>/dev/null | head -60 || cat README.rst 2>/dev/null | head -60 || true
-cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print('Name:', d.get('name'), '| Version:', d.get('version'), '| Main:', d.get('main',''))" 2>/dev/null || true
-cat pyproject.toml 2>/dev/null | head -20 || true
-cat go.mod 2>/dev/null | head -10 || true
-cat Cargo.toml 2>/dev/null | head -10 || true
+find . -maxdepth 3 \
+  -not -path '*/.git/*' -not -path '*/node_modules/*' -not -path '*/vendor/*' \
+  -not -path '*/dist/*' -not -path '*/build/*' -not -path '*/.venv/*' \
+  -not -path '*/__pycache__/*' | head -120
+
+# 2) Locate likely implementation areas
+rg --files | head -200
+rg -n "router|endpoint|handler|service|repository|controller|usecase|workflow" src tests docs 2>/dev/null | head -120
+
+# 3) Find symbol definitions/usages once a likely area is known
+rg -n "<symbol-or-pattern>" src tests docs 2>/dev/null | head -120
 ```
 
-Record:
-
-- **Project name and purpose**
-- **Tech stack** (language, framework, runtime)
-- **Project type** (API service, library, CLI, worker, monorepo)
-
-## Phase 2: Directory Structure
+Language and contract hints:
 
 ```bash
-# Top-level structure
-find . -maxdepth 3 -not -path '*/node_modules/*' -not -path '*/.git/*' \
-  -not -path '*/vendor/*' -not -path '*/__pycache__/*' -not -path '*/dist/*' \
-  -not -path '*/.venv/*' | sort | head -80
+cat pyproject.toml 2>/dev/null | head -80 || true
+cat package.json 2>/dev/null | head -80 || true
+cat go.mod 2>/dev/null | head -80 || true
+find . \( -name 'openapi*.yaml' -o -name 'openapi*.json' -o -name '*.proto' \) 2>/dev/null | head -40
 ```
 
-Identify:
+## Reuse-first discovery
 
-- Where source code lives (`src/`, `lib/`, `pkg/`, top-level)
-- Where tests live (`test/`, `tests/`, `spec/`, `__tests__/`)
-- Where configs live (`config/`, `.env*`, `*config.yaml`)
-- CI/CD configuration (`.github/workflows/`, `.gitlab-ci.yml`, etc.)
-- Infrastructure code (`k8s/`, `terraform/`, `docker-compose.yml`)
+Always look for an existing analogous implementation before suggesting net-new structure.
 
-## Phase 3: Dependencies & External Services
+For each candidate pattern, capture:
 
-```bash
-# Dependency overview
-cat package.json 2>/dev/null | python3 -c "
-import sys, json
-d = json.load(sys.stdin)
-deps = {**d.get('dependencies',{}), **d.get('devDependencies',{})}
-print('Dependencies:', len(deps))
-for k,v in list(deps.items())[:20]: print(f'  {k}: {v}')
-" 2>/dev/null || true
+- where it lives (file + symbol)
+- why it is analogous
+- what can be reused directly
+- what must be adapted
 
-cat pyproject.toml 2>/dev/null | grep -A 20 '\[tool.poetry.dependencies\]' | head -25 || true
-cat go.mod 2>/dev/null | grep -E '^require|^\t' | head -20 || true
+When asked to support implementation planning, return at least one "golden path" example and one fallback example.
 
-# External services referenced
-grep -r -E 'postgres|mysql|redis|mongodb|kafka|rabbitmq|elasticsearch|dynamodb|s3' \
-  --include='*.ts' --include='*.py' --include='*.go' --include='*.yaml' --include='*.env*' \
-  --exclude-dir=node_modules --exclude-dir=vendor . 2>/dev/null | grep -v test | head -20
-```
+## Evidence quality rules
 
-## Phase 4: API & Service Contracts
+- Prefer explicit evidence over assumptions.
+- Cite concrete files and symbols, not only directories.
+- Distinguish facts from inferences.
+- If confidence is low, say what is missing and what to check next.
 
-```bash
-# Check for API spec files
-find . -name 'openapi*.yaml' -o -name 'openapi*.json' -o -name 'swagger*.yaml' \
-  -o -name '*.proto' -o -name 'asyncapi*.yaml' 2>/dev/null | head -10
+## Output contract
 
-# Check for route definitions
-grep -r -n '@app.route\|router\.\|@Get\|@Post\|path=' \
-  --include='*.ts' --include='*.py' --include='*.go' \
-  --exclude-dir=node_modules . 2>/dev/null | head -30
-```
-
-## Phase 5: Test Infrastructure
-
-```bash
-# Detect test runner and run tests
-if [ -f package.json ]; then
-  if grep -q '"vitest"' package.json 2>/dev/null; then
-    npx vitest run
-  elif grep -q '"jest"' package.json 2>/dev/null; then
-    npx jest
-  elif grep -q '"bun"' package.json 2>/dev/null; then
-    bun test
-  else
-    npm test
-  fi
-elif [ -f pyproject.toml ] || [ -f setup.py ]; then
-  python -m pytest -v
-elif [ -f go.mod ]; then
-  go test ./...
-elif [ -f Cargo.toml ]; then
-  cargo test
-else
-  echo "No recognized test framework detected."
-fi
-```
-
-```bash
-# Test count and coverage setup
-find . \( -name '*.test.*' -o -name '*_test.*' -o -name '*spec.*' \) \
-  -not -path '*/node_modules/*' -not -path '*/.venv/*' 2>/dev/null | wc -l
-
-# Coverage config
-cat .nycrc 2>/dev/null || cat vitest.config.* 2>/dev/null | head -20 || \
-  cat pytest.ini 2>/dev/null | head -20 || true
-```
-
-## Phase 6: CI/CD Pipeline
-
-```bash
-# CI config
-ls .github/workflows/ 2>/dev/null | head -10
-cat .github/workflows/*.yml 2>/dev/null | head -80 || true
-cat .gitlab-ci.yml 2>/dev/null | head -60 || true
-```
-
-## Phase 7: Technical Debt & Health
-
-```bash
-# Check for TODO/FIXME/HACK comments
-grep -r -n "TODO\|FIXME\|HACK\|XXX\|DEPRECATED\|BUG" \
-  --include='*.ts' --include='*.py' --include='*.go' \
-  --exclude-dir=node_modules . 2>/dev/null | head -30
-
-# Check for TODOS.md
-cat TODOS.md 2>/dev/null | head -40 || true
-```
-
-## Discovery Report
-
-Produce a structured summary:
+Tailor output to the requested depth, but keep this structure:
 
 ```text
-## Discovery Report — [project name] — [date]
+## Exploration Result
 
-### Overview
-Purpose: [one paragraph]
-Type:    [API service / library / CLI / worker / ...]
-Stack:   [language, framework, runtime versions]
+### Answer
+[Direct answer to the question in 2-6 sentences]
 
-### Architecture
-[Mermaid diagram of service topology or module structure when possible; ASCII fallback if needed]
+### Evidence
+- [file/symbol]: [what it proves]
+- [file/symbol]: [what it proves]
 
-### Data Stores
+### Reusable Patterns
+- [pattern A]: [why reusable, adaptation notes]
+- [pattern B]: [why reusable, adaptation notes]
 
-- [Database]: [what it stores, ORM/driver used]
-- [Cache]: [what is cached, TTL strategy]
+### Suggested Next Checks
+- [targeted check 1]
+- [targeted check 2]
 
-### Key External Dependencies
-
-- [Service A]: [purpose, auth method]
-- [Service B]: [purpose]
-
-### API Surface
-
-[Summarize endpoints or exported functions]
-
-### Test Coverage
-
-- Unit tests: [Y/N, count, coverage %]
-- Integration tests: [Y/N]
-- Contract tests: [Y/N]
-
-### CI/CD
-
-- CI: [GitHub Actions/GitLab CI/etc]
-- Deploy target: [Fly.io/Render/K8s/etc]
-- Release process: [manual/automated]
-
-### Technical Debt
-
-- [Key items from TODOS.md or code comments]
-
-### Onboarding Notes
-
-- How to run locally: [command]
-- How to run tests: [command]
-- Key config: [env vars]
-- Gotchas: [anything that surprised me]
-
+### Confidence
+[high/medium/low + one-line reason]
 ```
 
+For `thorough` mode, append:
+
+- subsystem map
+- major dependency boundaries
+- main risk hotspots (coupling, missing tests, unclear ownership)
+
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"explore","artifact_type":"skill","artifact_version":"20260421015","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"explore","artifact_type":"skill","artifact_version":"20260611001","generator":"vstack","vstack_version":"3.5.1"} -->

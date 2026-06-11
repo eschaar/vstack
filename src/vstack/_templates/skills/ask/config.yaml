@@ -1,0 +1,17 @@
+name: ask
+version: 20260611001
+description: |
+  Read-only technical Q&A for the current codebase. Clarifies ambiguous
+  questions, gathers evidence from code and docs, and returns concise,
+  referenced answers without making any changes. Use for "how does this work",
+  "where is X", "why might this fail", and "what should we do" guidance.
+allowed-tools: 'read search web vscode'
+argument-hint: '[question about code, architecture, behavior, or workflow]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and optional web lookup.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false
