@@ -3,7 +3,6 @@ description: 'Assess a repository for production-readiness gaps and prioritized 
 name: repo-assessment
 argument-hint: '[repository scope or component path]'
 agent: engineer
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
@@ -56,4 +55,4 @@ Order from highest to lowest priority.
 - one-line rationale
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"repo-assessment","artifact_type":"prompt","artifact_version":"20260513001","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"repo-assessment","artifact_type":"prompt","artifact_version":"20260513001","generator":"vstack","vstack_version":"3.5.1"} -->

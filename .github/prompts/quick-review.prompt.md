@@ -3,7 +3,6 @@ description: 'Review a change for bugs, regressions, and missing tests.'
 name: quick-review
 argument-hint: '[scope or files to review]'
 agent: engineer
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search

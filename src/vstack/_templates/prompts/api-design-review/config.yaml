@@ -2,7 +2,6 @@ name: api-design-review
 description: Review an API design or OpenAPI spec for correctness, completeness, and consistency.
 argument-hint: "[OpenAPI spec file, design doc, or endpoint scope]"
 agent: designer
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search

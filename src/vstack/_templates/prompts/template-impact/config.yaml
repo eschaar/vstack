@@ -2,7 +2,6 @@ name: template-impact
 description: Assess impact of a template change on generated artifacts, tests, and release risk.
 argument-hint: "[template path or change scope]"
 agent: engineer
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search

@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "hash_algorithm": "sha256",
-  "vstack_version": "3.3.0",
-  "installed_at": "2026-05-14T15:15:33.016787+00:00",
+  "vstack_version": "3.5.1",
+  "installed_at": "2026-06-11T19:38:06.836456+00:00",
   "artifacts": {
     "skills": [
       {
@@ -465,120 +465,6 @@
         "checksum_algorithm": "sha256"
       }
     ],
-    "prompts": [
-      {
-        "name": "api-design-review",
-        "file": "prompts/api-design-review.prompt.md",
-        "version": "20260502006",
-        "checksum": "6144af4f462af890edf3a4e342feb05792fdf2ab678ff2187048e0f17a288a22",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "architecture-risk",
-        "file": "prompts/architecture-risk.prompt.md",
-        "version": "20260502007",
-        "checksum": "895bb3e17af65b472dfb010dfa956954dce26b5213c8fee60b846fa1581b1d36",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "artifact-integrity",
-        "file": "prompts/artifact-integrity.prompt.md",
-        "version": "20260513002",
-        "checksum": "a51ff1fb889996bf1c0256d304b647f9670413cea4506de951f722deaf65fbf1",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "ci-triage",
-        "file": "prompts/ci-triage.prompt.md",
-        "version": "20260513006",
-        "checksum": "7f0d5e006fac21b32dfebf4c00b5dfb918205a86816feaa6466375d4cc939ed4",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "code-review",
-        "file": "prompts/code-review.prompt.md",
-        "version": "20260502008",
-        "checksum": "ad3d379f2305e693717f0a24decb6549fd82e30c021754d78a52b32e0f5e0b9e",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "dependency-audit",
-        "file": "prompts/dependency-audit.prompt.md",
-        "version": "20260502009",
-        "checksum": "4d861e7b4c1fd55af72a0a260d9ce81487d7ab53bfa6bdb041de0c196e4e09a9",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "incident-timeline",
-        "file": "prompts/incident-timeline.prompt.md",
-        "version": "20260502010",
-        "checksum": "641bb8380390974ce7ce6753e30b748e6bd224175a6451b6a1077e4ab50891e0",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "migration-plan",
-        "file": "prompts/migration-plan.prompt.md",
-        "version": "20260513010",
-        "checksum": "27e71a0c33c1067e58fa6d0fd1dd73711cdb3b24ced0cca8fee2f9c93a056219",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "migration-safety",
-        "file": "prompts/migration-safety.prompt.md",
-        "version": "20260502011",
-        "checksum": "7dce672410844c8f84f29f2b50b1e046aaaa9d2cf5512bfb6b34140ea3c54619",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "ops-readiness",
-        "file": "prompts/ops-readiness.prompt.md",
-        "version": "20260513009",
-        "checksum": "f900b61282f2fee3c55f2dbb09f9fd3b30c73cc61b4433152bf144625e48cb19",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "release-check",
-        "file": "prompts/release-check.prompt.md",
-        "version": "20260513004",
-        "checksum": "a86cfabdd3a578bb1a862d9d3f58da7b98b37ce17f99f43767192eb2c43a5dd5",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "repo-assessment",
-        "file": "prompts/repo-assessment.prompt.md",
-        "version": "20260513001",
-        "checksum": "3f6c684e633576ff96dae2dfc2f482f80494b590645cd313a207c59cbc54bc11",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "template-impact",
-        "file": "prompts/template-impact.prompt.md",
-        "version": "20260513005",
-        "checksum": "ce5afc1b4b9664530a897f5f432148c93cda6ef4ffceaa750df70012c1f5cded",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "test-gaps",
-        "file": "prompts/test-gaps.prompt.md",
-        "version": "20260513007",
-        "checksum": "a3e7cfcbe5c0725ddaaa9739d1b06554bd2bbdd2350ed42df893b17f4e0b6a36",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "upgrade-plan",
-        "file": "prompts/upgrade-plan.prompt.md",
-        "version": "20260513008",
-        "checksum": "0fdebb072412f09f090f57c921ead6324e531948f2eca686b146445afd25867b",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "workflow-check",
-        "file": "prompts/workflow-check.prompt.md",
-        "version": "20260513003",
-        "checksum": "e4c5ad55fa1f494c45b24e5cea49e798a3d57055992755f4c03187a177a65f15",
-        "checksum_algorithm": "sha256"
-      }
-    ],
     "hooks": [
       {
         "name": "agent-call-audit",
@@ -627,6 +513,120 @@
         "file": "hooks/session-audit.json",
         "version": "3.3.0",
         "checksum": "df02c7bb679f6c2512171c51f266c2d9fed26908fe249a9f2912c44fbd7e8f44",
+        "checksum_algorithm": "sha256"
+      }
+    ],
+    "prompts": [
+      {
+        "name": "api-design-review",
+        "file": "prompts/api-design-review.prompt.md",
+        "version": "20260502006",
+        "checksum": "ffa476304bd92a45ff4153e7df159ea237af2983dbe055e786fe407c9bd5da88",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "architecture-risk",
+        "file": "prompts/architecture-risk.prompt.md",
+        "version": "20260502007",
+        "checksum": "296d01a0a8adc82836f51f53da5f42d25cba485a9d13aef8acf24bd3e2115e4e",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "artifact-integrity",
+        "file": "prompts/artifact-integrity.prompt.md",
+        "version": "20260513002",
+        "checksum": "97efd04c815f09970abca3bf598f95e80fe5f6eb29f85cac1735a0df49bac736",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "ci-triage",
+        "file": "prompts/ci-triage.prompt.md",
+        "version": "20260513006",
+        "checksum": "b3527632d716ca1f33d0a3e801f781088ae7ef133f8db4cf2ec25fcba9173bd7",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "dependency-audit",
+        "file": "prompts/dependency-audit.prompt.md",
+        "version": "20260502009",
+        "checksum": "9b933927db94ab1c385cffd7b124224e3dad7500871fb3cb4a8fcfd5460b8b72",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "incident-timeline",
+        "file": "prompts/incident-timeline.prompt.md",
+        "version": "20260502010",
+        "checksum": "d5a2b469c27380516cf72a68d932e92d0ac7f52ed468f21f4384fbc8e3c23446",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "migration-plan",
+        "file": "prompts/migration-plan.prompt.md",
+        "version": "20260513010",
+        "checksum": "d4910406d726413b6f46691938ed105881c77a21cfa7c9dd9a1b03df95305b2a",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "migration-safety",
+        "file": "prompts/migration-safety.prompt.md",
+        "version": "20260502011",
+        "checksum": "7250937fb8d9689d9c3ca6b828e8be452c6eeaa9611a11e5a1c8a3d49a428c5c",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "ops-readiness",
+        "file": "prompts/ops-readiness.prompt.md",
+        "version": "20260513009",
+        "checksum": "caa5ff131f4df913626e6adc20396cb79d4b2f4eed689ef3b4cbd8b7ec6bda78",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "quick-review",
+        "file": "prompts/quick-review.prompt.md",
+        "version": "20260502008",
+        "checksum": "bc56fa6b8b7cc392f899456ee06947ea54f2f6f10afc0b7abd090fad8b9141b5",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "release-check",
+        "file": "prompts/release-check.prompt.md",
+        "version": "20260513004",
+        "checksum": "2f6e7d78aafbacbb257a32a1c6552c605c8e9162b256e0ab71bb82a4cef0509b",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "repo-assessment",
+        "file": "prompts/repo-assessment.prompt.md",
+        "version": "20260513001",
+        "checksum": "247706bd3cd7576e8f9f2b525af5a444595ac84a41ba8c6b54be9ba18a68b8e2",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "template-impact",
+        "file": "prompts/template-impact.prompt.md",
+        "version": "20260513005",
+        "checksum": "c0eb0393982dfe5d586262a2cdd72dbfd2fae82e1da9869d22c77f98f49bc69c",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "test-gaps",
+        "file": "prompts/test-gaps.prompt.md",
+        "version": "20260513007",
+        "checksum": "718c201963dc28c8a2b803fb60905e9cb15987437aac02805f7f89ddb409d7fd",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "upgrade-plan",
+        "file": "prompts/upgrade-plan.prompt.md",
+        "version": "20260513008",
+        "checksum": "ff0d3913a57845762e796e24db9a7343f0fba606fcb4d4439c5c5a326b6f8596",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "workflow-check",
+        "file": "prompts/workflow-check.prompt.md",
+        "version": "20260513003",
+        "checksum": "54092bfd5da6a3b77192f5fe7eafb45a4d99628fbe73336c6fa17913de1c0de9",
         "checksum_algorithm": "sha256"
       }
     ]

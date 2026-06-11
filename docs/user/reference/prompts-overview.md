@@ -8,6 +8,8 @@ Prompts are reusable review and analysis templates that guide a focused task.
 
 In vstack, prompts are generated into `.github/prompts/*.prompt.md`.
 
+Prompt files should stay model-agnostic by default. Leave `model` out unless a prompt has a specific, justified need to pin a model for reproducibility or model-specific behavior.
+
 ## Built-in Prompts
 
 | Prompt               | Scope             | What It Helps With                                                                                  |

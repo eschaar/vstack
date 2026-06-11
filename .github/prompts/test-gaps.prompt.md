@@ -3,7 +3,6 @@ description: 'Identify missing behavioral coverage and prioritize test additions
 name: test-gaps
 argument-hint: '[component, feature, or repository scope]'
 agent: tester
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
@@ -40,4 +39,4 @@ Ordered from highest to lowest risk reduction.
 - acceptance check
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"test-gaps","artifact_type":"prompt","artifact_version":"20260513007","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"test-gaps","artifact_type":"prompt","artifact_version":"20260513007","generator":"vstack","vstack_version":"3.5.1"} -->

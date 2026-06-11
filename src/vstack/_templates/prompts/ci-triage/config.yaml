@@ -2,7 +2,6 @@ name: ci-triage
 description: Triage CI failures into root-cause clusters and prioritize the fastest safe recovery path.
 argument-hint: "[workflow run, failing job, or log scope]"
 agent: engineer
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search

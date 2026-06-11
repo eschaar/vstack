@@ -3,7 +3,6 @@ description: 'Audit dependencies for vulnerabilities, outdated versions, licence
 name: dependency-audit
 argument-hint: '[dependency manifest, lockfile, or package scope]'
 agent: tester
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
@@ -60,4 +59,4 @@ List packages with unusual provenance concerns: abandoned maintainers, single-ma
 Ordered list of actions by priority (critical first).
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"dependency-audit","artifact_type":"prompt","artifact_version":"20260502009","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"dependency-audit","artifact_type":"prompt","artifact_version":"20260502009","generator":"vstack","vstack_version":"3.5.1"} -->

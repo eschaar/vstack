@@ -3,7 +3,6 @@ description: 'Check source templates against generated artifacts and identify dr
 name: artifact-integrity
 argument-hint: '[artifact type, path, or full repo]'
 agent: tester
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
@@ -56,4 +55,4 @@ Provide a checklist to confirm the repository is back in a clean state after reg
 - [ ] All regenerated files match their source checksums in `.vstack/vstack.json`
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"artifact-integrity","artifact_type":"prompt","artifact_version":"20260513002","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"artifact-integrity","artifact_type":"prompt","artifact_version":"20260513002","generator":"vstack","vstack_version":"3.5.1"} -->

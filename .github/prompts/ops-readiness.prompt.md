@@ -3,7 +3,6 @@ description: 'Assess operational readiness across observability, runbooks, failu
 name: ops-readiness
 argument-hint: '[service, component, or release scope]'
 agent: tester
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
@@ -42,4 +41,4 @@ For each gap:
 - target milestone
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"ops-readiness","artifact_type":"prompt","artifact_version":"20260513009","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"ops-readiness","artifact_type":"prompt","artifact_version":"20260513009","generator":"vstack","vstack_version":"3.5.1"} -->

@@ -2,7 +2,6 @@ name: repo-assessment
 description: Assess a repository for production-readiness gaps and prioritized improvements.
 argument-hint: "[repository scope or component path]"
 agent: engineer
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
