@@ -1,7 +1,7 @@
 # vstack — roadmap
 
 > Maintained by: **product** role\
-> Last updated: 2026-06-01
+> Last updated: 2026-06-11
 
 ______________________________________________________________________
 
@@ -20,7 +20,7 @@ ______________________________________________________________________
 | checksum backfill                             | v2.0.0  | shipped     | `manifest upgrade --backfill` adds SHA-256 for VSTACK-META-tagged files (ADR-017)                                                                                  |
 | conservative install                          | v2.0.0  | shipped     | Untracked files never overwritten; checksum-gated update (ADR-015, superseded by ADR-020)                                                                          |
 | dry-run install                               | v2.1.0  | shipped     | `vstack install --dry-run` previews actions; type/name selectors in summary                                                                                        |
-| new skill scaffolding                         | v2.2.0  | shipped     | 42-skill set with canonical naming                                                                                                                                 |
+| new skill scaffolding                         | v2.2.0  | shipped     | 47-skill set with canonical naming                                                                                                                                 |
 | agent skill wiring                            | v2.2.0  | shipped     | Role-to-skill mapping, handoffs, and concise modes wired into all agents                                                                                           |
 | project-scope directory                       | v3.0.0  | shipped     | `.vstack/` directory: `config.yaml`, manifest, delta templates (ADR-019)                                                                                           |
 | install/init command semantics                | v3.0.0  | shipped     | `install` = first-run setup; `init` = idempotent CI regeneration (ADR-020, breaking change)                                                                        |
@@ -34,6 +34,7 @@ ______________________________________________________________________
 | golden-fixture coverage expansion             | v3.3.0  | shipped     | Extend deterministic golden fixtures to cover additional high-impact templates per artifact type.                                                                  |
 | defect-fixture matrix expansion               | v3.3.0  | shipped     | Expand defect fixtures across artifact types and failure classes with stable expected error assertions.                                                            |
 | planner routing refinement                    | v3.4.0  | shipped     | Planner/orchestrator routing follow-up to the DAG work                                                                                                             |
+| Homebrew distribution                         | v3.5.0  | shipped     | Homebrew tap/formula publish flow added for install and upgrade via `brew`                                                                                         |
 | docs information architecture (Diataxis)      | t.b.d.  | candidate   | `docs/user/` scaffold and navigation are in place with segmented tutorials/how-to/reference/explanation routes; broader migration and fully realized IA come later |
 | team customization layer                      | t.b.d.  | candidate   | Deferred major update after VS Code-first model proves itself; custompacks, overlay merge rules, and install profiles all add major maintenance surface            |
 | multi-IDE support (IntelliJ first)            | t.b.d.  | candidate   | Deferred until vstack proves stable in VS Code; likely a major follow-up because it needs separate targets, schemas, and more maintenance                          |
@@ -99,7 +100,7 @@ Existing documentation now lives under `docs/user/`.
 
 ### new skill scaffolding [shipped — v2.2.0]
 
-42 skills across 6 roles. Representative additions:
+47 skills across 6 roles. Representative additions:
 
 - `requirements`, `adr`, `analyse` (new)
 - `gh-issues`, `codeql`, `dependabot`, `secret-scan`, `gh-release`
@@ -387,9 +388,9 @@ Potential wall-clock reduction: 6 stages → 3 stages (~50% faster).
 
 **Remaining work beyond this release:**
 
-1. Planner-level parallel dispatch scheduling and layer execution policy.
-1. Explicit runtime join/failure strategy controls for parallel stage groups.
-1. Additional integration tests for parallel orchestration execution traces.
+1. Add configurable join/failure policy controls for parallel stage groups.
+1. Expand orchestration integration tests for complex parallel execution traces.
+1. Improve operator diagnostics for partial parallel-stage failures and recovery hints.
 
 **Backwards compatibility:**
 
@@ -439,7 +440,6 @@ workflow:
 
 **Next steps:**
 
-1. Implement planner runtime layer scheduling for parallel-ready stages.
 1. Add explicit join policy knobs for DAG layer completion.
 1. Expand orchestration integration tests for multi-stage parallel traces.
 1. Add user-facing troubleshooting guidance for DAG misconfiguration recovery.
@@ -534,7 +534,7 @@ guidance on which checks apply after each class of change.
 **Phase B — generated-artifact drift guard:**
 
 - Baseline shipped (2026-05-13): golden fixture drift tests added for
-  `instruction/security`, `agent/planner`, and `prompt/code-review` rendering in
+  `instruction/security`, `agent/planner`, and `prompt/quick-review` rendering in
   `tests/vstack/artifacts/test_generator.py`.
 
 - Expansion shipped (2026-05-13): golden fixture coverage now includes additional
@@ -622,6 +622,7 @@ ______________________________________________________________________
 - `prompts/`
 - `instructions/`
 - `skills/`
+- `hooks/`
 
-All artifact types are supported globally. vstack provides generic, reusable
-behavior; project-specific customization is out of scope.
+All global-supported artifact types are included above. vstack provides generic,
+reusable behavior; project-specific customization is out of scope.
