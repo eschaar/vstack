@@ -3,26 +3,26 @@ name: python
 description: 'Python coding conventions for projects. Use when writing or reviewing Python modules, tests, CLI code, and package internals.'
 applyTo: '**/*.py'
 ---
-Use these Python conventions in this project.
+Use these Python conventions.
 
 ## Design and readability
 
 1. Prefer explicit, domain-meaningful names over abbreviations.
-1. Keep functions focused; split functions that mix parsing, I/O, and business rules.
-1. Prefer straightforward control flow over clever one-liners.
-1. Raise precise exceptions with actionable error messages.
+1. Keep functions focused.
+1. Prefer straightforward control flow.
+1. Raise precise exceptions with actionable messages.
 
 ## Typing and APIs
 
 1. Add type hints to public functions, methods, and module-level constants.
-1. Keep public interfaces stable and backward compatible unless the task explicitly allows breaking changes.
-1. Use dataclasses or TypedDict for structured data instead of untyped dicts when shape is known.
+1. Keep public interfaces stable and backward compatible unless breaking changes are explicitly allowed.
+1. Use dataclasses or TypedDict for structured data.
 
 ## Imports and dependencies
 
 1. Group imports as standard library, third-party, and local modules.
 1. Keep imports minimal and remove unused imports.
-1. Avoid adding runtime dependencies unless there is a clear benefit over stdlib or existing project dependencies.
+1. Avoid adding runtime dependencies unless there is a clear benefit over stdlib or existing dependencies.
 
 ## Testing and verification
 
@@ -42,4 +42,4 @@ Use these Python conventions in this project.
 1. Do not silence lint/type errors unless there is a documented, task-specific reason.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"python","artifact_type":"instruction","artifact_version":"20260421002","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"python","artifact_type":"instruction","artifact_version":"20260421002","generator":"vstack","vstack_version":"3.5.1"} -->

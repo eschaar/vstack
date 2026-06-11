@@ -1,10 +1,10 @@
-Use these Java conventions in this project.
+Use these Java conventions.
 
 ## Design and readability
 
-1. Prefer explicit, domain-meaningful names over abbreviations; follow standard Java naming conventions.
-1. Keep methods focused; split methods that mix parsing, I/O, and business rules.
-1. Prefer immutable objects; make fields `final` by default and expose mutation only where required.
+1. Prefer explicit, domain-meaningful names over abbreviations.
+1. Keep methods focused.
+1. Prefer immutable objects; make fields `final` by default.
 1. Prefer straightforward control flow over clever one-liners.
 
 ## Types and APIs
@@ -12,13 +12,13 @@ Use these Java conventions in this project.
 1. Keep public APIs minimal and stable; mark implementation details `package-private` or `private`.
 1. Program to interfaces, not implementations, for dependencies that may change.
 1. Use records for simple value types where the Java version supports them.
-1. Prefer `Optional` as a return type for values that may be absent; do not use it for fields or parameters.
+1. Prefer `Optional` as a return type for absent values; do not use it for fields or parameters.
 
 ## Null safety
 
 1. Annotate method parameters and return types with `@NonNull` or `@Nullable` where nullability is meaningful.
 1. Never return `null` from a public method that could return `Optional` instead.
-1. Fail fast on unexpected nulls at system boundaries using explicit precondition checks.
+1. Fail fast on unexpected nulls at system boundaries.
 
 ## Exception handling
 

@@ -7,10 +7,10 @@ tools:
   - read
   - search
 ---
-Assess this repository for production-readiness gaps and prioritized improvement opportunities.
+Assess this repository for production-readiness gaps and prioritized improvements.
 
-Focus on evidence found in source files, tests, CI configuration, docs, and manifests.
-Prefer concrete findings over speculative risks.
+Base findings on evidence in source files, tests, CI config, docs, and manifests.
+Prefer concrete findings over speculation.
 
 Output exactly in this format:
 
@@ -26,8 +26,7 @@ For each item:
 
 ## High-ROI Improvements
 
-List high-value improvements that reduce operational risk or developer friction.
-Rank by impact relative to effort.
+List high-value improvements that reduce operational risk or developer friction, ranked by impact versus effort.
 
 For each item:
 
@@ -37,7 +36,7 @@ For each item:
 
 ## Testing and Verification Gaps
 
-List behavioral paths that are untested or where test coverage provides false confidence.
+List untested behavioral paths or areas where coverage may give false confidence.
 
 For each item:
 
@@ -47,8 +46,7 @@ For each item:
 
 ## Suggested Next Sprint Backlog
 
-Provide a short, actionable list of tasks suitable for the next sprint.
-Order from highest to lowest priority.
+Provide a short, actionable next-sprint task list ordered from highest to lowest priority.
 
 - task title
 - owner role (product | architect | designer | engineer | tester | release)

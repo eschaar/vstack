@@ -11,7 +11,7 @@ tools:
 Review the selected migration plan and code for production safety.
 
 Focus on forward compatibility, rollback feasibility, data integrity, and operational risk.
-Assume a live system with concurrent reads/writes.
+Assume a live system with concurrent reads and writes.
 
 Output exactly in this format:
 

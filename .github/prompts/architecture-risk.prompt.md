@@ -10,7 +10,7 @@ tools:
 Evaluate the provided architecture for delivery and runtime risk.
 
 Prioritize issues that could cause outages, data loss, severe operability pain, or major rework.
-Do not focus on stylistic preferences.
+Ignore stylistic preferences.
 
 Output exactly in this format:
 

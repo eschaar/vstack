@@ -7,16 +7,16 @@ tools:
   - read
   - search
 ---
-Check source templates against generated artifacts and identify drift or missing regeneration.
+Check source templates against generated artifacts and identify drift.
 
-Compare `src/vstack/_templates/` sources against their installed counterparts in `.github/`
-and the manifest at `.vstack/vstack.json`. Surface any mismatch, stale output, or gap.
+Compare `src/vstack/_templates/` sources with installed artifacts in `.github/`
+and the manifest at `.vstack/vstack.json`. Surface mismatches, stale output, or gaps.
 
 Output exactly in this format:
 
 ## Drift Findings
 
-List every source-to-artifact mismatch detected.
+List all source-to-artifact mismatches.
 
 For each item:
 
@@ -27,7 +27,7 @@ For each item:
 
 ## Regeneration Actions
 
-List the exact commands needed to bring generated artifacts back into sync.
+List exact commands needed to bring generated artifacts back into sync.
 
 For each action:
 
@@ -37,7 +37,7 @@ For each action:
 
 ## Risk If Unfixed
 
-Describe the production risk if drift is left unresolved.
+Describe production risk if drift is left unresolved.
 
 For each drift item from above:
 
@@ -46,7 +46,7 @@ For each drift item from above:
 
 ## Verification Steps
 
-Provide a checklist to confirm the repository is back in a clean state after regeneration.
+Provide a checklist to confirm the repository is clean after regeneration.
 
 - [ ] `python3 -m vstack install` completes without errors
 - [ ] `vstack validate` reports no unresolved template tokens
