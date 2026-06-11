@@ -144,4 +144,4 @@ Common failure classes:
 - [Kubernetes API reference](https://kubernetes.io/docs/reference/kubernetes-api/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"k8s","artifact_type":"skill","artifact_version":"20260502036","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"k8s","artifact_type":"skill","artifact_version":"20260502036","generator":"vstack","vstack_version":"3.5.1"} -->

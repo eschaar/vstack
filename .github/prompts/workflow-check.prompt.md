@@ -3,7 +3,6 @@ description: 'Review workflow stage flow, gate usage, and handoff integrity acro
 name: workflow-check
 argument-hint: '[workflow scope or stage list]'
 agent: planner
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
@@ -46,4 +45,4 @@ Provide an ordered short list of actions.
 - expected result
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"workflow-check","artifact_type":"prompt","artifact_version":"20260513003","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"workflow-check","artifact_type":"prompt","artifact_version":"20260513003","generator":"vstack","vstack_version":"3.5.1"} -->

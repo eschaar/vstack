@@ -13,6 +13,7 @@ In vstack, skills are generated into `.github/skills/<name>/SKILL.md`.
 | Skill                 | What It Helps With                                                        |
 | --------------------- | ------------------------------------------------------------------------- |
 | `adr`                 | Architecture Decision Record writing for significant technical decisions. |
+| `ask`                 | Read-only technical Q&A with code-backed evidence and clear guidance.     |
 | `analyse`             | Cross-cutting impact, tradeoff, and feasibility analysis.                 |
 | `architecture`        | Engineering-lead architecture and execution-plan review.                  |
 | `aws-cli`             | AWS CLI operations across core AWS services.                              |
@@ -30,7 +31,7 @@ In vstack, skills are generated into `.github/skills/<name>/SKILL.md`.
 | `dependency`          | Dependency health audit, upgrade strategy, and supply-chain checks.       |
 | `design`              | API and service interface design standards and contracts.                 |
 | `docs`                | Post-release documentation alignment with shipped behavior.               |
-| `explore`             | Repository architecture discovery and onboarding analysis.                |
+| `explore`             | Fast codebase exploration, reuse discovery, and architecture mapping.     |
 | `gdpr`                | GDPR-compliant engineering review for data handling and flows.            |
 | `gh-issues`           | GitHub issue lifecycle management via `gh`.                               |
 | `gh-release`          | GitHub Release drafting and publication flow via `gh`.                    |

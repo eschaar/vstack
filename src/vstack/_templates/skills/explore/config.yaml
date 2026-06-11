@@ -1,11 +1,11 @@
 name: explore
-version: 20260421015
+version: 20260611001
 description: |
-  Repository and system discovery. Maps the architecture, understands the
-  codebase, identifies technical debt, and produces a structured onboarding
-  summary. Use at the start of any engagement with an unfamiliar codebase,
-  when asked to "understand this codebase", "map the architecture", "explore
-  the repo", or "what does this service do?".
+  Fast codebase exploration and technical Q&A. Uses broad-to-narrow search,
+  parallel context gathering, and depth modes (`quick`, `medium`, `thorough`)
+  to map architecture, find reusable patterns, and answer targeted questions
+  without making code changes. Use when asked to "explore the repo", "where is
+  X implemented", "how does this system work", or "find examples to reuse".
 allowed-tools: 'execute read search'
 argument-hint: '[repository or system to explore]'
 

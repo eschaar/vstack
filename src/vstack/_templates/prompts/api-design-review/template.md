@@ -1,7 +1,7 @@
 Review the provided API design or OpenAPI specification for correctness, completeness, and consistency.
 
-Focus on issues that affect consumers: breaking contracts, ambiguous semantics, missing error cases, and inconsistent conventions.
-Do not focus on implementation details or tooling preferences.
+Focus on consumer impact: breaking contracts, ambiguous semantics, missing errors, and inconsistent conventions.
+Ignore implementation details and tooling preferences.
 
 Output exactly in this format:
 

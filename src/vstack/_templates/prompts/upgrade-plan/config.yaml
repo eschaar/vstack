@@ -2,7 +2,6 @@ name: upgrade-plan
 description: Build a safe upgrade plan with sequencing, compatibility checks, and rollback points.
 argument-hint: "[target version, component, or full repo]"
 agent: tester
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search

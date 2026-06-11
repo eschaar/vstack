@@ -278,4 +278,4 @@ For each significant structural decision made during this review (technology cho
 - Update `docs/architecture/overview.md` to reflect the final decisions.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"architecture","artifact_type":"skill","artifact_version":"20260421005","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"architecture","artifact_type":"skill","artifact_version":"20260421005","generator":"vstack","vstack_version":"3.5.1"} -->

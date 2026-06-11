@@ -1,4 +1,4 @@
-Use these Kubernetes conventions in this project.
+Use these Kubernetes conventions.
 
 ## API and versioning
 
@@ -9,7 +9,7 @@ Use these Kubernetes conventions in this project.
 ## Workload safety
 
 1. Set CPU and memory `requests` and `limits` for every container.
-1. Define both readiness and liveness probes for long-running services.
+1. Define readiness and liveness probes for long-running services.
 1. Avoid mutable image tags (`:latest`); use pinned tags or immutable digests.
 1. Set rollout strategy explicitly for Deployments handling production traffic.
 
@@ -30,7 +30,7 @@ Use these Kubernetes conventions in this project.
 
 1. Use PodDisruptionBudgets for critical workloads.
 1. Configure `terminationGracePeriodSeconds` and preStop hooks where graceful shutdown is required.
-1. Add resource annotations/labels needed by observability and runtime policies.
+1. Add resource annotations or labels needed by observability and runtime policies.
 
 ## Validation
 
@@ -40,7 +40,7 @@ Use these Kubernetes conventions in this project.
 
 ## References
 
-> Always use the official documentation for the exact Kubernetes version in use - API versions and defaults change between releases.
+> Always use the official documentation for the exact Kubernetes version in use; API versions and defaults change between releases.
 
 - [Kubernetes docs](https://kubernetes.io/docs/)
 - [Kubernetes API reference](https://kubernetes.io/docs/reference/kubernetes-api/)

@@ -13,8 +13,8 @@ from vstack.frontmatter import FrontmatterParser
 class TestAgentGeneration:
     """Test cases for AgentGeneration."""
 
-    def test_architect_agent_includes_model_and_handoffs(self, tmp_path: Path) -> None:
-        """Test that architect agent includes model and handoffs."""
+    def test_architect_agent_omits_model_and_includes_handoffs(self, tmp_path: Path) -> None:
+        """Test that architect agent omits model and includes handoffs."""
         # Seed a minimal workflow config so handoffs include agent targets.
         vstack_dir = tmp_path / ".vstack"
         vstack_dir.mkdir(parents=True, exist_ok=True)
@@ -50,12 +50,7 @@ class TestAgentGeneration:
         parsed = FrontmatterParser.parse(content)
 
         assert parsed.metadata.get("name") == "architect"
-        assert parsed.metadata.get("model") == [
-            "auto",
-            "Claude Sonnet 4.6 (copilot)",
-            "GPT-5.3-Codex (copilot)",
-            "Claude Opus 4.7 (copilot)",
-        ]
+        assert parsed.metadata.get("model") is None
 
         handoffs = parsed.metadata.get("handoffs")
         assert isinstance(handoffs, list)

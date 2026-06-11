@@ -3,19 +3,19 @@ name: typescript
 description: 'TypeScript coding conventions for projects. Use when writing or reviewing TypeScript or JavaScript modules, components, and package internals.'
 applyTo: '**/*.{ts,tsx,js,jsx,mts,cts,mjs,cjs}'
 ---
-Use these TypeScript conventions in this project.
+Use these TypeScript conventions.
 
 ## Type safety
 
-1. Enable and respect strict mode; do not disable strictness per-file without a documented reason.
+1. Enable and respect strict mode; do not disable strictness per file without a documented reason.
 1. Avoid `any`; prefer `unknown` when the type is genuinely unknown and narrow it explicitly.
-1. Prefer `interface` for object shapes that may be extended; use `type` for unions, intersections, and aliases.
+1. Prefer `interface` for extendable object shapes; use `type` for unions, intersections, and aliases.
 1. Do not use type assertions (`as`) to silence type errors; fix the type instead.
 
 ## Design and readability
 
 1. Prefer explicit, domain-meaningful names over abbreviations.
-1. Keep functions focused; split functions that mix parsing, I/O, and business rules.
+1. Keep functions focused.
 1. Prefer straightforward control flow over clever one-liners.
 1. Use `const` by default; use `let` only when reassignment is required; never use `var`.
 
@@ -49,4 +49,4 @@ Use these TypeScript conventions in this project.
 1. Do not suppress lint or type errors with inline disable comments unless there is a documented, task-specific reason.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"typescript","artifact_type":"instruction","artifact_version":"20260502005","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"typescript","artifact_type":"instruction","artifact_version":"20260502005","generator":"vstack","vstack_version":"3.5.1"} -->

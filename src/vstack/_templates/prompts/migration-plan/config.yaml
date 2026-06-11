@@ -2,7 +2,6 @@ name: migration-plan
 description: Produce a safe migration plan with sequencing, fallback paths, and verification checkpoints.
 argument-hint: "[migration scope or affected components]"
 agent: engineer
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search

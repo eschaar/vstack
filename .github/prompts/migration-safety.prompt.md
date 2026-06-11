@@ -3,7 +3,6 @@ description: 'Review database migration safety, rollback strategy, and zero-down
 name: migration-safety
 argument-hint: '[migration files, schema, or rollout plan]'
 agent: engineer
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
@@ -12,7 +11,7 @@ tools:
 Review the selected migration plan and code for production safety.
 
 Focus on forward compatibility, rollback feasibility, data integrity, and operational risk.
-Assume a live system with concurrent reads/writes.
+Assume a live system with concurrent reads and writes.
 
 Output exactly in this format:
 
@@ -52,4 +51,4 @@ List missing migration tests (forward, backward, data invariants, load-sensitive
 - biggest remaining risk in one sentence
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"migration-safety","artifact_type":"prompt","artifact_version":"20260502011","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"migration-safety","artifact_type":"prompt","artifact_version":"20260502011","generator":"vstack","vstack_version":"3.5.1"} -->
