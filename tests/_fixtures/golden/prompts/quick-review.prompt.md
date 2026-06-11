@@ -1,6 +1,6 @@
 ---
 description: 'Review a change for bugs, regressions, and missing tests.'
-name: code-review
+name: quick-review
 argument-hint: '[scope or files to review]'
 agent: engineer
 model: GPT-5.3-Codex (copilot)
@@ -51,4 +51,4 @@ End with:
 - Biggest remaining risk: one sentence
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"code-review","artifact_type":"prompt","artifact_version":"20260502008","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"quick-review","artifact_type":"prompt","artifact_version":"20260502008","generator":"vstack","vstack_version":"3.3.0"} -->

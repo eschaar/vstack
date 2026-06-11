@@ -16,7 +16,7 @@ In vstack, prompts are generated into `.github/prompts/*.prompt.md`.
 | `architecture-risk`  | Identify architectural risks, tradeoffs, and mitigation priorities for a proposed design.           |
 | `artifact-integrity` | Check source templates against generated artifacts and identify drift or missing regeneration.      |
 | `ci-triage`          | Triage CI failures into root-cause clusters and prioritize the fastest safe recovery path.          |
-| `code-review`        | Review a change for bugs, regressions, and missing tests.                                           |
+| `quick-review`       | Review a change for bugs, regressions, and missing tests.                                           |
 | `dependency-audit`   | Audit dependencies for vulnerabilities, outdated versions, licence risks, and supply chain hygiene. |
 | `incident-timeline`  | Build a structured, evidence-based incident timeline and action-oriented postmortem summary.        |
 | `migration-plan`     | Produce a safe migration plan with sequencing, fallback paths, and verification checkpoints.        |
