@@ -19,6 +19,22 @@ vstack init --only hook
 vstack init --only hook agent
 ```
 
+## Remove obsolete tracked artifacts safely
+
+Use prune mode to remove tracked artifacts that are no longer generated:
+
+```bash
+vstack init --prune
+```
+
+Run a preview first if needed:
+
+```bash
+vstack init --prune --dry-run
+```
+
+Without `--prune`, obsolete candidates are reported and preserved.
+
 ## Force overwrite managed artifacts
 
 Force overwrite for selected type scope:

@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "3.5.2",
-  "installed_at": "2026-06-18T18:48:27.456307+00:00",
+  "installed_at": "2026-06-18T21:27:59.158223+00:00",
   "artifacts": {
     "skills": [
       {
@@ -386,57 +386,6 @@
         "checksum_algorithm": "sha256"
       }
     ],
-    "hooks": [
-      {
-        "name": "agent-call-audit",
-        "file": "hooks/agent-call-audit.json",
-        "version": "3.3.0",
-        "checksum": "71552673112f56307087074e30563c726331fddb0f6b21256ac3ac083e6485ae",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "log-retention-cleanup",
-        "file": "hooks/log-retention-cleanup.json",
-        "version": "3.3.0",
-        "checksum": "76f2ecb32c1ed259ee155a2e3f3332a06dffdb3d25514b62b3e81e9c2a1b9cad",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "post-commit-security-scan",
-        "file": "hooks/post-commit-security-scan.json",
-        "version": "3.3.0",
-        "checksum": "56d0238d2a3ae556c62c1aa75fbd75449f1037fae70e85fdc4c88d87d262d183",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "post-edit-format",
-        "file": "hooks/post-edit-format.json",
-        "version": "3.3.0",
-        "checksum": "26fc1244e2e5d549c3327e1993ccad078c6f6522239979f0e6b010f1edf9b111",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "post-edit-markdown-quality",
-        "file": "hooks/post-edit-markdown-quality.json",
-        "version": "3.3.0",
-        "checksum": "ee0458ddcfca3d38714cf50c9b41741ef89ac3f99b3e4736ad449e5a4c07d972",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "pre-tool-safety-gate",
-        "file": "hooks/pre-tool-safety-gate.json",
-        "version": "3.3.0",
-        "checksum": "d6de87491ae43cfa1a99b7fe8293f4f18e0568125f9fcd37a2c6a58fba6c84b7",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "session-audit",
-        "file": "hooks/session-audit.json",
-        "version": "3.3.0",
-        "checksum": "df02c7bb679f6c2512171c51f266c2d9fed26908fe249a9f2912c44fbd7e8f44",
-        "checksum_algorithm": "sha256"
-      }
-    ],
     "instructions": [
       {
         "name": "git",
@@ -634,6 +583,57 @@
         "file": "prompts/workflow-check.prompt.md",
         "version": "20260513003",
         "checksum": "7eceb8d766731806efc16225c6e309cf42859f4bddf68e958d0ed79ff4d8f0a3",
+        "checksum_algorithm": "sha256"
+      }
+    ],
+    "hooks": [
+      {
+        "name": "agent-call-audit",
+        "file": "hooks/agent-call-audit.json",
+        "version": "3.5.2",
+        "checksum": "a03cc5df031670dd4902599048a9fc955a852862b2cb73408f5889ee74baa636",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "log-retention-cleanup",
+        "file": "hooks/log-retention-cleanup.json",
+        "version": "3.5.2",
+        "checksum": "2c3048637dc0f85b7196934b0f6c5a2ee9a21739b45bc7a529e2f5531f2b2609",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "post-commit-security-scan",
+        "file": "hooks/post-commit-security-scan.json",
+        "version": "3.5.2",
+        "checksum": "154305889deb5676a6b7d686400b14b4237687be130438d19843341addbdff8e",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "post-edit-format",
+        "file": "hooks/post-edit-format.json",
+        "version": "3.5.2",
+        "checksum": "5911a2fc0211b268749e5200db8d43eec953f456294c8cbc5556cea9ab11f875",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "post-edit-markdown-quality",
+        "file": "hooks/post-edit-markdown-quality.json",
+        "version": "3.5.2",
+        "checksum": "b8ef6b1805492a580902675ccd16564c693ec2ccf30fdb81d6b1d8dce610ab22",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "pre-tool-safety-gate",
+        "file": "hooks/pre-tool-safety-gate.json",
+        "version": "3.5.2",
+        "checksum": "1d55d6c9cee6137472e37c9e16febb5a96419fc0813c4c474af5a50ee03ee5a0",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "session-audit",
+        "file": "hooks/session-audit.json",
+        "version": "3.5.2",
+        "checksum": "0190aa65dfea26b2129ad8a5304377b2d40febf03779f561194e788bb8b27bfa",
         "checksum_algorithm": "sha256"
       }
     ]

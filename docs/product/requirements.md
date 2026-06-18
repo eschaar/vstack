@@ -117,15 +117,15 @@ ______________________________________________________________________
 
 ## non-functional requirements
 
-| ID    | Requirement                                                                                            |
-| ----- | ------------------------------------------------------------------------------------------------------ |
-| NFR-1 | One runtime dependency only: PyYAML (`pyyaml>=6.0`) for YAML frontmatter parsing.                      |
-| NFR-2 | Python 3.11–3.14 compatibility.                                                                        |
-| NFR-3 | Manifest writes are atomic: write to a temporary file, then replace atomically.                        |
-| NFR-4 | All public behavior exercised by automated tests (pytest). CI gate enforces test pass.                 |
-| NFR-5 | CLI operates standalone; no VS Code process required for `install`, `verify`, or `validate`.           |
-| NFR-6 | Lint (ruff) and type checking pass on every commit. CI gate enforces zero violations.                  |
-| NFR-7 | Generated output lives under `.github/` only; source templates under `_templates/` are never modified. |
+| ID    | Requirement                                                                                                                                                                                                                                                                                                           |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| NFR-1 | One runtime dependency only: PyYAML (`pyyaml>=6.0`) for YAML frontmatter parsing.                                                                                                                                                                                                                                     |
+| NFR-2 | Python 3.11–3.14 compatibility.                                                                                                                                                                                                                                                                                       |
+| NFR-3 | Manifest writes are atomic: write to a temporary file, then replace atomically.                                                                                                                                                                                                                                       |
+| NFR-4 | All public behavior exercised by automated tests (pytest). CI gate enforces test pass.                                                                                                                                                                                                                                |
+| NFR-5 | CLI operates standalone; no VS Code process required for `install`, `verify`, or `validate`.                                                                                                                                                                                                                          |
+| NFR-6 | Lint (ruff) and type checking pass on every commit. CI gate enforces zero violations.                                                                                                                                                                                                                                 |
+| NFR-7 | Generated output lives under `.github/` only; source templates under `_templates/` are never modified.                                                                                                                                                                                                                |
 | NFR-8 | macOS and Linux users can install via `brew install eschaar/vstack/vstack` without Python or pip awareness. The formula wraps the PyPI sdist in an isolated virtualenv. Formula updates are automated: triggered after each successful PyPI publish, with dual sha256 verification before the tap formula is updated. |
 
 ______________________________________________________________________

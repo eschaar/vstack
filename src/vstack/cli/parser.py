@@ -249,6 +249,14 @@ class CommandLineParser:
             action="store_true",
             help="Show what would be regenerated without writing files",
         )
+        parser.add_argument(
+            "--prune",
+            action="store_true",
+            help=(
+                "Remove safe obsolete tracked artifacts that are no longer generated. "
+                "Without this flag obsolete candidates are reported and preserved."
+            ),
+        )
 
     def _add_uninstall_command(self, sub: SubparserFactory) -> None:
         """Register the ``uninstall`` subcommand."""

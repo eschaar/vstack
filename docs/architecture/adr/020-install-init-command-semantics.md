@@ -54,13 +54,14 @@ location changes) and remains a separate, explicit command.
 
 ### conservative policy for `.github/` (inherited from ADR-015)
 
-| Flag                  | Behaviour                                                                      |
-| --------------------- | ------------------------------------------------------------------------------ |
-| _(default)_           | Skip untracked files; skip modified tracked files; replace clean tracked files |
-| `--force`             | Overwrite all target files                                                     |
-| `--force-name <name>` | Overwrite one named artifact                                                   |
-| `--adopt-name <name>` | Take ownership of an untracked file without overwriting                        |
-| `--update`            | Overwrite clean tracked files; skip locally modified files                     |
+| Flag                  | Behaviour                                                                                                                   |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| _(default)_           | Skip untracked files; skip modified tracked files; replace clean tracked files; report obsolete candidates without removing |
+| `--force`             | Overwrite all target files                                                                                                  |
+| `--force-name <name>` | Overwrite one named artifact                                                                                                |
+| `--adopt-name <name>` | Take ownership of an untracked file without overwriting                                                                     |
+| `--update`            | Overwrite clean tracked files; skip locally modified files                                                                  |
+| `--prune`             | Remove obsolete tracked artifacts that are clean (checksum matches manifest); preserve locally modified obsolete files      |
 
 ### additive policy for `.vstack/templates/` and `docs/`
 

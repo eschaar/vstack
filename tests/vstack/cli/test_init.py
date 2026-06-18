@@ -557,6 +557,7 @@ class TestInitCommand:
             action_counts={"install": 7, "update": 1},
             preserved_selectors=[],
             dry_run=False,
+            prune=False,
         )
         out = capsys.readouterr().out
         assert "Summary" in out
@@ -579,6 +580,7 @@ class TestInitCommand:
             action_counts={"install": 3, "preserve": 2},
             preserved_selectors=["agent/engineer", "skill/verify"],
             dry_run=False,
+            prune=False,
         )
         out = capsys.readouterr().out
         assert "Summary" in out
@@ -604,6 +606,7 @@ class TestInitCommand:
             action_counts={"install": 1, "preserve": 1},
             preserved_selectors=["agent/engineer"],
             dry_run=False,
+            prune=False,
         )
         out = capsys.readouterr().out
         assert "1 file preserved" in out
@@ -619,6 +622,7 @@ class TestInitCommand:
             action_counts={"install": 10},
             preserved_selectors=[],
             dry_run=True,
+            prune=False,
         )
         out = capsys.readouterr().out
         assert "Summary (dry-run)" in out
@@ -636,10 +640,28 @@ class TestInitCommand:
             action_counts={"install": 2, "skip": 3, "adopt": 1},
             preserved_selectors=[],
             dry_run=False,
+            prune=False,
         )
         out = capsys.readouterr().out
         assert "skipped" in out and ": 3" in out
         assert "adopted" in out and ": 1" in out
+
+    def test_print_summary_reports_obsolete_guidance_when_not_pruning(
+        self,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Obsolete candidates are reported with guidance when --prune is not used."""
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="", CYAN="")
+        InitCommand._print_summary(
+            colors=colors,
+            action_counts={"install": 1, "obsolete": 2},
+            preserved_selectors=[],
+            dry_run=False,
+            prune=False,
+        )
+        out = capsys.readouterr().out
+        assert "obsolete" in out and ": 2" in out
+        assert "vstack init --prune" in out
 
     # ------------------------------------------------------------------
     # _install_single_artifact — return value
@@ -767,7 +789,12 @@ class TestInitCommand:
 
         context = CommandContext(
             args=Namespace(
-                force=True, force_names=["a"], adopt_name=["b"], update=True, dry_run=True
+                force=True,
+                force_names=["a"],
+                adopt_name=["b"],
+                update=True,
+                prune=True,
+                dry_run=True,
             ),
             install_dir=tmp_path,
             only=["skill"],
@@ -779,6 +806,7 @@ class TestInitCommand:
         assert captured["kwargs"]["force_names"] == ["a"]
         assert captured["kwargs"]["adopt_names"] == ["b"]
         assert captured["kwargs"]["update"] is True
+        assert captured["kwargs"]["prune"] is True
         assert captured["kwargs"]["dry_run"] is True
         assert captured["kwargs"]["only"] == ["skill"]
 
@@ -806,7 +834,12 @@ class TestInitCommand:
 
         context = CommandContext(
             args=Namespace(
-                force=False, force_names=None, adopt_name=None, update=False, dry_run=False
+                force=False,
+                force_names=None,
+                adopt_name=None,
+                update=False,
+                prune=False,
+                dry_run=False,
             ),
             install_dir=tmp_path,
             only=None,
@@ -871,7 +904,7 @@ class TestInitCommand:
         )
         monkeypatch.setattr(
             "vstack.cli.init.InitCommand._load_existing_manifest",
-            staticmethod(lambda **_kwargs: (object(), object(), {}, {})),
+            staticmethod(lambda **_kwargs: (object(), None, {}, {})),
         )
 
         result = InitCommand.execute(
@@ -885,6 +918,324 @@ class TestInitCommand:
         assert "k8s" in install_single_calls
         out = capsys.readouterr().out
         assert "excluded by config" in out
+
+    def test_obsolete_candidates_uses_missing_names_from_selected_families(self) -> None:
+        """Candidates include tracked selected-family entries missing from regenerated output."""
+        from vstack.manifest import ArtifactEntry, Manifest
+
+        existing_manifest = Manifest(
+            vstack_version="3.5.2",
+            installed_at="2026-06-18T00:00:00+00:00",
+            artifacts={
+                "skills": [
+                    ArtifactEntry(name="verify", file="skills/verify/SKILL.md"),
+                    ArtifactEntry(name="legacy", file="skills/legacy/SKILL.md"),
+                ]
+            },
+        )
+        new_entries = {"skills": [ArtifactEntry(name="verify", file="skills/verify/SKILL.md")]}
+
+        obsolete = InitCommand._obsolete_candidates(
+            existing_manifest=existing_manifest,
+            selected_manifest_keys={"skills"},
+            new_entries=new_entries,
+        )
+
+        assert len(obsolete) == 1
+        assert obsolete[0][0] == "skills"
+        assert obsolete[0][1].name == "legacy"
+
+    def test_process_obsolete_entry_report_only_preserves_manifest_entry(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """Report-only mode keeps obsolete entry tracked for future prune runs."""
+        from vstack.manifest import ArtifactEntry
+
+        new_entries: dict[str, list[Any]] = {}
+        entry = ArtifactEntry(name="legacy", file="skills/legacy/SKILL.md")
+
+        action, was_preserved = InitCommand._process_obsolete_entry(
+            install_dir=tmp_path,
+            manifest_key="skills",
+            type_name="skill",
+            entry=entry,
+            prune=False,
+            dry_run=False,
+            colors=SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD=""),
+            prefix="",
+            new_entries=new_entries,
+        )
+
+        assert action == "obsolete"
+        assert was_preserved is False
+        assert "skills" in new_entries
+        assert len(new_entries["skills"]) == 1
+
+    def test_process_obsolete_entry_prunes_when_checksum_matches(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """Prune mode removes obsolete tracked files when content is unchanged."""
+        from vstack.manifest import ArtifactEntry
+
+        install_dir = tmp_path / ".github"
+        out_file = install_dir / "skills" / "legacy" / "SKILL.md"
+        out_file.parent.mkdir(parents=True)
+        content = "legacy\n"
+        out_file.write_text(content, encoding="utf-8")
+        entry = ArtifactEntry(
+            name="legacy",
+            file="skills/legacy/SKILL.md",
+            checksum=content_hash(content),
+            checksum_algorithm="sha256",
+        )
+        new_entries: dict[str, list[Any]] = {}
+
+        action, was_preserved = InitCommand._process_obsolete_entry(
+            install_dir=install_dir,
+            manifest_key="skills",
+            type_name="skill",
+            entry=entry,
+            prune=True,
+            dry_run=False,
+            colors=SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD=""),
+            prefix="",
+            new_entries=new_entries,
+        )
+
+        assert action == "prune"
+        assert was_preserved is False
+        assert not out_file.exists()
+        assert new_entries == {}
+
+    def test_process_obsolete_entry_prune_preserves_when_locally_modified(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """Prune mode preserves obsolete files with checksum drift."""
+        from vstack.manifest import ArtifactEntry
+
+        install_dir = tmp_path / ".github"
+        out_file = install_dir / "skills" / "legacy" / "SKILL.md"
+        out_file.parent.mkdir(parents=True)
+        out_file.write_text("local edit\n", encoding="utf-8")
+        entry = ArtifactEntry(
+            name="legacy",
+            file="skills/legacy/SKILL.md",
+            checksum=content_hash("generated\n"),
+            checksum_algorithm="sha256",
+        )
+        new_entries: dict[str, list[Any]] = {}
+
+        action, was_preserved = InitCommand._process_obsolete_entry(
+            install_dir=install_dir,
+            manifest_key="skills",
+            type_name="skill",
+            entry=entry,
+            prune=True,
+            dry_run=False,
+            colors=SimpleNamespace(CYAN="", RESET="", DIM="", YELLOW="", GREEN="", BOLD=""),
+            prefix="",
+            new_entries=new_entries,
+        )
+
+        assert action == "preserve"
+        assert was_preserved is True
+        assert out_file.exists()
+        assert "skills" in new_entries
+        assert len(new_entries["skills"]) == 1
+
+    def test_can_prune_obsolete_entry_true_when_file_is_missing(self, tmp_path: Path) -> None:
+        """Missing files are safe prune targets and treated as already removed."""
+        from vstack.manifest import ArtifactEntry
+
+        entry = ArtifactEntry(
+            name="legacy",
+            file="skills/legacy/SKILL.md",
+            checksum=content_hash("x"),
+            checksum_algorithm="sha256",
+        )
+        removable, reason = InitCommand._can_prune_obsolete_entry(install_dir=tmp_path, entry=entry)
+        assert removable is True
+        assert reason == "file already missing"
+
+    def test_can_prune_obsolete_entry_false_when_checksum_missing(self, tmp_path: Path) -> None:
+        """Tracked obsolete files without checksum metadata are preserved."""
+        from vstack.manifest import ArtifactEntry
+
+        out_file = tmp_path / "skills" / "legacy" / "SKILL.md"
+        out_file.parent.mkdir(parents=True)
+        out_file.write_text("legacy\n", encoding="utf-8")
+        entry = ArtifactEntry(name="legacy", file="skills/legacy/SKILL.md")
+
+        removable, reason = InitCommand._can_prune_obsolete_entry(install_dir=tmp_path, entry=entry)
+        assert removable is False
+        assert reason == "tracked file has no stored checksum"
+
+    def test_can_prune_obsolete_entry_false_when_file_is_unreadable(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        tmp_path: Path,
+    ) -> None:
+        """Unreadable files are preserved instead of pruned."""
+        from vstack.manifest import ArtifactEntry
+
+        out_file = tmp_path / "skills" / "legacy" / "SKILL.md"
+        out_file.parent.mkdir(parents=True)
+        out_file.write_text("legacy\n", encoding="utf-8")
+        entry = ArtifactEntry(
+            name="legacy",
+            file="skills/legacy/SKILL.md",
+            checksum=content_hash("legacy\n"),
+            checksum_algorithm="sha256",
+        )
+
+        def _raise_read_text(self: Path, *, encoding: str = "utf-8") -> str:
+            del self, encoding
+            raise OSError("unreadable")
+
+        monkeypatch.setattr(Path, "read_text", _raise_read_text)
+
+        removable, reason = InitCommand._can_prune_obsolete_entry(install_dir=tmp_path, entry=entry)
+        assert removable is False
+        assert reason == "file is unreadable"
+
+    def test_can_prune_obsolete_entry_false_for_unknown_checksum_algorithm(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """Unknown checksum algorithms are treated as unsafe for prune."""
+        from vstack.manifest import ArtifactEntry
+
+        out_file = tmp_path / "skills" / "legacy" / "SKILL.md"
+        out_file.parent.mkdir(parents=True)
+        out_file.write_text("legacy\n", encoding="utf-8")
+        entry = ArtifactEntry(
+            name="legacy",
+            file="skills/legacy/SKILL.md",
+            checksum="abc123",
+            checksum_algorithm="sha999",
+        )
+
+        removable, reason = InitCommand._can_prune_obsolete_entry(install_dir=tmp_path, entry=entry)
+        assert removable is False
+        assert reason == "unknown checksum algorithm"
+
+    def test_remove_file_if_present_dry_run_keeps_file(self, tmp_path: Path) -> None:
+        """Dry-run remove helper should not delete files."""
+        out_file = tmp_path / "skills" / "legacy" / "SKILL.md"
+        out_file.parent.mkdir(parents=True)
+        out_file.write_text("legacy\n", encoding="utf-8")
+
+        InitCommand._remove_file_if_present(out_file=out_file, dry_run=True)
+        assert out_file.exists()
+
+    def test_remove_file_if_present_ignores_parent_rmdir_error(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        tmp_path: Path,
+    ) -> None:
+        """Parent cleanup failures are swallowed after file deletion."""
+        out_file = tmp_path / "skills" / "legacy" / "SKILL.md"
+        out_file.parent.mkdir(parents=True)
+        out_file.write_text("legacy\n", encoding="utf-8")
+
+        def _raise_rmdir(self: Path) -> None:
+            del self
+            raise OSError("rmdir blocked")
+
+        monkeypatch.setattr(Path, "rmdir", _raise_rmdir)
+
+        InitCommand._remove_file_if_present(out_file=out_file, dry_run=False)
+        assert not out_file.exists()
+
+    def test_execute_tracks_obsolete_and_prune_summary_counts(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        tmp_path: Path,
+    ) -> None:
+        """execute() increments obsolete/prune/preserve counters from obsolete processing."""
+        from vstack.manifest import ArtifactEntry
+
+        summary_calls: list[dict[str, Any]] = []
+
+        monkeypatch.setattr(
+            "vstack.cli.init.InitCommand._write_manifest",
+            staticmethod(lambda **_kwargs: None),
+        )
+
+        def _fake_summary(**kwargs):
+            summary_calls.append(kwargs)
+
+        monkeypatch.setattr(
+            "vstack.cli.init.InitCommand._print_summary",
+            staticmethod(_fake_summary),
+        )
+
+        class _FakeGen:
+            config = SimpleNamespace(
+                type_name="skill",
+                manifest_key="skills",
+                output_subdir="skills",
+            )
+
+            @staticmethod
+            def render_all():
+                return []
+
+            @staticmethod
+            def verify_input():
+                return SimpleNamespace(messages=[])
+
+        service = cast(
+            CommandService,
+            SimpleNamespace(
+                generators=[_FakeGen()],
+                label=lambda path: str(path),
+                manifest_for=lambda _: SimpleNamespace(read=lambda: None, read_error=None),
+            ),
+        )
+
+        monkeypatch.setattr(
+            "vstack.cli.init.InitCommand._load_existing_manifest",
+            staticmethod(lambda **_kwargs: (object(), None, {}, {})),
+        )
+
+        obsolete_entries = [
+            (
+                "skills",
+                ArtifactEntry(name="legacy-one", file="skills/legacy-one/SKILL.md"),
+            ),
+            (
+                "skills",
+                ArtifactEntry(name="legacy-two", file="skills/legacy-two/SKILL.md"),
+            ),
+        ]
+        monkeypatch.setattr(
+            "vstack.cli.init.InitCommand._obsolete_candidates",
+            staticmethod(lambda **_kwargs: obsolete_entries),
+        )
+
+        process_actions = iter([("prune", False), ("preserve", True)])
+
+        def _fake_process(**_kwargs):
+            return next(process_actions)
+
+        monkeypatch.setattr(
+            "vstack.cli.init.InitCommand._process_obsolete_entry",
+            staticmethod(_fake_process),
+        )
+
+        result = InitCommand.execute(service, tmp_path, prune=True)
+
+        assert result == 0
+        assert len(summary_calls) == 1
+        action_counts = summary_calls[0]["action_counts"]
+        assert action_counts["obsolete"] == 2
+        assert action_counts["prune"] == 1
+        assert action_counts["preserve"] == 1
+        assert summary_calls[0]["preserved_selectors"] == ["skill/legacy-two"]
 
 
 class TestWarnUnknownWorkflowRoles:
