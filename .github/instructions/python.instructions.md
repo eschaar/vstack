@@ -42,4 +42,4 @@ Use these Python conventions.
 1. Do not silence lint/type errors unless there is a documented, task-specific reason.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"python","artifact_type":"instruction","artifact_version":"20260421002","generator":"vstack","vstack_version":"3.5.1"} -->
+<!-- VSTACK-META: {"artifact_name":"python","artifact_type":"instruction","artifact_version":"20260421002","generator":"vstack","vstack_version":"3.5.2"} -->

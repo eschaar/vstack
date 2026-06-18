@@ -6,7 +6,7 @@ compatibility: 'Requires a skills-compatible agent with repository file access a
 metadata:
   owner: vstack
   maturity: stable
-allowed-tools: 'read search web vscode'
+allowed-tools: 'execute read search web vscode'
 argument-hint: '[question about code, architecture, behavior, or workflow]'
 user-invocable: true
 disable-model-invocation: false
@@ -124,4 +124,4 @@ Use this format:
 - If it requires risk/impact comparison, hand off to `analyse`.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"ask","artifact_type":"skill","artifact_version":"20260611001","generator":"vstack","vstack_version":"3.5.1"} -->
+<!-- VSTACK-META: {"artifact_name":"ask","artifact_type":"skill","artifact_version":"20260618001","generator":"vstack","vstack_version":"3.5.2"} -->

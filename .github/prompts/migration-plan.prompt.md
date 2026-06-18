@@ -42,4 +42,4 @@ For each phase:
 - success criteria
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"migration-plan","artifact_type":"prompt","artifact_version":"20260513010","generator":"vstack","vstack_version":"3.5.1"} -->
+<!-- VSTACK-META: {"artifact_name":"migration-plan","artifact_type":"prompt","artifact_version":"20260513010","generator":"vstack","vstack_version":"3.5.2"} -->

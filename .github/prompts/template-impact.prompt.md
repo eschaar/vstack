@@ -42,4 +42,4 @@ List highest-risk regressions first.
 - expected pass criteria
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"template-impact","artifact_type":"prompt","artifact_version":"20260513005","generator":"vstack","vstack_version":"3.5.1"} -->
+<!-- VSTACK-META: {"artifact_name":"template-impact","artifact_type":"prompt","artifact_version":"20260513005","generator":"vstack","vstack_version":"3.5.2"} -->

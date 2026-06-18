@@ -43,4 +43,4 @@ Use these testing conventions.
 1. Treat flaky tests as bugs.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"testing","artifact_type":"instruction","artifact_version":"20260502004","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"testing","artifact_type":"instruction","artifact_version":"20260502004","generator":"vstack","vstack_version":"<vstack-version>"} -->

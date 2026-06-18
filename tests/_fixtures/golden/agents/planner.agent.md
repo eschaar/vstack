@@ -324,4 +324,4 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 - `@#analyse` - assess stage impact, skip rationale, and trade-offs
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"planner","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"planner","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"<vstack-version>"} -->

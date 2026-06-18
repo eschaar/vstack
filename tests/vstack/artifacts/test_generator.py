@@ -27,7 +27,7 @@ class TestGenericArtifactGenerator:
         r"(?P<prefix><!--\s*VSTACK-META:\s*)(?P<payload>\{.*?\})(?P<suffix>\s*-->)"
     )
     _VSTACK_VERSION_FIELD_RE = re.compile(r'("vstack_version"\s*:\s*")[^"]*(")')
-    _NORMALIZED_VSTACK_VERSION = "<normalized-vstack-version>"
+    _NORMALIZED_VSTACK_VERSION = "<vstack-version>"
 
     @classmethod
     def _normalize_vstack_version_in_meta_comment(cls, content: str) -> str:

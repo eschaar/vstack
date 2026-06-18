@@ -1,11 +1,11 @@
 name: ask
-version: 20260611001
+version: 20260618001
 description: |
   Read-only technical Q&A for the current codebase. Clarifies ambiguous
   questions, gathers evidence from code and docs, and returns concise,
   referenced answers without making any changes. Use for "how does this work",
   "where is X", "why might this fail", and "what should we do" guidance.
-allowed-tools: 'read search web vscode'
+allowed-tools: 'execute read search web vscode'
 argument-hint: '[question about code, architecture, behavior, or workflow]'
 
 license: MIT
