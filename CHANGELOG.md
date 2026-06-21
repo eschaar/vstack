@@ -2,6 +2,54 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.6.0](https://github.com/eschaar/vstack/compare/3.5.2...3.6.0) (2026-06-21)
+
+
+### Features
+
+* **init:** add safe obsolete prune flow and stabilize hook checksum output ([34818b0](https://github.com/eschaar/vstack/commit/34818b075f634d149004876d5a01d5ee18e8f36b))
+* **planner:** add ask/explore quick-review workflow ([416fa8b](https://github.com/eschaar/vstack/commit/416fa8b2f22e2c4ca109a794cc69e5a07329382d))
+* **planner:** add collaborative plan orchestration state ([f6d45c6](https://github.com/eschaar/vstack/commit/f6d45c6e4367a770b6ec582dd070e89f0cd31dd1))
+* **skills:** add ask skill and upgrade explore workflow ([6525ba7](https://github.com/eschaar/vstack/commit/6525ba7f0d9b5cd4e20aa8236d3a5d6539b1c7fd))
+
+
+### Fixes
+
+* **artifacts:** sync generated artifacts and fixtures ([cda0b4c](https://github.com/eschaar/vstack/commit/cda0b4c1d301889c19d6514e9db1b8eca42e1ef2))
+
+
+### Refactoring
+
+* **prompt:** rename code-review prompt to quick-review ([7d753d8](https://github.com/eschaar/vstack/commit/7d753d8e257f5166d460728679ce527733c5d879))
+* **templates:** trim prompt/instruction text and regenerate install artifacts ([89cad70](https://github.com/eschaar/vstack/commit/89cad709940c5f1a24766ac521f1b0a596cfa2cc))
+
+
+### Documentation
+
+* **roadmap:** refresh status for skills, DAG, prompts, and global scope ([f8db002](https://github.com/eschaar/vstack/commit/f8db002979e01d4d33a1f063a3ad71aed77d20a5))
+
+
+### Maintenance
+
+* **agents:** drop pinned model defaults ([1c04e07](https://github.com/eschaar/vstack/commit/1c04e074ab5c11beff0cf761c2a5f508b7be8b1c))
+* **ci:** bump actions/checkout from 6.0.3 to 7.0.0 ([cf84ed6](https://github.com/eschaar/vstack/commit/cf84ed6446a42ce745d5d4a3bb9c4f0e12641919))
+* **ci:** bump actions/checkout from 6.0.3 to 7.0.0 ([#78](https://github.com/eschaar/vstack/issues/78)) ([2dc3233](https://github.com/eschaar/vstack/commit/2dc3233453c475de73c9e6bf4289fb79dc010e48))
+* **ci:** bump trufflesecurity/trufflehog from 3.95.5 to 3.95.6 in the gha-patch-minor group ([#77](https://github.com/eschaar/vstack/issues/77)) ([d4481f7](https://github.com/eschaar/vstack/commit/d4481f72f4eb21381d9d2175e9ad42b5c25d8bd9))
+* **ci:** bump trufflesecurity/trufflehog in the gha-patch-minor group ([bc486cf](https://github.com/eschaar/vstack/commit/bc486cf36e6e189872797a51ef711ff85e1efe1d))
+* **deps:** bump pytest from 9.1.0 to 9.1.1 in the pip-patch-minor group across 1 directory ([#80](https://github.com/eschaar/vstack/issues/80)) ([02991c1](https://github.com/eschaar/vstack/commit/02991c1156d5dac2f167603b02d1351b53cce931))
+* **deps:** bump pytest in the pip-patch-minor group across 1 directory ([b05cd26](https://github.com/eschaar/vstack/commit/b05cd2637997feec210f1ff94807b1a3af548b34))
+* **deps:** consistent  pyyaml version ([1d47155](https://github.com/eschaar/vstack/commit/1d47155a4eccbd01e8f7c1ebd582a75e12c498bd))
+* **deps:** update locked dev dependencies ([242c62b](https://github.com/eschaar/vstack/commit/242c62b2286c89fec3514f14bc8087b0153e1e00))
+* **docs:** classify prompt scope and generalize space-setup wording ([0ed162e](https://github.com/eschaar/vstack/commit/0ed162ed19c41eba663ab07da7529a407ebad619))
+* **docs:** updated the roadmap ([d0e22d5](https://github.com/eschaar/vstack/commit/d0e22d54cf1dddc2a81ea210fd14d085e1d0f0ad))
+* **prompt:** add quick-review generated artifact ([9ac44d8](https://github.com/eschaar/vstack/commit/9ac44d8864b7925ae26c82c7bc9930baec9acfc7))
+* **prompts:** drop pinned model defaults ([5d7a9cb](https://github.com/eschaar/vstack/commit/5d7a9cb445c6efeddcb53f0d06195a153f38755b))
+
+
+### Tests
+
+* **fixtures:** align golden expectations after template and prompt updates ([e9993d2](https://github.com/eschaar/vstack/commit/e9993d21b35c8acd011a39425e78056562f3c87b))
+
 ## [3.5.2](https://github.com/eschaar/vstack/compare/3.5.1...3.5.2) (2026-06-09)
 
 ### Maintenance
