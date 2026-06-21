@@ -3,21 +3,20 @@ description: 'Check source templates against generated artifacts and identify dr
 name: artifact-integrity
 argument-hint: '[artifact type, path, or full repo]'
 agent: tester
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
 ---
-Check source templates against generated artifacts and identify drift or missing regeneration.
+Check source templates against generated artifacts and identify drift.
 
-Compare `src/vstack/_templates/` sources against their installed counterparts in `.github/`
-and the manifest at `.vstack/vstack.json`. Surface any mismatch, stale output, or gap.
+Compare `src/vstack/_templates/` sources with installed artifacts in `.github/`
+and the manifest at `.vstack/vstack.json`. Surface mismatches, stale output, or gaps.
 
 Output exactly in this format:
 
 ## Drift Findings
 
-List every source-to-artifact mismatch detected.
+List all source-to-artifact mismatches.
 
 For each item:
 
@@ -28,7 +27,7 @@ For each item:
 
 ## Regeneration Actions
 
-List the exact commands needed to bring generated artifacts back into sync.
+List exact commands needed to bring generated artifacts back into sync.
 
 For each action:
 
@@ -38,7 +37,7 @@ For each action:
 
 ## Risk If Unfixed
 
-Describe the production risk if drift is left unresolved.
+Describe production risk if drift is left unresolved.
 
 For each drift item from above:
 
@@ -47,7 +46,7 @@ For each drift item from above:
 
 ## Verification Steps
 
-Provide a checklist to confirm the repository is back in a clean state after regeneration.
+Provide a checklist to confirm the repository is clean after regeneration.
 
 - [ ] `python3 -m vstack install` completes without errors
 - [ ] `vstack validate` reports no unresolved template tokens
@@ -56,4 +55,4 @@ Provide a checklist to confirm the repository is back in a clean state after reg
 - [ ] All regenerated files match their source checksums in `.vstack/vstack.json`
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"artifact-integrity","artifact_type":"prompt","artifact_version":"20260513002","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"artifact-integrity","artifact_type":"prompt","artifact_version":"20260513002","generator":"vstack","vstack_version":"3.5.2"} -->

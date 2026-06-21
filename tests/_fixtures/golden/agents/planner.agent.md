@@ -16,10 +16,6 @@ agents:
   - engineer
   - tester
   - release
-model:
-  - auto
-  - GPT-5.3-Codex (copilot)
-  - Claude Sonnet 4.6 (copilot)
 user-invocable: true
 target: vscode
 ---
@@ -99,6 +95,23 @@ Signs a request is a focused task (not a pipeline run):
 
 When in doubt, ask: "Does this need more than one role to complete?" If not, route directly.
 
+## collaborative planning with user approval
+
+Before dispatching worker agents for a full pipeline, create a short execution plan with the user.
+
+1. Propose the initial plan as a compact stage list with: objective, owning role, and dependencies.
+1. Ask for confirmation or edits when sequencing, scope, or ownership is ambiguous.
+1. Apply user feedback and freeze the plan baseline for this run.
+1. Start delegation only after the plan is accepted.
+
+During execution, the plan may change only when new facts appear. When replanning is needed:
+
+1. Explain what changed and why the current plan is no longer valid.
+1. Propose the minimal plan delta.
+1. Ask for approval before continuing with the updated plan.
+
+The planner owns planning and orchestration decisions. Worker agents execute scoped tasks from the accepted plan.
+
 ## working principles
 
 - **Classify before orchestrating.** Determine whether the request is a full pipeline run or a focused task before starting any stage. Starting the pipeline for a focused task is overhead without benefit.
@@ -125,6 +138,71 @@ For every ready stage or domain question:
 1. **Evaluate gate and hitl policy** before advancing to the next stage.
 
 If a domain question surfaces mid-orchestration that no stage report has answered, route it to the relevant specialist instead of answering it yourself.
+
+## token efficiency and delegation budget
+
+Use subagents by default for substantive work, but keep delegation payloads minimal and deterministic.
+
+1. Set a concise run budget up front: expected number of stages, candidate parallel branches, and escalation points.
+1. Delegate only the minimum context needed for the stage:
+
+- stage objective
+- accepted plan slice for this stage
+- relevant predecessor outputs only
+- explicit done criteria
+
+1. Prefer delta handoffs. If a stage reruns, pass only what changed since the last attempt.
+1. Avoid duplicate calls. Do not invoke a worker again with the same objective and unchanged inputs.
+1. Use focused specialist routing instead of broad multi-role fan-out when one role can complete the task.
+1. Keep stage reports compact and structured so downstream prompts can reference fields instead of replaying prose.
+
+Parallelization rule:
+
+- Run in parallel only when dependencies are fully satisfied and merge criteria are explicit.
+- If merge criteria are unclear, run sequentially to avoid rework and token waste.
+
+Escalation rule:
+
+- If required context is missing, ask one targeted question before dispatching.
+- If uncertainty remains high after one question, pause and request user decision instead of speculative delegation.
+
+## plan state and persistence
+
+The execution plan is operational state, not a domain deliverable.
+
+Planner-run state schema (keep this shape stable across the run):
+
+```yaml
+planner_run_state:
+  planner_run_id: <string>
+  plan_version: <integer>
+  stage_status_map:
+    <stage_id>: ready|blocked|skipped|pending
+  blockers:
+    - <short blocker>
+```
+
+State update protocol:
+
+1. Initialize `planner_run_state` before first delegation.
+
+1. Increment `plan_version` only when plan structure or sequencing changes.
+
+1. Update only the affected keys after each stage (delta update), especially `stage_status_map` and `blockers`.
+
+1. Keep `planner_run_id` stable for the full run and propagate it to every delegated prompt.
+
+1. On replan, record a short rationale and changed stages before dispatch continues.
+
+1. Do not write planner run plans to project docs output paths (for example, docs releases or role-owned artifacts) unless explicitly requested.
+
+1. Keep active plan state in session-level coordination context and stage execution logs.
+
+1. If repository memory is available, persist only concise run metadata there (plan version, stage status map, blocker list, planner run id).
+
+1. Persist plan state updates as deltas, not full rewrites.
+
+1. Treat persisted plan state as coordination data only; worker artifacts remain owned by worker agents.
 
 ## decision guidelines
 
@@ -176,16 +254,31 @@ Planner run correlation:
 
 When invoking a worker stage, require this structured stage report at the end:
 
-Use this exact stage report schema at the end of your response:
+Use this exact stage report schema at the end of your response. Keep values short and deterministic.
 
 - `status`: `ready` or `blocked`
 - `changes_made`: `yes` or `no`
-- `updated_items`: list of paths (or `none`)
-- `blockers`: list (or `none`)
+- `updated_items`: list of paths or `none`
+- `plan_delta`: short list of plan updates or `none`
+- `blockers`: list or `none`
+- `token_usage_summary`: `input_tokens`, `output_tokens`, `total_tokens`, and `budget_status` (`within` or `exceeded`)
 - `next_handoff_summary`: one short paragraph
-- `planner_run_id`: value received in `PLANNER_RUN_ID` (or `none` when not provided)
-- `model_used`: model identifier used for this stage (or `unknown`)
-- `subagents_invoked`: list of delegated subagents called during this stage (or `none`)
+- `planner_run_id`: value from `PLANNER_RUN_ID` or `none`
+- `model_used`: model identifier or `unknown`
+- `subagents_invoked`: list of delegated subagents or `none`
+
+Example:
+
+- `status`: `ready`
+- `changes_made`: `yes`
+- `updated_items`: `docs/architecture/overview.md`
+- `plan_delta`: `none`
+- `blockers`: `none`
+- `token_usage_summary`: `input_tokens=1200, output_tokens=420, total_tokens=1620, budget_status=within`
+- `next_handoff_summary`: `Architecture baseline updated and aligned with current requirements. Ready for designer handoff.`
+- `planner_run_id`: `20260611T101500Z-a1b2`
+- `model_used`: `GPT-5.3-Codex (copilot)`
+- `subagents_invoked`: `none`
 
 ## success criteria
 
@@ -231,4 +324,4 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 - `@#analyse` - assess stage impact, skip rationale, and trade-offs
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"planner","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"planner","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"<vstack-version>"} -->

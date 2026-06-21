@@ -115,6 +115,19 @@ class TestBuildParser:
         assert args.command == "install"
         assert args.adopt_name == ["vision"]
 
+    def test_init_accepts_prune(self) -> None:
+        """Test that init supports obsolete cleanup via --prune."""
+        parser = parser_module.CommandLineParser().build()
+        args = parser.parse_args(["init", "--prune", "--target", "."])
+        assert args.command == "init"
+        assert args.prune is True
+
+    def test_install_rejects_prune(self) -> None:
+        """Test that --prune is init-only and rejected on install."""
+        parser = parser_module.CommandLineParser().build()
+        with pytest.raises(SystemExit):
+            parser.parse_args(["install", "--prune", "--target", "."])
+
     def test_status_accepts_only_filter(self) -> None:
         """Test that status supports --only type filters."""
         parser = parser_module.CommandLineParser().build()

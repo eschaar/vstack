@@ -9,14 +9,14 @@ ______________________________________________________________________
 
 ## Verdict
 
-| Category                             | Findings                                    | Blocking                                 |
-| ------------------------------------ | ------------------------------------------- | ---------------------------------------- |
-| Static analysis (bandit)             | 1 LOW                                       | No — informational; import advisory only |
-| Dependency CVEs                      | 0 known CVEs in current local env           | No                                       |
-| Secrets in source                    | None                                        | —                                        |
-| Injection risk                       | None identified                             | —                                        |
-| Auth / access control                | N/A (local CLI, no network)                 | —                                        |
-| CI/CD workflow (publish-homebrew)    | See W-001 – W-004 below                     | No — all informational or design notes   |
+| Category                          | Findings                          | Blocking                                 |
+| --------------------------------- | --------------------------------- | ---------------------------------------- |
+| Static analysis (bandit)          | 1 LOW                             | No — informational; import advisory only |
+| Dependency CVEs                   | 0 known CVEs in current local env | No                                       |
+| Secrets in source                 | None                              | —                                        |
+| Injection risk                    | None identified                   | —                                        |
+| Auth / access control             | N/A (local CLI, no network)       | —                                        |
+| CI/CD workflow (publish-homebrew) | See W-001 – W-004 below           | No — all informational or design notes   |
 
 > **Ship readiness: PASS** — no blocking security findings; workflow security controls verified.
 
@@ -142,16 +142,16 @@ ______________________________________________________________________
 
 ## Summary of Advisory Items
 
-| ID    | Severity      | Location / package                  | Action                                                                                                  |
-| ----- | ------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| S-001 | LOW           | `src/vstack/constants.py`           | Keep B404 import advisory documented; no unsafe subprocess use                                          |
-| S-002 | LOW           | `pip`, `urllib3` (dev env)          | **Resolved** by upgrading to `pip 26.1.1` and `urllib3 2.7.0`                                           |
-| W-001 | PASS          | `publish-homebrew` feature flag     | Committed as `false`; enabled by explicit maintainer change only                                        |
-| W-002 | PASS          | `publish-homebrew` actor check      | Mirrors `publish` job guard; no change needed                                                           |
-| W-003 | PASS          | `publish-homebrew` sdist checksum   | Double-pinned: PyPI API vs downloaded tarball; formula embeds verified sha256                           |
-| W-004 | INFORMATIONAL | `publish-homebrew` dispatch signing | Configure `HOMEBREW_TAP_DISPATCH_SECRET` and enforce verification in tap repo before enabling the flag  |
-| W-005 | PASS          | `publish-homebrew` curl dispatch    | No shell injection; JSON built via Python, passed as file to curl                                       |
-| W-006 | PASS          | `publish-homebrew` token handling   | Token consumed from `secrets.*`; GitHub Actions masks it in logs                                        |
+| ID    | Severity      | Location / package                  | Action                                                                                                 |
+| ----- | ------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| S-001 | LOW           | `src/vstack/constants.py`           | Keep B404 import advisory documented; no unsafe subprocess use                                         |
+| S-002 | LOW           | `pip`, `urllib3` (dev env)          | **Resolved** by upgrading to `pip 26.1.1` and `urllib3 2.7.0`                                          |
+| W-001 | PASS          | `publish-homebrew` feature flag     | Committed as `false`; enabled by explicit maintainer change only                                       |
+| W-002 | PASS          | `publish-homebrew` actor check      | Mirrors `publish` job guard; no change needed                                                          |
+| W-003 | PASS          | `publish-homebrew` sdist checksum   | Double-pinned: PyPI API vs downloaded tarball; formula embeds verified sha256                          |
+| W-004 | INFORMATIONAL | `publish-homebrew` dispatch signing | Configure `HOMEBREW_TAP_DISPATCH_SECRET` and enforce verification in tap repo before enabling the flag |
+| W-005 | PASS          | `publish-homebrew` curl dispatch    | No shell injection; JSON built via Python, passed as file to curl                                      |
+| W-006 | PASS          | `publish-homebrew` token handling   | Token consumed from `secrets.*`; GitHub Actions masks it in logs                                       |
 
 No remaining dependency CVEs were detected in the audited local environment. No security item blocks release.
 

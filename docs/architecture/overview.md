@@ -187,16 +187,16 @@ ______________________________________________________________________
 
 These bind architecture decisions. Full list in `docs/product/requirements.md`.
 
-| ID    | Requirement                                                                       | Architectural binding                                      |
-| ----- | --------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| NFR-1 | No external binary dependencies in skill template content                         | ADR-006; one pip dependency (`pyyaml`) allowed per ADR-025 |
-| NFR-2 | Python 3.11–3.14 compatibility                                                    | ADR-007                                                    |
-| NFR-3 | Manifest writes are atomic                                                        | ADR-016                                                    |
-| NFR-4 | All public behavior covered by automated tests; CI enforces test pass             | `tests/` structure, `verify.yml` workflow                  |
-| NFR-5 | CLI operates standalone; no VS Code process required for CLI operations           | ADR-006; only `pyyaml` required at runtime (ADR-025)       |
-| NFR-6 | Lint and type checking pass on every commit; CI gate enforces zero violations     | `pyproject.toml` ruff + mypy config                        |
-| NFR-7 | Generated output lives under `.github/` only; templates never modified at runtime | ADR-012                                                    |
-| NFR-8 | Homebrew formula updates require dual SHA-256 verification (PyPI metadata vs downloaded tarball); pre-release tags are excluded from Homebrew publish | ADR-030 |
+| ID    | Requirement                                                                                                                                           | Architectural binding                                      |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| NFR-1 | No external binary dependencies in skill template content                                                                                             | ADR-006; one pip dependency (`pyyaml`) allowed per ADR-025 |
+| NFR-2 | Python 3.11–3.14 compatibility                                                                                                                        | ADR-007                                                    |
+| NFR-3 | Manifest writes are atomic                                                                                                                            | ADR-016                                                    |
+| NFR-4 | All public behavior covered by automated tests; CI enforces test pass                                                                                 | `tests/` structure, `verify.yml` workflow                  |
+| NFR-5 | CLI operates standalone; no VS Code process required for CLI operations                                                                               | ADR-006; only `pyyaml` required at runtime (ADR-025)       |
+| NFR-6 | Lint and type checking pass on every commit; CI gate enforces zero violations                                                                         | `pyproject.toml` ruff + mypy config                        |
+| NFR-7 | Generated output lives under `.github/` only; templates never modified at runtime                                                                     | ADR-012                                                    |
+| NFR-8 | Homebrew formula updates require dual SHA-256 verification (PyPI metadata vs downloaded tarball); pre-release tags are excluded from Homebrew publish | ADR-030                                                    |
 
 ______________________________________________________________________
 
@@ -258,35 +258,35 @@ ______________________________________________________________________
 All significant architectural decisions are recorded in `docs/architecture/adr/`.
 See individual files for context, decision, alternatives, and rationale.
 
-| ADR | Title                                                | Status     | Notes                                      |
-| --- | ---------------------------------------------------- | ---------- | ------------------------------------------ |
-| 001 | VS Code-native variant                               | accepted   |                                            |
-| 002 | Artifact naming and compatibility policy             | accepted   |                                            |
-| 003 | Backend-first verify                                 | accepted   |                                            |
-| 004 | Direct execution and orchestrated pipeline           | superseded | Superseded by ADR-024                      |
-| 005 | VS Code prompt format                                | superseded | Superseded by ADR-009                      |
-| 006 | No runtime dependency on external binaries           | accepted   |                                            |
-| 007 | Python runtime                                       | accepted   |                                            |
-| 008 | Agents over prompts                                  | accepted   |                                            |
-| 009 | 6-role agent model                                   | accepted   |                                            |
-| 010 | Artifact flow                                        | accepted   |                                            |
-| 011 | Skill restructure                                    | accepted   |                                            |
-| 012 | Flat templates and install-time generation           | accepted   |                                            |
-| 013 | Policy vs procedure boundary for instructions/skills | accepted   |                                            |
-| 014 | Manifest schema versioning and explicit upgrade gate | accepted   |                                            |
-| 015 | Conservative install-by-default                      | superseded | Superseded by ADR-020                      |
-| 016 | Atomic manifest writes                               | accepted   |                                            |
-| 017 | Checksum backfill on upgrade                         | accepted   |                                            |
-| 018 | Skill genericity boundary                            | accepted   |                                            |
-| 019 | `.vstack/` project-scope directory                   | accepted   | Introduced `.vstack/` directory            |
-| 020 | `install` and `init` command semantics               | accepted   | Breaking change; supersedes ADR-015        |
-| 021 | Config-driven artifact paths in agent config         | accepted   | Machine-readable artifact ownership        |
-| 022 | Selective exclude filter in `.vstack/config.yaml`    | accepted   | Agents cannot be excluded (atomic unit)    |
-| 023 | Workflow contract in `.vstack/config.yaml`           | accepted   | Pipeline order, gate, hitl, handoffs       |
-| 024 | Subagent orchestration via VS Code native subagents  | accepted   | Supersedes ADR-004; planner coordinator    |
-| 025 | PyYAML as sole runtime dependency                    | accepted   | Replaces hand-rolled frontmatter parser    |
-| 026 | Docs artifact migration policy                       | accepted   | Versioned docs relocation maps             |
-| 027 | Repository hooks as first-class artifact type        | accepted   | Hook templates and manifest ownership      |
-| 028 | DAG dependency semantics for workflow stages         | accepted   | `depends_on`, cycle safety, compatibility  |
-| 029 | Multi-agentic execution model                        | accepted   | DAG chosen; event-driven and tree compared |
+| ADR | Title                                                | Status     | Notes                                         |
+| --- | ---------------------------------------------------- | ---------- | --------------------------------------------- |
+| 001 | VS Code-native variant                               | accepted   |                                               |
+| 002 | Artifact naming and compatibility policy             | accepted   |                                               |
+| 003 | Backend-first verify                                 | accepted   |                                               |
+| 004 | Direct execution and orchestrated pipeline           | superseded | Superseded by ADR-024                         |
+| 005 | VS Code prompt format                                | superseded | Superseded by ADR-009                         |
+| 006 | No runtime dependency on external binaries           | accepted   |                                               |
+| 007 | Python runtime                                       | accepted   |                                               |
+| 008 | Agents over prompts                                  | accepted   |                                               |
+| 009 | 6-role agent model                                   | accepted   |                                               |
+| 010 | Artifact flow                                        | accepted   |                                               |
+| 011 | Skill restructure                                    | accepted   |                                               |
+| 012 | Flat templates and install-time generation           | accepted   |                                               |
+| 013 | Policy vs procedure boundary for instructions/skills | accepted   |                                               |
+| 014 | Manifest schema versioning and explicit upgrade gate | accepted   |                                               |
+| 015 | Conservative install-by-default                      | superseded | Superseded by ADR-020                         |
+| 016 | Atomic manifest writes                               | accepted   |                                               |
+| 017 | Checksum backfill on upgrade                         | accepted   |                                               |
+| 018 | Skill genericity boundary                            | accepted   |                                               |
+| 019 | `.vstack/` project-scope directory                   | accepted   | Introduced `.vstack/` directory               |
+| 020 | `install` and `init` command semantics               | accepted   | Breaking change; supersedes ADR-015           |
+| 021 | Config-driven artifact paths in agent config         | accepted   | Machine-readable artifact ownership           |
+| 022 | Selective exclude filter in `.vstack/config.yaml`    | accepted   | Agents cannot be excluded (atomic unit)       |
+| 023 | Workflow contract in `.vstack/config.yaml`           | accepted   | Pipeline order, gate, hitl, handoffs          |
+| 024 | Subagent orchestration via VS Code native subagents  | accepted   | Supersedes ADR-004; planner coordinator       |
+| 025 | PyYAML as sole runtime dependency                    | accepted   | Replaces hand-rolled frontmatter parser       |
+| 026 | Docs artifact migration policy                       | accepted   | Versioned docs relocation maps                |
+| 027 | Repository hooks as first-class artifact type        | accepted   | Hook templates and manifest ownership         |
+| 028 | DAG dependency semantics for workflow stages         | accepted   | `depends_on`, cycle safety, compatibility     |
+| 029 | Multi-agentic execution model                        | accepted   | DAG chosen; event-driven and tree compared    |
 | 030 | Homebrew distribution via private tap                | accepted   | Private tap now; homebrew-core optional later |

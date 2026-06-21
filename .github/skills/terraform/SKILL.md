@@ -335,4 +335,4 @@ Run `terraform plan` after every state operation to verify the outcome.
 - [tfsec rules](https://aquasecurity.github.io/tfsec/latest/checks/aws/) · [checkov checks](https://www.checkov.io/5.Policy%20Index/terraform.html)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"terraform","artifact_type":"skill","artifact_version":"20260502030","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"terraform","artifact_type":"skill","artifact_version":"20260502030","generator":"vstack","vstack_version":"3.5.2"} -->

@@ -195,7 +195,7 @@ class HookGenerator(GenericArtifactGenerator):
                 rendered_actions.append(rendered_action)
             rendered_hooks[event] = rendered_actions
 
-        return json.dumps({"version": 1, "hooks": rendered_hooks}, indent=2)
+        return json.dumps({"version": 1, "hooks": rendered_hooks}, indent=2) + "\n"
 
     def find_extra_files(self, tmpl_dir: Path) -> list[Path]:
         """Hook templates use a single YAML file and do not copy sidecar files."""

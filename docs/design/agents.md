@@ -67,21 +67,21 @@ Style rule: long `description` and `handoffs.prompt` values should use YAML bloc
 
 ### emitted to frontmatter
 
-| Field                      | Type        | Required | Notes                                                                                                                                                                     |
-| -------------------------- | ----------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                     | string      | no       | Overrides filename as picker label                                                                                                                                        |
-| `description`              | string      | no       | Shown as placeholder text in chat input                                                                                                                                   |
-| `argument-hint`            | string      | no       | Hint text shown after `@agent` in chat                                                                                                                                    |
-| `tools`                    | list        | no       | Tools available to this agent (see below)                                                                                                                                 |
-| `agents`                   | list        | no       | Subagents this agent may invoke; wildcard delegation (`["*"]`) is rejected by source verification, so use an explicit allowlist                                           |
-| `model`                    | list        | no       | Ordered model fallbacks (for example `auto` first, then role-appropriate pinned IDs). This preserves role intent while staying resilient to policy or availability drift. |
-| `user-invocable`           | bool        | no       | `true` = show in agents dropdown (default)                                                                                                                                |
-| `disable-model-invocation` | bool        | no       | `true` = prevent other agents from calling this one                                                                                                                       |
-| `target`                   | string      | no       | `vscode` (default) or `github-copilot`                                                                                                                                    |
-| `handoffs`                 | object-list | no       | Sequential workflow handoffs — see [handoffs](#handoffs) below                                                                                                            |
-| `mcp-servers`              | raw YAML    | no       | MCP server config (`github-copilot` target only)                                                                                                                          |
-| `hooks`                    | raw YAML    | no       | Chat hooks (Preview — requires `chat.useCustomAgentHooks` setting)                                                                                                        |
-| `metadata`                 | raw YAML    | no       | String key/value annotations (`github-copilot` target only)                                                                                                               |
+| Field                      | Type        | Required | Notes                                                                                                                                                                         |
+| -------------------------- | ----------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                     | string      | no       | Overrides filename as picker label                                                                                                                                            |
+| `description`              | string      | no       | Shown as placeholder text in chat input                                                                                                                                       |
+| `argument-hint`            | string      | no       | Hint text shown after `@agent` in chat                                                                                                                                        |
+| `tools`                    | list        | no       | Tools available to this agent (see below)                                                                                                                                     |
+| `agents`                   | list        | no       | Subagents this agent may invoke; wildcard delegation (`["*"]`) is rejected by source verification, so use an explicit allowlist                                               |
+| `model`                    | list        | no       | Optional model override. Omit by default so VS Code uses the currently selected model picker value. If present, use a prioritized fallback list only for explicit exceptions. |
+| `user-invocable`           | bool        | no       | `true` = show in agents dropdown (default)                                                                                                                                    |
+| `disable-model-invocation` | bool        | no       | `true` = prevent other agents from calling this one                                                                                                                           |
+| `target`                   | string      | no       | `vscode` (default) or `github-copilot`                                                                                                                                        |
+| `handoffs`                 | object-list | no       | Sequential workflow handoffs — see [handoffs](#handoffs) below                                                                                                                |
+| `mcp-servers`              | raw YAML    | no       | MCP server config (`github-copilot` target only)                                                                                                                              |
+| `hooks`                    | raw YAML    | no       | Chat hooks (Preview — requires `chat.useCustomAgentHooks` setting)                                                                                                            |
+| `metadata`                 | raw YAML    | no       | String key/value annotations (`github-copilot` target only)                                                                                                                   |
 
 ### vstack-internal only (not emitted)
 
@@ -91,6 +91,8 @@ Style rule: long `description` and `handoffs.prompt` values should use YAML bloc
 | `items`   | Declares work-item ownership for this agent — see [items](#items) below        |
 
 Frontmatter multiline rendering is configured in generator code (`ArtifactTypeConfig.preserve_multiline_frontmatter`), not per-agent `config.yaml`.
+
+Model policy: keep `model` out of source templates unless a role needs an explicit, justified override. That keeps the generated agents portable across users and orgs with different model access or cost policy.
 
 ______________________________________________________________________
 

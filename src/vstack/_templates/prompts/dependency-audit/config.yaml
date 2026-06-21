@@ -2,7 +2,6 @@ name: dependency-audit
 description: Audit dependencies for vulnerabilities, outdated versions, licence risks, and supply chain hygiene.
 argument-hint: "[dependency manifest, lockfile, or package scope]"
 agent: tester
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search

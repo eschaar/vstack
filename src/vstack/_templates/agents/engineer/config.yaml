@@ -15,10 +15,6 @@ tools:
   - vscode
   - todo
   - agent
-model:
-  - auto
-  - GPT-5.3-Codex (copilot)
-  - Claude Sonnet 4.6 (copilot)
 agents:
   - product
   - architect

@@ -3,15 +3,14 @@ description: 'Review an API design or OpenAPI spec for correctness, completeness
 name: api-design-review
 argument-hint: '[OpenAPI spec file, design doc, or endpoint scope]'
 agent: designer
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
 ---
 Review the provided API design or OpenAPI specification for correctness, completeness, and consistency.
 
-Focus on issues that affect consumers: breaking contracts, ambiguous semantics, missing error cases, and inconsistent conventions.
-Do not focus on implementation details or tooling preferences.
+Focus on consumer impact: breaking contracts, ambiguous semantics, missing errors, and inconsistent conventions.
+Ignore implementation details and tooling preferences.
 
 Output exactly in this format:
 
@@ -55,4 +54,4 @@ List fields or objects that are missing required constraints, descriptions, or e
 - top priority fix in one sentence
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"api-design-review","artifact_type":"prompt","artifact_version":"20260502006","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"api-design-review","artifact_type":"prompt","artifact_version":"20260502006","generator":"vstack","vstack_version":"<vstack-version>"} -->

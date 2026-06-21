@@ -18,7 +18,7 @@ Set up a project Space that keeps Copilot context focused, current, and easy to 
 1. Create or update the Space using GitHub UI (or approved API workflow).
 1. Validate discoverability: each key topic maps to at least one source document.
 1. Record refresh cadence and owner.
-1. Re-check after `vstack install` or release docs updates.
+1. Re-check after major context source changes or release docs updates.
 
 ## Output format
 

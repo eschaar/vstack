@@ -22,6 +22,7 @@ env/
 
 # Testing
 .pytest_cache/
+.pytest-tmp/
 .vstack/tmp/
 .hypothesis/
 .nox/

@@ -1,16 +1,16 @@
-Use these TypeScript conventions in this project.
+Use these TypeScript conventions.
 
 ## Type safety
 
-1. Enable and respect strict mode; do not disable strictness per-file without a documented reason.
+1. Enable and respect strict mode; do not disable strictness per file without a documented reason.
 1. Avoid `any`; prefer `unknown` when the type is genuinely unknown and narrow it explicitly.
-1. Prefer `interface` for object shapes that may be extended; use `type` for unions, intersections, and aliases.
+1. Prefer `interface` for extendable object shapes; use `type` for unions, intersections, and aliases.
 1. Do not use type assertions (`as`) to silence type errors; fix the type instead.
 
 ## Design and readability
 
 1. Prefer explicit, domain-meaningful names over abbreviations.
-1. Keep functions focused; split functions that mix parsing, I/O, and business rules.
+1. Keep functions focused.
 1. Prefer straightforward control flow over clever one-liners.
 1. Use `const` by default; use `let` only when reassignment is required; never use `var`.
 

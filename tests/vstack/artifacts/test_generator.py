@@ -27,7 +27,7 @@ class TestGenericArtifactGenerator:
         r"(?P<prefix><!--\s*VSTACK-META:\s*)(?P<payload>\{.*?\})(?P<suffix>\s*-->)"
     )
     _VSTACK_VERSION_FIELD_RE = re.compile(r'("vstack_version"\s*:\s*")[^"]*(")')
-    _NORMALIZED_VSTACK_VERSION = "<normalized-vstack-version>"
+    _NORMALIZED_VSTACK_VERSION = "<vstack-version>"
 
     @classmethod
     def _normalize_vstack_version_in_meta_comment(cls, content: str) -> str:
@@ -302,21 +302,21 @@ class TestGenericArtifactGenerator:
             artifact_label="agent/product",
         )
 
-    def test_render_prompt_code_review_matches_golden_fixture(
+    def test_render_prompt_quick_review_matches_golden_fixture(
         self,
         templates_root: Path,
         prompt_fixture_path: Callable[[str], Path],
     ) -> None:
-        """Code-review prompt rendering must remain byte-for-byte stable."""
+        """Quick-review prompt rendering must remain byte-for-byte stable."""
         templates = templates_root
-        template_dir = templates / "prompts" / "code-review"
-        expected_fixture = prompt_fixture_path("code-review")
+        template_dir = templates / "prompts" / "quick-review"
+        expected_fixture = prompt_fixture_path("quick-review")
 
         artifact = GenericArtifactGenerator(PROMPT_TYPE, templates).render(template_dir)
         self._assert_matches_golden_fixture(
             artifact_content=artifact.content,
             expected_fixture=expected_fixture,
-            artifact_label="prompt/code-review",
+            artifact_label="prompt/quick-review",
         )
 
     def test_render_prompt_api_design_review_matches_golden_fixture(
