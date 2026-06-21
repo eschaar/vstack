@@ -5,7 +5,7 @@ description = "VS Code-native AI engineering workflow system for microservices, 
 license = "MIT"
 readme = "README-pypi.md"
 requires-python = ">=3.11,<3.15"
-dependencies = ["pyyaml>=6.0"]
+dependencies = ["pyyaml>=6.0.3"]
 keywords = [
     "github-copilot",
     "vscode",

@@ -87,4 +87,4 @@ Provide this structure:
 Escalate when permissions are insufficient, settings conflict across scopes, or policy intent is ambiguous.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"copilot-ops","artifact_type":"skill","artifact_version":"20260513012","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"copilot-ops","artifact_type":"skill","artifact_version":"20260513012","generator":"vstack","vstack_version":"3.5.2"} -->

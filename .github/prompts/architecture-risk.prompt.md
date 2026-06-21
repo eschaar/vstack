@@ -3,7 +3,6 @@ description: 'Identify architectural risks, tradeoffs, and mitigation priorities
 name: architecture-risk
 argument-hint: '[design doc, ADR, or architecture scope]'
 agent: architect
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
@@ -11,7 +10,7 @@ tools:
 Evaluate the provided architecture for delivery and runtime risk.
 
 Prioritize issues that could cause outages, data loss, severe operability pain, or major rework.
-Do not focus on stylistic preferences.
+Ignore stylistic preferences.
 
 Output exactly in this format:
 
@@ -52,4 +51,4 @@ List security-specific risks not covered above: auth boundaries, sensitive data 
 - one-sentence rationale
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"architecture-risk","artifact_type":"prompt","artifact_version":"20260502007","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"architecture-risk","artifact_type":"prompt","artifact_version":"20260502007","generator":"vstack","vstack_version":"3.5.2"} -->

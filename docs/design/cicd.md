@@ -248,11 +248,11 @@ after PyPI publish succeeds and checksum verification passes.
 
 ### Payload schema
 
-| Field       | Type   | Source                                                                  | Description                                                        |
-| ----------- | ------ | ----------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `version`   | string | `github.event.release.tag_name`                                         | Release tag (e.g. `v1.4.0`); used in the tap commit message only   |
-| `sdist_url` | string | PyPI JSON API `.urls[].url` where `packagetype == "sdist"`               | Canonical PyPI download URL embedded in the formula `url` field    |
-| `sha256`    | string | Computed locally from downloaded tarball; cross-checked against PyPI API | SHA-256 digest of the sdist tarball; embedded in formula `sha256`  |
+| Field       | Type   | Source                                                                   | Description                                                       |
+| ----------- | ------ | ------------------------------------------------------------------------ | ----------------------------------------------------------------- |
+| `version`   | string | `github.event.release.tag_name`                                          | Release tag (e.g. `v1.4.0`); used in the tap commit message only  |
+| `sdist_url` | string | PyPI JSON API `.urls[].url` where `packagetype == "sdist"`               | Canonical PyPI download URL embedded in the formula `url` field   |
+| `sha256`    | string | Computed locally from downloaded tarball; cross-checked against PyPI API | SHA-256 digest of the sdist tarball; embedded in formula `sha256` |
 
 Example:
 
@@ -279,10 +279,10 @@ Example:
 
 `formula-update.yml` applies exactly two field updates to `Formula/vstack.rb`:
 
-| Field    | Scope                           | Replacement behavior                        |
-| -------- | ------------------------------- | ------------------------------------------- |
-| `url`    | Top-level formula `url` line    | Replaced with the dispatched `sdist_url`    |
-| `sha256` | Top-level formula `sha256` line | Replaced with the dispatched `sha256`       |
+| Field    | Scope                           | Replacement behavior                     |
+| -------- | ------------------------------- | ---------------------------------------- |
+| `url`    | Top-level formula `url` line    | Replaced with the dispatched `sdist_url` |
+| `sha256` | Top-level formula `sha256` line | Replaced with the dispatched `sha256`    |
 
 The `resource` blocks for runtime dependencies (currently `pyyaml`) contain their own
 `sha256` lines. The update script must target only the top-level formula fields and must

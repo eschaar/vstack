@@ -4,85 +4,73 @@
 
 ## [3.5.2](https://github.com/eschaar/vstack/compare/3.5.1...3.5.2) (2026-06-09)
 
-
 ### Maintenance
 
-* **ci:** bump the gha-patch-minor group with 2 updates ([#73](https://github.com/eschaar/vstack/issues/73)) ([7c322ec](https://github.com/eschaar/vstack/commit/7c322ec62c4d75f453f415b8e1603ff6e8385ed9))
-* **deps:** bump the pip-patch-minor group with 2 updates ([#72](https://github.com/eschaar/vstack/issues/72)) ([45801fe](https://github.com/eschaar/vstack/commit/45801fe7192ab90032ddfec99e2e7c3dd679096e))
+- **ci:** bump the gha-patch-minor group with 2 updates ([#73](https://github.com/eschaar/vstack/issues/73)) ([7c322ec](https://github.com/eschaar/vstack/commit/7c322ec62c4d75f453f415b8e1603ff6e8385ed9))
+- **deps:** bump the pip-patch-minor group with 2 updates ([#72](https://github.com/eschaar/vstack/issues/72)) ([45801fe](https://github.com/eschaar/vstack/commit/45801fe7192ab90032ddfec99e2e7c3dd679096e))
 
 ## [3.5.1](https://github.com/eschaar/vstack/compare/3.5.0...3.5.1) (2026-06-02)
 
-
 ### Fixes
 
-* **ci:** fix Homebrew token action for publish workflow ([#69](https://github.com/eschaar/vstack/issues/69)) ([f2bd2b1](https://github.com/eschaar/vstack/commit/f2bd2b1e0ee4a7d21b4c73e1bc1971caee7ea474))
+- **ci:** fix Homebrew token action for publish workflow ([#69](https://github.com/eschaar/vstack/issues/69)) ([f2bd2b1](https://github.com/eschaar/vstack/commit/f2bd2b1e0ee4a7d21b4c73e1bc1971caee7ea474))
 
 ## [3.5.0](https://github.com/eschaar/vstack/compare/3.4.2...3.5.0) (2026-06-02)
 
-
 ### Features
 
-* add Homebrew distribution channel for vstack ([#66](https://github.com/eschaar/vstack/issues/66)) ([6939f31](https://github.com/eschaar/vstack/commit/6939f31e5f9c09492bcd0532dd7626823e8e0f7a))
-
+- add Homebrew distribution channel for vstack ([#66](https://github.com/eschaar/vstack/issues/66)) ([6939f31](https://github.com/eschaar/vstack/commit/6939f31e5f9c09492bcd0532dd7626823e8e0f7a))
 
 ### Fixes
 
-* **ci:** harden Homebrew publish workflow auth and environment separation ([#68](https://github.com/eschaar/vstack/issues/68)) ([3651714](https://github.com/eschaar/vstack/commit/3651714997f6b6c3988f974c8985ec6a6fd0d463))
+- **ci:** harden Homebrew publish workflow auth and environment separation ([#68](https://github.com/eschaar/vstack/issues/68)) ([3651714](https://github.com/eschaar/vstack/commit/3651714997f6b6c3988f974c8985ec6a6fd0d463))
 
 ## [3.5.0](https://github.com/eschaar/vstack/compare/3.4.2...3.5.0) (2026-06-02)
 
-
 ### Features
 
-* **ci:** add homebrew private tap publish job ([feature/publish_in_homebrew](https://github.com/eschaar/vstack/tree/feature/publish_in_homebrew))
-
+- **ci:** add homebrew private tap publish job ([feature/publish_in_homebrew](https://github.com/eschaar/vstack/tree/feature/publish_in_homebrew))
 
 ### Documentation
 
-* **architecture:** add ADR-030 and homebrew distribution plan
-* **cicd:** extend workflow table and sequence diagram with homebrew tap stage
-* **design:** update workflow.md publish.yml description
-* **product:** add FR-8 homebrew distribution requirement; align roadmap
-
+- **architecture:** add ADR-030 and homebrew distribution plan
+- **cicd:** extend workflow table and sequence diagram with homebrew tap stage
+- **design:** update workflow.md publish.yml description
+- **product:** add FR-8 homebrew distribution requirement; align roadmap
 
 ### Tests
 
-* **ci:** add publish workflow contract tests for homebrew job
+- **ci:** add publish workflow contract tests for homebrew job
 
 ## [3.4.2](https://github.com/eschaar/vstack/compare/3.4.1...3.4.2) (2026-05-28)
 
-
 ### Maintenance
 
-* **ci:** handle disabled auto-merge gracefully ([ac91e78](https://github.com/eschaar/vstack/commit/ac91e780f1e6e9c0746683f186a47716a8c8ca12))
-* **ci:** updated dependencies ([576d27d](https://github.com/eschaar/vstack/commit/576d27db9e296da685c3849347453de2e0a13a03))
+- **ci:** handle disabled auto-merge gracefully ([ac91e78](https://github.com/eschaar/vstack/commit/ac91e780f1e6e9c0746683f186a47716a8c8ca12))
+- **ci:** updated dependencies ([576d27d](https://github.com/eschaar/vstack/commit/576d27db9e296da685c3849347453de2e0a13a03))
 
 ## [3.4.1](https://github.com/eschaar/vstack/compare/3.4.0...3.4.1) (2026-05-19)
 
-
 ### Maintenance
 
-* **ci:** bump actions/create-github-app-token ([351e2cb](https://github.com/eschaar/vstack/commit/351e2cb1c312b4a5406bbf698e73ed0b81ee1137))
-* **ci:** bump actions/github-script ([e17ddb0](https://github.com/eschaar/vstack/commit/e17ddb0a5b5d75b6c59580b6f50c254964774a5d))
-* **ci:** bump googleapis/release-please-action ([805e319](https://github.com/eschaar/vstack/commit/805e3194eec77c83a6dc6c2ab7572f3e8fbeb293))
+- **ci:** bump actions/create-github-app-token ([351e2cb](https://github.com/eschaar/vstack/commit/351e2cb1c312b4a5406bbf698e73ed0b81ee1137))
+- **ci:** bump actions/github-script ([e17ddb0](https://github.com/eschaar/vstack/commit/e17ddb0a5b5d75b6c59580b6f50c254964774a5d))
+- **ci:** bump googleapis/release-please-action ([805e319](https://github.com/eschaar/vstack/commit/805e3194eec77c83a6dc6c2ab7572f3e8fbeb293))
 
 ## [3.4.0](https://github.com/eschaar/vstack/compare/3.3.0...3.4.0) (2026-05-14)
 
-
 ### Features
 
-* **workflow:** improve planner routing and stabilize artifact generation ([0cf4bd2](https://github.com/eschaar/vstack/commit/0cf4bd2db4e62774d958363cd3b3c9c89a24d666))
-
+- **workflow:** improve planner routing and stabilize artifact generation ([0cf4bd2](https://github.com/eschaar/vstack/commit/0cf4bd2db4e62774d958363cd3b3c9c89a24d666))
 
 ### Fixes
 
-* **ci:** ignore vstack metadata version-only drift in verify guard ([41bac6f](https://github.com/eschaar/vstack/commit/41bac6f87dd5c54abda580dfad2d5c1e523a877f))
-* **docs:** align examples and pytest temp path guidance ([7d26d52](https://github.com/eschaar/vstack/commit/7d26d5219f08368d8f62990cc999c143ad7c5e55))
-
+- **ci:** ignore vstack metadata version-only drift in verify guard ([41bac6f](https://github.com/eschaar/vstack/commit/41bac6f87dd5c54abda580dfad2d5c1e523a877f))
+- **docs:** align examples and pytest temp path guidance ([7d26d52](https://github.com/eschaar/vstack/commit/7d26d5219f08368d8f62990cc999c143ad7c5e55))
 
 ### Maintenance
 
-* **ci:** bump trufflesecurity/trufflehog ([722d74e](https://github.com/eschaar/vstack/commit/722d74eacf73e1bd4f193beccf74ada8858b6b5f))
+- **ci:** bump trufflesecurity/trufflehog ([722d74e](https://github.com/eschaar/vstack/commit/722d74eacf73e1bd4f193beccf74ada8858b6b5f))
 
 ## [3.3.0](https://github.com/eschaar/vstack/compare/3.2.0...3.3.0) (2026-05-12)
 

@@ -14,15 +14,15 @@ ______________________________________________________________________
 
 ## decision: private tap vs homebrew-core
 
-| Factor | Private tap | homebrew-core |
-|---|---|---|
-| Setup time | Hours | Days–weeks (PR review) |
-| Release automation | Full control | Maintainers must submit bump PRs or use bots |
-| Acceptance bar | None | 30-day PyPI history, notable adoption, strict criteria |
-| Install UX | `brew tap eschaar/vstack && brew install vstack` | `brew install vstack` |
-| Formula ownership | Maintainer-owned | Homebrew project |
-| Update autonomy | Immediate | Subject to Homebrew review cycles |
-| Blast radius on mistake | Isolated tap repo | Homebrew-core infrastructure |
+| Factor                  | Private tap                                      | homebrew-core                                          |
+| ----------------------- | ------------------------------------------------ | ------------------------------------------------------ |
+| Setup time              | Hours                                            | Days–weeks (PR review)                                 |
+| Release automation      | Full control                                     | Maintainers must submit bump PRs or use bots           |
+| Acceptance bar          | None                                             | 30-day PyPI history, notable adoption, strict criteria |
+| Install UX              | `brew tap eschaar/vstack && brew install vstack` | `brew install vstack`                                  |
+| Formula ownership       | Maintainer-owned                                 | Homebrew project                                       |
+| Update autonomy         | Immediate                                        | Subject to Homebrew review cycles                      |
+| Blast radius on mistake | Isolated tap repo                                | Homebrew-core infrastructure                           |
 
 **Recommendation: private tap now, homebrew-core later.**
 
@@ -38,7 +38,7 @@ The current release pipeline has two stages:
 
 1. `release.yml` — merge to `main` triggers release-please; on release PR merge, creates
    the SemVer tag and GitHub Release.
-2. `publish.yml` — triggered on `release: published`; builds and publishes the wheel and
+1. `publish.yml` — triggered on `release: published`; builds and publishes the wheel and
    sdist to PyPI.
 
 Homebrew publishing inserts as a third, sequential stage after PyPI publish succeeds.
@@ -68,11 +68,11 @@ sequenceDiagram
     TAP->>U: install from formula (virtualenv wrapping sdist)
 ```
 
-  Install UX constraints in this phase:
+Install UX constraints in this phase:
 
-  - The private tap path supports plain `brew install vstack` after a one-time `brew tap eschaar/vstack`.
-  - The fully-qualified fallback `brew install eschaar/vstack/vstack` remains valid without a prior tap.
-  - Universal plain `brew install vstack` for users who never tapped requires formula acceptance in `Homebrew/homebrew-core`.
+- The private tap path supports plain `brew install vstack` after a one-time `brew tap eschaar/vstack`.
+- The fully-qualified fallback `brew install eschaar/vstack/vstack` remains valid without a prior tap.
+- Universal plain `brew install vstack` for users who never tapped requires formula acceptance in `Homebrew/homebrew-core`.
 
 ______________________________________________________________________
 
@@ -163,9 +163,9 @@ ______________________________________________________________________
 ### checksum verification
 
 1. The publish workflow fetches the sdist tarball from PyPI.
-2. It computes `sha256sum` locally and also reads the sha256 from the PyPI JSON API.
-3. The two values must match before the workflow proceeds.
-4. The tap formula embeds the verified sha256; Homebrew verifies it again at install time.
+1. It computes `sha256sum` locally and also reads the sha256 from the PyPI JSON API.
+1. The two values must match before the workflow proceeds.
+1. The tap formula embeds the verified sha256; Homebrew verifies it again at install time.
 
 ### supply-chain hardening
 
@@ -282,58 +282,58 @@ ______________________________________________________________________
 ### initial bootstrap
 
 1. Create `github.com/eschaar/homebrew-vstack` as a public repository.
-2. Add `Formula/` directory and commit the initial `Formula/vstack.rb` for the latest
+1. Add `Formula/` directory and commit the initial `Formula/vstack.rb` for the latest
    released version. Compute the sha256 with:
    ```bash
    curl -fsSL https://files.pythonhosted.org/packages/source/v/vstack/vstack-X.Y.Z.tar.gz \
      | sha256sum
    ```
-3. Add and enable `formula-update.yml` and `test.yml` workflows in the tap repo.
-4. Set branch protection on `main`: require `test.yml` to pass.
-5. Create a fine-grained PAT with `contents: write` scope limited to `homebrew-vstack`.
+1. Add and enable `formula-update.yml` and `test.yml` workflows in the tap repo.
+1. Set branch protection on `main`: require `test.yml` to pass.
+1. Create a fine-grained PAT with `contents: write` scope limited to `homebrew-vstack`.
    Store it as secret `HOMEBREW_TAP_TOKEN` in the `pypi` Actions environment of this repo.
-6. Pin the `peter-evans/repository-dispatch` action to a full commit SHA in `publish.yml`.
-7. Merge the `publish-homebrew` job into `publish.yml` behind a feature flag
+1. Pin the `peter-evans/repository-dispatch` action to a full commit SHA in `publish.yml`.
+1. Merge the `publish-homebrew` job into `publish.yml` behind a feature flag
    (`HOMEBREW_TAP_ENABLED: "true"` env var) for safe rollout.
-8. Run a manual test: publish a dry-run release (or trigger `workflow_dispatch`) and
+1. Run a manual test: publish a dry-run release (or trigger `workflow_dispatch`) and
    verify the tap formula is updated correctly.
-9. Document install instructions in `README.md` once bootstrap is validated.
+1. Document install instructions in `README.md` once bootstrap is validated.
 
 ### recurring release flow (maintainer view)
 
 Every release follows the existing process unchanged. The only additions are:
 
 1. After `release.yml` creates the GitHub Release, `publish.yml` runs as before.
-2. The new `publish-homebrew` job triggers automatically after PyPI publish succeeds.
-3. Monitor the tap repo's `formula-update.yml` run to confirm success.
-4. `brew update && brew upgrade vstack` on the release engineer's machine to confirm
+1. The new `publish-homebrew` job triggers automatically after PyPI publish succeeds.
+1. Monitor the tap repo's `formula-update.yml` run to confirm success.
+1. `brew update && brew upgrade vstack` on the release engineer's machine to confirm
    the new version installs correctly.
 
 ### rollback and fix-forward
 
-| Scenario | Action |
-|---|---|
-| Formula update committed with wrong sha256 | Manually push a corrected formula commit to the tap repo; no effect on PyPI |
-| `formula-update.yml` fails mid-run | Re-run the workflow from the tap repo Actions UI; it is idempotent |
-| Tap formula test fails | Push a fix commit to `Formula/vstack.rb`; the test workflow re-runs |
+| Scenario                                          | Action                                                                                       |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Formula update committed with wrong sha256        | Manually push a corrected formula commit to the tap repo; no effect on PyPI                  |
+| `formula-update.yml` fails mid-run                | Re-run the workflow from the tap repo Actions UI; it is idempotent                           |
+| Tap formula test fails                            | Push a fix commit to `Formula/vstack.rb`; the test workflow re-runs                          |
 | PyPI publish succeeds but Homebrew dispatch fails | Trigger `publish-homebrew` job via `workflow_dispatch` on `publish.yml` with the release tag |
-| Wrong version formula is live | Push a corrected formula commit; advise users to `brew update && brew upgrade vstack` |
-| `HOMEBREW_TAP_TOKEN` expires | Rotate PAT, update secret; no user-visible impact until next release |
+| Wrong version formula is live                     | Push a corrected formula commit; advise users to `brew update && brew upgrade vstack`        |
+| `HOMEBREW_TAP_TOKEN` expires                      | Rotate PAT, update secret; no user-visible impact until next release                         |
 
 ______________________________________________________________________
 
 ## risk register
 
-| Risk | Likelihood | Impact | Mitigation |
-|---|---|---|---|
-| PyPI tarball URL changes format | Low | High | Read URL from PyPI JSON API dynamically, not hardcoded |
-| Tap dispatch token leaked | Low | Medium | Fine-grained PAT scoped to tap repo only; rotate on any exposure |
-| sha256 mismatch at install (supply chain attack) | Very low | Critical | Double-verify: PyPI metadata vs downloaded tarball; Homebrew verifies again |
-| `formula-update.yml` pushes a broken formula | Low | Medium | Branch protection + `test.yml` gate on `main`; fix-forward is low-friction |
-| PyPI publish succeeds but tap update fails silently | Medium | Low | Add required status check or Slack/issue notification on failure |
-| Homebrew-core submission rejected later | Low | Low | Private tap provides immediate value; core submission is optional |
-| PyYAML resource block falls out of sync | Medium | Medium | Add a release checklist item: verify tap resource versions match `pyproject.toml` |
-| Rate limiting on PyPI JSON API from CI | Very low | Low | Cache the JSON response in the workflow step; retry once |
+| Risk                                                | Likelihood | Impact   | Mitigation                                                                        |
+| --------------------------------------------------- | ---------- | -------- | --------------------------------------------------------------------------------- |
+| PyPI tarball URL changes format                     | Low        | High     | Read URL from PyPI JSON API dynamically, not hardcoded                            |
+| Tap dispatch token leaked                           | Low        | Medium   | Fine-grained PAT scoped to tap repo only; rotate on any exposure                  |
+| sha256 mismatch at install (supply chain attack)    | Very low   | Critical | Double-verify: PyPI metadata vs downloaded tarball; Homebrew verifies again       |
+| `formula-update.yml` pushes a broken formula        | Low        | Medium   | Branch protection + `test.yml` gate on `main`; fix-forward is low-friction        |
+| PyPI publish succeeds but tap update fails silently | Medium     | Low      | Add required status check or Slack/issue notification on failure                  |
+| Homebrew-core submission rejected later             | Low        | Low      | Private tap provides immediate value; core submission is optional                 |
+| PyYAML resource block falls out of sync             | Medium     | Medium   | Add a release checklist item: verify tap resource versions match `pyproject.toml` |
+| Rate limiting on PyPI JSON API from CI              | Very low   | Low      | Cache the JSON response in the workflow step; retry once                          |
 
 ______________________________________________________________________
 

@@ -9,6 +9,7 @@ from vstack.prompts.config import PROMPT_TYPE
 from vstack.skills.config import SKILL_TYPE
 
 EXPECTED_CANONICAL_NAMES = [
+    "ask",
     "vision",
     "architecture",
     "requirements",
@@ -126,7 +127,7 @@ EXPECTED_INPUT_NAMES: dict[str, list[str]] = {
         "architecture-risk",
         "artifact-integrity",
         "ci-triage",
-        "code-review",
+        "quick-review",
         "dependency-audit",
         "incident-timeline",
         "migration-plan",

@@ -3,7 +3,7 @@ name: helm
 description: 'Helm chart conventions. Use when writing or reviewing Helm charts, templates, and values files.'
 applyTo: '**/charts/**/*.{yaml,yml,tpl}'
 ---
-Use these Helm conventions in this project.
+Use these Helm conventions.
 
 ## Chart structure
 
@@ -13,10 +13,10 @@ Use these Helm conventions in this project.
 
 ## Templating quality
 
-1. Quote string values where ambiguity may cause rendering/type errors.
-1. Guard optional blocks with conditionals to avoid emitting invalid YAML.
+1. Quote string values where ambiguity may cause rendering or type errors.
+1. Guard optional blocks with conditionals to avoid invalid YAML.
 1. Keep names and labels deterministic via helper templates.
-1. Avoid embedding large opaque blobs in templates; externalize where possible.
+1. Avoid embedding large opaque blobs; externalize where possible.
 
 ## Values and secrets
 
@@ -39,10 +39,10 @@ Use these Helm conventions in this project.
 
 ## References
 
-> Always use the official documentation for the exact Helm and Kubernetes versions in use - chart schema, flags, and behavior evolve between releases.
+> Always use the official documentation for the exact Helm and Kubernetes versions in use; chart schema, flags, and behavior evolve between releases.
 
 - [Helm docs](https://helm.sh/docs/)
 - [Helm chart best practices](https://helm.sh/docs/chart_best_practices/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"helm","artifact_type":"instruction","artifact_version":"20260502040","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"helm","artifact_type":"instruction","artifact_version":"20260502040","generator":"vstack","vstack_version":"3.5.2"} -->

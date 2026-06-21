@@ -3,14 +3,13 @@ description: 'Audit dependencies for vulnerabilities, outdated versions, licence
 name: dependency-audit
 argument-hint: '[dependency manifest, lockfile, or package scope]'
 agent: tester
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
 ---
 Audit the provided dependency manifest or lockfile for vulnerabilities, outdated packages, licence risks, and supply chain hygiene.
 
-Prefer evidence from the manifest itself; flag items that require external verification.
+Prefer evidence from the manifest itself; flag items that need external verification.
 
 Output exactly in this format:
 
@@ -27,8 +26,8 @@ For each item:
 
 ## Outdated Packages
 
-List dependencies that are significantly behind their latest stable release and carry meaningful risk.
-Do not list minor version differences without impact.
+List dependencies significantly behind latest stable releases where risk is meaningful.
+Do not list low-impact minor version differences.
 
 For each item:
 
@@ -53,11 +52,11 @@ For each item:
 
 ## Supply Chain Hygiene
 
-List packages with unusual provenance concerns: abandoned maintainers, single-maintainer with no backup, recent ownership transfers, or typosquatting risk.
+List packages with unusual provenance concerns: abandoned maintainers, single-maintainer projects, recent ownership transfers, or typosquatting risk.
 
 ## Recommended Actions
 
-Ordered list of actions by priority (critical first).
+Ordered action list by priority (critical first).
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"dependency-audit","artifact_type":"prompt","artifact_version":"20260502009","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"dependency-audit","artifact_type":"prompt","artifact_version":"20260502009","generator":"vstack","vstack_version":"3.5.2"} -->

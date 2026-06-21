@@ -6,6 +6,7 @@ from vstack.cli.constants import EXPECTED_CANONICAL_NAMES as CLI_NAMES
 from vstack.cli.constants import EXPECTED_INPUT_NAMES
 
 EXPECTED_CLI_NAMES = [
+    "ask",
     "vision",
     "architecture",
     "requirements",

@@ -30,6 +30,20 @@ vstack init --only skill prompt
 vstack init --only hook
 ```
 
+## Remove Safe Obsolete Artifacts
+
+Use explicit prune mode when templates were renamed or removed and you want cleanup:
+
+```bash
+vstack init --prune
+```
+
+Preview prune actions without writing files:
+
+```bash
+vstack init --prune --dry-run
+```
+
 ## Verify the Reinitialized State
 
 ```bash
@@ -41,6 +55,7 @@ vstack manifest verify --target .
 
 - If a file is locally modified and not updated as expected, inspect `manifest status` output.
 - If you need explicit overwrite semantics, use install flags such as `--force-name` or `--force`.
+- If obsolete candidates keep appearing, run `vstack init --prune` to remove only checksum-safe tracked files.
 
 ## Related Docs
 

@@ -3,7 +3,6 @@ description: 'Build a safe upgrade plan with sequencing, compatibility checks, a
 name: upgrade-plan
 argument-hint: '[target version, component, or full repo]'
 agent: tester
-model: GPT-5.3-Codex (copilot)
 tools:
   - read
   - search
@@ -43,4 +42,4 @@ For each major step:
 - pass criteria
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"upgrade-plan","artifact_type":"prompt","artifact_version":"20260513008","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"upgrade-plan","artifact_type":"prompt","artifact_version":"20260513008","generator":"vstack","vstack_version":"3.5.2"} -->

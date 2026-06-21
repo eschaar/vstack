@@ -13,6 +13,7 @@ from vstack.constants import VERSION
 from vstack.manifest import (
     CURRENT_HASH_ALGORITHM,
     CURRENT_MANIFEST_VERSION,
+    ArtifactEntry,
     Manifest,
     content_hash,
     hash_with_algorithm,
@@ -180,8 +181,6 @@ class InitCommand(BaseCommand):
         checksum_algorithm: str,
     ) -> None:
         """Append one installed artifact entry to in-memory manifest data."""
-        from vstack.manifest import ArtifactEntry
-
         new_entries.setdefault(gen.config.manifest_key, []).append(
             ArtifactEntry(
                 name=artifact_name,
@@ -364,12 +363,131 @@ class InitCommand(BaseCommand):
         print(f"  {colors.DIM}wrote  {service.label(manifest_file.path)}{colors.RESET}")
 
     @staticmethod
+    def _obsolete_candidates(
+        *,
+        existing_manifest: Manifest | None,
+        selected_manifest_keys: set[str],
+        new_entries,
+    ) -> list[tuple[str, ArtifactEntry]]:
+        """Return tracked entries that are no longer produced by current templates.
+
+        Candidates are entries for selected artifact families that existed in the
+        previous manifest but are absent from the newly built entry set.
+        """
+        if existing_manifest is None:
+            return []
+
+        obsolete: list[tuple[str, ArtifactEntry]] = []
+        for manifest_key in selected_manifest_keys:
+            existing_by_name = {
+                entry.name: entry for entry in existing_manifest.entries_for(manifest_key)
+            }
+            kept_names = {entry.name for entry in new_entries.get(manifest_key, [])}
+            for artifact_name, entry in existing_by_name.items():
+                if artifact_name not in kept_names:
+                    obsolete.append((manifest_key, entry))
+        return obsolete
+
+    @staticmethod
+    def _can_prune_obsolete_entry(*, install_dir: Path, entry) -> tuple[bool, str]:
+        """Return whether an obsolete entry can be removed safely and why."""
+        out_file = install_dir / entry.file
+        if not out_file.exists():
+            return True, "file already missing"
+
+        if entry.checksum is None:
+            return False, "tracked file has no stored checksum"
+
+        checksum_algorithm = (entry.checksum_algorithm or CURRENT_HASH_ALGORITHM).lower()
+        try:
+            current = hash_with_algorithm(out_file.read_text(encoding="utf-8"), checksum_algorithm)
+        except OSError:
+            return False, "file is unreadable"
+        except ValueError:
+            return False, "unknown checksum algorithm"
+
+        if current != entry.checksum:
+            return False, "local changes detected"
+        return True, ""
+
+    @staticmethod
+    def _remove_file_if_present(*, out_file: Path, dry_run: bool) -> None:
+        """Remove one file and prune an empty parent directory when possible."""
+        if dry_run:
+            return
+
+        out_file.unlink(missing_ok=True)
+        parent = out_file.parent
+        try:
+            if parent.exists() and not any(parent.iterdir()):
+                parent.rmdir()
+        except OSError:
+            pass
+
+    @staticmethod
+    def _process_obsolete_entry(
+        *,
+        install_dir: Path,
+        manifest_key: str,
+        type_name: str,
+        entry: ArtifactEntry,
+        prune: bool,
+        dry_run: bool,
+        colors,
+        prefix: str,
+        new_entries,
+    ) -> tuple[str, bool]:
+        """Handle one obsolete manifest entry and return (action, was_preserved)."""
+        selector = f"{type_name}/{entry.name}"
+        rel = str(entry.file)
+
+        if not prune:
+            print(
+                f"  {prefix}{colors.YELLOW}?{colors.RESET}  {rel}"
+                f"  {colors.DIM}obsolete candidate ({selector}) — run vstack init --prune to remove{colors.RESET}"
+            )
+            Manifest.preserve_existing_entry(
+                new_entries=new_entries,
+                manifest_key=manifest_key,
+                existing_entry=entry,
+            )
+            return "obsolete", False
+
+        removable, reason = InitCommand._can_prune_obsolete_entry(
+            install_dir=install_dir,
+            entry=entry,
+        )
+        if not removable:
+            print(
+                f"  {prefix}{colors.YELLOW}↷{colors.RESET}  {rel}"
+                f"  {colors.DIM}obsolete preserved ({selector}) — {reason}{colors.RESET}"
+            )
+            Manifest.preserve_existing_entry(
+                new_entries=new_entries,
+                manifest_key=manifest_key,
+                existing_entry=entry,
+            )
+            return "preserve", True
+
+        reason_suffix = "" if reason == "" else f" — {reason}"
+        print(
+            f"  {prefix}{colors.CYAN}−{colors.RESET}  {rel}"
+            f"  {colors.DIM}removed obsolete tracked artifact ({selector}){reason_suffix}{colors.RESET}"
+        )
+        InitCommand._remove_file_if_present(
+            out_file=install_dir / entry.file,
+            dry_run=dry_run,
+        )
+        return "prune", False
+
+    @staticmethod
     def _print_summary(
         *,
         colors,
         action_counts: dict[str, int],
         preserved_selectors: list[str],
         dry_run: bool,
+        prune: bool,
     ) -> None:
         """Print a readable summary and conflict guidance after an init run."""
         installed = action_counts.get("install", 0)
@@ -377,10 +495,12 @@ class InitCommand(BaseCommand):
         preserved = action_counts.get("preserve", 0)
         skipped = action_counts.get("skip", 0)
         adopted = action_counts.get("adopt", 0)
+        obsolete = action_counts.get("obsolete", 0)
+        pruned = action_counts.get("prune", 0)
 
         install_label = "installed"
         summary_title = "Summary (dry-run)" if dry_run else "Summary"
-        total = installed + updated + preserved + skipped + adopted
+        total = installed + updated + preserved + skipped + adopted + obsolete
 
         print()
         print(f"  {colors.BOLD}{summary_title}{colors.RESET}")
@@ -390,6 +510,19 @@ class InitCommand(BaseCommand):
         print(f"    preserved       : {colors.BOLD}{preserved}{colors.RESET}")
         print(f"    skipped         : {colors.BOLD}{skipped}{colors.RESET}")
         print(f"    adopted         : {colors.BOLD}{adopted}{colors.RESET}")
+        print(f"    obsolete        : {colors.BOLD}{obsolete}{colors.RESET}")
+        print(f"    pruned          : {colors.BOLD}{pruned}{colors.RESET}")
+
+        if obsolete and not prune:
+            print()
+            print(
+                f"  {colors.YELLOW}⚠{colors.RESET}  "
+                "obsolete candidates were reported and preserved in manifest state."
+            )
+            print("  Next step:")
+            print(
+                f"     {colors.DIM}vstack init --prune{colors.RESET}  remove safe obsolete artifacts"
+            )
 
         if preserved:
             noun = "file" if preserved == 1 else "files"
@@ -456,8 +589,6 @@ class InitCommand(BaseCommand):
         exists from a previous non-manual mode, remove it when unchanged.
         Locally modified planner files are preserved and kept tracked.
         """
-        from vstack.manifest import hash_with_algorithm
-
         if gen.config.type_name != "agent":
             return
         if getattr(gen, "workflow_mode", "manual") != "manual":
@@ -520,6 +651,7 @@ class InitCommand(BaseCommand):
         force_names: list[str] | None = None,
         adopt_names: list[str] | None = None,
         update: bool = False,
+        prune: bool = False,
         dry_run: bool = False,
         excluded_names: dict[str, list[str]] | None = None,
     ) -> int:
@@ -552,10 +684,12 @@ class InitCommand(BaseCommand):
                 )
                 break
 
-        manifest_file, _, existing_entries, new_entries = InitCommand._load_existing_manifest(
-            service=service,
-            install_dir=install_dir,
-            gens=gens,
+        manifest_file, existing_manifest, existing_entries, new_entries = (
+            InitCommand._load_existing_manifest(
+                service=service,
+                install_dir=install_dir,
+                gens=gens,
+            )
         )
         if manifest_file is None or existing_entries is None or new_entries is None:
             return 1
@@ -615,11 +749,39 @@ class InitCommand(BaseCommand):
                     print(f"  ERROR [{gen.config.type_name}]: {msg.message}", file=sys.stderr)
                     all_ok = False
 
+        selected_manifest_keys = {gen.config.manifest_key for gen in gens}
+        type_name_by_manifest_key = {gen.config.manifest_key: gen.config.type_name for gen in gens}
+        for manifest_key, entry in InitCommand._obsolete_candidates(
+            existing_manifest=existing_manifest,
+            selected_manifest_keys=selected_manifest_keys,
+            new_entries=new_entries,
+        ):
+            action_counts["obsolete"] = action_counts.get("obsolete", 0) + 1
+            type_name = type_name_by_manifest_key.get(manifest_key, manifest_key.rstrip("s"))
+            obsolete_action, was_preserved = InitCommand._process_obsolete_entry(
+                install_dir=install_dir,
+                manifest_key=manifest_key,
+                type_name=type_name,
+                entry=entry,
+                prune=prune,
+                dry_run=dry_run,
+                colors=colors,
+                prefix=prefix,
+                new_entries=new_entries,
+            )
+            if obsolete_action == "prune":
+                action_counts["prune"] = action_counts.get("prune", 0) + 1
+            elif obsolete_action == "preserve":
+                action_counts["preserve"] = action_counts.get("preserve", 0) + 1
+            if was_preserved:
+                preserved_selectors.add(f"{type_name}/{entry.name}")
+
         InitCommand._print_summary(
             colors=colors,
             action_counts=action_counts,
             preserved_selectors=sorted(preserved_selectors),
             dry_run=dry_run,
+            prune=prune,
         )
 
         if not dry_run:
@@ -650,5 +812,6 @@ class InitCommand(BaseCommand):
             force_names=getattr(context.args, "force_names", None),
             adopt_names=getattr(context.args, "adopt_name", None),
             update=getattr(context.args, "update", False),
+            prune=getattr(context.args, "prune", False),
             dry_run=getattr(context.args, "dry_run", False),
         )

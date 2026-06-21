@@ -151,4 +151,4 @@ Skipped (n/a):
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"docs","artifact_type":"skill","artifact_version":"20260421014","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"docs","artifact_type":"skill","artifact_version":"20260421014","generator":"vstack","vstack_version":"3.5.2"} -->

@@ -140,4 +140,4 @@ Practices:
 - [Chart best practices](https://helm.sh/docs/chart_best_practices/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"helm","artifact_type":"skill","artifact_version":"20260502037","generator":"vstack","vstack_version":"3.3.0"} -->
+<!-- VSTACK-META: {"artifact_name":"helm","artifact_type":"skill","artifact_version":"20260502037","generator":"vstack","vstack_version":"3.5.2"} -->

@@ -33,6 +33,7 @@ vstack manifest upgrade --target .
 | `vstack install --adopt-name TYPE/NAME`   | Track an existing unmanaged artifact without overwriting it.                                                                  |
 | `vstack init`                             | Idempotent regeneration in current directory based on `.vstack/config.yaml`.                                                  |
 | `vstack init --target DIR`                | Same as `init`, but explicit target path.                                                                                     |
+| `vstack init --prune`                     | Remove safe obsolete tracked artifacts that are no longer generated; default mode only reports and preserves candidates.      |
 | `vstack uninstall`                        | Remove tracked artifacts from current directory target when checksums still match manifest.                                   |
 | `vstack uninstall --target DIR`           | Same as `uninstall`, but explicit target path.                                                                                |
 | `vstack uninstall --global`               | Uninstall profile-scoped artifacts.                                                                                           |
@@ -54,5 +55,7 @@ vstack manifest upgrade --target .
 | `vstack init`    | Repeatable regeneration after upgrades or config edits | Re-applies generation idempotently from existing project config. |
 
 Both commands default to current working directory when `--target` is omitted.
+
+`vstack init --prune` applies only to obsolete tracked artifacts where the current file content still matches the manifest checksum. Locally modified or untracked files are never removed by this flag.
 
 For manual-edit preservation and force-overwrite flows, see [Update managed artifacts](../how-to/update-managed-artifacts.md).
