@@ -87,4 +87,4 @@ Provide this structure:
 Escalate when required docs are missing, stale, or inconsistent across product/architecture/design baselines.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"space-setup","artifact_type":"skill","artifact_version":"20260513011","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"space-setup","artifact_type":"skill","artifact_version":"20260513011","generator":"vstack","vstack_version":"3.6.0"} -->

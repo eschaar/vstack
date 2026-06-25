@@ -195,27 +195,23 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 
 ## skills you use
 
-- `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
-- `@#inspect` — read-only verification audit, produces findings report
-- `@#security` — security audit
-- `@#threat-model` — structured threat analysis and mitigation prioritization
-- `@#performance` — performance review
-- `@#docs` — keep verification and audit documentation complete and current
-- `@#guardrails` — reliability and observability review
-- `@#explore` — codebase discovery and mapping
+Keep this list intentionally lean to limit prompt bloat.
+Use additional installed domain skills on demand when the task requires them.
+
 - `@#analyse` — impact analysis, tradeoffs, feasibility
 - `@#code-review` — pre-merge review before release
-- `@#migrate` — database migration safety review
+- `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
 - `@#dependency` — dependency vulnerability and health audit
+- `@#docs` — keep verification and audit documentation complete and current
+- `@#explore` — codebase discovery and mapping
+- `@#guardrails` — reliability and observability review
 - `@#incident` — incident analysis and post-mortem writing
-- `@#codeql` — CodeQL code scanning setup and alert triage
-- `@#secret-scan` — GitHub secret scanning configuration and alert triage
-- `@#dependabot` — review and validate dependency update configuration
-- `@#gdpr` — GDPR compliance review for data handling and privacy controls
-- `@#aws-cli` — AWS resource inspection and observability queries
-- `@#k8s` — Kubernetes workload validation, deployment safety, and runtime diagnostics
-- `@#helm` — Helm chart and release validation with rollback safety checks
-- `@#rancher` — Rancher/Fleet configuration and multi-cluster governance review
+- `@#inspect` — read-only verification audit, produces findings report
+- `@#migrate` — database migration safety review
+- `@#performance` — performance review
+- `@#security` — security audit
+- `@#simplify` — simplify verification scope without weakening required safety checks
+- `@#threat-model` — structured threat analysis and mitigation prioritization
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"tester","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"tester","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.6.0"} -->

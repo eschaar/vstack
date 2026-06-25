@@ -218,4 +218,4 @@ reason: [one sentence]
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"consult","artifact_type":"skill","artifact_version":"20260421009","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"consult","artifact_type":"skill","artifact_version":"20260421009","generator":"vstack","vstack_version":"3.6.0"} -->

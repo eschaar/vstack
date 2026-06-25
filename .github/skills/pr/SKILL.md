@@ -151,4 +151,4 @@ Next steps depend on the repository CI/CD configuration:
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"pr","artifact_type":"skill","artifact_version":"20260502013","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"pr","artifact_type":"skill","artifact_version":"20260502013","generator":"vstack","vstack_version":"3.6.0"} -->

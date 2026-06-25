@@ -55,4 +55,4 @@ Provide a checklist to confirm the repository is clean after regeneration.
 - [ ] All regenerated files match their source checksums in `.vstack/vstack.json`
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"artifact-integrity","artifact_type":"prompt","artifact_version":"20260513002","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"artifact-integrity","artifact_type":"prompt","artifact_version":"20260513002","generator":"vstack","vstack_version":"3.6.0"} -->

@@ -320,4 +320,4 @@ updates:
 - [Dependabot security updates](https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"dependabot","artifact_type":"skill","artifact_version":"20260502027","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"dependabot","artifact_type":"skill","artifact_version":"20260502027","generator":"vstack","vstack_version":"3.6.0"} -->

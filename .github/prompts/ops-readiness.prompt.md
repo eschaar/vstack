@@ -41,4 +41,4 @@ For each gap:
 - target milestone
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"ops-readiness","artifact_type":"prompt","artifact_version":"20260513009","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"ops-readiness","artifact_type":"prompt","artifact_version":"20260513009","generator":"vstack","vstack_version":"3.6.0"} -->

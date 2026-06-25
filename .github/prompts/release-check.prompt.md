@@ -45,4 +45,4 @@ Ordered actions to reach READY.
 - verification step
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"release-check","artifact_type":"prompt","artifact_version":"20260513004","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"release-check","artifact_type":"prompt","artifact_version":"20260513004","generator":"vstack","vstack_version":"3.6.0"} -->

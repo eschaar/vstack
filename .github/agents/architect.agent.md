@@ -206,15 +206,19 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 
 ## skills you use
 
-- `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
-- `@#architecture` — architecture document writing and review
+Keep this list intentionally lean to limit prompt bloat.
+Use additional installed domain skills on demand when the task requires them.
+
 - `@#adr` — architecture decision record writing (when available)
-- `@#docs` — keep architecture items and supporting documentation synchronized
-- `@#threat-model` — design-time threat modeling (STRIDE-first, with DREAD/PASTA as needed)
-- `@#code-review` — review existing code for architectural alignment
-- `@#explore` — codebase discovery and mapping
 - `@#analyse` — impact analysis, tradeoffs, feasibility
+- `@#architecture` — architecture document writing and review
+- `@#code-review` — review existing code for architectural alignment
+- `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
+- `@#docs` — keep architecture items and supporting documentation synchronized
+- `@#explore` — codebase discovery and mapping
 - `@#gdpr` — privacy by design and data processing architecture review
+- `@#simplify` — simplify proposals and plans while preserving outcomes and constraints
+- `@#threat-model` — design-time threat modeling (STRIDE-first, with DREAD/PASTA as needed)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"architect","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"architect","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.6.0"} -->

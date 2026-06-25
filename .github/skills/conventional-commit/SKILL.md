@@ -155,4 +155,4 @@ Remaining changes:
 If commit is blocked, report exact reason and proposed fix.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"conventional-commit","artifact_type":"skill","artifact_version":"20260502024","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"conventional-commit","artifact_type":"skill","artifact_version":"20260502024","generator":"vstack","vstack_version":"3.6.0"} -->

@@ -42,4 +42,4 @@ Ordered by unblock value.
 - [ ] confirm no new failures
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"ci-triage","artifact_type":"prompt","artifact_version":"20260513006","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"ci-triage","artifact_type":"prompt","artifact_version":"20260513006","generator":"vstack","vstack_version":"3.6.0"} -->
