@@ -74,6 +74,8 @@ Planner-coordinated mode (`@planner` invokes this role as a subagent):
 
 {{STAGE_REPORT_CONTRACT}}
 
+{{MEMORY_CACHE}}
+
 ## assess current state
 
 Before running any checks, scan your configured input items to determine
@@ -129,8 +131,7 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 
 ## skills you use
 
-Keep this list intentionally lean to limit prompt bloat.
-Use additional installed domain skills on demand when the task requires them.
+Keep this list lean. Use additional installed domain skills only when needed.
 
 - `@#analyse` — impact analysis, tradeoffs, feasibility
 - `@#code-review` — pre-merge review before release

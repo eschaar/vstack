@@ -62,6 +62,16 @@ AGENT_TYPE = ArtifactTypeConfig(
     partials_subdir="_partials",
     auto_gen_footer=True,
     fail_on_unresolved=False,
+    placeholders={
+        "AGENT_ARTIFACTS_BASELINE": "template_partials()",
+        "AGENT_ARTIFACTS_INPUT": "template_partials()",
+        "AGENT_ARTIFACTS_INPUT_COMMENTS": "template_partials()",
+        "AGENT_ARTIFACTS_OUTPUT": "template_partials()",
+        "AGENT_ARTIFACTS_OUTPUT_COMMENTS": "template_partials()",
+        "AGENT_SKILL_BOUNDARY": "_partials/agent-skill-boundary.md",
+        "MEMORY_CACHE": "_partials/memory-cache.md",
+        "STAGE_REPORT_CONTRACT": "_partials/stage-report-contract.md",
+    },
     frontmatter_schema=AGENT_SCHEMA,
     preserve_multiline_frontmatter=True,
 )

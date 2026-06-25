@@ -14,6 +14,11 @@ implementable interfaces, data schemas, state models, validation rules, and erro
 contracts. Implementation follows this document; architecture decisions are recorded in
 `docs/architecture/adr/`.
 
+Coordinated runs may also use a disposable handoff cache under
+`.vstack/memories/session/<RUN_ID>/`. This cache exists only to reduce duplicated
+prompt context between delegated stages; it never replaces role-owned artifacts
+or `.vstack/vstack.json`.
+
 ______________________________________________________________________
 
 ## 1. domain model

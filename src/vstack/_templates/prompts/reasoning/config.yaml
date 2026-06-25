@@ -1,0 +1,12 @@
+name: reasoning
+description: |
+  Evidence-based reasoning framework for one-shot evaluation tasks.
+  Use when you need to apply critical thinking to a specific decision, proposal, or evaluation.
+category: review
+keywords:
+  - critical thinking
+  - evidence-based reasoning
+  - adversarial thinking
+  - evaluation framework
+reusable: true
+version: '20260626001'

@@ -353,6 +353,7 @@ class TestInstallCommand:
         content = gitignore.read_text(encoding="utf-8")
         assert "tmp/\n" in content
         assert "logs/\n" in content
+        assert "memories/session/\n" in content
         assert "*\n" not in content
 
     def test_write_vstack_gitignore_overwrites_existing(self, tmp_path: Path) -> None:

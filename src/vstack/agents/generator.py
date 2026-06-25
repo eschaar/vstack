@@ -457,8 +457,7 @@ class AgentGenerator(GenericArtifactGenerator):
             return ""
         return (
             "### baseline docs you maintain\n\n"
-            "Keep these files current. Update them whenever the relevant scope, "
-            "design, or implementation changes — do not let them go stale.\n\n"
+            "Keep these files current.\n\n"
             f"{self._build_table(entries)}"
         )
 

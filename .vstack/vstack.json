@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "3.6.0",
-  "installed_at": "2026-06-25T20:50:53.984497+00:00",
+  "installed_at": "2026-06-25T22:16:11.572022+00:00",
   "artifacts": {
     "skills": [
       {
@@ -10,6 +10,13 @@
         "file": "skills/adr/SKILL.md",
         "version": "20260421003",
         "checksum": "b6d6c1774467f339cce476f009b130e267d5fdbf217243bfc45b939ee11e9abe",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "advise",
+        "file": "skills/advise/SKILL.md",
+        "version": "20260626001",
+        "checksum": "e3dd835bb4971ee7e33c3bd999f32c6c1aca402fed6e7f9e90789da099bc0d57",
         "checksum_algorithm": "sha256"
       },
       {
@@ -361,49 +368,49 @@
         "name": "architect",
         "file": "agents/architect.agent.md",
         "version": "20260514001",
-        "checksum": "7a7a68db1ea28ae1866cd4db69e20681a6e3282da270acebaced268a45097db0",
+        "checksum": "476495605706181261ba0e20b00dd821b75703c4e6e8b2e21c4d8068cb34e384",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "designer",
         "file": "agents/designer.agent.md",
         "version": "20260514001",
-        "checksum": "277eb64e15d20f82daed87d08ea41b449519a2e3f74f85ad223087c256c6c9ad",
+        "checksum": "a772bf8aaf9d3db9327b84685d8c484864cb414ecc3f1bbb2ccf3bf0330863f2",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "engineer",
         "file": "agents/engineer.agent.md",
         "version": "20260514001",
-        "checksum": "071312e16fe96f97d7a2e6ff742998e3bc8a7813979cb12f8adaeec8a6468973",
+        "checksum": "207c86de6ef6c772a1ad105fe33326b6802b962c3f04fad0b5e8e11dc0d286f8",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "planner",
         "file": "agents/planner.agent.md",
         "version": "20260514001",
-        "checksum": "703feb9220fcc298a466b372919afe5e1a28f3fd71bc48264f943d5c435e7c69",
+        "checksum": "33e463e5a430d3205166fdeae9400237adfd90bb179a61b612b0895812530bca",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "product",
         "file": "agents/product.agent.md",
         "version": "20260514001",
-        "checksum": "9c1490115997573ffe230a80da1c6a32b5264dc09532cc677f7e688dee5b40bc",
+        "checksum": "1eb85182a4a65aeb792258b29fcab06650043edd4978a270ba3beb1e1bca20ff",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "release",
         "file": "agents/release.agent.md",
         "version": "20260514001",
-        "checksum": "e46424f5285370314c93dbde5e63559e362a9fcf479ae34620c1219b5b538b37",
+        "checksum": "1191467bd0cd82c01dc760a1f7655ef3b23762e936af3dfe3bb7ef6cb1819445",
         "checksum_algorithm": "sha256"
       },
       {
         "name": "tester",
         "file": "agents/tester.agent.md",
         "version": "20260514001",
-        "checksum": "10cfe63d7d7d4a28d2a5cefb53ff1850d2655d2d10a5c02f8644211f5b3b013d",
+        "checksum": "63f759ed60cc54a79c700e0d6be688624cdd7776408e310f57a8b7bdc1de1111",
         "checksum_algorithm": "sha256"
       }
     ],
@@ -613,6 +620,13 @@
         "file": "prompts/quick-review.prompt.md",
         "version": "20260502008",
         "checksum": "7d4362e35180953f32c58b15b8bde51303ed69bce06349c19b148908a5c83c85",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "reasoning",
+        "file": "prompts/reasoning.prompt.md",
+        "version": "20260626001",
+        "checksum": "d669e0797e1e99bbcca92f8aeea8ef821fe7bfb7d4001773790fe4fe39c37387",
         "checksum_algorithm": "sha256"
       },
       {
