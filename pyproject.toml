@@ -71,7 +71,7 @@ include = [
 ]
 # Keep the placeholder version last because the plugin may remove/re-add it in
 # PEP 621 mode, which otherwise causes noisy key reordering.
-version = "0.0.0"
+version = "3.7.0"
 
 [tool.poetry.requires-plugins]
 poetry-dynamic-versioning = { version = ">=1.10.0,<2.0.0", extras = ["plugin"] }

@@ -15,6 +15,9 @@ sdist/
 venv/
 env/
 
+# Poetry local state (plugins, dynamic versioning)
+.poetry/
+
 # Environment / secrets
 .env
 .env.*

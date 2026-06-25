@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/commit-check/commit-check
-    rev: v2.7.0
+    rev: v2.9.0
     hooks:
       - id: check-message
         stages: [commit-msg]
@@ -16,7 +16,7 @@ repos:
       - id: check-yaml
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.17
+    rev: v0.15.20
     hooks:
       - id: ruff
         args: [--fix]
@@ -29,7 +29,7 @@ repos:
         additional_dependencies:
           - mdformat-gfm
         files: \.(md)$
-        exclude: ^(\.github/|tests/_fixtures/golden/)
+        exclude: ^(\.github/|tests/_fixtures/golden/|src/vstack/_templates/(prompts/reasoning/template\.md|skills/advise/template\.md)$)
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2
     rev: v0.22.1
