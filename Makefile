@@ -99,8 +99,11 @@ clean:
 
 clean-deep:
 	find . -path "./.venv" -prune -o -type d \( -name "__pycache__" -o -name ".pytest_cache" -o -name ".ruff_cache" -o -name ".mypy_cache" -o -name ".hypothesis" -o -name ".tox" -o -name ".nox" -o -name "htmlcov" -o -name "*.egg-info" \) -exec rm -rf {} +
-	find . -path "./.venv" -prune -o -type f \( -name "*.pyc" -o -name "*.pyo" -o -name ".coverage" -o -name ".coverage.*" \) -delete
-	rm -rf build dist
+	find . -path "./.venv" -prune -o -type f \( -name "*.pyc" -o -name "*.pyo" -o -name ".coverage" -o -name ".coverage.*" \) -exec rm -f {} +
+	rm -rf build dist .pytest-tmp
+
+nuke: clean-deep
+	rm -rf .venv .poetry
 
 format:
 	$(VENV_PYTHON) -m ruff format $(PYTHON_CHECK_PATHS)

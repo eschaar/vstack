@@ -1,6 +1,6 @@
-______________________________________________________________________
+{{SKILL_CONTEXT}}
 
-## name: advise category: review description: | Structured adversarial review: challenge premises, identify tradeoffs, stress-test ideas. Use when evaluating proposals, architectural decisions, or approaches that need critical scrutiny.
+# advise — Structured Adversarial Review
 
 ## When to Invoke
 
@@ -57,6 +57,6 @@ Always consider:
 - What is the cost of getting this wrong?
 - What would change my assessment?
 
-______________________________________________________________________
+---
 
 **Related:** See `prompt/reasoning` for the underlying reasoning framework.

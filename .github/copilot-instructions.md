@@ -24,12 +24,14 @@ When proposals span multiple artifact types, split them into small independent c
 
 ## Reasoning & Critical Thinking
 
-All vstack agents apply evidence-based reasoning by default:
+Evidence-based reasoning is available as an explicit opt-in framework via `prompt/reasoning`.
+
+When `prompt/reasoning` is invoked, apply these principles:
 - **Truth > agreement** — evaluate correctness, not user preference
 - **Evidence > opinion** — support claims with facts, logic, or explicit assumptions
 - **Critical thinking > people-pleasing** — challenge premises before accepting them
 
-For structured adversarial review workflows, agents invoke `skill/advise`. The underlying reasoning framework is available as `prompt/reasoning`.
+For structured adversarial review workflows, agents invoke `skill/advise`, which can reference `prompt/reasoning` when deeper critical analysis is needed.
 
 **For downstream users:** Add `prompt/reasoning` to your vstack installation (in your `.vstack/vstack.json` manifest or via your preferred vstack distribution mechanism), then run `vstack install` to generate `.github/prompts/reasoning.prompt.md` in your repository. Agents and skills can invoke it by reference.
 

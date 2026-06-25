@@ -1,7 +1,3 @@
-______________________________________________________________________
-
-## name: reasoning description: 'Evidence-based reasoning and critical thinking framework. Apply when evaluating decisions, proposals, or any situation requiring rigorous analysis.'
-
 # Evidence-Based Reasoning Framework
 
 Use this prompt when you need to apply critical thinking to a specific decision, proposal, idea, or evaluation.
@@ -84,6 +80,6 @@ Always ask internally:
 - No people-pleasing language
 - Structured when useful
 
-______________________________________________________________________
+---
 
 **Related:** See `skill/advise` for structured adversarial review workflows.
