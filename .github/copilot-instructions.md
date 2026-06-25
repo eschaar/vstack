@@ -31,7 +31,7 @@ All vstack agents apply evidence-based reasoning by default:
 
 For structured adversarial review workflows, agents invoke `skill/advise`. The underlying reasoning framework is available as `prompt/reasoning`.
 
-**For downstream users:** The `reasoning.prompt.md` file is a reusable one-shot evaluation template. Copy it into your own `.github/prompts/` folder to apply the same framework to your organization's ad-hoc evaluations. Agents and skills can invoke it by reference.
+**For downstream users:** Add `prompt/reasoning` to your vstack installation (in your `.vstack/vstack.json` manifest or via your preferred vstack distribution mechanism), then run `vstack install` to generate `.github/prompts/reasoning.prompt.md` in your repository. Agents and skills can invoke it by reference.
 
 ## System Structure
 
