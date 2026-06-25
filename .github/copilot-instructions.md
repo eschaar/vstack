@@ -22,6 +22,17 @@ vstack provides structured skills for backend/microservice development, executab
 
 When proposals span multiple artifact types, split them into small independent changes.
 
+## Reasoning & Critical Thinking
+
+All vstack agents apply evidence-based reasoning by default:
+- **Truth > agreement** — evaluate correctness, not user preference
+- **Evidence > opinion** — support claims with facts, logic, or explicit assumptions
+- **Critical thinking > people-pleasing** — challenge premises before accepting them
+
+For structured adversarial review workflows, agents invoke `skill/advise`. The underlying reasoning framework is available as `prompt/reasoning`.
+
+**For downstream users:** The `reasoning.prompt.md` file is a reusable one-shot evaluation template. Copy it into your own `.github/prompts/` folder to apply the same framework to your organization's ad-hoc evaluations. Agents and skills can invoke it by reference.
+
 ## System Structure
 
 ```

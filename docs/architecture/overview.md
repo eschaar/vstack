@@ -48,6 +48,9 @@ vstack/
 │   └── vstack/
 ├── .vstack/                     ← project-scope vstack state (committed)
 │   ├── config.yaml              ← human-authored project config (YAML)
+│   ├── memories/
+│   │   ├── README.md            ← handoff-cache protocol and limits
+│   │   └── session/             ← planner-run cache files (gitignored)
 │   ├── vstack.json              ← machine-generated manifest (JSON)
 │   └── templates/               ← project-owned artifact starter templates (seeded by vstack install)
 ├── .github/                     ← generated Copilot artifacts (never edit directly)
@@ -133,6 +136,22 @@ See ADR-014 and ADR-020.
 Writes are atomic: content is staged to a sibling `.tmp` file and promoted with
 `os.replace` so a crash or `KeyboardInterrupt` cannot produce a partially-written
 manifest. See ADR-016.
+
+### 5.1 coordinator handoff cache (`.vstack/memories/session/`)
+
+Coordinated runs may use `.vstack/memories/session/<RUN_ID>/` as a disposable
+handoff cache to avoid replaying the same context across delegated stages.
+
+- The coordinating agent owns `index.md`, a compact current-state summary for the run.
+- Each worker owns one role-scoped cache file such as `engineer.md` or
+  `tester-security.md` when same-role variants run in parallel.
+- Planner-led pipelines typically use `PLANNER_RUN_ID` as `RUN_ID`, but the same contract can be reused by `product` or another lead agent coordinating subagents directly.
+- Session cache files are gitignored and are not a source of truth; role-owned
+  docs, code, and reports remain the authoritative outputs.
+- Cache entries are intentionally terse: current facts, decisions, open points,
+  and next actions only.
+
+See ADR-031.
 
 ### 6. VS Code agent files (`.github/agents/<name>.agent.md`)
 

@@ -72,6 +72,8 @@ Planner-coordinated mode (`@planner` invokes this role as a subagent):
 
 {{STAGE_REPORT_CONTRACT}}
 
+{{MEMORY_CACHE}}
+
 ## how you work
 
 1. Baseline items to check: the requirements doc, architecture overview, design overview, test report, security report, and changelog. Use your input items (see `## work items`) to locate them.
@@ -115,8 +117,7 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 
 ## skills you use
 
-Keep this list intentionally lean to limit prompt bloat.
-Use additional installed domain skills on demand when the task requires them.
+Keep this list lean. Use additional installed domain skills only when needed.
 
 - `@#cicd` — write GitHub Actions CI/CD workflows
 - `@#code-review` — final review before PR is opened

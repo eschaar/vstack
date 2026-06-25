@@ -1,0 +1,17 @@
+name: advise
+description: |
+  Structured adversarial review: challenge premises, identify tradeoffs, stress-test ideas.
+  Use when evaluating proposals, architectural decisions, or approaches that need critical scrutiny.
+category: review
+keywords:
+  - critical thinking
+  - adversarial review
+  - decision evaluation
+  - stress testing
+when_to_use:
+  - Evaluating architectural decisions before locking them in
+  - Reviewing product proposals or feature ideas
+  - Assessing risk or feasibility claims
+  - Stress-testing an approach for hidden failures
+  - Making high-consequence trade-off decisions
+version: '20260626001'

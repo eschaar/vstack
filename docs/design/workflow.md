@@ -57,6 +57,15 @@ Planner correlation semantics:
 - Planner forwards the same `PLANNER_RUN_ID` to every delegated worker stage.
 - Worker stage reports must echo this value in `planner_run_id`.
 
+Planner handoff-cache semantics:
+
+- A coordinating agent may create `.vstack/memories/session/<RUN_ID>/` as a disposable handoff cache.
+- In planner-led runs, `RUN_ID` is normally `PLANNER_RUN_ID`.
+- The coordinating agent owns `index.md`; workers own one role-scoped cache file each.
+- Same-role parallel variants must use distinct file names such as `tester-security.md` and `tester-performance.md`.
+- Cache files keep current-state bullets only: `facts`, `decisions`, `open`, `next`.
+- Cache files are not durable artifacts and must not contain full transcripts, command logs, or duplicated document excerpts.
+
 Stage report schema (planner and workers):
 
 - `status`: `ready` or `blocked`
@@ -204,6 +213,8 @@ The DAG model does not block future evolution:
 
 - **Parallel scheduling:** planner reads `depends_on` to compute ready stages and dispatches
   them concurrently. No config migration required.
+- **Parallel cache safety:** same-role parallel variants can keep separate cache files and merge
+  current-state deltas back into planner `index.md` without shared writes.
 - **Event-driven integration:** external CI events can trigger planner invocations that then
   follow the DAG execution model internally.
 - **Orchestration tree:** role-variant support, once specified via ADR, extends the current
