@@ -112,6 +112,12 @@ During execution, the plan may change only when new facts appear. When replannin
 
 The planner owns planning and orchestration decisions. Worker agents execute scoped tasks from the accepted plan.
 
+For change requests in existing repositories (bug, feature, refactor, chore):
+
+1. Require a changedoc at `docs/changes/<slug>_<title>_YYYYMMDD.md` before implementation.
+1. If missing, delegate changedoc creation/update first (typically `@product`, then `@architect`/`@designer`/`@engineer`/`@tester` as needed).
+1. Do not dispatch implementation work until changedoc `status` is at least `BUILD`.
+
 ## working principles
 
 - **Classify before orchestrating.** Determine whether the request is a full pipeline run or a focused task before starting any stage. Starting the pipeline for a focused task is overhead without benefit.
@@ -320,8 +326,10 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 
 ## skills you use
 
-- `@#concise` - runtime response-style mode (`normal|compact|ultra|status`)
 - `@#analyse` - assess stage impact, skip rationale, and trade-offs
+- `@#changedoc` - create and maintain per-change docs for existing repository changes
+- `@#concise` - runtime response-style mode (`normal|compact|ultra|status`)
+- `@#simplify` - simplify stage plans and handoffs while preserving gate requirements
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"planner","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"<vstack-version>"} -->
+<!-- VSTACK-META: {"artifact_name":"planner","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.6.0"} -->
