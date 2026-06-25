@@ -35,6 +35,7 @@ ______________________________________________________________________
 | defect-fixture matrix expansion               | v3.3.0  | shipped     | Expand defect fixtures across artifact types and failure classes with stable expected error assertions.                                                             |
 | planner routing refinement                    | v3.4.0  | shipped     | Planner/orchestrator routing follow-up to the DAG work                                                                                                              |
 | Homebrew distribution                         | v3.5.0  | shipped     | Homebrew tap/formula publish flow added for install and upgrade via `brew`                                                                                          |
+| configurable skill output paths               | t.b.d.  | candidate   | Replace hardcoded skill artifact/output paths (for example changedoc location conventions) with project-configurable path settings while preserving safe defaults.  |
 | docs information architecture (Diataxis)      | t.b.d.  | candidate   | `docs/user/` scaffold and navigation are in place with segmented tutorials/how-to/reference/explanation routes; broader migration and fully realized IA come later  |
 | team customization layer                      | t.b.d.  | candidate   | Deferred major update after VS Code-first model proves itself; custompacks, overlay merge rules, and install profiles all add major maintenance surface             |
 | multi-IDE support (IntelliJ first)            | t.b.d.  | candidate   | Deferred until vstack proves stable in VS Code; likely a major follow-up because it needs separate targets, schemas, and more maintenance                           |
@@ -258,6 +259,21 @@ Ref: [GitHub — Administer GitHub Copilot for your team](https://docs.github.co
 This is a later major update, not a near-term roadmap item. The idea is valid, but it
 adds another product layer on top of a system that is still proving itself in its
 VS Code-first form.
+
+### configurable skill output paths [candidate — t.b.d.]
+
+Current skills often rely on path conventions embedded in skill guidance (for example
+release notes or changedoc output locations). This keeps defaults simple but limits
+project flexibility.
+
+Candidate scope:
+
+- Add project-level configuration for skill output roots and selected skill-specific
+  output paths (for example changedoc output directory).
+- Keep backward-compatible defaults so existing repositories continue to work without
+  config changes.
+- Ensure generated docs and agent guidance resolve configured paths deterministically.
+- Provide migration guidance and validation warnings for invalid path settings.
 
 ### obsolete artifact pruning for init [shipped — v3.5.x]
 
