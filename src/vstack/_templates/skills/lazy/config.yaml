@@ -1,0 +1,18 @@
+name: lazy
+version: 20260625001
+description: |
+  Engineer-focused minimal-change execution skill. Finds the smallest safe
+  solution by preferring deletion, reuse, standard library, and native
+  platform capabilities before writing new code. Use when asked to implement,
+  simplify, or avoid over-engineering while preserving correctness, security,
+  and maintainability.
+allowed-tools: 'execute read search edit'
+argument-hint: '[task or change request to solve with minimal new code]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

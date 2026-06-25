@@ -1,0 +1,16 @@
+name: simplify
+version: 20260625001
+description: |
+  Generic simplification skill for any role. Removes unnecessary scope,
+  complexity, and moving parts while preserving required outcomes,
+  correctness, safety, and maintainability.
+allowed-tools: 'execute read search edit'
+argument-hint: '[proposal, plan, or change request to simplify]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access and terminal command execution when needed.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false
