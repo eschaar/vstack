@@ -57,4 +57,4 @@ Use these Terragrunt conventions.
 - [Terragrunt CLI reference](https://terragrunt.gruntwork.io/docs/reference/cli-options/)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"terragrunt","artifact_type":"instruction","artifact_version":"20260502035","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"terragrunt","artifact_type":"instruction","artifact_version":"20260502035","generator":"vstack","vstack_version":"3.6.0"} -->

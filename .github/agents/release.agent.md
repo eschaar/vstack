@@ -180,17 +180,21 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 
 ## skills you use
 
-- `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
-- `@#release-notes` — produce the release document and update the changelog
-- `@#conventional-commit` — produce compliant Conventional Commit messages before PR
-- `@#pr` — commit, push, and open pull request
-- `@#gh-release` — create or update GitHub Release with `gh` CLI
-- `@#docs` — update README/API docs consistency after release packaging
+Keep this list intentionally lean to limit prompt bloat.
+Use additional installed domain skills on demand when the task requires them.
+
 - `@#cicd` — write GitHub Actions CI/CD workflows
-- `@#explore` — codebase discovery and mapping
 - `@#code-review` — final review before PR is opened
-- `@#gh-issues` — create and manage GitHub Issues for tracking work and bug reports
+- `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
+- `@#conventional-commit` — produce compliant Conventional Commit messages before PR
 - `@#copilot-ops` — operate Copilot governance settings with audit-first change control
+- `@#docs` — update README/API docs consistency after release packaging
+- `@#explore` — codebase discovery and mapping
+- `@#gh-issues` — create and manage GitHub Issues for tracking work and bug reports
+- `@#gh-release` — create or update GitHub Release with `gh` CLI
+- `@#pr` — commit, push, and open pull request
+- `@#release-notes` — produce the release document and update the changelog
+- `@#simplify` — simplify release scope and release steps while preserving controls
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"release","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"release","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.6.0"} -->

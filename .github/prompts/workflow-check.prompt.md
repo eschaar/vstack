@@ -45,4 +45,4 @@ Provide an ordered short list of actions.
 - expected result
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"workflow-check","artifact_type":"prompt","artifact_version":"20260513003","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"workflow-check","artifact_type":"prompt","artifact_version":"20260513003","generator":"vstack","vstack_version":"3.6.0"} -->

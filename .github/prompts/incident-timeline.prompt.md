@@ -56,4 +56,4 @@ For each action:
 List the minimum controls needed to reduce repeat probability.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"incident-timeline","artifact_type":"prompt","artifact_version":"20260502010","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"incident-timeline","artifact_type":"prompt","artifact_version":"20260502010","generator":"vstack","vstack_version":"3.6.0"} -->

@@ -59,4 +59,4 @@ List packages with unusual provenance concerns: abandoned maintainers, single-ma
 Ordered action list by priority (critical first).
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"dependency-audit","artifact_type":"prompt","artifact_version":"20260502009","generator":"vstack","vstack_version":"3.5.2"} -->
+<!-- VSTACK-META: {"artifact_name":"dependency-audit","artifact_type":"prompt","artifact_version":"20260502009","generator":"vstack","vstack_version":"3.6.0"} -->
