@@ -1,0 +1,17 @@
+name: changedoc
+version: 20260625001
+description: |
+  Create and maintain a per-change document for existing repositories before
+  implementation. Captures metadata, context, AS-IS, TO-BE, impact,
+  acceptance criteria, and test scenarios so all agents can execute with less
+  prompt context and better alignment.
+allowed-tools: 'execute read search edit'
+argument-hint: '[change request, ticket reference, and scope]'
+
+license: MIT
+compatibility: Requires a skills-compatible agent with repository file access.
+metadata:
+  owner: vstack
+  maturity: stable
+user-invocable: true
+disable-model-invocation: false

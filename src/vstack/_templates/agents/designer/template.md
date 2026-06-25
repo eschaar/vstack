@@ -149,10 +149,14 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 
 ## skills you use
 
+Keep this list intentionally lean to limit prompt bloat.
+Use additional installed domain skills on demand when the task requires them.
+
+- `@#analyse` — impact analysis, tradeoffs, feasibility
 - `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
-- `@#design` — API and service design
 - `@#consult` — API ergonomics and developer experience review
+- `@#design` — API and service design
 - `@#docs` — keep design items and related docs aligned with delivered changes
 - `@#explore` — codebase discovery and mapping
-- `@#analyse` — impact analysis, tradeoffs, feasibility
 - `@#openapi` — OpenAPI 3.1 spec writing and review
+- `@#simplify` — simplify proposals and designs while preserving required outcomes

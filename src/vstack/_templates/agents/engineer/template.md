@@ -132,32 +132,22 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 
 ## skills you use
 
-- `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
-- `@#explore` — codebase discovery and mapping
+Keep this list intentionally lean to limit prompt bloat.
+Use additional installed domain skills on demand when the task requires them.
+
 - `@#analyse` — impact analysis, tradeoffs, feasibility
-- `@#docs` — keep implementation and technical documentation accurate when behavior changes
-- `@#verify` — run tests, fix issues, re-verify loop
-- `@#conventional-commit` — prepare policy-aligned Conventional Commit messages
 - `@#code-review` — pre-merge review
+- `@#concise` — runtime response-style mode (`normal|compact|ultra|status`)
+- `@#conventional-commit` — prepare policy-aligned Conventional Commit messages
 - `@#debug` — root-cause debugging
-- `@#threat-model` — threat model updates when design or attack surface changes
-- `@#performance` — performance investigation
-- `@#container` — Dockerfile and docker-compose authoring
-- `@#cicd` — GitHub Actions CI/CD workflow configuration
-- `@#migrate` — database migration review and authoring
-- `@#refactor` — structured refactoring without behavior change
-- `@#openapi` — OpenAPI 3.1 spec writing and review
 - `@#dependency` — dependency health audit
-- `@#incident` — incident analysis and coordination (delegates to rca + postmortem)
-- `@#rca` — root cause analysis document writing
-- `@#postmortem` — blameless post-mortem document writing
-- `@#dependabot` — configure automated dependency updates
-- `@#secret-scan` — configure GitHub secret scanning and push protection
-- `@#gdpr` — GDPR engineering practices for data models, APIs, logging, and retention
-- `@#terraform` — Terraform IaC authoring and review
-- `@#terragrunt` — Terragrunt DRY multi-environment IaC configuration
-- `@#cloudformation` — AWS CloudFormation template writing and review
-- `@#aws-cli` — AWS CLI operations and scripting
-- `@#k8s` — Kubernetes manifest authoring, rollout operations, and troubleshooting
-- `@#helm` — Helm chart authoring and release lifecycle operations
-- `@#rancher` — Rancher and Fleet multi-cluster operations and governance
+- `@#docs` — keep implementation and technical documentation accurate when behavior changes
+- `@#explore` — codebase discovery and mapping
+- `@#lazy` — minimal safe implementation by preferring deletion and reuse over net-new code
+- `@#migrate` — database migration review and authoring
+- `@#openapi` — OpenAPI 3.1 spec writing and review
+- `@#performance` — performance investigation
+- `@#refactor` — structured refactoring without behavior change
+- `@#simplify` — simplify proposals and change plans while preserving required outcomes
+- `@#threat-model` — threat model updates when design or attack surface changes
+- `@#verify` — run tests, fix issues, re-verify loop
