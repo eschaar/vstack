@@ -2,6 +2,32 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.7.0](https://github.com/eschaar/vstack/compare/3.6.0...3.7.0) (2026-06-27)
+
+
+### Features
+
+* **agents:** add compact shared safety guardrails ([0d57aa0](https://github.com/eschaar/vstack/commit/0d57aa0417d3e9af08d2cacf1c378175ce4356e0))
+* **artifacts:** convert reasoning to prompt type, add advise skill ([120e99b](https://github.com/eschaar/vstack/commit/120e99b1a6bf15d2fdfd00d9eb16f6f125c68351))
+* **skills:** add changedoc, lazy, and simplify workflows ([a710d8e](https://github.com/eschaar/vstack/commit/a710d8e304bac16e85a3d8add68c22ab358d4a08))
+
+
+### Documentation
+
+* clarify vstack installation for downstream users ([5c238ad](https://github.com/eschaar/vstack/commit/5c238adb1fc7319aaee2f7179f86d29be4bc66e1))
+* **roadmap:** add configurable skill output paths candidate ([85b767c](https://github.com/eschaar/vstack/commit/85b767cc448dba57bcd2bc700bca223a647478b6))
+* **skills:** document changedoc ownership and usage ([9e87458](https://github.com/eschaar/vstack/commit/9e87458654688ae6d781e0ccddc8ad8751660885))
+
+
+### Maintenance
+
+* **generate:** sync installed artifacts after template updates ([99da10e](https://github.com/eschaar/vstack/commit/99da10ed62b238fdc6196dbc85b79b3d388fa682))
+
+
+### Tests
+
+* **artifacts:** sync planner and product golden fixtures ([8682a87](https://github.com/eschaar/vstack/commit/8682a878fc91fdcb0a62b7e2cb836151841d9a32))
+
 ## [3.6.0](https://github.com/eschaar/vstack/compare/3.5.2...3.6.0) (2026-06-21)
 
 ### Features
