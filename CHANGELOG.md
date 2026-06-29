@@ -2,6 +2,13 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.7.1](https://github.com/eschaar/vstack/compare/3.7.0...3.7.1) (2026-06-29)
+
+
+### Maintenance
+
+* **ci:** bump actions/setup-python in the gha-patch-minor group ([8d4fae2](https://github.com/eschaar/vstack/commit/8d4fae2ccc540e5a7e5039d98d95133221462d13))
+
 ## [3.7.0](https://github.com/eschaar/vstack/compare/3.6.0...3.7.0) (2026-06-27)
 
 
