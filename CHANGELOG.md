@@ -2,6 +2,14 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.7.4](https://github.com/eschaar/vstack/compare/3.7.3...3.7.4) (2026-07-19)
+
+
+### Maintenance
+
+* **ci:** bump pypa/gh-action-pypi-publish in the gha-patch-minor group ([5d8b0ac](https://github.com/eschaar/vstack/commit/5d8b0ac456e1fd669d7e970753cf69efb2a9f37b))
+* **deps:** bump the pip-patch-minor group with 3 updates ([74e2eb6](https://github.com/eschaar/vstack/commit/74e2eb687f6969b58eb6992b53e671537951a5a7))
+
 ## [3.7.3](https://github.com/eschaar/vstack/compare/3.7.2...3.7.3) (2026-07-13)
 
 
