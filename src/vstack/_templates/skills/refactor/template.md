@@ -154,12 +154,14 @@ def process_order(order):
     # process
     ...
 
+
 # After
 def _validate_order(order: dict) -> None:
     if not order.get("id"):
         raise ValueError("missing id")
     if order.get("amount", 0) <= 0:
         raise ValueError("amount must be positive")
+
 
 def process_order(order: dict) -> None:
     _validate_order(order)
@@ -176,6 +178,7 @@ def process(item):
             if item.value > 0:
                 return item.value * 2
     return None
+
 
 # After
 def process(item):
@@ -207,8 +210,8 @@ if status_code == HTTP_TOO_MANY_REQUESTS:
 
 ```python
 # Before
-def create_user(name, email, role, department, manager_id, start_date):
-    ...
+def create_user(name, email, role, department, manager_id, start_date): ...
+
 
 # After
 @dataclass
@@ -220,8 +223,8 @@ class CreateUserRequest:
     manager_id: str
     start_date: date
 
-def create_user(request: CreateUserRequest) -> User:
-    ...
+
+def create_user(request: CreateUserRequest) -> User: ...
 ```
 
 ## Step 5: Verify
