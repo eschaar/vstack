@@ -2,6 +2,21 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.7.5](https://github.com/eschaar/vstack/compare/3.7.4...3.7.5) (2026-07-31)
+
+
+### Fixes
+
+* fix ruff format violations in refactor skill template Python code blocks ([745b0f9](https://github.com/eschaar/vstack/commit/745b0f96b167af7b9ce00925c3468f5f1e1dd77f))
+
+
+### Maintenance
+
+* **ci:** bump actions/setup-python from 6.3.0 to 7.0.0 ([55c518e](https://github.com/eschaar/vstack/commit/55c518efd489b8adba53392d318420b48ddf5ea1))
+* **ci:** bump the gha-patch-minor group with 2 updates ([3efa7b4](https://github.com/eschaar/vstack/commit/3efa7b459144fc8e4005c0825a9406b48ae5ad6d))
+* **deps:** bump the pip-patch-minor group across 1 directory with 3 updates ([9081f77](https://github.com/eschaar/vstack/commit/9081f77edf2c5dd03d2fc96ca23a9ebe5ab36921))
+* **deps:** bump types-pyyaml from 6.0.12.20260518 to 6.0.12.20260724 ([5dfd73f](https://github.com/eschaar/vstack/commit/5dfd73f4e3ec65d2e7d8f14b8212e0bda4538133))
+
 ## [3.7.4](https://github.com/eschaar/vstack/compare/3.7.3...3.7.4) (2026-07-19)
 
 
