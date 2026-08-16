@@ -2,6 +2,14 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.7.7](https://github.com/eschaar/vstack/compare/3.7.6...3.7.7) (2026-08-16)
+
+
+### Maintenance
+
+* **ci:** bump trufflesecurity/trufflehog in the gha-patch-minor group ([a59614e](https://github.com/eschaar/vstack/commit/a59614e2c3cc33832dac635947a03df7442852f6))
+* **deps:** bump the pip-patch-minor group across 1 directory with 3 updates ([e0b8b0e](https://github.com/eschaar/vstack/commit/e0b8b0e1ee157044246f8812fe213ec929324e21))
+
 ## [3.7.6](https://github.com/eschaar/vstack/compare/3.7.5...3.7.6) (2026-08-02)
 
 
