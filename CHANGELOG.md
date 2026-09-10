@@ -2,6 +2,15 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [3.7.8](https://github.com/eschaar/vstack/compare/3.7.7...3.7.8) (2026-09-10)
+
+
+### Maintenance
+
+* **ci:** bump trufflesecurity/trufflehog in the gha-patch-minor group ([5b14058](https://github.com/eschaar/vstack/commit/5b140589cf547c262884bfe1ab73103d37650548))
+* **deps:** bump the pip-patch-minor group across 1 directory with 3 updates ([1df5724](https://github.com/eschaar/vstack/commit/1df572413a25b9015eae00fc0d7863425bb6c3d5))
+* **deps:** bump types-pyyaml from 6.0.12.20260724 to 6.0.12.20260815 ([832a46d](https://github.com/eschaar/vstack/commit/832a46de7b40b45221bc895c7c9fd448723943dd))
+
 ## [3.7.7](https://github.com/eschaar/vstack/compare/3.7.6...3.7.7) (2026-08-16)
 
 
