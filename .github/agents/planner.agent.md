@@ -291,4 +291,4 @@ that requires changes to upstream items, flag it and trigger a reverse handoff.
 - `@#simplify` - simplify stage plans and handoffs while preserving gate requirements
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"planner","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.6.0"} -->
+<!-- VSTACK-META: {"artifact_name":"planner","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.7.4"} -->

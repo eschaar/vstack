@@ -57,14 +57,14 @@ make check
 Use this table to find the minimum set of checks to run after each type of change.
 Run `make check` before opening a PR when your change touches multiple areas.
 
-| Change type                                                             | Required checks                                                        |
-| ----------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `src/vstack/_templates/agents/`, `skills/`, `instructions/`, `prompts/` | `python3 -m vstack install`, `make test-local`, `make markdown-format` |
-| `src/vstack/_templates/hooks/`                                          | `python3 -m vstack install`, `make test-local`                         |
-| `docs/**/*.md`                                                          | `make markdown-format`                                                 |
-| `src/**/*.py` or `tests/**/*.py`                                        | `make test-local` (run `make check` before merge)                      |
-| CLI behavior, manifest logic, or workflow contract                      | `make check`                                                           |
-| `pyproject.toml`, `Makefile`, or CI workflow files                      | `make check`                                                           |
+| Change type                                                 | Required checks                                                        |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `src/vstack/_templates/agents/`, `skills/`, `instructions/` | `python3 -m vstack install`, `make test-local`, `make markdown-format` |
+| `src/vstack/_templates/hooks/`                              | `python3 -m vstack install`, `make test-local`                         |
+| `docs/**/*.md`                                              | `make markdown-format`                                                 |
+| `src/**/*.py` or `tests/**/*.py`                            | `make test-local` (run `make check` before merge)                      |
+| CLI behavior, manifest logic, or workflow contract          | `make check`                                                           |
+| `pyproject.toml`, `Makefile`, or CI workflow files          | `make check`                                                           |
 
 ### Coverage requirement
 
@@ -115,7 +115,7 @@ type(optional-scope)!: short summary
 - Domain and backend areas: `api`, `auth`, `permissions`, `serializer`, `viewset`, `orm`, `migrations`, `admin`, `settings`.
 - Tooling and workflow areas: `deps`, `ci`, `docs`, `build`, `style`, `release`, `workflow`.
 - Quality and test areas: `test`, `tests`.
-- Project modules: `cli`, `agents`, `skills`, `instructions`, `prompts`, `frontmatter`, `artifacts`.
+- Project modules: `cli`, `agents`, `skills`, `instructions`, `hooks`, `frontmatter`, `artifacts`.
 
 ### 5) Examples
 

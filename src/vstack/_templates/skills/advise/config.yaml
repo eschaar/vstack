@@ -14,4 +14,4 @@ when_to_use:
   - Assessing risk or feasibility claims
   - Stress-testing an approach for hidden failures
   - Making high-consequence trade-off decisions
-version: '20260626001'
+version: '20261017001'

@@ -43,5 +43,5 @@ They provide durable handoff context between stages.
 - [Workflow modes explanation](../explanation/workflow-modes.md)
 - [Configure workflow modes](../how-to/configure-workflow-modes.md)
 - [Configuration](configuration.md)
-- [Prompts overview](prompts-overview.md)
+- [Prompt migration](prompt-migration.md)
 - [Skills overview](skills-overview.md)

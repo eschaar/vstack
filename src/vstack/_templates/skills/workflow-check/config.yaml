@@ -1,0 +1,7 @@
+name: workflow-check
+description: Review workflow stage flow, gate usage, and handoff integrity across role artifacts.
+argument-hint: "[workflow scope or stage list]"
+allowed-tools: 'read search'
+user-invocable: true
+disable-model-invocation: true
+version: 20261017001

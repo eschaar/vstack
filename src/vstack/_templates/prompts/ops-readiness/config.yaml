@@ -1,8 +1,0 @@
-name: ops-readiness
-description: Assess operational readiness across observability, runbooks, failure handling, and supportability.
-argument-hint: "[service, component, or release scope]"
-agent: tester
-tools:
-  - read
-  - search
-version: 20260513009

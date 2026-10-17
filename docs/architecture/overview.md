@@ -6,7 +6,7 @@
 ## overview
 
 vstack is a VS Code–native AI engineering workflow system. It provides template-driven
-skills, agents, hooks, instructions, and prompts for planning, reviewing, verifying, and
+skills, agents, hooks, and instructions for planning, reviewing, verifying, and
 releasing software via GitHub Copilot Agent Mode.
 
 **System style:** `platform` — a standalone CLI tool and SDK. vstack installs
@@ -32,12 +32,11 @@ vstack/
 │   ├── skills/                  ← SKILL_SCHEMA, SKILL_TYPE
 │   ├── agents/                  ← AGENT_SCHEMA, AGENT_TYPE
 │   ├── instructions/            ← instruction config and wrappers
-│   ├── prompts/                 ← prompt config and wrappers
 │   ├── hooks/                   ← hook config and YAML-to-JSON generator
 │   ├── manifest/                ← Manifest, ManifestFile, ArtifactEntry, checksums
 │   ├── cli/                     ← interface, registry, service, per-command handlers, helpers
 │   └── _templates/              ← source templates for all artifact types
-│       ├── skills/, agents/, hooks/, instructions/, prompts/
+│       ├── skills/, agents/, hooks/, instructions/
 │       ├── docs/                ← baseline doc stubs (seeded by vstack install)
 │       └── project/             ← .vstack/ config and artifact starter templates
 ├── docs/
@@ -57,8 +56,7 @@ vstack/
 │   ├── skills/<name>/SKILL.md
 │   ├── agents/<name>.agent.md
 │   ├── hooks/<name>.json
-│   ├── instructions/<name>.instructions.md
-│   └── prompts/<name>.prompt.md
+│   └── instructions/<name>.instructions.md
 └── README.md
 ```
 
@@ -117,7 +115,7 @@ have defined skill access and artifact ownership. See
 ### 5. manifest (`.vstack/vstack.json`)
 
 Generated at install time at `.vstack/vstack.json`. Tracks every `.github/` artifact
-installed by `vstack init` (skills, agents, hooks, instructions, and prompts), including a
+installed by `vstack init` (skills, agents, hooks, and instructions), including a
 per-file SHA-256 checksum, version, and algorithm so that:
 
 - `vstack uninstall` removes exactly the files it installed.
@@ -132,6 +130,12 @@ See ADR-019.
 The manifest schema is versioned (`manifest_version` field). Operations that require
 the current schema fail fast with an upgrade hint rather than silently misbehaving.
 See ADR-014 and ADR-020.
+
+Legacy `prompts` entries remain readable for migration only. When skills are
+selected, `install` and `init` automatically remove known, unchanged prompts after
+their replacement skills are available. Modified, unknown, or unsafe files remain
+tracked and are reported for manual review. See
+[ADR-032](adr/032-skills-replace-prompts.md).
 
 Writes are atomic: content is staged to a sibling `.tmp` file and promoted with
 `os.replace` so a crash or `KeyboardInterrupt` cannot produce a partially-written

@@ -83,7 +83,7 @@ Always consider:
 
 ---
 
-**Related:** See `prompt/reasoning` for the underlying reasoning framework.
+**Related:** See `skill/reasoning` for the underlying reasoning framework.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"advise","artifact_type":"skill","artifact_version":"20260626001","generator":"vstack","vstack_version":"3.6.0"} -->
+<!-- VSTACK-META: {"artifact_name":"advise","artifact_type":"skill","artifact_version":"20261017001","generator":"vstack","vstack_version":"3.7.4"} -->

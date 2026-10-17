@@ -2,10 +2,10 @@
 
 This module provides:
 
-* :class:`ArtifactTypeConfig` — fully describes one family of prompt artifacts:
+* :class:`ArtifactTypeConfig` — fully describes one family of artifacts:
   where to find source templates, how to derive output paths, which frontmatter
   schema applies, and what to verify.
-* Shared schemas for **prompts** and **instructions**.
+* The shared schema for **instructions**.
 
 Frontmatter field types (:class:`~vstack.frontmatter.FieldSpec`,
 :class:`~vstack.frontmatter.FrontmatterSchema`, :data:`~vstack.frontmatter.FieldType`)
@@ -28,7 +28,7 @@ from vstack.frontmatter import FieldSpec, FrontmatterSchema
 
 @dataclass
 class ArtifactTypeConfig:
-    """Describes a family of prompt artifacts and how to process them.
+    """Describe an artifact family and how to process it.
 
     Attributes:
         type_name:         Singular identifier used in log output and internal lookups
@@ -88,18 +88,6 @@ class ArtifactTypeConfig:
 
 
 # ── Frontmatter schemas ───────────────────────────────────────────────────────
-
-#: Fields recognised in VS Code prompt files (``.prompt.md``).
-PROMPT_SCHEMA = FrontmatterSchema(
-    [
-        FieldSpec("description"),
-        FieldSpec("name", quoted=False),
-        FieldSpec("argument-hint"),
-        FieldSpec("agent", quoted=False),
-        FieldSpec("model", quoted=False),
-        FieldSpec("tools", type="list"),
-    ]
-)
 
 #: Fields recognised in VS Code instruction files (``.instructions.md``).
 INSTRUCTION_SCHEMA = FrontmatterSchema(

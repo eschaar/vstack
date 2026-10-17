@@ -1,8 +1,0 @@
-name: test-gaps
-description: Identify missing behavioral coverage and prioritize test additions by production risk.
-argument-hint: "[component, feature, or repository scope]"
-agent: tester
-tools:
-  - read
-  - search
-version: 20260513007

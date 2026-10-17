@@ -36,16 +36,6 @@ def fixture_agent_fixture_path(golden_fixtures_root: Path) -> Callable[[str], Pa
     return _build
 
 
-@pytest.fixture(scope="session", name="prompt_fixture_path")
-def fixture_prompt_fixture_path(golden_fixtures_root: Path) -> Callable[[str], Path]:
-    """Build the fixture path for a prompt artifact."""
-
-    def _build(name: str) -> Path:
-        return golden_fixtures_root / "prompts" / f"{name}.prompt.md"
-
-    return _build
-
-
 @pytest.fixture(scope="session", name="instruction_fixture_path")
 def fixture_instruction_fixture_path(golden_fixtures_root: Path) -> Callable[[str], Path]:
     """Build the fixture path for an instruction artifact."""

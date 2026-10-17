@@ -1,0 +1,7 @@
+name: migration-plan
+description: Produce a safe migration plan with sequencing, fallback paths, and verification checkpoints.
+argument-hint: "[migration scope or affected components]"
+allowed-tools: 'read search'
+user-invocable: true
+disable-model-invocation: true
+version: 20261017001

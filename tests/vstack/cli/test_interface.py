@@ -154,7 +154,7 @@ class TestCommandLineInterface:
         assert len(command.calls) == 1
         assert command.calls[0].args is args
         assert command.calls[0].install_dir == tmp_path / ".github"
-        assert command.calls[0].only == ["agent", "hook", "instruction", "prompt", "skill"]
+        assert command.calls[0].only == ["agent", "hook", "instruction", "skill"]
 
     def test_resolve_only_for_scope_rejects_disallowed_global_types(self) -> None:
         """Global mode rejects unsupported type filters with a helpful message."""
@@ -1298,10 +1298,10 @@ class TestReadExclude:
         vstack_dir = tmp_path / ".vstack"
         vstack_dir.mkdir()
         (vstack_dir / "config.yaml").write_text(
-            "exclude:\n  prompts: all\n  skills:\n    - helm\n", encoding="utf-8"
+            "exclude:\n  instructions: all\n  skills:\n    - helm\n", encoding="utf-8"
         )
         excluded_types, excluded_names = CommandLineInterface._read_exclude(tmp_path / ".github")
-        assert "prompt" in excluded_types
+        assert "instruction" in excluded_types
         assert excluded_names == {"skill": ["helm"]}
 
     def test_ignores_unknown_keys(self, tmp_path: Path) -> None:

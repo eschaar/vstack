@@ -43,7 +43,7 @@ vstack manifest verify --target .
 ## 3. Operations Path
 
 1. Set operating behavior in [Configure workflow modes](how-to/configure-workflow-modes.md).
-1. Choose execution style with [Choose agent, skill, or prompt](how-to/choose-agent-skill-or-prompt.md).
+1. Choose execution style with [Choose agent or skill](how-to/choose-agent-or-skill.md).
 1. Tune project settings in [Configuration](reference/configuration.md).
 1. Manage automation points in [Hooks](reference/hooks.md).
 1. Review role-owned outputs and handoff artifacts in [Work items](reference/work-items.md).

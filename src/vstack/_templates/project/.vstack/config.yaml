@@ -25,7 +25,6 @@
 #   hooks:
 #     - post-edit-markdown-quality
 #   instructions: all
-#   prompts: all
 
 # -----------------------------------------------------------------------------
 # REPOSITORY HOOKS

@@ -56,6 +56,12 @@ vstack manifest upgrade --target .
 
 Both commands default to current working directory when `--target` is omitted.
 
+The active artifact types are `skill`, `agent`, `instruction`, and `hook`.
+The `prompt` family is retired. With skills selected, both install commands
+automatically retire safe, tracked legacy prompts after replacements are
+available; no `--prune` flag is needed for this migration.
+See [Prompt migration](prompt-migration.md) for safeguards and replacement commands.
+
 `vstack init --prune` applies only to obsolete tracked artifacts where the current file content still matches the manifest checksum. Locally modified or untracked files are never removed by this flag.
 
 For manual-edit preservation and force-overwrite flows, see [Update managed artifacts](../how-to/update-managed-artifacts.md).

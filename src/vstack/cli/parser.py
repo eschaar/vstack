@@ -30,6 +30,15 @@ class CommandLineParser:
     """Create the vstack command-line parser and resolve install targets."""
 
     @staticmethod
+    def _artifact_selector(value: str) -> str:
+        """Reject retired prompt selectors with an actionable migration message."""
+        if value.strip().startswith("prompt/"):
+            raise argparse.ArgumentTypeError(
+                "prompt artifacts are retired; use the replacement skill/<name> selector"
+            )
+        return value
+
+    @staticmethod
     def _add_scope_group(parser: argparse.ArgumentParser, *, help_text: str) -> None:
         """Add mutually-exclusive target scope flags to a parser."""
         group = parser.add_mutually_exclusive_group()
@@ -38,7 +47,7 @@ class CommandLineParser:
             "--global",
             dest="use_global",
             action="store_true",
-            help="VS Code user profile (agents/prompts/instructions/skills)",
+            help="VS Code user profile (agents/instructions/skills)",
         )
 
     @staticmethod
@@ -177,6 +186,7 @@ class CommandLineParser:
             "--force-name",
             dest="force_names",
             action="append",
+            type=self._artifact_selector,
             metavar="<name|type/name>",
             help=(
                 "Force install one named artifact without overwriting everything. "
@@ -188,6 +198,7 @@ class CommandLineParser:
         parser.add_argument(
             "--adopt-name",
             action="append",
+            type=self._artifact_selector,
             default=None,
             metavar="<name|type/name>",
             help=(
@@ -225,6 +236,7 @@ class CommandLineParser:
             "--force-name",
             dest="force_names",
             action="append",
+            type=self._artifact_selector,
             metavar="<name|type/name>",
             help=(
                 "Force regenerate one named artifact without overwriting everything. "
@@ -235,6 +247,7 @@ class CommandLineParser:
         parser.add_argument(
             "--adopt-name",
             action="append",
+            type=self._artifact_selector,
             default=None,
             metavar="<name|type/name>",
             help=(
@@ -275,6 +288,7 @@ class CommandLineParser:
             "--force-name",
             dest="force_names",
             action="append",
+            type=self._artifact_selector,
             metavar="<artifact-name>",
             help="Force uninstall one named artifact without removing every modified file",
         )

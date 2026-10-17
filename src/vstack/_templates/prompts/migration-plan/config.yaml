@@ -1,8 +1,0 @@
-name: migration-plan
-description: Produce a safe migration plan with sequencing, fallback paths, and verification checkpoints.
-argument-hint: "[migration scope or affected components]"
-agent: engineer
-tools:
-  - read
-  - search
-version: 20260513010
