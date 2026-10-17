@@ -35,12 +35,27 @@ Zero external Python dependencies at runtime. All runtime code uses stdlib only:
 
 ## rationale
 
-Python 3.11–3.14 is the supported range, matching CI and type-checking compatibility
-requirements. The package is distributed via PyPI with no runtime dependencies beyond
-the Python standard library.
+Python 3.11–3.15 is the supported and tested range. Python 3.14 is the default
+development, build, and single-version CI runtime; compatibility targets for
+linters and type checkers remain at Python 3.11.
+
+As of 2026-10-17, the project adds Python 3.15 while retaining Python 3.11,
+which receives upstream security support until October 2027. Dropping 3.11
+would reduce the validation range but unnecessarily exclude existing consumers;
+defaulting to 3.15 would adopt the newest runtime immediately. Instead, 3.14
+remains the stable default while the full suite validates 3.11 through 3.15.
+Package metadata declares `>=3.11` without an upper bound; future versions are
+not claimed as tested until added to the matrix.
+
+The repository pins the default interpreter to Python 3.14.8 and lists exact
+patch versions for the other supported minors in `.python-version`. CI uses the
+latest available patch in each selected minor. Existing virtual environments
+are not automatically recreated when these pins change.
 
 ## impact on future orchestrated pipeline
 
 The future orchestrated pipeline runner will be implemented in Python.
 `asyncio` + `subprocess` provide sufficient primitives for sequential and parallel
 stage execution.
+Any future orchestrated pipeline runner must also support Python 3.11–3.15;
+the default interpreter does not permit using Python 3.14-only APIs in shared code.

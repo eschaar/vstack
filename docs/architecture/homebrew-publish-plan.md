@@ -117,7 +117,7 @@ class Vstack < Formula
   license "MIT"
   head "https://github.com/eschaar/vstack.git", branch: "main"
 
-  depends_on "python@3.11"
+  depends_on "python@3.14"
 
   resource "pyyaml" do
     url "https://files.pythonhosted.org/packages/source/P/PyYAML/PyYAML-6.0.2.tar.gz"
