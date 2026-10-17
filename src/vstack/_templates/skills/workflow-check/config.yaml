@@ -4,4 +4,4 @@ argument-hint: "[workflow scope or stage list]"
 allowed-tools: 'read search'
 user-invocable: true
 disable-model-invocation: true
-version: 20261017001
+version: 20261017002
