@@ -57,7 +57,8 @@ During an install with skills selected:
 1. Generate and install replacement skills using conservative install rules.
 1. Inspect legacy `prompts` entries in the install manifest.
 1. Remove only known, canonical, non-symlinked prompt files matching their stored
-   checksum and whose replacement skill was installed or verified unchanged.
+   checksum and whose fully resolved replacement skill was installed or verified
+   unchanged.
 1. Remove their manifest entries and empty prompt directories.
 
 No `--prune` flag is needed for this targeted retirement. Other obsolete artifact
@@ -79,6 +80,14 @@ If skills are not selected, or a replacement skill is excluded, locally modified
 untracked, or merely adopted, migration is deferred. Resolve the reported conflict
 and rerun `vstack init`. Review and migrate preserved custom workflows manually;
 vstack does not delete unknown custom prompts or scan directories for ownership.
+
+An unresolved replacement template also defers retirement, even when the skill
+was installed, updated, or unchanged. For example, a missing partial can leave
+`{{SKILL_CONTEXT}}` in its output. The unresolved-token warning and deferred
+migration are reported; the legacy prompt and its manifest entry remain intact.
+Restore the missing template input and rerun `vstack init` to regenerate tracked
+skills. `--update` can skip an existing skill at the same template version;
+such a skill does not permit retirement if its installed content is unresolved.
 
 Deletion errors are reported with a nonzero exit code. The prompt's manifest entry
 is retained, so you can resolve the filesystem error and retry without losing
