@@ -124,7 +124,7 @@ ______________________________________________________________________
 | ID    | Requirement                                                                                                                                                                                                                                                                                                           |
 | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | NFR-1 | One runtime dependency only: PyYAML (`pyyaml>=6.0`) for YAML frontmatter parsing.                                                                                                                                                                                                                                     |
-| NFR-2 | Python 3.11–3.14 compatibility.                                                                                                                                                                                                                                                                                       |
+| NFR-2 | Python 3.11–3.15 compatibility; Python 3.14 is the default development and CI runtime.                                                                                                                                                                                                                                |
 | NFR-3 | Manifest writes are atomic: write to a temporary file, then replace atomically.                                                                                                                                                                                                                                       |
 | NFR-4 | All public behavior exercised by automated tests (pytest). CI gate enforces test pass.                                                                                                                                                                                                                                |
 | NFR-5 | CLI operates standalone; no VS Code process required for `install`, `verify`, or `validate`.                                                                                                                                                                                                                          |
@@ -157,5 +157,5 @@ ______________________________________________________________________
    at runtime.
 1. Manifest schema is versioned; old manifests require explicit upgrade before further
    use.
-1. CLI behavior must be reproducible across Python 3.11–3.14.
+1. CLI behavior must be reproducible across Python 3.11–3.15.
 1. No cloud, network, or VS Code process dependency for CLI operations.

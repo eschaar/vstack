@@ -4,8 +4,15 @@ Thanks for your interest in contributing to vstack.
 
 ## Prerequisites
 
-- Python 3.11-3.14
+- Python 3.11-3.15 (Python 3.14 is the default development and CI runtime)
 - Virtual environment enabled
+
+The repository's `.python-version` selects Python 3.14.8 by default and lists
+the patch versions used for the 3.11-3.15 test matrix. With pyenv,
+run `pyenv install --skip-existing 3.14.8` before setup and install the other
+listed versions before running the full test matrix.
+CI selects the latest available patch release for each minor version.
+Python 3.11 remains supported while it receives upstream security updates.
 
 ## Setup
 

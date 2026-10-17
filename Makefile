@@ -30,14 +30,14 @@ help:
 	@echo "  make setup        - create .venv, install dev tools, install pre-commit hook"
 	@echo "  make format       - format Python and Markdown"
 	@echo "  make lint         - lint Python"
-	@echo "  make test         - run tests on Python 3.11-3.14 via tox"
+	@echo "  make test         - run tests on Python 3.11-3.15 via tox"
 	@echo "  make test-local   - run pytest on current interpreter only"
 	@echo "  make test-fixtures - run fixture-only generator tests without coverage"
 	@echo "  make check        - full local quality gate"
 	@echo "  make verify-fast  - fast deterministic checks: format-check + lint + typecheck + test-local"
 	@echo "  make verify-full  - full verification profile: check + vstack-validate"
 	@echo "  make ci           - check + vstack template validation"
-	@echo "  make tox          - run pytest across Python 3.11-3.14 (if interpreters are available)"
+	@echo "  make tox          - run pytest across Python 3.11-3.15 (if interpreters are available)"
 	@echo "  make clean        - remove build/cache artifacts"
 	@echo "  make vstack-install - install generated artifacts into target"
 	@echo ""
@@ -62,14 +62,14 @@ help-all:
 	@echo "  make markdown-format-check - run markdown formatting check hook (may rewrite files)"
 	@echo "  make markdown-lint       - lint Markdown via pre-commit markdownlint hook"
 	@echo "  make typecheck           - run mypy on src/ and tests/"
-	@echo "  make test                - run pytest matrix via tox (py311, py312, py313, py314)"
+	@echo "  make test                - run pytest matrix via tox (py311, py312, py313, py314, py315)"
 	@echo "  make test-local          - run pytest on current interpreter only"
 	@echo "  make test-fixtures       - run fixture-only generator tests without coverage"
 	@echo "  make check               - run format-check + markdown checks + lint + typecheck + test"
 	@echo "  make verify-fast         - run format-check + lint + typecheck + test-local"
 	@echo "  make verify-full         - run check + vstack-validate"
 	@echo "  make ci                  - run check + vstack-validate"
-	@echo "  make tox                 - run tox pytest matrix (py311, py312, py313, py314)"
+	@echo "  make tox                 - run tox pytest matrix (py311, py312, py313, py314, py315)"
 	@echo "  make tox-all             - run all tox envs (tests + lint + type)"
 	@echo "  make vstack-validate     - run vstack validate"
 	@echo "  make vstack-install      - run vstack install --target <path> (default .)"
@@ -138,7 +138,7 @@ test-fixtures:
 	$(VENV_PYTHON) -m pytest -q tests/vstack/artifacts/test_generator.py -k "golden_fixture or defect_fixture" --no-cov
 
 test:
-	$(TOX_PYTHON) -m tox -e py311,py312,py313,py314
+	$(TOX_PYTHON) -m tox -e py311,py312,py313,py314,py315
 
 check: format-check markdown-lint lint typecheck test
 
@@ -149,7 +149,7 @@ verify-full: check vstack-validate
 ci: check vstack-validate
 
 tox:
-	$(TOX_PYTHON) -m tox -e py311,py312,py313,py314
+	$(TOX_PYTHON) -m tox -e py311,py312,py313,py314,py315
 
 tox-all:
 	$(TOX_PYTHON) -m tox

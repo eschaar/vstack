@@ -1,7 +1,7 @@
 # vstack CI/CD Pipeline
 
 > Maintained by: **designer** role\
-> Last updated: 2026-06-02
+> Last updated: 2026-10-17
 
 ## Overview
 
@@ -22,8 +22,8 @@ Their jobs are merge-blocking when configured as required status checks in the `
 | Workflow                          | Trigger                                           | Responsibility                                                                      |
 | --------------------------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | `.github/workflows/commit.yml`    | push to non-main branches, pull_request to `main` | Commit/branch policy and lint/typecheck                                             |
-| `.github/workflows/check.yml`     | push to non-main branches, pull_request to `main` | Single-version unit tests (py3.11)                                                  |
-| `.github/workflows/verify.yml`    | pull_request to `main`                            | Cross-version test matrix (py3.11–3.14), fixture tests, and artifact install verify |
+| `.github/workflows/check.yml`     | push to non-main branches, pull_request to `main` | Single-version unit tests (py3.14)                                                  |
+| `.github/workflows/verify.yml`    | pull_request to `main`                            | Cross-version test matrix (py3.11–3.15), fixture tests, and artifact install verify |
 | `.github/workflows/security.yml`  | pull_request to `main`                            | Dependency vulnerability scan and secret scan                                       |
 | `.github/workflows/codeql.yml`    | push/pull_request to `main` + weekly schedule     | Code scanning for GitHub Actions and Python                                         |
 | `.github/workflows/automerge.yml` | pull_request_target to `main`                     | Dependabot auto-approve/auto-merge policy gate                                      |
@@ -46,13 +46,13 @@ sequenceDiagram
    Dev->>GH: [1] Push commit to feature branch
    GH->>GH: [2a] commit.yml / Validate Commit Messages
    GH->>GH: [2b] commit.yml / Format Lint Typecheck
-   GH->>GH: [2c] check.yml / Unit Tests (py3.11)
+   GH->>GH: [2c] check.yml / Unit Tests (py3.14)
 
    Dev->>GH: [3] Open PR to main
    GH->>GH: [4a] commit.yml / Validate Commit Messages
    GH->>GH: [4b] commit.yml / Format Lint Typecheck
-   GH->>GH: [4c] check.yml / Unit Tests (py3.11)
-   GH->>GH: [4d] verify.yml / Tests (py3.11) — Tests (py3.14) [matrix ×4] + Fixture Tests (fast)
+   GH->>GH: [4c] check.yml / Unit Tests (py3.14)
+   GH->>GH: [4d] verify.yml / Tests (py3.11) — Tests (py3.15) [matrix ×5] + Fixture Tests (fast)
    GH->>GH: [4e] verify.yml / Artifact Install Verify
    GH->>GH: [4f] security.yml / Dependency and Secret Scan
    Dev->>GH: [5] Approve and merge PR
@@ -60,7 +60,7 @@ sequenceDiagram
    GH->>GH: [6] Push to main triggers release.yml
    GH->>RP: [7] release.yml / Release Please (PR + Tag + Notes)
    RP-->>GH: [8] Create or update release PR branch + PR
-   GH->>GH: [9a] verify.yml / Tests (py3.11) — Tests (py3.14) [matrix ×4] + Fixture Tests (fast)
+   GH->>GH: [9a] verify.yml / Tests (py3.11) — Tests (py3.15) [matrix ×5] + Fixture Tests (fast)
    GH->>GH: [9b] verify.yml / Artifact Install Verify
    GH->>GH: [9c] security.yml / Dependency and Secret Scan
 
@@ -82,13 +82,13 @@ sequenceDiagram
 
 1. `[1]` Push commit to feature branch.
 1. `[2a]` `commit.yml / Validate Commit Messages` — checks commit format, branch name, and reserved scope policy.
-1. `[2b]` `commit.yml / Format Lint Typecheck` — runs `make format-check`, `make lint`, `make typecheck` on py3.11.
-1. `[2c]` `check.yml / Unit Tests` — runs `make test-local` on py3.11.
+1. `[2b]` `commit.yml / Format Lint Typecheck` — runs `make format-check`, `make lint`, `make typecheck` on py3.14, targeting compatibility with py3.11.
+1. `[2c]` `check.yml / Unit Tests` — runs `make test-local` on py3.14.
 1. `[3]` Open PR to `main`.
 1. `[4a]` `commit.yml / Validate Commit Messages` — validates commit messages, branch policy, and reserved `docs(changelog)` scope.
-1. `[4b]` `commit.yml / Format Lint Typecheck` — runs `make format-check`, `make lint`, `make typecheck` on py3.11.
-1. `[4c]` `check.yml / Unit Tests` — runs `make test-local` on py3.11.
-1. `[4d]` `verify.yml / Tests (py3.11)` through `Tests (py3.14)` plus `Fixture Tests (fast)` — matrix jobs run `make test-local`; fixture job runs `make test-fixtures`.
+1. `[4b]` `commit.yml / Format Lint Typecheck` — runs `make format-check`, `make lint`, `make typecheck` on py3.14, targeting compatibility with py3.11.
+1. `[4c]` `check.yml / Unit Tests` — runs `make test-local` on py3.14.
+1. `[4d]` `verify.yml / Tests (py3.11)` through `Tests (py3.15)` plus `Fixture Tests (fast)` — matrix jobs run `make test-local`; fixture job runs `make test-fixtures`.
 1. `[4e]` `verify.yml / Artifact Install Verify` — installs vstack into a temp dir and runs `vstack verify`.
 1. `[4f]` `security.yml / Dependency and Secret Scan` — pip-audit + trufflehog diff scan.
 1. `[5]` Approve and merge PR.
@@ -119,13 +119,13 @@ sequenceDiagram
    DB->>GH: [1] Push dependency branch update
    GH->>GH: [2a] commit.yml / Validate Commit Messages
    GH->>GH: [2b] commit.yml / Format Lint Typecheck
-   GH->>GH: [2c] check.yml / Unit Tests (py3.11)
+   GH->>GH: [2c] check.yml / Unit Tests (py3.14)
 
    DB->>GH: [3] Open dependency PR to main
    GH->>GH: [4a] commit.yml / Validate Commit Messages
    GH->>GH: [4b] commit.yml / Format Lint Typecheck
-   GH->>GH: [4c] check.yml / Unit Tests (py3.11)
-   GH->>GH: [4d] verify.yml / Tests (py3.11) — Tests (py3.14) [matrix ×4]
+   GH->>GH: [4c] check.yml / Unit Tests (py3.14)
+   GH->>GH: [4d] verify.yml / Tests (py3.11) — Tests (py3.15) [matrix ×5]
    GH->>GH: [4e] verify.yml / Artifact Install Verify
    GH->>GH: [4f] security.yml / Dependency and Secret Scan
    Note over GH: [5] automerge.yml job runs only if actor == dependabot[bot]
@@ -145,7 +145,7 @@ sequenceDiagram
    GH->>GH: [11] Push to main triggers release.yml
    GH->>RP: [12] release.yml / Release Please (PR + Tag + Notes)
    RP-->>GH: [13] Create or update release PR branch + PR
-   GH->>GH: [14a] verify.yml / Tests (py3.11) — Tests (py3.14) [matrix ×4] + Fixture Tests (fast)
+   GH->>GH: [14a] verify.yml / Tests (py3.11) — Tests (py3.15) [matrix ×5] + Fixture Tests (fast)
    GH->>GH: [14b] verify.yml / Artifact Install Verify
    GH->>GH: [14c] security.yml / Dependency and Secret Scan
 
@@ -162,13 +162,13 @@ sequenceDiagram
 
 1. `[1]` Dependabot pushes dependency update branch.
 1. `[2a]` `commit.yml / Validate Commit Messages` — commit format and branch name validated (`chore(deps)` / `chore(ci)` prefix, `dependabot/` branch).
-1. `[2b]` `commit.yml / Format Lint Typecheck` — lint/typecheck on py3.11.
-1. `[2c]` `check.yml / Unit Tests` — `make test-local` on py3.11.
+1. `[2b]` `commit.yml / Format Lint Typecheck` — lint/typecheck on py3.14, targeting compatibility with py3.11.
+1. `[2c]` `check.yml / Unit Tests` — `make test-local` on py3.14.
 1. `[3]` Dependabot opens PR to `main`.
 1. `[4a]` `commit.yml / Validate Commit Messages` — commit message policy on PR commits.
 1. `[4b]` `commit.yml / Format Lint Typecheck`.
 1. `[4c]` `check.yml / Unit Tests`.
-1. `[4d]` `verify.yml / Tests (py3.11)` through `Tests (py3.14)` plus `Fixture Tests (fast)`.
+1. `[4d]` `verify.yml / Tests (py3.11)` through `Tests (py3.15)` plus `Fixture Tests (fast)`.
 1. `[4e]` `verify.yml / Artifact Install Verify`.
 1. `[4f]` `security.yml / Dependency and Secret Scan`.
 1. `[5]` `automerge.yml` job runs only when `github.actor == 'dependabot[bot]'`.
@@ -204,7 +204,7 @@ Configure via **Settings → Rules → Rulesets** on GitHub.
 - `Commit / Validate Commit Messages`
 - `Commit / Format Lint Typecheck`
 - `Check / Unit Tests`
-- `Verify / Tests (py3.11)`, `Verify / Tests (py3.12)`, `Verify / Tests (py3.13)`, `Verify / Tests (py3.14)`
+- `Verify / Tests (py3.11)`, `Verify / Tests (py3.12)`, `Verify / Tests (py3.13)`, `Verify / Tests (py3.14)`, `Verify / Tests (py3.15)`
 - `Verify / Fixture Tests (fast)`
 - `Verify / Artifact Install Verify`
 - `Security / Dependency and Secret Scan`
@@ -213,6 +213,10 @@ Configure via **Settings → Rules → Rulesets** on GitHub.
   events normally — these checks run on release PRs the same as on any other PR.
 - **Allowed merge methods**: must include **Squash** — required for `automerge.yml` to enable auto-merge for Dependabot PRs.
 - **Restrict force pushes**: enabled.
+
+When extending the Python support range, add the required `py3.15` check
+to the GitHub Ruleset while retaining `py3.11`. Workflow changes do not update
+repository settings automatically.
 
 ### Actions permissions
 

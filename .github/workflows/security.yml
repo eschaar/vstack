@@ -19,7 +19,7 @@ permissions:
 
 env:
   # Keep scanner runtime consistent across runs.
-  PYTHON_VERSION: "3.11"
+  PYTHON_VERSION: "3.14"
   # Pin Poetry CLI version for deterministic CI behavior.
   POETRY_VERSION: "2.4.1"
   # Keep Poetry virtual environments inside the workspace for deterministic paths.

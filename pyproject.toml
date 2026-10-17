@@ -4,7 +4,7 @@ dynamic = ["version"]
 description = "VS Code-native AI engineering workflow system for microservices, libraries, and backend systems."
 license = "MIT"
 readme = "README-pypi.md"
-requires-python = ">=3.11,<3.15"
+requires-python = ">=3.11"
 dependencies = ["pyyaml>=6.0.3"]
 keywords = [
     "github-copilot",
@@ -38,6 +38,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Build Tools",
@@ -179,7 +180,7 @@ extraPaths = ["scripts"]
 legacy_tox_ini = """
 [tox]
 min_version = 4.54.0
-env_list = py311, py312, py313, py314, lint, type
+env_list = py311, py312, py313, py314, py315, lint, type
 skip_missing_interpreters = true
 
 [testenv]
