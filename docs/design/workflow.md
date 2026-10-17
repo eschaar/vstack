@@ -18,10 +18,13 @@ For authoring boundaries between reusable guidance mechanisms:
 - [013-instructions-vs-skills-boundary.md](../architecture/adr/013-instructions-vs-skills-boundary.md)
 - [028-dag-dependency-semantics.md](../architecture/adr/028-dag-dependency-semantics.md)
 
-Reusable workflows use skills, not prompt files. The six converted planning and
+Reusable workflows use skills, not prompt files. The five distributed converted planning and
 audit skills remain explicitly invoked; overlapping former prompts route users
 to existing skills. Role selection, handoff prompt strings, and the Option B
 pipeline are unchanged. See [Prompt migration](../user/reference/prompt-migration.md).
+
+The source-specific `artifact-integrity` audit is a hand-authored repository-only
+skill, not an installed workflow. Consumers use `inspect` for repository audits.
 
 ______________________________________________________________________
 

@@ -69,4 +69,4 @@ Provide an ordered short list of actions.
 - expected result
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"workflow-check","artifact_type":"skill","artifact_version":"20261017001","generator":"vstack","vstack_version":"3.7.4"} -->
+<!-- VSTACK-META: {"artifact_name":"workflow-check","artifact_type":"skill","artifact_version":"20261017001","generator":"vstack","vstack_version":"3.7.8"} -->

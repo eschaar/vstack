@@ -7,25 +7,25 @@ them. vstack now supplies reusable workflows as skills in
 
 ## Replacement Commands
 
-| Retired prompt       | Replacement skill    | Change                                                             |
-| -------------------- | -------------------- | ------------------------------------------------------------------ |
-| `api-design-review`  | `openapi`            | Reuse API contract writing and review.                             |
-| `architecture-risk`  | `architecture`       | Reuse architecture and execution-plan review.                      |
-| `artifact-integrity` | `artifact-integrity` | New explicit-only skill; vstack source audit.                      |
-| `ci-triage`          | `debug`              | Reuse root-cause investigation for CI failures.                    |
-| `dependency-audit`   | `dependency`         | Reuse dependency health auditing.                                  |
-| `incident-timeline`  | `postmortem`         | Reuse incident timeline and postmortem workflow.                   |
-| `migration-plan`     | `migration-plan`     | New explicit-only cross-component planning skill.                  |
-| `migration-safety`   | `migrate`            | Reuse database migration review.                                   |
-| `ops-readiness`      | `inspect`            | Reuse reliability and observability auditing.                      |
-| `quick-review`       | `code-review`        | Reuse pre-landing review.                                          |
-| `reasoning`          | `reasoning`          | New explicit-only reasoning framework.                             |
-| `release-check`      | `release-check`      | New explicit-only release evidence audit, not release publication. |
-| `repo-assessment`    | `inspect`            | Reuse repository verification audit.                               |
-| `template-impact`    | `analyse`            | Reuse impact analysis.                                             |
-| `test-gaps`          | `inspect`            | Reuse test and verification auditing.                              |
-| `upgrade-plan`       | `upgrade-plan`       | New explicit-only upgrade planning skill.                          |
-| `workflow-check`     | `workflow-check`     | New explicit-only stage, gate, and handoff audit.                  |
+| Retired prompt       | Replacement skill | Change                                                                   |
+| -------------------- | ----------------- | ------------------------------------------------------------------------ |
+| `api-design-review`  | `openapi`         | Reuse API contract writing and review.                                   |
+| `architecture-risk`  | `architecture`    | Reuse architecture and execution-plan review.                            |
+| `artifact-integrity` | `inspect`         | Reuse repository auditing; the source-specific skill is repository-only. |
+| `ci-triage`          | `debug`           | Reuse root-cause investigation for CI failures.                          |
+| `dependency-audit`   | `dependency`      | Reuse dependency health auditing.                                        |
+| `incident-timeline`  | `postmortem`      | Reuse incident timeline and postmortem workflow.                         |
+| `migration-plan`     | `migration-plan`  | New explicit-only cross-component planning skill.                        |
+| `migration-safety`   | `migrate`         | Reuse database migration review.                                         |
+| `ops-readiness`      | `inspect`         | Reuse reliability and observability auditing.                            |
+| `quick-review`       | `code-review`     | Reuse pre-landing review.                                                |
+| `reasoning`          | `reasoning`       | New explicit-only reasoning framework.                                   |
+| `release-check`      | `release-check`   | New explicit-only release evidence audit, not release publication.       |
+| `repo-assessment`    | `inspect`         | Reuse repository verification audit.                                     |
+| `template-impact`    | `analyse`         | Reuse impact analysis.                                                   |
+| `test-gaps`          | `inspect`         | Reuse test and verification auditing.                                    |
+| `upgrade-plan`       | `upgrade-plan`    | New explicit-only upgrade planning skill.                                |
+| `workflow-check`     | `workflow-check`  | New explicit-only stage, gate, and handoff audit.                        |
 
 Invoke skills with `/name`, for example `/code-review`. References such as
 `prompt/reasoning` become `skill/reasoning`. Existing replacement skills keep their
@@ -62,6 +62,13 @@ During an install with skills selected:
 
 No `--prune` flag is needed for this targeted retirement. Other obsolete artifact
 cleanup still requires `init --prune`.
+
+`artifact-integrity` is maintained only in the vstack source repository as a
+hand-authored skill. Fresh installations do not receive it. If an earlier build
+installed a managed copy, `init` reports it as obsolete; `init --prune` removes
+it only when its stored checksum still matches. Locally modified copies are
+preserved. Untracked repository-only skills remain untouched, including with
+`--force` and `--prune`.
 
 Untracked files are never touched. Modified, unreadable, checksum-less, unknown,
 or unsafe-path prompts are preserved, reported, and kept in the manifest for

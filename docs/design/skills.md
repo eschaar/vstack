@@ -25,6 +25,16 @@ Unlike custom instructions that primarily define coding preferences and guardrai
 skills package specialized, reusable workflows with optional scripts, examples,
 and references.
 
+### distributed and repository-only skills
+
+Distributed skills have sources under `src/vstack/_templates/skills/` and are
+installed into consumer repositories. Repository-only maintenance skills are
+hand-authored directly in `.github/skills/`, outside the package and install
+manifest. They have no generation footer and are not regenerated.
+
+`artifact-integrity` is repository-only: it audits vstack's own template sources
+and generated output. It is not part of the distributed skill catalog below.
+
 Boundary rule:
 
 - Policies belong in instructions.
@@ -52,7 +62,6 @@ List skills in alphabetical order by skill name in every catalog or role skill l
 | `adr`                 | Architecture Decision Record writing. Documents a decision with context, alternatives, and rationale.                                                                               | architect                                                        | `docs/architecture/adr/NNN-*.md`             |
 | `analyse`             | Cross-cutting technical analysis. Investigates impact, tradeoffs, root causes, or feasibility without implementing changes.                                                         | engineer, architect                                              | analysis report                              |
 | `architecture`        | Engineering-lead plan review. Lock in service boundaries, data models, API contracts, test strategy.                                                                                | architect                                                        | `docs/architecture/overview.md`              |
-| `artifact-integrity`  | Explicit-only vstack source-to-generated-artifact audit.                                                                                                                            | engineer, tester                                                 | drift report                                 |
 | `ask`                 | Read-only technical Q&A. Clarifies ambiguous questions, gathers repository evidence, and returns concise answers with references and confidence.                                    | all roles                                                        | referenced answer + next-step guidance       |
 | `aws-cli`             | AWS CLI workflows for IAM, S3, EC2, RDS, ECS, Lambda, CloudWatch, Secrets Manager, and SSM Parameter Store.                                                                         | engineer, tester                                                 | —                                            |
 | `cicd`                | Write GitHub Actions CI/CD workflow configuration. Covers build, test, lint, security scan, container publish, deploy.                                                              | release                                                          | GitHub Actions workflow                      |

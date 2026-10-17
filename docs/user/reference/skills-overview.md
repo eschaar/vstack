@@ -8,6 +8,11 @@ Skills provide domain-specific execution playbooks. Agents use them to perform f
 
 In vstack, skills are generated into `.github/skills/<name>/SKILL.md`.
 
+Projects may also hand-author repository-only skills in that directory. These
+have no vstack template or manifest entry and are not distributed by vstack.
+The vstack source repository's `artifact-integrity` maintenance skill is one
+such local skill, not a built-in command for consumer installations.
+
 ## Built-in Skills
 
 | Skill                 | What It Helps With                                                                                                  |
@@ -15,7 +20,6 @@ In vstack, skills are generated into `.github/skills/<name>/SKILL.md`.
 | `adr`                 | Architecture Decision Record writing for significant technical decisions.                                           |
 | `analyse`             | Cross-cutting impact, tradeoff, and feasibility analysis.                                                           |
 | `architecture`        | Engineering-lead architecture and execution-plan review.                                                            |
-| `artifact-integrity`  | Explicit-only audit of vstack source templates, installed artifacts, and manifest drift.                            |
 | `ask`                 | Read-only technical Q&A with code-backed evidence and clear guidance.                                               |
 | `aws-cli`             | AWS CLI operations across core AWS services.                                                                        |
 | `cicd`                | GitHub Actions CI/CD workflow authoring and hardening.                                                              |

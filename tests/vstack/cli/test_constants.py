@@ -9,7 +9,6 @@ EXPECTED_CLI_NAMES = [
     "advise",
     "analyse",
     "architecture",
-    "artifact-integrity",
     "ask",
     "adr",
     "aws-cli",

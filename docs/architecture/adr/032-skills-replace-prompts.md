@@ -16,6 +16,11 @@ Remove the prompt artifact family in the next major release. Reuse existing
 skills where workflows overlap and convert unique prompts to skills with
 `disable-model-invocation: true`.
 
+Distribute only workflows useful to consumer projects. Keep the source-specific
+`artifact-integrity` audit as a hand-authored repository-only skill under
+`.github/skills/`, without a package template, generation footer, or manifest
+ownership. Its old prompt maps to the distributed `inspect` skill.
+
 Keep legacy manifest data readable solely for migration. `install` and `init`
 automatically retire known prompts when skills are selected, replacement skills
 are successfully available, and the old files match their stored checksums.
@@ -29,6 +34,9 @@ Preserve and report unmanaged, modified, unknown, or unsafe files.
   discovery and maintenance. Rejected.
 - Retire prompts with safe migration: one workflow surface with an explicit
   breaking-change boundary. Selected.
+- Distribute repository maintenance skills or add a local-template generator:
+  unnecessary consumer coupling and configuration. Rejected in favor of native,
+  hand-authored repository skills.
 
 ## Rationale
 
@@ -47,6 +55,7 @@ model, or tool selection.
 
 For the Option B pipeline, role boundaries and handoff prompt strings remain
 unchanged. Stages invoke skills rather than prompt artifacts.
+Repository-only maintenance skills are not dependencies of consumer pipeline stages.
 
 ## Related ADRs
 

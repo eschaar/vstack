@@ -1,7 +1,0 @@
-name: artifact-integrity
-description: Check source templates against generated artifacts and identify drift or missing regeneration.
-argument-hint: "[artifact type, path, or full repo]"
-allowed-tools: 'read search'
-user-invocable: true
-disable-model-invocation: true
-version: 20261017001

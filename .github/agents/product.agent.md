@@ -213,4 +213,4 @@ Keep this list lean. Use additional installed domain skills only when needed.
 - `@#vision` — vision document writing and review
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"product","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.7.4"} -->
+<!-- VSTACK-META: {"artifact_name":"product","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.7.8"} -->

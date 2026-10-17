@@ -89,6 +89,75 @@ def test_fresh_install_does_not_generate_or_adopt_prompts(
     assert prompt.read_text(encoding="utf-8") == "My workflow\n"
 
 
+@pytest.mark.parametrize("force", [False, True])
+def test_repository_skill_is_not_installed_or_managed(
+    service: CommandService, tmp_path: Path, force: bool
+) -> None:
+    """Even forced installs with pruning leave repository-owned skills untouched."""
+    install_dir = tmp_path / ".github"
+    local_skill = install_dir / "skills" / "artifact-integrity" / "SKILL.md"
+    local_skill.parent.mkdir(parents=True)
+    content = "---\nname: artifact-integrity\ndescription: Local audit.\n---\nLocal procedure.\n"
+    local_skill.write_text(content, encoding="utf-8")
+
+    assert InitCommand.execute(service, install_dir, only=["skill"], force=force, prune=True) == 0
+    assert local_skill.read_text(encoding="utf-8") == content
+    manifest = service.manifest_for(install_dir).read()
+    assert manifest is not None
+    assert "artifact-integrity" not in manifest.names_for("skills")
+    assert "artifact-integrity" not in {
+        path.name for gen in service.generators for path in gen.find_templates()
+    }
+
+
+def test_fresh_install_omits_repository_skill(service: CommandService, tmp_path: Path) -> None:
+    """Consumer repositories receive product skills, not vstack maintenance skills."""
+    install_dir = tmp_path / ".github"
+    assert InitCommand.execute(service, install_dir, only=["skill"]) == 0
+    assert not (install_dir / "skills" / "artifact-integrity").exists()
+    assert RETIRED_PROMPT_SKILLS["artifact-integrity"] == "inspect"
+
+
+@pytest.mark.parametrize("modified", [False, True])
+def test_previously_distributed_repository_skill_uses_safe_obsolete_cleanup(
+    service: CommandService, tmp_path: Path, modified: bool
+) -> None:
+    """Old managed copies require pruning and local edits prevent their removal."""
+    install_dir = tmp_path / ".github"
+    local_skill = install_dir / "skills" / "artifact-integrity" / "SKILL.md"
+    local_skill.parent.mkdir(parents=True)
+    original = "Previously generated audit skill\n"
+    local_skill.write_text(original, encoding="utf-8")
+    manifest = Manifest(
+        vstack_version="3.7.0",
+        installed_at="2026-10-01T00:00:00Z",
+        artifacts={
+            "skills": [
+                ArtifactEntry(
+                    name="artifact-integrity",
+                    file="skills/artifact-integrity/SKILL.md",
+                    version="20261017001",
+                    checksum=content_hash(original),
+                    checksum_algorithm="sha256",
+                )
+            ]
+        },
+    )
+    service.manifest_for(install_dir).write(manifest)
+    content = "Locally customized audit\n" if modified else original
+    local_skill.write_text(content, encoding="utf-8")
+
+    assert InitCommand.execute(service, install_dir, only=["skill"]) == 0
+    assert local_skill.read_text(encoding="utf-8") == content
+    assert InitCommand.execute(service, install_dir, only=["skill"], prune=True) == 0
+    installed_manifest = service.manifest_for(install_dir).read()
+    assert installed_manifest is not None
+    assert ("artifact-integrity" in installed_manifest.names_for("skills")) is modified
+    assert local_skill.exists() is modified
+    if modified:
+        assert local_skill.read_text(encoding="utf-8") == content
+
+
 def test_upgrade_dry_run_preserves_files_and_manifest(
     service: CommandService, tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:

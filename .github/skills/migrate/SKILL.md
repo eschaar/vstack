@@ -320,4 +320,4 @@ Pre-deploy checklist:
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"migrate","artifact_type":"skill","artifact_version":"20260421019","generator":"vstack","vstack_version":"3.7.4"} -->
+<!-- VSTACK-META: {"artifact_name":"migrate","artifact_type":"skill","artifact_version":"20260421019","generator":"vstack","vstack_version":"3.7.8"} -->
