@@ -406,6 +406,13 @@ Converted skills are explicitly invoked (`disable-model-invocation: true`).
 Overlapping workflows use existing skills without command aliases. See
 [Prompt migration](../user/reference/prompt-migration.md) for the complete mapping.
 
+Repository-only skills live directly in `.github/skills/`, not in the package's
+template root or canonical skill catalog. They have no generation metadata or
+manifest entry. Existing template discovery and manifest-scoped verification
+therefore ignore them without a new generator mode. The vstack source audit
+`artifact-integrity` is local; its retired prompt maps to distributed `inspect`.
+Previously managed copies use the existing conservative obsolete/prune policy.
+
 ______________________________________________________________________
 
 ## 4. placeholder resolver

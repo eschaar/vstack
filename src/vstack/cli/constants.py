@@ -11,7 +11,6 @@ EXPECTED_CANONICAL_NAMES = [
     "advise",
     "analyse",
     "architecture",
-    "artifact-integrity",
     "ask",
     "adr",
     "aws-cli",
@@ -136,7 +135,7 @@ EXPECTED_INPUT_NAMES: dict[str, list[str]] = {
 RETIRED_PROMPT_SKILLS: dict[str, str] = {
     "api-design-review": "openapi",
     "architecture-risk": "architecture",
-    "artifact-integrity": "artifact-integrity",
+    "artifact-integrity": "inspect",
     "ci-triage": "debug",
     "dependency-audit": "dependency",
     "incident-timeline": "postmortem",

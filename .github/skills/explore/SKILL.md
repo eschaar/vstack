@@ -149,4 +149,4 @@ For `thorough` mode, append:
 - main risk hotspots (coupling, missing tests, unclear ownership)
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"explore","artifact_type":"skill","artifact_version":"20260611001","generator":"vstack","vstack_version":"3.7.4"} -->
+<!-- VSTACK-META: {"artifact_name":"explore","artifact_type":"skill","artifact_version":"20260611001","generator":"vstack","vstack_version":"3.7.8"} -->

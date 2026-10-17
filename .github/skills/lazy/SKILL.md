@@ -160,4 +160,4 @@ Stop and escalate when:
 - The task is under-specified and any minimal patch would be guesswork.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"lazy","artifact_type":"skill","artifact_version":"20260625001","generator":"vstack","vstack_version":"3.7.4"} -->
+<!-- VSTACK-META: {"artifact_name":"lazy","artifact_type":"skill","artifact_version":"20260625001","generator":"vstack","vstack_version":"3.7.8"} -->

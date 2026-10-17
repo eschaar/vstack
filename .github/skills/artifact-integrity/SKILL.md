@@ -1,6 +1,6 @@
 ---
 name: artifact-integrity
-description: 'Check source templates against generated artifacts and identify drift or missing regeneration.'
+description: 'Audit source templates and generated artifacts in the vstack source repository only.'
 allowed-tools: 'read search'
 argument-hint: '[artifact type, path, or full repo]'
 user-invocable: true
@@ -8,7 +8,8 @@ disable-model-invocation: true
 ---
 ## Skill Context
 
-This skill is part of **vstack** — a VS Code-native AI engineering workflow system.
+This hand-authored skill maintains the **vstack source repository** only.
+It is not a distributable template and is not installed by `vstack install`.
 
 ### AskUserQuestion Format
 
@@ -35,6 +36,8 @@ Report only; do not regenerate, edit, or delete files.
 
 Compare `src/vstack/_templates/` sources with installed artifacts in `.github/`
 and the manifest at `.vstack/vstack.json`. Surface mismatches, stale output, or gaps.
+Repository-local skills, including this one, intentionally have no source template,
+generation footer, or install-manifest entry. Do not report them as drift.
 
 Output exactly in this format:
 
@@ -77,6 +80,3 @@ Provide a checklist to confirm the repository is clean after regeneration.
 - [ ] `make test-local` passes with 100% coverage
 - [ ] `make markdown-format` reports no changes
 - [ ] All regenerated files match their source checksums in `.vstack/vstack.json`
-
-<!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"artifact-integrity","artifact_type":"skill","artifact_version":"20261017001","generator":"vstack","vstack_version":"3.7.4"} -->

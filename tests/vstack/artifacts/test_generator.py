@@ -304,7 +304,6 @@ class TestGenericArtifactGenerator:
     @pytest.mark.parametrize(
         "name, heading",
         [
-            ("artifact-integrity", "## Drift Findings"),
             ("migration-plan", "## Rollback Plan"),
             ("reasoning", "## Hallucination Guardrails"),
             ("release-check", "## Sign-off Gaps"),

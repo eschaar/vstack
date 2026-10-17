@@ -115,4 +115,4 @@ Always ask internally:
 **Related:** See `skill/advise` for structured adversarial review workflows.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"reasoning","artifact_type":"skill","artifact_version":"20261017001","generator":"vstack","vstack_version":"3.7.4"} -->
+<!-- VSTACK-META: {"artifact_name":"reasoning","artifact_type":"skill","artifact_version":"20261017001","generator":"vstack","vstack_version":"3.7.8"} -->

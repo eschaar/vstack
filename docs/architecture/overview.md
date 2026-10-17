@@ -52,13 +52,18 @@ vstack/
 │   │   └── session/             ← planner-run cache files (gitignored)
 │   ├── vstack.json              ← machine-generated manifest (JSON)
 │   └── templates/               ← project-owned artifact starter templates (seeded by vstack install)
-├── .github/                     ← generated Copilot artifacts (never edit directly)
+├── .github/                     ← generated artifacts plus hand-authored repository skills
 │   ├── skills/<name>/SKILL.md
 │   ├── agents/<name>.agent.md
 │   ├── hooks/<name>.json
 │   └── instructions/<name>.instructions.md
 └── README.md
 ```
+
+Distributed skills are template-backed and manifest-managed. Repository-only
+skills, such as `.github/skills/artifact-integrity/SKILL.md`, are hand-authored
+in this repository, have no templates or manifest entries, and are not packaged
+or installed for consumers. Generated files remain template-owned.
 
 ______________________________________________________________________
 

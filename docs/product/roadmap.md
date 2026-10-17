@@ -35,7 +35,7 @@ ______________________________________________________________________
 | defect-fixture matrix expansion               | v3.3.0     | shipped     | Expand defect fixtures across artifact types and failure classes with stable expected error assertions.                                                             |
 | planner routing refinement                    | v3.4.0     | shipped     | Planner/orchestrator routing follow-up to the DAG work                                                                                                              |
 | Homebrew distribution                         | v3.5.0     | shipped     | Homebrew tap/formula publish flow added for install and upgrade via `brew`                                                                                          |
-| skills replace prompt artifacts               | next major | implemented | Retire the prompt family, reuse 11 existing workflows, convert six unique skills, and safely clean tracked prompts during install/init (ADR-032).                   |
+| skills replace prompt artifacts               | next major | implemented | Retire prompts, reuse 12 existing workflows, distribute five converted skills, keep the source audit repository-only, and safely clean tracked prompts (ADR-032).   |
 | configurable skill output paths               | t.b.d.     | candidate   | Replace hardcoded skill artifact/output paths (for example changedoc location conventions) with project-configurable path settings while preserving safe defaults.  |
 | docs information architecture (Diataxis)      | t.b.d.     | candidate   | `docs/user/` scaffold and navigation are in place with segmented tutorials/how-to/reference/explanation routes; broader migration and fully realized IA come later  |
 | team customization layer                      | t.b.d.     | candidate   | Deferred major update after VS Code-first model proves itself; custompacks, overlay merge rules, and install profiles all add major maintenance surface             |
@@ -557,8 +557,9 @@ guidance on which checks apply after each class of change.
 
 - Add a change-trigger validation matrix to `CONTRIBUTING.md` that maps change types to required
   checks (e.g. template change → `python3 -m vstack install` + `make test-local`).
-- Use `inspect` for repository assessment and `artifact-integrity` for explicit
-  source-to-generated drift audits. The next major release replaces the old
+- Use distributed `inspect` for repository assessment and repository-only
+  `artifact-integrity` for vstack source-to-generated drift audits.
+  The next major release replaces the old
   prompt catalog with skills; see [Prompt migration](../user/reference/prompt-migration.md).
 
 **Phase B — generated-artifact drift guard:**
