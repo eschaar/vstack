@@ -2,6 +2,34 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [4.0.0](https://github.com/eschaar/vstack/compare/3.7.8...4.0.0) (2026-10-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* **artifacts:** Remove prompt artifact selectors, vstack.prompts, PromptGenerator, and PROMPT_SCHEMA. Use the documented replacement skills and run vstack init to migrate managed prompts.
+
+### Features
+
+* **artifacts:** replace prompts with skills and migrate managed installs ([6bda5ce](https://github.com/eschaar/vstack/commit/6bda5ce79cff2c4c6f721b85abfd939c938234fa))
+* **python:** support Python 3.15 and default to Python 3.14 ([47003f2](https://github.com/eschaar/vstack/commit/47003f279cb9965ec6bedc39f689d752d4664792))
+
+
+### Fixes
+
+* **migration:** preserve prompts until replacement skills fully resolve ([8837770](https://github.com/eschaar/vstack/commit/8837770c5761413bfd973c75f65f5a127d89c57e))
+* **skills:** audit consumer project artifacts in workflow-check ([ca87b1c](https://github.com/eschaar/vstack/commit/ca87b1cce7493444e810885cb8ef084b51da9eb3))
+* **skills:** keep vstack artifact audit repository-local ([878a4c7](https://github.com/eschaar/vstack/commit/878a4c788e9c78b9e45c16d2db5de74ca4168424))
+
+
+### Maintenance
+
+* **ci:** bump trufflehog to 3.97.4 ([555df84](https://github.com/eschaar/vstack/commit/555df8454b184adb3f67710d7b905971e50ddf52))
+* **deps:** bump ruff mypy and tox development tools ([72b12a7](https://github.com/eschaar/vstack/commit/72b12a7e580c4188842af2a7d04f3d7e8bc505b1))
+* **deps:** bump the pip-patch-minor group across 1 directory with 3 updates ([9eaffaf](https://github.com/eschaar/vstack/commit/9eaffaf900d8a7bfdf1193bd66fdf1076205c729))
+* **deps:** bump types-pyyaml to 6.0.12.20260906 ([94675e2](https://github.com/eschaar/vstack/commit/94675e2abe7503c59d3738084a3644a784284906))
+* **deps:** bump virtualenv to 21.7.13 ([8b8f158](https://github.com/eschaar/vstack/commit/8b8f158268cd2138c12ff8598d13607061a15a84))
+
 ## [3.7.8](https://github.com/eschaar/vstack/compare/3.7.7...3.7.8) (2026-09-10)
 
 
