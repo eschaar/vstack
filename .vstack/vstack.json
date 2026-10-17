@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "3.7.8",
-  "installed_at": "2026-10-17T13:54:40.625936+00:00",
+  "installed_at": "2026-10-17T13:59:31.708252+00:00",
   "artifacts": {
     "skills": [
       {
@@ -296,7 +296,7 @@
         "name": "refactor",
         "file": "skills/refactor/SKILL.md",
         "version": "20260421023",
-        "checksum": "c804552f73f7be6fc6efb0709f4ec993c994bba1e9fdf75f549da275be854fb0",
+        "checksum": "cdc4a2b846353ccb8b5255bab6095477885cd1228cba7815cab3638b6d71f570",
         "checksum_algorithm": "sha256"
       },
       {
@@ -393,8 +393,8 @@
       {
         "name": "workflow-check",
         "file": "skills/workflow-check/SKILL.md",
-        "version": "20261017001",
-        "checksum": "ba480e7ed2a158bff03e5dbde1f2c25ce26ed8c769bd5e043b0c6994208b5e7c",
+        "version": "20261017002",
+        "checksum": "aa68d768a44fed5e142ddc1d66c8958fdf1636284294ecf93dc255e7011b1428",
         "checksum_algorithm": "sha256"
       }
     ],

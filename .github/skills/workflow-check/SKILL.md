@@ -33,7 +33,9 @@ directory structures and other scan-friendly hierarchies.
 Review workflow stage flow, gate usage, and handoff integrity across role artifacts.
 Report only; do not change workflow configuration or role artifacts.
 
-Focus on evidence in workflow config, role templates, and docs.
+Focus on the current project's workflow configuration, installed agent files,
+role documents, and handoff definitions. These are consumer-project artifacts;
+the vstack source repository and its template directories are not required.
 
 Output exactly in this format:
 
@@ -69,4 +71,4 @@ Provide an ordered short list of actions.
 - expected result
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"workflow-check","artifact_type":"skill","artifact_version":"20261017001","generator":"vstack","vstack_version":"3.7.8"} -->
+<!-- VSTACK-META: {"artifact_name":"workflow-check","artifact_type":"skill","artifact_version":"20261017002","generator":"vstack","vstack_version":"3.7.8"} -->

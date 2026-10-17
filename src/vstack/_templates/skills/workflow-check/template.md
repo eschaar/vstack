@@ -5,7 +5,9 @@
 Review workflow stage flow, gate usage, and handoff integrity across role artifacts.
 Report only; do not change workflow configuration or role artifacts.
 
-Focus on evidence in workflow config, role templates, and docs.
+Focus on the current project's workflow configuration, installed agent files,
+role documents, and handoff definitions. These are consumer-project artifacts;
+the vstack source repository and its template directories are not required.
 
 Output exactly in this format:
 
