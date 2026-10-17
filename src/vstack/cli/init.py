@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from vstack.artifacts.generator import GenericArtifactGenerator
 from vstack.cli.base import BaseCommand, CommandContext
 from vstack.cli.constants import RETIRED_PROMPT_SKILLS, Colors
 from vstack.constants import VERSION
@@ -817,12 +818,18 @@ class InitCommand(BaseCommand):
                 action_counts[artifact_action] = action_counts.get(artifact_action, 0) + 1
                 if artifact_action == "preserve":
                     preserved_selectors.add(f"{gen.config.type_name}/{artifact.name}")
-                elif gen.config.type_name == "skill" and artifact_action in {
-                    "install",
-                    "update",
-                    "skip",
-                }:
-                    available_skills.add(artifact.name)
+                elif (
+                    gen.config.type_name == "skill"
+                    and artifact_action in {"install", "update", "skip"}
+                    and not artifact.unresolved
+                ):
+                    installed_content = (
+                        (out_dir / gen.output_path(artifact.name)).read_text(encoding="utf-8")
+                        if artifact_action == "skip"
+                        else artifact.content
+                    )
+                    if not GenericArtifactGenerator.find_unresolved(installed_content):
+                        available_skills.add(artifact.name)
 
             InitCommand._prune_planner_when_manual_mode(
                 install_dir=install_dir,

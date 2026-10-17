@@ -28,7 +28,8 @@ their manifest entries behind.
 - Reuse existing skills for overlapping workflows.
 - Convert unique workflows to manually invoked skills.
 - During `install` and `init` with skills selected, remove unchanged legacy prompts
-  only after their replacement skills are successfully available.
+  only after their replacement skills are successfully available with no unresolved
+  template placeholders.
 - Preserve unmanaged, modified, checksum-less, unsafe-path, and unknown prompts.
   Report why migration was deferred and retain manifest tracking for retry.
 - Keep legacy manifest parsing, dry-run behavior, and scoped installs intact.
@@ -62,6 +63,8 @@ their manifest entries behind.
 - Reject unsafe manifest paths without accessing files outside the install root.
 - Retry a partially completed migration and clear entries for already missing files.
 - Confirm dry-run leaves files and manifest bytes unchanged.
+- Preserve prompts when a replacement partial is missing, including install,
+  update, unchanged, and dry-run paths; retry retirement after repairing the partial.
 - Confirm CLI rejection of removed selectors and valid output for all four families.
 - Run lint, type checking, tests with 100% coverage, and source validation.
 

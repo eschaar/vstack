@@ -2,6 +2,7 @@
 
 from argparse import Namespace
 from pathlib import Path
+from shutil import copytree
 
 import pytest
 
@@ -383,6 +384,79 @@ def test_source_validation_failure_does_not_retire_prompts(
     manifest = service.manifest_for(install_dir).read()
     assert manifest is not None
     assert manifest.names_for("prompts") == ["quick-review"]
+
+
+@pytest.mark.parametrize("action", ["install", "update", "skip"])
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_unresolved_replacement_preserves_prompt_until_repaired(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    action: str,
+    dry_run: bool,
+) -> None:
+    """Missing partials defer retirement for new, updated, and unchanged replacements."""
+    templates = tmp_path / "templates"
+    copytree(TEMPLATES_ROOT / "skills", templates / "skills")
+    service = CommandService(templates)
+    install_dir = tmp_path / ".github"
+    partial = templates / "skills" / "_partials" / "skill-context.md"
+    partial_content = partial.read_text(encoding="utf-8")
+    if action == "skip":
+        partial.unlink()
+    if action != "install":
+        assert InitCommand.execute(service, install_dir, only=["skill"]) == 0
+    installed = service.manifest_for(install_dir).read()
+    manifest = track_prompts(service, install_dir, ["quick-review"])
+    if installed is not None:
+        manifest.artifacts["skills"] = installed.entries_for("skills")
+        if action == "update":
+            for entry in manifest.artifacts["skills"]:
+                entry.version = "1"
+        service.manifest_for(install_dir).write(manifest)
+    if action != "skip":
+        partial.unlink()
+    service = CommandService(templates)
+    gen = service.gen_for("skill")
+    assert gen is not None
+    assert gen.verify_input().ok
+    replacement = next(artifact for artifact in gen.render_all() if artifact.name == "code-review")
+    assert "SKILL_CONTEXT" in replacement.unresolved
+    prompt = install_dir / "prompts" / "quick-review.prompt.md"
+    original_prompt = prompt.read_bytes()
+    original_manifest = service.manifest_for(install_dir).path.read_bytes()
+    capsys.readouterr()
+
+    assert (
+        InitCommand.execute(
+            service, install_dir, only=["skill"], update=action != "install", dry_run=dry_run
+        )
+        == 0
+    )
+    assert prompt.read_bytes() == original_prompt
+    current = service.manifest_for(install_dir).read()
+    assert current is not None
+    assert current.names_for("prompts") == ["quick-review"]
+    output = capsys.readouterr()
+    assert "replacement skill/code-review is unavailable" in output.out
+    assert "SKILL_CONTEXT" in output.err
+    if dry_run:
+        assert service.manifest_for(install_dir).path.read_bytes() == original_manifest
+
+    partial.write_text(partial_content, encoding="utf-8")
+    service = CommandService(templates)
+    if not dry_run or action == "skip":
+        assert InitCommand.execute(service, install_dir, only=["skill"], update=True) == 0
+        assert prompt.read_bytes() == original_prompt
+        current = service.manifest_for(install_dir).read()
+        assert current is not None
+        assert current.names_for("prompts") == ["quick-review"]
+    assert InitCommand.execute(service, install_dir, only=["skill"]) == 0
+    assert not prompt.exists()
+    repaired = install_dir / "skills" / "code-review" / "SKILL.md"
+    assert "{{SKILL_CONTEXT}}" not in repaired.read_text(encoding="utf-8")
+    current = service.manifest_for(install_dir).read()
+    assert current is not None
+    assert not current.entries_for("prompts")
 
 
 def test_retired_prompt_exclusions_warn_instead_of_blocking_upgrade(
