@@ -12,7 +12,7 @@
 
 The VS Code-native AI workflow system for backend engineering.
 
-vstack installs structured agents, skills, instructions, and prompts into `.github/` so GitHub Copilot Agent Mode can run repeatable backend workflows with clear role boundaries.
+vstack installs structured agents, skills, instructions, and hooks into `.github/` so GitHub Copilot Agent Mode can run repeatable backend workflows with clear role boundaries.
 
 It provides six delivery roles for end-to-end software work: `product`, `architect`, `designer`, `engineer`, `tester`, and `release`, coordinated by `planner`.
 

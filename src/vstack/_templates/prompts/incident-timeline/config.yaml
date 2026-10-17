@@ -1,8 +1,0 @@
-name: incident-timeline
-description: Build a structured, evidence-based incident timeline and action-oriented postmortem summary.
-argument-hint: "[logs, alerts, timeline notes, or incident ID]"
-agent: tester
-tools:
-  - read
-  - search
-version: 20260502010

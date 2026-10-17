@@ -1,8 +1,0 @@
-name: architecture-risk
-description: Identify architectural risks, tradeoffs, and mitigation priorities for a proposed design.
-argument-hint: "[design doc, ADR, or architecture scope]"
-agent: architect
-tools:
-  - read
-  - search
-version: 20260502007

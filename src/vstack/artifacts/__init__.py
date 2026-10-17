@@ -1,7 +1,6 @@
-"""vstack.artifacts — shared prompt-artifact models, generator, and protocol."""
+"""Shared artifact models, generator, and protocol."""
 
 from vstack.artifacts.config import INSTRUCTION_SCHEMA as INSTRUCTION_SCHEMA
-from vstack.artifacts.config import PROMPT_SCHEMA as PROMPT_SCHEMA
 from vstack.artifacts.config import ArtifactTypeConfig as ArtifactTypeConfig
 from vstack.artifacts.generator import (
     GenericArtifactGenerator as GenericArtifactGenerator,

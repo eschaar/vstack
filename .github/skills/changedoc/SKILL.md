@@ -142,4 +142,4 @@ Escalate before implementation when:
 - required stakeholders have not approved transition to `BUILD`
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"changedoc","artifact_type":"skill","artifact_version":"20260625001","generator":"vstack","vstack_version":"3.6.0"} -->
+<!-- VSTACK-META: {"artifact_name":"changedoc","artifact_type":"skill","artifact_version":"20260625001","generator":"vstack","vstack_version":"3.7.4"} -->

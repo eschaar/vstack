@@ -20,7 +20,7 @@ vstack init --only agent
 Multiple types:
 
 ```bash
-vstack init --only skill prompt instruction
+vstack init --only skill instruction
 ```
 
 Hooks only:
@@ -47,6 +47,8 @@ vstack manifest verify --target . --only agent
 
 - Partial upgrade can leave other artifact types on older generated output.
 - For broad CLI upgrades, a full `vstack init` is still the safest final step.
+- Safe prompt retirement runs only when skills are selected. See
+  [Prompt migration](../reference/prompt-migration.md).
 
 ## Related Docs
 

@@ -18,7 +18,7 @@
 
 vstack is a VS Code-native AI engineering workflow system for backend services,
 libraries, APIs, and adjacent platform work. It installs structured agents,
-skills, instructions, and prompts into `.github/` so GitHub Copilot Agent Mode
+skills, instructions, and hooks into `.github/` so GitHub Copilot Agent Mode
 has a clear operating model instead of ad hoc chat prompts.
 
 What gets built is determined by the product vision. vstack fixes the delivery
@@ -115,7 +115,7 @@ ______________________________________________________________________
 - [CLI commands reference](docs/user/reference/cli-commands.md)
 - [Configuration reference](docs/user/reference/configuration.md)
 - [Hooks reference](docs/user/reference/hooks.md)
-- [Prompts overview](docs/user/reference/prompts-overview.md)
+- [Prompt-to-skill migration](docs/user/reference/prompt-migration.md)
 - [Skills overview](docs/user/reference/skills-overview.md)
 - [Instructions overview](docs/user/reference/instructions-overview.md)
 - [Workflow modes explanation](docs/user/explanation/workflow-modes.md)

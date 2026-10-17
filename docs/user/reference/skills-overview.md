@@ -15,6 +15,7 @@ In vstack, skills are generated into `.github/skills/<name>/SKILL.md`.
 | `adr`                 | Architecture Decision Record writing for significant technical decisions.                                           |
 | `analyse`             | Cross-cutting impact, tradeoff, and feasibility analysis.                                                           |
 | `architecture`        | Engineering-lead architecture and execution-plan review.                                                            |
+| `artifact-integrity`  | Explicit-only audit of vstack source templates, installed artifacts, and manifest drift.                            |
 | `ask`                 | Read-only technical Q&A with code-backed evidence and clear guidance.                                               |
 | `aws-cli`             | AWS CLI operations across core AWS services.                                                                        |
 | `cicd`                | GitHub Actions CI/CD workflow authoring and hardening.                                                              |
@@ -43,6 +44,7 @@ In vstack, skills are generated into `.github/skills/<name>/SKILL.md`.
 | `k8s`                 | Kubernetes manifest authoring and operational troubleshooting.                                                      |
 | `lazy`                | Engineer-first minimal-change implementation with safety guardrails.                                                |
 | `migrate`             | Safe database migration planning and review.                                                                        |
+| `migration-plan`      | Explicit-only cross-component migration planning with checkpoints and rollback.                                     |
 | `onboard`             | Contributor onboarding guide creation.                                                                              |
 | `openapi`             | OpenAPI 3.1 specification writing and review.                                                                       |
 | `performance`         | Benchmarking, profiling, and performance regression analysis.                                                       |
@@ -50,7 +52,9 @@ In vstack, skills are generated into `.github/skills/<name>/SKILL.md`.
 | `pr`                  | Commit/push and pull-request creation workflow support.                                                             |
 | `rancher`             | Rancher and Fleet workload/governance operations.                                                                   |
 | `rca`                 | Technical root cause analysis for incidents and defects.                                                            |
+| `reasoning`           | Explicit-only evidence-based critical thinking and evaluation framework.                                            |
 | `refactor`            | Behavior-preserving structural refactoring.                                                                         |
+| `release-check`       | Explicit-only release evidence and sign-off audit without publishing.                                               |
 | `release-notes`       | Release note artifact and changelog preparation.                                                                    |
 | `requirements`        | Structured requirements gathering and documentation.                                                                |
 | `secret-scan`         | Secret scanning and push-protection setup and triage.                                                               |
@@ -60,11 +64,13 @@ In vstack, skills are generated into `.github/skills/<name>/SKILL.md`.
 | `terraform`           | Terraform IaC authoring and review.                                                                                 |
 | `terragrunt`          | Terragrunt DRY multi-environment configuration design.                                                              |
 | `threat-model`        | Threat modeling with STRIDE-first prioritization.                                                                   |
+| `upgrade-plan`        | Explicit-only upgrade planning with compatibility and rollback checks.                                              |
 | `verify`              | Verification fix-loop with targeted re-checking.                                                                    |
 | `vision`              | Scope and strategy review from first principles.                                                                    |
+| `workflow-check`      | Explicit-only workflow stage, gate, and handoff integrity review.                                                   |
 
 ## Related Docs
 
-- [Prompts overview](prompts-overview.md)
+- [Prompt migration](prompt-migration.md)
 - [Instructions overview](instructions-overview.md)
 - [Work items](work-items.md)

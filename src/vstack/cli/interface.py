@@ -20,7 +20,6 @@ _CONFIG_TYPE_ALIAS: dict[str, str] = {
     "agents": "agent",
     "hooks": "hook",
     "instructions": "instruction",
-    "prompts": "prompt",
     "skills": "skill",
 }
 
@@ -128,6 +127,12 @@ class CommandLineInterface:
         excluded_types: set[str] = set()
         excluded_names: dict[str, list[str]] = {}
         for config_key, value in raw_exclude.items():
+            if config_key == "prompts":
+                print(
+                    "WARNING: exclude.prompts is retired; configure replacement skill exclusions instead.",
+                    file=sys.stderr,
+                )
+                continue
             type_name = _CONFIG_TYPE_ALIAS.get(config_key)
             if type_name is None:
                 continue  # unknown key, ignore gracefully

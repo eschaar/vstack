@@ -64,7 +64,7 @@ class TestCommandService:
         """Service generators cover all known artifact families."""
         svc = CommandService(templates_root=TEMPLATES_ROOT)
         names = {g.config.type_name for g in svc.generators}
-        assert names == {"skill", "agent", "hook", "instruction", "prompt"}
+        assert names == {"skill", "agent", "hook", "instruction"}
 
     def test_custom_items_root_is_passed_to_agent_generator(self, tmp_path: Path) -> None:
         """items_root kwarg is forwarded to the AgentGenerator instance."""

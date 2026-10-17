@@ -76,7 +76,7 @@ COMMAND_CATALOG: dict[str, TopLevelCommandConfig] = {
         include_scope_group=True,
         include_only_option=True,
         scope_help="Verify output in <dir>/.github/",
-        only_help="Verify only these artifact types, e.g. --only agent prompt",
+        only_help="Verify only these artifact types, e.g. --only agent skill",
     ),
     "status": TopLevelCommandConfig(
         command_factory=StatusCommand,
@@ -163,6 +163,6 @@ MANIFEST_SUBCOMMAND_CATALOG: dict[str, ManifestSubcommandConfig] = {
         help_text="Verify installed output against manifest ownership and checksums",
         scope_help="Verify output in <dir>/.github/",
         include_only_option=True,
-        only_help="Verify only these artifact types, e.g. --only agent prompt",
+        only_help="Verify only these artifact types, e.g. --only agent skill",
     ),
 }

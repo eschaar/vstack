@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from vstack.artifacts.config import INSTRUCTION_SCHEMA, PROMPT_SCHEMA, ArtifactTypeConfig
+from vstack.artifacts.config import INSTRUCTION_SCHEMA, ArtifactTypeConfig
 
 
 class TestArtifactTypeConfig:
@@ -22,10 +22,6 @@ class TestArtifactTypeConfig:
 
 class TestSchemas:
     """Test cases for Schemas."""
-
-    def test_prompt_schema_has_description(self) -> None:
-        """Test that prompt schema has description."""
-        assert PROMPT_SCHEMA.get("description") is not None
 
     def test_instruction_schema_has_apply_to(self) -> None:
         """Test that instruction schema has apply to."""

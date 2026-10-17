@@ -96,10 +96,40 @@ class TestBuildParser:
     def test_verify_accepts_only_filter(self) -> None:
         """Test that verify command supports --only type filters."""
         parser = parser_module.CommandLineParser().build()
-        args = parser.parse_args(["verify", "--only", "agent", "prompt", "--no-source"])
+        args = parser.parse_args(["verify", "--only", "agent", "skill", "--no-source"])
         assert args.command == "verify"
-        assert args.only == ["agent", "prompt"]
+        assert args.only == ["agent", "skill"]
         assert args.source is False
+
+    @pytest.mark.parametrize(
+        "command", ["install", "init", "verify", "validate", "status", "uninstall"]
+    )
+    def test_prompt_artifact_filter_is_rejected(self, command: str) -> None:
+        """Removed prompt selectors are rejected instead of silently doing nothing."""
+        parser = parser_module.CommandLineParser().build()
+        with pytest.raises(SystemExit) as exc:
+            parser.parse_args([command, "--only", "prompt"])
+        assert exc.value.code == 2
+
+    @pytest.mark.parametrize(
+        "command, option",
+        [
+            ("install", "--force-name"),
+            ("install", "--adopt-name"),
+            ("init", "--force-name"),
+            ("init", "--adopt-name"),
+            ("uninstall", "--force-name"),
+        ],
+    )
+    def test_prompt_artifact_selector_is_rejected(
+        self, command: str, option: str, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Removed selectors explain the replacement instead of silently being ignored."""
+        parser = parser_module.CommandLineParser().build()
+        with pytest.raises(SystemExit) as exc:
+            parser.parse_args([command, option, "prompt/quick-review"])
+        assert exc.value.code == 2
+        assert "use the replacement skill/" in capsys.readouterr().err
 
     def test_install_accepts_force_name(self) -> None:
         """Test that install supports targeted force names."""
