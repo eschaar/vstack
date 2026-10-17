@@ -5,7 +5,7 @@
   </picture>
 
 [![PyPI version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fpypi.org%2Fpypi%2Fvstack%2Fjson&query=%24.info.version&label=PyPI&color=0B8A6F&cacheSeconds=300 "Latest PyPI release")](https://pypi.org/project/vstack/)
-[![Python version](https://img.shields.io/badge/python-3.11--3.14-0B8A6F "Supported Python versions")](pyproject.toml)
+[![Python version](https://img.shields.io/badge/python-3.11--3.15-0B8A6F "Supported Python versions")](pyproject.toml)
 [![Verify status](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/verify.yml?label=verify&color=1D6FA5 "Build and test status")](https://github.com/eschaar/vstack/actions/workflows/verify.yml)
 [![Security checks](https://img.shields.io/github/actions/workflow/status/eschaar/vstack/security.yml?label=security&color=B15E00 "Security workflow status")](https://github.com/eschaar/vstack/actions/workflows/security.yml)
 [![Runtime: PyYAML](https://img.shields.io/badge/runtime-PyYAML-5B6C8F "One runtime dependency: PyYAML")](pyproject.toml)
@@ -18,7 +18,7 @@
 
 vstack is a VS Code-native AI engineering workflow system for backend services,
 libraries, APIs, and adjacent platform work. It installs structured agents,
-skills, instructions, and prompts into `.github/` so GitHub Copilot Agent Mode
+skills, instructions, and hooks into `.github/` so GitHub Copilot Agent Mode
 has a clear operating model instead of ad hoc chat prompts.
 
 What gets built is determined by the product vision. vstack fixes the delivery
@@ -115,7 +115,7 @@ ______________________________________________________________________
 - [CLI commands reference](docs/user/reference/cli-commands.md)
 - [Configuration reference](docs/user/reference/configuration.md)
 - [Hooks reference](docs/user/reference/hooks.md)
-- [Prompts overview](docs/user/reference/prompts-overview.md)
+- [Prompt-to-skill migration](docs/user/reference/prompt-migration.md)
 - [Skills overview](docs/user/reference/skills-overview.md)
 - [Instructions overview](docs/user/reference/instructions-overview.md)
 - [Workflow modes explanation](docs/user/explanation/workflow-modes.md)

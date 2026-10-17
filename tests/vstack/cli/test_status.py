@@ -32,7 +32,7 @@ class TestStatusCommand:
         context = CommandContext(
             args=Namespace(output_format="json", verbose=True, no_color=True),
             install_dir=tmp_path,
-            only=["prompt"],
+            only=["skill"],
         )
         assert StatusCommand(service=cast(CommandService, object())).run(context=context) == 3
         assert captured["kwargs"]["output_format"] == "json"

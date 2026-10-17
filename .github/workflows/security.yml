@@ -19,7 +19,7 @@ permissions:
 
 env:
   # Keep scanner runtime consistent across runs.
-  PYTHON_VERSION: "3.11"
+  PYTHON_VERSION: "3.14"
   # Pin Poetry CLI version for deterministic CI behavior.
   POETRY_VERSION: "2.4.1"
   # Keep Poetry virtual environments inside the workspace for deterministic paths.
@@ -60,7 +60,7 @@ jobs:
 
       - name: Secret scan
         # Scan only PR diff range to reduce noise and speed up checks.
-        uses: trufflesecurity/trufflehog@20652fbbdefffcdaa493a5bf57ab2ac6b1db715b
+        uses: trufflesecurity/trufflehog@363923b901c911a9164f50b6c423f47c15372b1c
         with:
           path: ./
           base: ${{ github.event.pull_request.base.sha }}

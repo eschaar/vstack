@@ -59,4 +59,4 @@ Always consider:
 
 ---
 
-**Related:** See `prompt/reasoning` for the underlying reasoning framework.
+**Related:** See `skill/reasoning` for the underlying reasoning framework.

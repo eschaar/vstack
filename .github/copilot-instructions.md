@@ -17,23 +17,22 @@ vstack provides structured skills for backend/microservice development, executab
 - Agents are for roles and handoffs.
 - Skills are for reusable procedures.
 - Instructions are for always-on policies.
-- Prompts are for one-shot task framing.
 - Hooks are for repository-level automation.
 
 When proposals span multiple artifact types, split them into small independent changes.
 
 ## Reasoning & Critical Thinking
 
-Evidence-based reasoning is available as an explicit opt-in framework via `prompt/reasoning`.
+Evidence-based reasoning is available as an explicit opt-in framework via `skill/reasoning`.
 
-When `prompt/reasoning` is invoked, apply these principles:
+When `skill/reasoning` is invoked, apply these principles:
 - **Truth > agreement** — evaluate correctness, not user preference
 - **Evidence > opinion** — support claims with facts, logic, or explicit assumptions
 - **Critical thinking > people-pleasing** — challenge premises before accepting them
 
-For structured adversarial review workflows, agents invoke `skill/advise`, which can reference `prompt/reasoning` when deeper critical analysis is needed.
+For structured adversarial review workflows, agents invoke `skill/advise`, which can reference `skill/reasoning` when deeper critical analysis is needed.
 
-**For downstream users:** Add `prompt/reasoning` to your vstack installation (in your `.vstack/vstack.json` manifest or via your preferred vstack distribution mechanism), then run `vstack install` to generate `.github/prompts/reasoning.prompt.md` in your repository. Agents and skills can invoke it by reference.
+**For downstream users:** Run `vstack install` to generate `.github/skills/reasoning/SKILL.md`, then invoke `/reasoning` explicitly when needed. The install manifest is generated state, not a hand-edited selection file.
 
 ## System Structure
 
@@ -47,24 +46,26 @@ src/vstack/_templates/
 ├── agents/<name>/
 │   ├── template.md             ← agent instructions body
 │   └── config.yaml             ← agent frontmatter fields
-├── instructions/<name>/
-│   ├── template.md             ← instruction file body
-│   └── config.yaml
-└── prompts/<name>/
-    ├── template.md             ← prompt file body
+└── instructions/<name>/
+    ├── template.md             ← instruction file body
     └── config.yaml
 docs/            ← overview.md, design.md, skills.md, workflow.md, roadmap.md, adr/
-.github/         ← generated output (never edit directly*)
+.github/         ← generated output plus hand-authored exceptions*
 ├── skills/<name>/SKILL.md
 ├── agents/<name>.agent.md
-├── instructions/<name>.instructions.md
-└── prompts/<name>.prompt.md
+└── instructions/<name>.instructions.md
 .vstack/         ← project-scope vstack state and config
 └── vstack.json                 ← install manifest (generated)
 ```
 
 *Hand-authored exceptions in `.github/`: `copilot-instructions.md`, `CODEOWNERS`,
-`PULL_REQUEST_TEMPLATE/`, `ISSUE_TEMPLATE/`, `workflows/`.
+`PULL_REQUEST_TEMPLATE/`, `ISSUE_TEMPLATE/`, `workflows/`, and repository-only skills
+such as `skills/artifact-integrity/SKILL.md`.
+
+Repository-only skills live directly in `.github/skills/<name>/SKILL.md`.
+They have no template under `src/vstack/_templates/`, no generation footer, and no
+entry in `.vstack/vstack.json`. They are not packaged or installed for consumers.
+Edit these files directly; the template-first rules apply only to distributed artifacts.
 
 Generated files are written to `.github/` at install time:
 
@@ -76,14 +77,14 @@ python3 -m vstack install
 
 When vstack is installed inside its own repo (`.github/agents/` and `.github/skills/` exist):
 
-**Source of truth is always in `src/vstack/_templates/`.** After every change:
+**Source of truth for distributed artifacts is in `src/vstack/_templates/`.**
+Repository-only skills are hand-authored exceptions. After every template change:
 
 | What changed | Command to run |
 |---|---|
 | `src/vstack/_templates/agents/<name>/config.yaml` or `template.md` | `python3 -m vstack install` |
 | `src/vstack/_templates/skills/<name>/template.md` or `_partials/*.md` | `python3 -m vstack install` |
 | `src/vstack/_templates/instructions/<name>/template.md` | `python3 -m vstack install` |
-| `src/vstack/_templates/prompts/<name>/template.md` | `python3 -m vstack install` |
 
 A single command handles all artifact types:
 
@@ -91,7 +92,7 @@ A single command handles all artifact types:
 python3 -m vstack install
 ```
 
-Never edit `.github/agents/`, `.github/skills/`, `.github/instructions/`, or `.github/prompts/` directly — changes will be overwritten.
+Never edit generated files in `.github/agents/`, `.github/skills/`, or `.github/instructions/` directly — changes will be overwritten. Repository-only skills are edited directly and remain outside manifest ownership. Legacy managed prompts are retired by install/init only when safe.
 
 ## Execution Model
 

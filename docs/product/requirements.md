@@ -8,7 +8,7 @@ ______________________________________________________________________
 ## context
 
 vstack is a VS Code-native AI engineering workflow system. It installs structured
-agents, skills, instructions, and prompts into `.github/` so GitHub Copilot Agent
+agents, skills, instructions, and hooks into `.github/` so GitHub Copilot Agent
 Mode has a clear operating model. vstack is distributed as a standalone Python CLI
 tool via PyPI (`pipx install vstack`) with a single runtime dependency
 (`pyyaml>=6.0`) for YAML frontmatter parsing (see ADR-025). A Homebrew private tap
@@ -24,8 +24,7 @@ ______________________________________________________________________
 - Source templates live under `src/vstack/_templates/<type>/<name>/`.
 - Supported artifact types: `skill` (`.github/skills/<name>/SKILL.md`), `agent`
   (`.github/agents/<name>.agent.md`), `instruction`
-  (`.github/instructions/<name>.instructions.md`), `prompt`
-  (`.github/prompts/<name>.prompt.md`), `hook`
+  (`.github/instructions/<name>.instructions.md`), `hook`
   (`.github/hooks/<name>.json`).
 - At generation time the generator resolves `{{TOKEN}}` placeholders from shared
   partials and injects frontmatter validated against the artifact schema.
@@ -58,6 +57,11 @@ ______________________________________________________________________
 - `--update` rewrites only when a newer version is available and the tracked file is
   still clean. Mutually exclusive with `--force`.
 - `--dry-run` prints what would change without writing any files.
+- The next major release retires the prompt family. `install` and `init` with
+  skills selected install replacements before removing known, unchanged,
+  manifest-tracked prompts. Unsafe, custom, or modified files remain tracked and
+  reported; force options do not bypass retirement safeguards. See
+  [Prompt migration](../user/reference/prompt-migration.md) and ADR-032.
 
 ### FR-5 — uninstall
 
@@ -120,7 +124,7 @@ ______________________________________________________________________
 | ID    | Requirement                                                                                                                                                                                                                                                                                                           |
 | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | NFR-1 | One runtime dependency only: PyYAML (`pyyaml>=6.0`) for YAML frontmatter parsing.                                                                                                                                                                                                                                     |
-| NFR-2 | Python 3.11–3.14 compatibility.                                                                                                                                                                                                                                                                                       |
+| NFR-2 | Python 3.11–3.15 compatibility; Python 3.14 is the default development and CI runtime.                                                                                                                                                                                                                                |
 | NFR-3 | Manifest writes are atomic: write to a temporary file, then replace atomically.                                                                                                                                                                                                                                       |
 | NFR-4 | All public behavior exercised by automated tests (pytest). CI gate enforces test pass.                                                                                                                                                                                                                                |
 | NFR-5 | CLI operates standalone; no VS Code process required for `install`, `verify`, or `validate`.                                                                                                                                                                                                                          |
@@ -153,5 +157,5 @@ ______________________________________________________________________
    at runtime.
 1. Manifest schema is versioned; old manifests require explicit upgrade before further
    use.
-1. CLI behavior must be reproducible across Python 3.11–3.14.
+1. CLI behavior must be reproducible across Python 3.11–3.15.
 1. No cloud, network, or VS Code process dependency for CLI operations.

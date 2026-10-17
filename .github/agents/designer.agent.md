@@ -241,4 +241,4 @@ Keep this list lean. Use additional installed domain skills only when needed.
 - `@#simplify` — simplify proposals and designs while preserving required outcomes
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"designer","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.6.0"} -->
+<!-- VSTACK-META: {"artifact_name":"designer","artifact_type":"agent","artifact_version":"20260514001","generator":"vstack","vstack_version":"3.7.8"} -->

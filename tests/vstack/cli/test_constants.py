@@ -38,6 +38,7 @@ EXPECTED_CLI_NAMES = [
     "k8s",
     "lazy",
     "migrate",
+    "migration-plan",
     "onboard",
     "openapi",
     "performance",
@@ -45,7 +46,9 @@ EXPECTED_CLI_NAMES = [
     "pr",
     "rancher",
     "rca",
+    "reasoning",
     "refactor",
+    "release-check",
     "release-notes",
     "requirements",
     "secret-scan",
@@ -55,8 +58,10 @@ EXPECTED_CLI_NAMES = [
     "terraform",
     "terragrunt",
     "threat-model",
+    "upgrade-plan",
     "verify",
     "vision",
+    "workflow-check",
 ]
 
 

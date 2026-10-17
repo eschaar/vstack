@@ -1,0 +1,7 @@
+name: upgrade-plan
+description: Build a safe upgrade plan with sequencing, compatibility checks, and rollback points.
+argument-hint: "[target version, component, or full repo]"
+allowed-tools: 'read search'
+user-invocable: true
+disable-model-invocation: true
+version: 20261017001

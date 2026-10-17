@@ -7,8 +7,9 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from vstack.artifacts.generator import GenericArtifactGenerator
 from vstack.cli.base import BaseCommand, CommandContext
-from vstack.cli.constants import Colors
+from vstack.cli.constants import RETIRED_PROMPT_SKILLS, Colors
 from vstack.constants import VERSION
 from vstack.manifest import (
     CURRENT_HASH_ALGORITHM,
@@ -401,7 +402,7 @@ class InitCommand(BaseCommand):
         checksum_algorithm = (entry.checksum_algorithm or CURRENT_HASH_ALGORITHM).lower()
         try:
             current = hash_with_algorithm(out_file.read_text(encoding="utf-8"), checksum_algorithm)
-        except OSError:
+        except (OSError, UnicodeError):
             return False, "file is unreadable"
         except ValueError:
             return False, "unknown checksum algorithm"
@@ -470,13 +471,13 @@ class InitCommand(BaseCommand):
             return "preserve", True
 
         reason_suffix = "" if reason == "" else f" — {reason}"
-        print(
-            f"  {prefix}{colors.CYAN}−{colors.RESET}  {rel}"
-            f"  {colors.DIM}removed obsolete tracked artifact ({selector}){reason_suffix}{colors.RESET}"
-        )
         InitCommand._remove_file_if_present(
             out_file=install_dir / entry.file,
             dry_run=dry_run,
+        )
+        print(
+            f"  {prefix}{colors.CYAN}−{colors.RESET}  {rel}"
+            f"  {colors.DIM}removed obsolete tracked artifact ({selector}){reason_suffix}{colors.RESET}"
         )
         return "prune", False
 
@@ -497,10 +498,11 @@ class InitCommand(BaseCommand):
         adopted = action_counts.get("adopt", 0)
         obsolete = action_counts.get("obsolete", 0)
         pruned = action_counts.get("prune", 0)
+        retired = action_counts.get("retire", 0)
 
         install_label = "installed"
         summary_title = "Summary (dry-run)" if dry_run else "Summary"
-        total = installed + updated + preserved + skipped + adopted + obsolete
+        total = installed + updated + preserved + skipped + adopted + obsolete + retired
 
         print()
         print(f"  {colors.BOLD}{summary_title}{colors.RESET}")
@@ -512,6 +514,8 @@ class InitCommand(BaseCommand):
         print(f"    adopted         : {colors.BOLD}{adopted}{colors.RESET}")
         print(f"    obsolete        : {colors.BOLD}{obsolete}{colors.RESET}")
         print(f"    pruned          : {colors.BOLD}{pruned}{colors.RESET}")
+        if retired:
+            print(f"    retired prompts : {colors.BOLD}{retired}{colors.RESET}")
 
         if obsolete and not prune:
             print()
@@ -536,6 +540,10 @@ class InitCommand(BaseCommand):
             if preserved_selectors:
                 for selector in sorted(preserved_selectors):
                     print(f"     - {selector}")
+            if any(selector.startswith("prompt/") for selector in preserved_selectors):
+                print("  Retired prompts require manual review; --force does not remove them.")
+                if all(selector.startswith("prompt/") for selector in preserved_selectors):
+                    return
             print("  Next steps:")
             print(f"     {colors.DIM}--force{colors.RESET}               overwrite all")
             print(
@@ -546,6 +554,84 @@ class InitCommand(BaseCommand):
                 f"     {colors.DIM}--adopt-name <name|type/name>{colors.RESET} "
                 "take ownership without overwriting"
             )
+
+    @staticmethod
+    def _migrate_retired_prompts(
+        *,
+        install_dir: Path,
+        existing_manifest: Manifest | None,
+        new_entries: dict[str, list[ArtifactEntry]],
+        available_skills: set[str],
+        dry_run: bool,
+        action_counts: dict[str, int],
+        preserved_selectors: set[str],
+        colors,
+        prefix: str,
+    ) -> bool:
+        """Retire known prompts only after their replacement skills are available.
+
+        Unsafe or locally modified files remain tracked so a later install can
+        retry. Return false if a deletion fails. Neither force options nor legacy
+        metadata bypass checksum checks.
+        """
+        if existing_manifest is None:
+            return True
+        all_ok = True
+        new_entries.pop("prompts", None)
+        for entry in existing_manifest.entries_for("prompts"):
+            replacement = RETIRED_PROMPT_SKILLS.get(entry.name)
+            out_file = install_dir / entry.file
+            reason = None
+            if replacement is None:
+                reason = "unknown retired prompt; convert this custom workflow manually"
+            elif entry.file != f"prompts/{entry.name}.prompt.md":
+                reason = "noncanonical legacy prompt path"
+            elif out_file.is_symlink() or out_file.parent.is_symlink():
+                reason = "symlinked legacy prompt path"
+            elif replacement not in available_skills:
+                reason = f"replacement skill/{replacement} is unavailable, excluded, or preserved"
+
+            if reason is not None:
+                print(
+                    f"  {prefix}{colors.YELLOW}↷{colors.RESET}  {entry.file}"
+                    f"  retired prompt preserved — {reason}"
+                )
+                Manifest.preserve_existing_entry(
+                    new_entries=new_entries,
+                    manifest_key="prompts",
+                    existing_entry=entry,
+                )
+                action = "preserve"
+                preserved = True
+            else:
+                print(f"  {prefix}Migrating prompt/{entry.name} → skill/{replacement}")
+                try:
+                    action, preserved = InitCommand._process_obsolete_entry(
+                        install_dir=install_dir,
+                        manifest_key="prompts",
+                        type_name="prompt",
+                        entry=entry,
+                        prune=True,
+                        dry_run=dry_run,
+                        colors=colors,
+                        prefix=prefix,
+                        new_entries=new_entries,
+                    )
+                except OSError as exc:
+                    print(f"ERROR: could not retire prompt/{entry.name}: {exc}", file=sys.stderr)
+                    Manifest.preserve_existing_entry(
+                        new_entries=new_entries,
+                        manifest_key="prompts",
+                        existing_entry=entry,
+                    )
+                    action, preserved = "preserve", True
+                    all_ok = False
+                if action == "prune":
+                    action = "retire"
+            action_counts[action] = action_counts.get(action, 0) + 1
+            if preserved:
+                preserved_selectors.add(f"prompt/{entry.name}")
+        return all_ok
 
     @staticmethod
     def _warn_unknown_workflow_roles(
@@ -698,6 +784,7 @@ class InitCommand(BaseCommand):
         all_ok = True
         action_counts: dict[str, int] = {}
         preserved_selectors: set[str] = set()
+        available_skills: set[str] = set()
 
         for gen in gens:
             out_dir = install_dir / gen.config.output_subdir
@@ -731,6 +818,18 @@ class InitCommand(BaseCommand):
                 action_counts[artifact_action] = action_counts.get(artifact_action, 0) + 1
                 if artifact_action == "preserve":
                     preserved_selectors.add(f"{gen.config.type_name}/{artifact.name}")
+                elif (
+                    gen.config.type_name == "skill"
+                    and artifact_action in {"install", "update", "skip"}
+                    and not artifact.unresolved
+                ):
+                    installed_content = (
+                        (out_dir / gen.output_path(artifact.name)).read_text(encoding="utf-8")
+                        if artifact_action == "skip"
+                        else artifact.content
+                    )
+                    if not GenericArtifactGenerator.find_unresolved(installed_content):
+                        available_skills.add(artifact.name)
 
             InitCommand._prune_planner_when_manual_mode(
                 install_dir=install_dir,
@@ -775,6 +874,19 @@ class InitCommand(BaseCommand):
                 action_counts["preserve"] = action_counts.get("preserve", 0) + 1
             if was_preserved:
                 preserved_selectors.add(f"{type_name}/{entry.name}")
+
+        if all_ok and any(gen.config.type_name == "skill" for gen in gens):
+            all_ok = InitCommand._migrate_retired_prompts(
+                install_dir=install_dir,
+                existing_manifest=existing_manifest,
+                new_entries=new_entries,
+                available_skills=available_skills,
+                dry_run=dry_run,
+                action_counts=action_counts,
+                preserved_selectors=preserved_selectors,
+                colors=colors,
+                prefix=prefix,
+            )
 
         InitCommand._print_summary(
             colors=colors,

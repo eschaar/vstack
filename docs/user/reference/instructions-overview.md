@@ -35,4 +35,4 @@ In vstack, instructions are generated into `.github/instructions/*.instructions.
 
 - [Configuration](configuration.md)
 - [Skills overview](skills-overview.md)
-- [Prompts overview](prompts-overview.md)
+- [Prompt migration](prompt-migration.md)

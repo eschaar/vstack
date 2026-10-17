@@ -17,6 +17,12 @@ vstack init
 
 `vstack init` is idempotent. You can run it repeatedly after upgrades.
 
+The next major release replaces prompts with skills. `init` and `install`
+automatically retire unchanged, tracked built-in prompts once their replacement
+skills are available. Modified and unmanaged files are preserved.
+Preview with `vstack init --dry-run`; see [Prompt migration](../reference/prompt-migration.md)
+for the command mapping, exclusions, and manual recovery.
+
 ## 3. Verify After Upgrade
 
 The commands in this guide assume you run them from the repository root, so `--target` is omitted.

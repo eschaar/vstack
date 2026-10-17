@@ -1,8 +1,0 @@
-name: repo-assessment
-description: Assess a repository for production-readiness gaps and prioritized improvements.
-argument-hint: "[repository scope or component path]"
-agent: engineer
-tools:
-  - read
-  - search
-version: 20260513001

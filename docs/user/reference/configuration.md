@@ -20,7 +20,6 @@ exclude:
     - helm
     - k8s
   instructions: all
-  prompts: all
   hook: all
 ```
 
@@ -29,6 +28,8 @@ Rules:
 - `type: all` skips an entire artifact type.
 - `type: [name, ...]` skips only listed artifacts.
 - Use exclusions to reduce generated surface for team needs.
+- `exclude.prompts` is retired and emits a warning. Configure replacement skills
+  instead; see [Prompt migration](prompt-migration.md).
 
 ## Workflow mode
 

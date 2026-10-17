@@ -16,7 +16,6 @@ from vstack.agents.generator import AgentGenerator
 from vstack.artifacts.generator import GenericArtifactGenerator
 from vstack.instructions.config import INSTRUCTION_TYPE
 from vstack.models import ValidationResult
-from vstack.prompts.config import PROMPT_TYPE
 from vstack.skills.config import SKILL_TYPE
 
 
@@ -302,39 +301,32 @@ class TestGenericArtifactGenerator:
             artifact_label="agent/product",
         )
 
-    def test_render_prompt_quick_review_matches_golden_fixture(
-        self,
-        templates_root: Path,
-        prompt_fixture_path: Callable[[str], Path],
+    @pytest.mark.parametrize(
+        "name, heading",
+        [
+            ("migration-plan", "## Rollback Plan"),
+            ("reasoning", "## Hallucination Guardrails"),
+            ("release-check", "## Sign-off Gaps"),
+            ("upgrade-plan", "## Verification Matrix"),
+            ("workflow-check", "## Gate and Handoff Findings"),
+        ],
+    )
+    def test_converted_prompt_is_a_manually_invoked_skill(
+        self, templates_root: Path, name: str, heading: str
     ) -> None:
-        """Quick-review prompt rendering must remain byte-for-byte stable."""
-        templates = templates_root
-        template_dir = templates / "prompts" / "quick-review"
-        expected_fixture = prompt_fixture_path("quick-review")
-
-        artifact = GenericArtifactGenerator(PROMPT_TYPE, templates).render(template_dir)
-        self._assert_matches_golden_fixture(
-            artifact_content=artifact.content,
-            expected_fixture=expected_fixture,
-            artifact_label="prompt/quick-review",
+        """Converted workflows retain their output contracts and require explicit invocation."""
+        artifact = GenericArtifactGenerator(SKILL_TYPE, templates_root).render(
+            templates_root / "skills" / name
         )
-
-    def test_render_prompt_api_design_review_matches_golden_fixture(
-        self,
-        templates_root: Path,
-        prompt_fixture_path: Callable[[str], Path],
-    ) -> None:
-        """API-design-review prompt rendering must remain byte-for-byte stable."""
-        templates = templates_root
-        template_dir = templates / "prompts" / "api-design-review"
-        expected_fixture = prompt_fixture_path("api-design-review")
-
-        artifact = GenericArtifactGenerator(PROMPT_TYPE, templates).render(template_dir)
-        self._assert_matches_golden_fixture(
-            artifact_content=artifact.content,
-            expected_fixture=expected_fixture,
-            artifact_label="prompt/api-design-review",
-        )
+        assert artifact.frontmatter is not None
+        assert artifact.frontmatter["name"] == name
+        assert artifact.frontmatter["user-invocable"] is True
+        assert artifact.frontmatter["disable-model-invocation"] is True
+        assert "agent" not in artifact.frontmatter
+        assert "model" not in artifact.frontmatter
+        assert "tools" not in artifact.frontmatter
+        assert heading in artifact.content
+        assert "{{" not in artifact.content
 
     def test_render_skill_verify_matches_golden_fixture(
         self,

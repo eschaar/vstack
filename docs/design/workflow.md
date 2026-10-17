@@ -18,6 +18,14 @@ For authoring boundaries between reusable guidance mechanisms:
 - [013-instructions-vs-skills-boundary.md](../architecture/adr/013-instructions-vs-skills-boundary.md)
 - [028-dag-dependency-semantics.md](../architecture/adr/028-dag-dependency-semantics.md)
 
+Reusable workflows use skills, not prompt files. The five distributed converted planning and
+audit skills remain explicitly invoked; overlapping former prompts route users
+to existing skills. Role selection, handoff prompt strings, and the Option B
+pipeline are unchanged. See [Prompt migration](../user/reference/prompt-migration.md).
+
+The source-specific `artifact-integrity` audit is a hand-authored repository-only
+skill, not an installed workflow. Consumers use `inspect` for repository audits.
+
 ______________________________________________________________________
 
 ## workflow modes
@@ -233,8 +241,8 @@ and easy to reason about.
 | Workflow                          | Trigger                                               | Responsibility                                                                                         |
 | --------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | `.github/workflows/commit.yml`    | Push to non-main branches and pull requests to `main` | Commit/branch policy and lint/typecheck gate.                                                          |
-| `.github/workflows/check.yml`     | Push to non-main branches and pull requests to `main` | Single-version unit tests (py3.11) for fast feedback.                                                  |
-| `.github/workflows/verify.yml`    | Pull request to `main`                                | Cross-version test matrix (py3.11–3.14) and artifact install/verify flow.                              |
+| `.github/workflows/check.yml`     | Push to non-main branches and pull requests to `main` | Single-version unit tests (py3.14) for fast feedback.                                                  |
+| `.github/workflows/verify.yml`    | Pull request to `main`                                | Cross-version test matrix (py3.11–3.15) and artifact install/verify flow.                              |
 | `.github/workflows/security.yml`  | Pull request to `main`                                | Dependency vulnerability audit and secret scan.                                                        |
 | `.github/workflows/codeql.yml`    | Push/pull request to `main` + weekly schedule         | Code scanning for GitHub Actions and Python.                                                           |
 | `.github/workflows/automerge.yml` | Pull request target to `main`                         | Dependabot safe auto-merge policy for eligible updates.                                                |

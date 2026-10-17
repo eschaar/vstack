@@ -25,7 +25,7 @@ ______________________________________________________________________
 
 ### 1.1 artifact lifecycle states
 
-An artifact (skill, agent, instruction, prompt, hook) exists in one of these states relative
+An artifact (skill, agent, instruction, hook) exists in one of these states relative
 to the target `.github/` directory:
 
 ```text
@@ -83,8 +83,7 @@ stateDiagram-v2
     ],
     "agents": [],
     "hooks": [],
-    "instructions": [],
-    "prompts": []
+    "instructions": []
   }
 }
 ```
@@ -390,13 +389,29 @@ guidance, field semantics, examples, and template structure, see the dedicated d
 | `description` | string | **yes**  | When this instruction applies             |
 | `applyTo`     | string | no       | Glob pattern e.g. `"**/*.py"` or `"**/*"` |
 
-### 3.4 prompt frontmatter (`config.yaml`)
+### 3.4 retired prompt migration
 
-| Field         | Type   | Required | Notes                               |
-| ------------- | ------ | -------- | ----------------------------------- |
-| `name`        | string | **yes**  | Matches directory name; kebab-case  |
-| `description` | string | **yes**  | What this prompt does               |
-| `mode`        | string | no       | `"ask"` \| `"edit"` \| `"generate"` |
+The prompt generator and frontmatter schema are removed in the next major release.
+The manifest remains schema v2 and accepts legacy `prompts` entries for migration.
+
+After successful skill generation, `InitCommand` compares legacy entries with the
+canonical prompt-to-skill mapping. Only known entries at
+`prompts/<name>.prompt.md`, without symlinked paths, with matching stored checksums,
+and with successfully installed or unchanged replacement skills can be retired.
+Unknown, conflicting, modified, or unreadable entries are retained and reported.
+Dry-run simulates both generation and retirement without changing files or state.
+Non-skill installs preserve prompt tracking unchanged.
+
+Converted skills are explicitly invoked (`disable-model-invocation: true`).
+Overlapping workflows use existing skills without command aliases. See
+[Prompt migration](../user/reference/prompt-migration.md) for the complete mapping.
+
+Repository-only skills live directly in `.github/skills/`, not in the package's
+template root or canonical skill catalog. They have no generation metadata or
+manifest entry. Existing template discovery and manifest-scoped verification
+therefore ignore them without a new generator mode. The vstack source audit
+`artifact-integrity` is local; its retired prompt maps to distributed `inspect`.
+Previously managed copies use the existing conservative obsolete/prune policy.
 
 ______________________________________________________________________
 
@@ -439,7 +454,7 @@ Every generated artifact ends with this block when `auto_gen_footer=True`:
 
 - Human-readable line: constant in `src/vstack/artifacts/constants.py`
 - Machine-readable `VSTACK-META` line: emitted by `GenericArtifactGenerator._build_footer`
-- Markdown artifact types (`skill`, `agent`, `instruction`, `prompt`) use
+- Markdown artifact types (`skill`, `agent`, `instruction`) use
   `auto_gen_footer=True`; JSON hooks use `auto_gen_footer=False`
 
 ______________________________________________________________________

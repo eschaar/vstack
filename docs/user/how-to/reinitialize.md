@@ -26,7 +26,7 @@ Use `--only` when you want a narrower regeneration scope:
 
 ```bash
 vstack init --only agent
-vstack init --only skill prompt
+vstack init --only skill
 vstack init --only hook
 ```
 
@@ -43,6 +43,10 @@ Preview prune actions without writing files:
 ```bash
 vstack init --prune --dry-run
 ```
+
+Retired built-in prompts are a targeted migration exception: `init` and `install`
+remove safe tracked prompts automatically after their replacement skills are
+available. See [Prompt migration](../reference/prompt-migration.md).
 
 ## Verify the Reinitialized State
 

@@ -1,8 +1,0 @@
-name: dependency-audit
-description: Audit dependencies for vulnerabilities, outdated versions, licence risks, and supply chain hygiene.
-argument-hint: "[dependency manifest, lockfile, or package scope]"
-agent: tester
-tools:
-  - read
-  - search
-version: 20260502009

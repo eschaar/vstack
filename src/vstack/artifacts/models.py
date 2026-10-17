@@ -1,10 +1,4 @@
-"""Shared data models for prompt artifacts.
-
-A *prompt artifact* is any Markdown file produced by vstack: a skill file,
-an agent file, a prompt file, or an instructions file.  Some artifact types
-always carry YAML front matter (``*.agent.md``, ``SKILL.md``); others do not
-(``AGENTS.md``, ``copilot-instructions.md`` — not yet in scope).
-"""
+"""Shared models for generated skills, agents, instructions, and hooks."""
 
 from __future__ import annotations
 
@@ -16,7 +10,7 @@ from vstack.models import ValidationResult
 
 @dataclass
 class RenderedArtifact:
-    """A single rendered prompt artifact, ready to write to disk.
+    """Represent a rendered artifact ready to write to disk.
 
     Attributes:
         name:        Logical identifier (directory name or stem without suffix).

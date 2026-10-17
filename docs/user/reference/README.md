@@ -15,7 +15,7 @@ Reference pages should be precise, complete, and free of tutorial flow.
 - [CLI commands](cli-commands.md)
 - [Configuration](configuration.md)
 - [Hooks](hooks.md)
-- [Prompts overview](prompts-overview.md)
+- [Prompt migration](prompt-migration.md)
 - [Skills overview](skills-overview.md)
 - [Instructions overview](instructions-overview.md)
 - [Artifact checks](artifact-checks.md)

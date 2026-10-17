@@ -19,7 +19,7 @@ permissions:
 
 env:
   # Shared interpreter version for reproducible CI behavior.
-  PYTHON_VERSION: "3.11"
+  PYTHON_VERSION: "3.14"
   # Pin Poetry CLI version for deterministic CI behavior.
   POETRY_VERSION: "2.4.1"
   # Keep Poetry virtual environments inside the workspace for deterministic paths.
@@ -35,7 +35,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
 
     steps:
       - name: Checkout

@@ -25,6 +25,16 @@ Unlike custom instructions that primarily define coding preferences and guardrai
 skills package specialized, reusable workflows with optional scripts, examples,
 and references.
 
+### distributed and repository-only skills
+
+Distributed skills have sources under `src/vstack/_templates/skills/` and are
+installed into consumer repositories. Repository-only maintenance skills are
+hand-authored directly in `.github/skills/`, outside the package and install
+manifest. They have no generation footer and are not regenerated.
+
+`artifact-integrity` is repository-only: it audits vstack's own template sources
+and generated output. It is not part of the distributed skill catalog below.
+
 Boundary rule:
 
 - Policies belong in instructions.
@@ -80,6 +90,7 @@ List skills in alphabetical order by skill name in every catalog or role skill l
 | `k8s`                 | Write, review, and troubleshoot Kubernetes manifests and operations. Covers rollout safety, probes, RBAC, namespace isolation, and diagnostics.                                     | engineer, tester                                                 | Kubernetes manifests                         |
 | `lazy`                | Engineer-focused minimal-change execution. Prefer avoid/delete/reuse/stdlib/native solutions before writing new code while keeping safety guarantees.                               | engineer                                                         | minimal safe implementation report + changes |
 | `migrate`             | Database migration review and authoring. Forwards/backwards compatibility, zero-downtime strategies, rollback plans, data integrity, index safety.                                  | engineer, tester                                                 | reviewed/corrected migration SQL             |
+| `migration-plan`      | Explicit-only cross-component migration planning with validation and rollback.                                                                                                      | engineer                                                         | migration plan                               |
 | `onboard`             | Generate a contributor onboarding guide. Prerequisites, setup, tests, env vars, architecture overview, good first issues.                                                           | product                                                          | `CONTRIBUTING.md` + README dev section       |
 | `openapi`             | Write and review OpenAPI 3.1 specifications. Resource naming, HTTP semantics, status codes, error conventions, pagination, security schemes.                                        | designer, engineer                                               | `openapi.yaml`                               |
 | `performance`         | Performance profiling and regression detection. Establishes baselines, detects regressions, profiles bottlenecks.                                                                   | engineer, tester                                                 | perf report                                  |
@@ -87,7 +98,9 @@ List skills in alphabetical order by skill name in every catalog or role skill l
 | `pr`                  | Commit, push, and open a pull request from the current branch to main.                                                                                                              | release                                                          | commit + PR                                  |
 | `rancher`             | Operate Kubernetes workloads and governance through Rancher. Covers project scope, RBAC, Fleet/GitOps basics, and multi-cluster checks.                                             | engineer, tester                                                 | Rancher/Fleet config                         |
 | `rca`                 | Root cause analysis for incidents and bugs. Guides a systematic technical investigation and produces an RCA document linked to the triggering issue.                                | engineer, tester                                                 | technical RCA                                |
+| `reasoning`           | Explicit-only evidence-based critical thinking framework.                                                                                                                           | all roles                                                        | evaluation                                   |
 | `refactor`            | Structured refactoring without behavior change. Identify smells, plan incremental steps, execute, verify correctness.                                                               | engineer                                                         | refactored code + green tests                |
+| `release-check`       | Explicit-only release evidence and sign-off audit; does not publish.                                                                                                                | release, tester                                                  | readiness report                             |
 | `release-notes`       | Prepare release artifacts: write release notes, own CHANGELOG updates, produce `docs/releases/YYYY-MM-DD.md`.                                                                       | release                                                          | CHANGELOG + release doc                      |
 | `requirements`        | Collaborative requirements gathering. Clarifies what must be built, defines success criteria and NFRs.                                                                              | product                                                          | `docs/product/requirements.md`               |
 | `secret-scan`         | Configure GitHub secret scanning and push protection. Path exclusions, custom patterns, alert triage, and credential remediation.                                                   | tester, engineer                                                 | `.github/secret_scanning.yml`                |
@@ -97,8 +110,15 @@ List skills in alphabetical order by skill name in every catalog or role skill l
 | `terraform`           | Write, review, and refactor Terraform IaC. Module structure, state management, variable conventions, provider pinning, and security hardening.                                      | engineer                                                         | Terraform config files                       |
 | `terragrunt`          | Write, review, and refactor Terragrunt DRY multi-environment IaC. Root config, dependency blocks, `_envcommon`, and run-all workflows.                                              | engineer                                                         | `terragrunt.hcl` files                       |
 | `threat-model`        | Threat modeling with STRIDE-first identification, optional DREAD prioritization, and selective PASTA depth for critical systems.                                                    | architect, tester, engineer, designer                            | `docs/architecture/threat-model.md`          |
+| `upgrade-plan`        | Explicit-only upgrade plan with compatibility and rollback checks.                                                                                                                  | engineer, tester                                                 | upgrade plan                                 |
 | `verify`              | Verification fix-loop with mode routing (quick/standard/exhaustive). Runs targeted checks, fixes by severity, and re-verifies impacted paths.                                       | engineer, tester                                                 | fixes + verification report                  |
 | `vision`              | CEO/founder-mode plan review. Rethink from first principles, validate ambition, find the 10x solution.                                                                              | product                                                          | `docs/product/vision.md`                     |
+| `workflow-check`      | Explicit-only stage, gate, and handoff audit using project configuration, installed agents, and role documents; no vstack source templates required.                                | planner, tester                                                  | workflow report                              |
+
+The next major release removes prompt artifacts in favor of skills.
+Converted workflows retain their bodies and output sections, but do not select
+an agent or model. Existing replacement skills keep their own invocation policy.
+See [Prompt migration](../user/reference/prompt-migration.md) for all replacements.
 
 ### changedoc ownership model
 

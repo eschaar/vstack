@@ -51,6 +51,6 @@ If output does not look role-structured, verify that Agent mode is enabled and `
 
 ## Next steps
 
-1. Practice role targeting with [Choose agent, skill, or prompt](../how-to/choose-agent-skill-or-prompt.md).
+1. Practice role targeting with [Choose agent or skill](../how-to/choose-agent-or-skill.md).
 1. Learn upgrade checks with [Upgrade with checks](upgrade-with-checks.md).
 1. Keep command behavior handy with [CLI commands](../reference/cli-commands.md).

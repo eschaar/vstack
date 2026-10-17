@@ -21,7 +21,7 @@ vstack install --global
 Install selected artifact families only:
 
 ```bash
-vstack install --global --only agent skill prompt instruction hook
+vstack install --global --only agent skill instruction hook
 ```
 
 ## Update global artifacts
