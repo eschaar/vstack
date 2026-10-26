@@ -130,6 +130,8 @@ Neither path bypasses project safety, gates, or required approvals.
 - Contributors: relevant roles enrich constraints, contracts, scenarios, tasks, and evidence without silently changing product intent.
 - Orchestration: `planner` coordinates updates and stage transitions.
 - Artifact path: `docs/changes/<slug>_<title>_YYYYMMDD.md`.
+  Product declares this as an explicit project-root output; changing the shared
+  agent items root does not relocate changedocs or historical records.
 
 Keep obligations, observable acceptance, checking methods, and actual results
 distinct without repeating prose. Tasks and local references are optional;

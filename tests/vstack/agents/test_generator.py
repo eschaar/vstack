@@ -11,6 +11,17 @@ from vstack.agents.generator import AgentGenerator
 from vstack.constants import ARTIFACTS_DOCS_ROOT
 
 
+@pytest.mark.parametrize("items_root", ["docs", "documentation"])
+def test_product_changedoc_output_uses_canonical_project_path(items_root: str) -> None:
+    """Product ownership agrees with changedoc guidance even with a custom item root."""
+    template = Path(__file__).resolve().parents[3] / "src/vstack/_templates/agents/product"
+    result = AgentGenerator(items_root=items_root).template_partials(template)
+    output = result["AGENT_ARTIFACTS_OUTPUT"]
+    assert "`docs/changes/*.md`" in output
+    assert f"`{items_root}/product/vision.md`" in output
+    assert f"`{items_root}/product/changes/*.md`" not in output
+
+
 class TestAgentGenerator:
     """Tests for AgentGenerator and all its methods."""
 

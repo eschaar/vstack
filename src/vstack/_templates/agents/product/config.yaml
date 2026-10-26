@@ -1,5 +1,5 @@
 name: product
-version: 20261026001
+version: 20261026002
 description: >
   Senior product manager. Owns vision, scope, requirements, and acceptance.
   Keeps change-local intent proportional and shared baselines current;
@@ -38,7 +38,7 @@ defaults:
         baseline: true
       - path: roadmap.md
         baseline: true
-      - path: changes/*.md
+      - path: ./docs/changes/*.md
       - path: issues/*.md
 user-invocable: true
 

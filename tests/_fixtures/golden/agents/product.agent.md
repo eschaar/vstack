@@ -179,7 +179,7 @@ Use `.vstack/memories/session/<RUN_ID>/` only to avoid replaying the same short-
 | `docs/product/vision.md`       |
 | `docs/product/requirements.md` |
 | `docs/product/roadmap.md`      |
-| `docs/product/changes/*.md`    |
+| `docs/changes/*.md`            |
 | `docs/product/issues/*.md`     |
 
 ### baseline docs you maintain
@@ -219,4 +219,4 @@ Keep this list lean. Use additional installed domain skills only when needed.
 - `@#vision` — vision document writing and review
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"product","artifact_type":"agent","artifact_version":"20261026001","generator":"vstack","vstack_version":"<vstack-version>"} -->
+<!-- VSTACK-META: {"artifact_name":"product","artifact_type":"agent","artifact_version":"20261026002","generator":"vstack","vstack_version":"<vstack-version>"} -->
