@@ -670,6 +670,18 @@ class TestReadWorkflowStages:
 class TestValidateWorkflowStages:
     """Tests for CommandLineInterface._validate_workflow_stages."""
 
+    @pytest.mark.parametrize("invalid_stage", [{}, {"role": ""}, {"role": "   "}])
+    def test_rejects_missing_or_blank_role_with_indexed_diagnostic(
+        self, invalid_stage: dict
+    ) -> None:
+        """Direct validation rejects invalid roles even without the YAML reader."""
+        with pytest.raises(ValueError) as error:
+            CommandLineInterface._validate_workflow_stages([{"role": "product"}, invalid_stage])
+
+        assert str(error.value) == (
+            "Invalid workflow config: workflow.stages[1].role must be a non-empty string"
+        )
+
     def test_accepts_linear_workflow_without_explicit_handoffs(self) -> None:
         """A plain stage list without handoffs is treated as a valid acyclic flow."""
         CommandLineInterface._validate_workflow_stages(
