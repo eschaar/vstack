@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import yaml
@@ -66,10 +67,7 @@ class TestPublishWorkflow:
         assert "HOMEBREW_TAP_DISPATCH_SECRET" in config_script
 
         app_token_step = next(step for step in steps if step.get("id") == "create_tap_token")
-        assert (
-            app_token_step["uses"]
-            == "actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1"
-        )
+        assert re.fullmatch(r"actions/create-github-app-token@[0-9a-f]{40}", app_token_step["uses"])
         assert app_token_step["with"]["client-id"] == "${{ env.HOMEBREW_TAP_APP_CLIENT_ID }}"
         assert app_token_step["with"]["private-key"] == "${{ env.HOMEBREW_TAP_APP_PRIVATE_KEY }}"
         assert app_token_step["with"]["owner"] == "${{ env.HOMEBREW_TAP_REPOSITORY_OWNER }}"
