@@ -96,6 +96,8 @@ class Manifest:
         if isinstance(checksum, str):
             if len(checksum) == 64:
                 return CURRENT_HASH_ALGORITHM
+            if len(checksum) == 32:
+                return "md5"
         if (
             manifest_version >= CURRENT_MANIFEST_VERSION
             and fallback_algorithm == CURRENT_HASH_ALGORITHM
