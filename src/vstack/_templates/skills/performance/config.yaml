@@ -1,5 +1,5 @@
 name: performance
-version: 20260421022
+version: 20261026004
 description: |
   Performance profiling and regression detection. Establishes baselines, detects
   regressions, profiles bottlenecks, and recommends optimizations. Use when asked

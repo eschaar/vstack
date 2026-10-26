@@ -41,11 +41,13 @@ last_modified: YYYY-MM-DD
 - Security/privacy:
 - Operations/observability:
 
+## Requirements
+
+- Change-local obligations and constraints; link shared baselines, do not copy them.
+
 ## Acceptance Criteria
 
-1.
-1.
-1.
+- Observable completion criteria; use stable local references when helpful.
 
 ## Test Scenarios
 
@@ -66,6 +68,21 @@ last_modified: YYYY-MM-DD
 
 ## Notes
 
-- Open questions:
+- Clarifications, decisions, and blocking questions:
 - Dependencies:
 - Rollback considerations:
+
+## Execution Tasks (Optional)
+
+| Task | Outcome | Actual prerequisites | Criteria | Status |
+| ---- | ------- | -------------------- | -------- | ------ |
+|      |         | None                 |          |        |
+
+## Verification
+
+| Criterion | Check and result | Reviewed commit or working-tree scope | Evidence status | Limitation |
+| --------- | ---------------- | ------------------------------------- | --------------- | ---------- |
+|           |                  |                                       | not run         |            |
+
+Use passed, failed, not run, or no longer current. Required failed/unrun checks
+prevent full verification; name approved exceptions without reporting a pass.

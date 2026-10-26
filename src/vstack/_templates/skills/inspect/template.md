@@ -4,91 +4,54 @@
 
 # inspect - Read-Only Verification Audit
 
-Run verification checks and report findings. Do not edit code, do not commit,
-and do not fix anything.
+Assess and report; do not edit code, fix issues, or commit. Use `verify` for an
+authorized fix loop, `architecture` for decisions, `security` for full audits,
+and `performance` for profiling.
 
-Use `verify` when a fix loop is required.
+## Scope and report placement
 
-## Out of scope
+Read agreed intent, relevant contracts, project policy, and the reviewed commit
+or working-tree scope. Compare actual in-scope behavior with acceptance, including
+required behavior absent from the diff. Do not infer completion from checkboxes.
 
-- Fixing issues (use `verify`)
-- Architecture decisions (use `architecture`)
-- Full security audit (use `security`)
-- Performance profiling (use `performance`)
+Use `docs/reports/test-report.md` when project policy or cross-change reporting
+requires it. Otherwise report in the response, or update an existing changedoc
+only when authorized. No duplicate report or mandatory new file.
 
-## Deliverable and artifact policy
+## Checks
 
-- Primary deliverable: `docs/reports/test-report.md`
-- Baseline-first default: write final findings directly to `docs/reports/test-report.md` on the feature branch.
-- Before merge: confirm blocking findings and final verdict are written to baseline reports.
+Discover repository commands and run the smallest checks covering acceptance and
+regressions. Preserve command failures and missing-tool evidence; never suppress
+errors or treat unavailable checks as passes.
 
-## Step 0: Scope
+| Surface               | Checks when applicable                                                                                   |
+| --------------------- | -------------------------------------------------------------------------------------------------------- |
+| Baseline              | Lint, types, build/package, unit tests                                                                   |
+| Integration/contracts | Service boundaries, OpenAPI/JSON Schema/Protobuf, compatibility                                          |
+| Reliability/data      | Smoke, migrations/rollback, timeouts, retries, circuit breakers, concurrency                             |
+| Observability         | Structured failure/transition logs, latency/error/saturation metrics, trace propagation, alerts/runbooks |
+| Dependencies          | Repository vulnerability gate (for example audit tools); route deeper concerns                           |
 
-```text
-Report only. No edits. No commits.
-If critical issues are found, recommend `verify`.
-```
+Choose by scope and risk, not a universal checklist. Documentation-only work
+needs document checks, not runtime tests. Record commands, results, and limits.
 
-## Step 1: Baseline Checks
+## Intent-to-behavior assessment
 
-```bash
-[ -f package.json ] && (npm run lint 2>/dev/null || true)
-[ -f tsconfig.json ] && npx tsc --noEmit 2>/dev/null || true
-[ -f pyproject.toml ] && (ruff check . 2>/dev/null || true)
-[ -f pyproject.toml ] && (mypy . 2>/dev/null || pyright . 2>/dev/null || true)
-[ -f go.mod ] && (go vet ./... 2>/dev/null || true)
-```
+Separate missing behavior, contradictions, unexplained additions, and evidence
+gaps. Ask for scope decisions on unrelated additions; do not delete them.
+Necessary helpers need no separate product requirement.
 
-{{RUN_TESTS}}
+For each applicable criterion record: check/result, evidence reference, reviewed
+scope/revision, and `passed`, `failed`, `not run`, or `no longer current`.
+Code coverage is not acceptance coverage; requirement wording is not runtime proof.
+Reassess only evidence affected by material intent or behavior revisions.
 
-## Step 2: Extended Checks (when present)
+## Verdict
 
-```bash
-# Integration
-[ -f package.json ] && npm run test:integration 2>/dev/null || true
-[ -f pyproject.toml ] && python -m pytest -m integration -v 2>/dev/null || true
-[ -f go.mod ] && go test -run Integration ./... 2>/dev/null || true
+Return scope, checks, severity-ranked findings (source, impact, reproduction),
+criterion evidence/gaps, residual risks, and next action:
+`SHIP-READY`, `USE VERIFY FIX LOOP`, or `NEEDS ARCH/DESIGN REVIEW`.
 
-# Contract
-[ -f openapi.yaml ] && npx @redocly/cli lint openapi.yaml 2>/dev/null || true
-[ -n "$(find . -name '*.proto' 2>/dev/null | head -1)" ] && buf lint 2>/dev/null || true
-
-# Lightweight vulnerability gate
-[ -f package.json ] && npm audit --audit-level=high 2>/dev/null || true
-[ -f pyproject.toml ] && pip-audit 2>/dev/null || true
-[ -f go.mod ] && govulncheck ./... 2>/dev/null || true
-```
-
-### 2.1 Observability & Reliability Checks
-
-Confirm for changed paths:
-
-- Structured logs exist for key state transitions and failures.
-- Metrics cover latency, error rate, and saturation for impacted services.
-- Trace propagation exists across service boundaries where applicable.
-- Alerts/runbooks exist for high-severity failure modes.
-
-## Step 3: Report
-
-```text
-## Inspection Report - [component/repo] - [date]
-
-### Summary
-- tests: [X pass / Y fail / Z skip]
-- issues: [N critical / N high / N medium / N low]
-
-### Critical
-1. [issue] - [file:line] - [evidence]
-
-### High
-1. [issue] - [file:line] - [recommended fix]
-
-### Medium
-1. [issue] - [file:line] - [recommended fix]
-
-### Low
-1. [issue] - [notes]
-
-### Recommendation
-[SHIP-READY | USE VERIFY FIX LOOP | NEEDS ARCH/DESIGN REVIEW]
-```
+Required failed/unrun checks block full verification. Name any policy-approved
+exception and approver without marking the criterion passed. Production outcomes
+needing observation remain follow-ups. Sanitize evidence; do not copy sensitive logs.

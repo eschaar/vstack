@@ -96,6 +96,8 @@ class Manifest:
         if isinstance(checksum, str):
             if len(checksum) == 64:
                 return CURRENT_HASH_ALGORITHM
+            if len(checksum) == 32:
+                return "md5"
         if (
             manifest_version >= CURRENT_MANIFEST_VERSION
             and fallback_algorithm == CURRENT_HASH_ALGORITHM
@@ -304,9 +306,11 @@ class Manifest:
 class ManifestFile:
     """Read and write the ``vstack.json`` manifest inside an install root."""
 
-    def __init__(self, parent_dir: Path) -> None:
+    def __init__(self, parent_dir: Path, *, legacy_path: Path | None = None) -> None:
         self.path = parent_dir / MANIFEST_FILENAME
+        self.legacy_path = legacy_path
         self.read_error: str | None = None
+        self.read_source_path: Path | None = None
 
     def exists(self) -> bool:
         """Return ``True`` when the manifest file exists on disk."""
@@ -314,11 +318,31 @@ class ManifestFile:
 
     def read(self, *, allow_legacy: bool = False) -> Manifest | None:
         """Parse the manifest file from disk."""
-        if not self.path.exists():
+        self.read_source_path = None
+        legacy_exists = self.legacy_path is not None and self.legacy_path.exists()
+        if legacy_exists and self.path.exists():
+            self.read_error = (
+                "Conflicting manifests found at "
+                f"{self.path} and {self.legacy_path}. "
+                "Resolve the conflict manually before running vstack commands."
+            )
+            return None
+        if legacy_exists and not allow_legacy:
+            self.read_error = (
+                f"Legacy manifest location detected at {self.legacy_path}. "
+                "Run: vstack manifest upgrade --target <project-root>."
+            )
+            return None
+
+        source_path = self.legacy_path if legacy_exists else self.path
+        if source_path is None or not source_path.exists():
             self.read_error = None
             return None
+        self.read_source_path = source_path
         try:
-            data = json.loads(self.path.read_text(encoding="utf-8"))
+            data = json.loads(source_path.read_text(encoding="utf-8"))
+            if not isinstance(data, dict):
+                raise ValueError("manifest root must be a JSON object")
             manifest = Manifest.from_dict(data)
             if manifest.needs_upgrade() and not allow_legacy:
                 self.read_error = (
@@ -331,6 +355,7 @@ class ManifestFile:
             return manifest
         except (json.JSONDecodeError, KeyError, TypeError, ValueError):
             self.read_error = "Invalid manifest format in vstack.json"
+            self.read_source_path = None
             return None
 
     def write(self, manifest: Manifest) -> None:
@@ -347,3 +372,14 @@ class ManifestFile:
             encoding="utf-8",
         )
         os.replace(tmp_path, self.path)
+
+    def write_new(self, manifest: Manifest) -> None:
+        """Create a manifest only when the destination does not already exist.
+
+        This is used for location migration so an existing current manifest is
+        never replaced by data from the legacy location.
+        """
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with self.path.open("x", encoding="utf-8") as manifest_file:
+            json.dump(manifest.to_dict(), manifest_file, indent=2, ensure_ascii=False)
+            manifest_file.write("\n")

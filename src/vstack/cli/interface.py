@@ -194,7 +194,7 @@ class CommandLineInterface:
 
         Returns an empty list when *install_dir* is ``None``, when the config
         file does not exist, or when the ``workflow:`` block is absent or
-        contains no valid stages.
+        contains no stages.
 
         Each returned dict has at minimum a ``role`` key.  Optional keys are
         ``gate``, ``hitl``, ``depends_on``, and ``handoffs`` (a list of handoff
@@ -216,35 +216,45 @@ class CommandLineInterface:
             return []
         result: list[dict] = []
         for stage_index, item in enumerate(stages_raw):
-            if isinstance(item, dict) and isinstance(item.get("role"), str):
-                handoffs = CommandLineInterface._parse_stage_handoffs(item)
-                normalized_role = item["role"].strip()
-                stage: dict = {
-                    "role": normalized_role,
-                    "gate": str(item.get("gate", "required")),
-                    "handoffs": handoffs,
-                }
-                if "hitl" in item:
-                    stage["hitl"] = str(item["hitl"])
-                if "depends_on" in item:
-                    raw_depends_on = item.get("depends_on", [])
-                    if not isinstance(raw_depends_on, list):
+            if not isinstance(item, dict):
+                raise ValueError(
+                    f"Invalid workflow config: workflow.stages[{stage_index}] must be a mapping"
+                )
+            raw_role = item.get("role")
+            if not isinstance(raw_role, str) or not raw_role.strip():
+                raise ValueError(
+                    "Invalid workflow config: "
+                    f"workflow.stages[{stage_index}].role must be a non-empty string"
+                )
+
+            handoffs = CommandLineInterface._parse_stage_handoffs(item)
+            normalized_role = raw_role.strip()
+            stage: dict = {
+                "role": normalized_role,
+                "gate": str(item.get("gate", "required")),
+                "handoffs": handoffs,
+            }
+            if "hitl" in item:
+                stage["hitl"] = str(item["hitl"])
+            if "depends_on" in item:
+                raw_depends_on = item.get("depends_on", [])
+                if not isinstance(raw_depends_on, list):
+                    raise ValueError(
+                        "Invalid workflow config: "
+                        f"workflow.stages[{stage_index}].depends_on must be a list"
+                    )
+                depends_on: list[str] = []
+                for dep_index, dep in enumerate(raw_depends_on):
+                    if not isinstance(dep, str):
                         raise ValueError(
                             "Invalid workflow config: "
-                            f"workflow.stages[{stage_index}].depends_on must be a list"
+                            f"workflow.stages[{stage_index}].depends_on[{dep_index}] must be a string"
                         )
-                    depends_on: list[str] = []
-                    for dep_index, dep in enumerate(raw_depends_on):
-                        if not isinstance(dep, str):
-                            raise ValueError(
-                                "Invalid workflow config: "
-                                f"workflow.stages[{stage_index}].depends_on[{dep_index}] must be a string"
-                            )
-                        dep_name = dep.strip()
-                        if dep_name and dep_name not in depends_on:
-                            depends_on.append(dep_name)
-                    stage["depends_on"] = depends_on
-                result.append(stage)
+                    dep_name = dep.strip()
+                    if dep_name and dep_name not in depends_on:
+                        depends_on.append(dep_name)
+                stage["depends_on"] = depends_on
+            result.append(stage)
         CommandLineInterface._validate_workflow_stages(result)
         return result
 

@@ -64,14 +64,14 @@ In `hybrid`, pick one execution path per session and stay on it.
 ## Planner vs. direct agent invocation
 
 Choosing a workflow mode is separate from deciding whether to use the planner at all.
-The planner is built for coordinating a full multi-role delivery pipeline.
-It adds overhead — multiple model calls, orchestration logic, gate pauses — that is only
-worthwhile when multiple roles genuinely need to collaborate in sequence.
+The planner classifies focused work and multi-role delivery. For focused work it
+routes to the relevant owner; a full pipeline adds model calls and coordination
+only when the scope and configured workflow require them.
 
 **Use the planner when:**
 
 - Delivering a feature, fix, or change that spans multiple roles (product → architect → designer → engineer → tester → release).
-- You want explicit gate approvals at each stage boundary.
+- You need coordinated progression and approvals according to configured gate policy.
 - The work is large enough that cross-role coordination matters.
 
 **Use a specialist agent directly when:**
@@ -80,14 +80,12 @@ worthwhile when multiple roles genuinely need to collaborate in sequence.
 - You are doing focused day-to-day maintenance: refreshing a report, writing an ADR, bumping a dependency.
 - You want the fastest path to a result.
 
-**Why the planner cannot automatically do this better:**
-The planner works from a stage-based pipeline, not from artifact ownership. It cannot
-infer that "update the architecture docs" should skip product, designer, engineer, tester,
-and release and route only to architect. Per-task stage qualification does not scale —
-there is no finite list of task types that maps cleanly onto pipeline subsets.
-
-The effective pattern is: you make the routing decision. The planner handles orchestration
-when the full pipeline is genuinely needed. Direct invocation handles everything else.
+**How focused routing works:**
+The planner assesses intent, ownership, risk, and ambiguity before choosing focused
+delivery or a multi-role pipeline. Clear, low-risk work can use existing issue/chat
+context. Focused routing never bypasses configured dependencies, gates, or approvals.
+Invoke the specialist directly when ownership is already clear to avoid an extra
+routing turn; use the planner when coordination or ownership is uncertain.
 
 | Situation                       | Best approach                                        |
 | ------------------------------- | ---------------------------------------------------- |

@@ -1,7 +1,7 @@
 # vstack — workflow
 
 > Maintained by: **designer** role\
-> Last updated: 2026-05-14
+> Last updated: 2026-10-26
 
 ## overview
 
@@ -29,6 +29,38 @@ skill, not an installed workflow. Consumers use `inspect` for repository audits.
 ______________________________________________________________________
 
 ## workflow modes
+
+### proportional entry
+
+Default to focused work when one owner can complete it. A clear low-risk task
+may use an existing issue or conversation with scope, observable acceptance, and
+verification. Use one changedoc for durable agreement/handoff or on request.
+Add useful tasks with real prerequisites, not dependencies inferred from list
+order or role names. Multiple changes may share a branch.
+
+Before affected implementation, resolve material blockers and obtain required
+approval. Ask one evidence-informed question at a time; record accepted answers
+in the existing intent source. Involve relevant owners, not every role by default.
+Configured pipelines still obey their dependencies, gates, and human approvals.
+
+Changedoc states are explicit, not ordered thresholds: `CONCEPT` is discovery,
+`BUILD` authorizes implementation under policy, `IMPLEMENTED` requires verified
+completion, and `ARCHIVED` is closed history, never authorization.
+
+Verify actual agreed behavior, including work missing from the diff. Record
+criterion/check/result, reviewed commit or working-tree scope, evidence freshness,
+and limitations in existing handoff fields and the appropriate evidence location.
+Use baseline reports when policy or cross-change reporting requires them;
+otherwise the existing changedoc or response suffices. Required failed/unrun
+checks block full verification; approved exceptions are not passes.
+
+Material intent/behavior changes affect only relevant tasks/evidence; renew
+approval only for changed scope, risk, or policy. Stop fix loops for missing
+required evidence, scope decisions, or repeated no progress. This adds no CLI,
+configuration, automatic enforcement, or stage-report fields. Option B can reuse
+criterion references without assuming machine-verified compliance.
+
+### configured modes
 
 Workflow mode is configured in `.vstack/config.yaml` at `workflow.mode`.
 
@@ -308,7 +340,7 @@ flowchart TD
 
 - Each role is scoped to its domain
 - Each role reads its inputs from disk (artifacts from upstream roles)
-- User approval is required after each stage output
+- User approval follows each stage's configured `hitl` policy; the diagram shows `always`
 - Handoffs are only for happy-path continuation
 
 ### flow principles

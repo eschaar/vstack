@@ -1,7 +1,7 @@
 # requirements
 
 > Maintained by: **product** role\
-> Last updated: 2026-06-02
+> Last updated: 2026-10-26
 
 ______________________________________________________________________
 
@@ -100,7 +100,8 @@ ______________________________________________________________________
 
 - 6 delivery agent roles: `product`, `architect`, `designer`, `engineer`,
   `tester`, `release`, plus a `planner` coordinator agent.
-- 42 skills across the role set with canonical names enforced at source-verify time.
+- 56 distributed skills across the role set with canonical names enforced at source-verify time.
+  Repository-only skills are outside the installed catalog.
 
 ### FR-11 — workflow mode semantics
 
@@ -118,6 +119,25 @@ ______________________________________________________________________
 - In `agentic`, the planner may schedule multiple ready stages in parallel when the DAG permits it.
 
 ______________________________________________________________________
+
+### FR-13 - proportional specification-driven delivery
+
+- Use one changedoc for durable change-local intent or explicit requests; clear,
+  low-risk work may use sufficient issue/chat context without a full role pipeline.
+- Keep requirements, observable criteria, scenarios, useful tasks, and evidence
+  together without duplicating shared baselines. Tasks have only real prerequisites.
+- Resolve material ambiguity before affected implementation. Preserve scope
+  ownership, local references, configured dependencies, gates, and approvals.
+- Assess actual agreed behavior, including missing work; report applicable
+  criterion evidence as passed, failed, not run, or no longer current. Required
+  failed/unrun checks block full verification; approved exceptions are not passes.
+- Reassess affected work after material revisions; bound remediation and stop on
+  blockers or repeated no progress. Keep policy-required reports authoritative,
+  otherwise use the existing changedoc or response.
+- Preserve historical documents and customized seeded templates. Add no CLI,
+  dependencies, configuration, automated gates, or mandatory report fields.
+- Keep source/rendered guidance consistent, concrete, and compact without
+  sacrificing required content. See [ADR-033](../architecture/adr/033-lightweight-sdd.md).
 
 ## non-functional requirements
 
@@ -143,7 +163,7 @@ ______________________________________________________________________
 1. `vstack verify --target DIR` reports zero errors on a clean install.
 1. `vstack validate` exits 0 when all source templates resolve cleanly.
 1. Locally modified tracked files are preserved on re-install by default (FR-4).
-1. All 42 canonical skill names are present after a full install.
+1. All 56 canonical skill names are present after a full install.
 1. `vstack manifest upgrade` migrates a legacy manifest without data loss.
 1. `brew install eschaar/vstack/vstack` installs and runs `vstack --help` and
    `vstack --version` without errors on a supported macOS or Linux runner.
@@ -152,7 +172,7 @@ ______________________________________________________________________
 
 ## constraints
 
-1. No external runtime dependencies (stdlib-only at runtime).
+1. PyYAML is the only external runtime dependency; use the standard library otherwise.
 1. Generated output lives under `.github/` only; source templates are never modified
    at runtime.
 1. Manifest schema is versioned; old manifests require explicit upgrade before further

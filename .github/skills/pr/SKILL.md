@@ -1,6 +1,6 @@
 ---
 name: pr
-description: 'Commit, push, and open a pull request from the current branch to main. Uses the release notes from docs/releases/{date}.md as the PR body. Use when asked to "open a PR", "push and create PR", or "submit for review".'
+description: 'Commit, push, and open a pull request from the current branch to main. Updates an existing PR after pushing; uses the repository PR template for new PRs. Use when asked to "open a PR", "push and create PR", or "submit for review".'
 license: 'MIT'
 compatibility: 'Requires a skills-compatible agent with repository file access and terminal command execution when needed.'
 metadata:
@@ -50,9 +50,21 @@ before CI/CD takes over.
 
 ## Step 1: Pre-flight
 
+Resolve the configured remote's **push** URL to its GitHub owner/repository
+(including SSH aliases), then set `PUSH_REPO` below. Set `BASE_REPO` to the target
+repository, which may differ for forks. Confirm both are on the same GitHub host.
+Stop on ambiguous or multiple push destinations; never infer push identity from
+the fetch URL or branch name alone. Requires `gh` and `jq`.
+
 ```bash
+PUSH_REMOTE="origin"
+PUSH_REPO="<push-owner>/<push-repo>"
+BASE_REPO="<base-owner>/<base-repo>"
+PUSH_OWNER=${PUSH_REPO%/*}
+git remote get-url --push --all "$PUSH_REMOTE" || exit $?
+
 # Confirm gh CLI is authenticated
-gh auth status 2>/dev/null || echo "WARNING: gh CLI not authenticated — Step 4 will fail"
+gh auth status || exit $?
 
 # Confirm not on the target base branch
 BRANCH=$(git branch --show-current)
@@ -63,10 +75,16 @@ fi
 echo "Branch: $BRANCH"
 
 # Check if a PR already exists for this branch
-EXISTING_PR=$(gh pr view --json url --jq '.url' 2>/dev/null)
+PR_CANDIDATES=$(gh pr list --repo "$BASE_REPO" --head "$BRANCH" --state open \
+  --json url,headRepositoryOwner,headRepository,headRefName) || exit $?
+EXISTING_PR=$(printf '%s' "$PR_CANDIDATES" | jq -r \
+  --arg repo "$PUSH_REPO" --arg branch "$BRANCH" \
+  '[.[] | select(
+    (.headRepositoryOwner.login + "/" + .headRepository.name) == $repo
+    and .headRefName == $branch
+  )] | .[0].url // empty') || exit $?
 if [ -n "$EXISTING_PR" ]; then
-  echo "PR already open: $EXISTING_PR"
-  exit 0
+  echo "Existing PR will be updated after push: $EXISTING_PR"
 fi
 
 # Show what will be included
@@ -82,23 +100,31 @@ PR_TEMPLATE=$(cat .github/PULL_REQUEST_TEMPLATE.md \
 
 ## Step 2: Commit
 
-Stage and commit any uncommitted changes:
+Review changed and already-staged files. Commit only approved task changes using
+`@#conventional-commit` and an intent-specific message. Stage explicit paths;
+never use `git add -A` or a generic cleanup commit. Leave unrelated work untouched.
+If scope is unclear, ask before staging or committing.
 
 ```bash
-git add -A
 git diff --cached --stat
-
-# Only commit if there are staged changes
-git diff --cached --quiet || git commit -m "chore: pre-release cleanup"
 ```
 
 ## Step 3: Push
 
 ```bash
-git push --set-upstream origin "$BRANCH"
+git push --set-upstream "$PUSH_REMOTE" "$BRANCH" || exit $?
 ```
 
-## Step 4: Open PR
+## Step 4: Reuse or Open PR
+
+Only after a successful push, reuse an existing PR:
+
+```bash
+if [ -n "$EXISTING_PR" ]; then
+  echo "PR updated: $EXISTING_PR"
+  exit 0
+fi
+```
 
 Use the PR title and body provided by the invoking agent or user.
 If no body is provided, write a short summary of the changes on this branch.
@@ -107,6 +133,7 @@ Use `--draft` when the work is not yet ready for review.
 ```bash
 # Short body (inline):
 gh pr create \
+  --repo "$BASE_REPO" --head "$PUSH_OWNER:$BRANCH" \
   --base main \
   --title "<title>" \
   --body "<body>"
@@ -116,12 +143,14 @@ cat > /tmp/pr-body.md <<'EOF'
 <body>
 EOF
 gh pr create \
+  --repo "$BASE_REPO" --head "$PUSH_OWNER:$BRANCH" \
   --base main \
   --title "<title>" \
   --body-file /tmp/pr-body.md
 
 # Draft PR (not ready for review):
 gh pr create \
+  --repo "$BASE_REPO" --head "$PUSH_OWNER:$BRANCH" \
   --base main \
   --title "<title>" \
   --body "<body>" \
@@ -151,4 +180,4 @@ Next steps depend on the repository CI/CD configuration:
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"pr","artifact_type":"skill","artifact_version":"20260502013","generator":"vstack","vstack_version":"3.7.8"} -->
+<!-- VSTACK-META: {"artifact_name":"pr","artifact_type":"skill","artifact_version":"20261026003","generator":"vstack","vstack_version":"4.0.0"} -->

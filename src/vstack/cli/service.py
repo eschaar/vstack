@@ -23,7 +23,7 @@ from vstack.agents.config import AGENT_TYPE
 from vstack.agents.generator import AgentGenerator
 from vstack.artifacts.generator import GenericArtifactGenerator
 from vstack.cli.constants import KNOWN_TYPES, ArtifactState
-from vstack.constants import ARTIFACTS_DOCS_ROOT, VSTACK_DIR_NAME
+from vstack.constants import ARTIFACTS_DOCS_ROOT, MANIFEST_FILENAME, VSTACK_DIR_NAME
 from vstack.hooks.config import HOOK_TYPE
 from vstack.hooks.generator import HookGenerator
 from vstack.manifest import CURRENT_MANIFEST_VERSION, ManifestFile, hash_with_algorithm
@@ -123,7 +123,10 @@ class CommandService:
         ``install_dir`` directly.
         """
         if install_dir.name == ".github":
-            return ManifestFile(parent_dir=install_dir.parent / VSTACK_DIR_NAME)
+            return ManifestFile(
+                parent_dir=install_dir.parent / VSTACK_DIR_NAME,
+                legacy_path=install_dir / MANIFEST_FILENAME,
+            )
         return ManifestFile(parent_dir=install_dir)
 
     def gen_for(self, type_name: str) -> GenericArtifactGenerator | None:
@@ -285,7 +288,12 @@ class CommandService:
             return 1
 
         needs_upgrade = manifest_data.needs_upgrade()
-        if not needs_upgrade and not backfill:
+        legacy_source = getattr(manifest_file, "legacy_path", None)
+        location_migration = (
+            legacy_source is not None
+            and getattr(manifest_file, "read_source_path", None) == legacy_source
+        )
+        if not needs_upgrade and not backfill and not location_migration:
             print(f"Manifest already up to date at schema v{manifest_data.manifest_version}.")
             return 0
 
@@ -297,7 +305,25 @@ class CommandService:
                 install_dir=install_dir,
             )
 
-        manifest_file.write(upgraded)
+        if location_migration:
+            assert isinstance(legacy_source, Path)
+            try:
+                manifest_file.write_new(upgraded)
+                legacy_source.unlink()
+            except OSError as exc:
+                print(
+                    "ERROR: Could not safely migrate the legacy manifest "
+                    f"({exc}). Neither manifest was intentionally overwritten; "
+                    "inspect both files and resolve the conflict before retrying.",
+                    file=sys.stderr,
+                )
+                return 1
+            print(
+                f"Migrated manifest location: {self.label(legacy_source)} → "
+                f"{self.label(manifest_file.path)}"
+            )
+        else:
+            manifest_file.write(upgraded)
 
         if needs_upgrade:
             print(

@@ -117,6 +117,14 @@ have defined skill access and artifact ownership. See
 | release   | `docs/releases/YYYYMMDDNN.md`, `CHANGELOG.md`, release PR                                                |
 | planner   | none (coordination only; reads workflow config and stage outputs)                                        |
 
+Change-local intent belongs in one changedoc when durable agreement is needed;
+small, clear, low-risk work may use existing issue or conversation context.
+Product owns scope/acceptance; relevant roles contribute constraints, tasks, and
+evidence. Update shared baselines only for affected shared behavior or contracts.
+This adds no artifact family, runtime enforcement, or mandatory full pipeline.
+Configured dependencies, approvals, and the stage-report schema remain unchanged.
+See [ADR-033](adr/033-lightweight-sdd.md).
+
 ### 5. manifest (`.vstack/vstack.json`)
 
 Generated at install time at `.vstack/vstack.json`. Tracks every `.github/` artifact

@@ -176,6 +176,36 @@ class TestManifest:
         assert upgraded.hash_algorithm == CURRENT_HASH_ALGORITHM
         assert upgraded.entries_for("skills")[0].checksum_algorithm == "sha256"
 
+    def test_upgraded_preserves_legacy_md5_digest_algorithm(self) -> None:
+        """A 32-character legacy digest remains MD5 after schema upgrade."""
+        content = "legacy artifact content"
+        legacy_checksum = hash_with_algorithm(content, "md5")
+        legacy = Manifest.from_dict(
+            {
+                "manifest_version": 1,
+                "hash_algorithm": "md5",
+                "vstack_version": "0.1.0",
+                "installed_at": "2026-01-01T00:00:00Z",
+                "artifacts": {
+                    "skills": [
+                        {
+                            "name": "vision",
+                            "file": "skills/vision/SKILL.md",
+                            "checksum": legacy_checksum,
+                        }
+                    ]
+                },
+            }
+        )
+
+        upgraded = legacy.upgraded()
+        entry = upgraded.entries_for("skills")[0]
+
+        assert upgraded.hash_algorithm == "sha256"
+        assert entry.checksum == legacy_checksum
+        assert entry.checksum_algorithm == "md5"
+        assert hash_with_algorithm(content, entry.checksum_algorithm) == entry.checksum
+
     def test_upgraded_is_idempotent(self) -> None:
         """Test that upgrading twice results in the same serialized manifest."""
         manifest = Manifest.from_dict(
@@ -472,6 +502,15 @@ class TestManifestFile:
         mf = ManifestFile(parent_dir=tmp_path)
         assert mf.read() is None
         assert mf.read_error is None
+
+    @pytest.mark.parametrize("root_value", [[], None, "manifest", 42])
+    def test_read_rejects_non_object_json_root(self, tmp_path, root_value) -> None:
+        """Non-object JSON roots are reported as invalid manifest data."""
+        mf = ManifestFile(parent_dir=tmp_path)
+        mf.path.write_text(json.dumps(root_value), encoding="utf-8")
+
+        assert mf.read() is None
+        assert mf.read_error == "Invalid manifest format in vstack.json"
 
     def test_write_and_read_manifest(self, tmp_path) -> None:
         """Test that write and read manifest."""
