@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import subprocess
@@ -14,10 +15,12 @@ from vstack.cli.constants import EXPECTED_CANONICAL_NAMES
 from vstack.frontmatter import FrontmatterParser
 
 
-@pytest.mark.parametrize("existing_pr", ["", "https://example.invalid/pull/1"])
+@pytest.mark.parametrize(
+    "candidate_kind", ["none", "other-fork", "other-repo", "other-branch", "matching"]
+)
 @pytest.mark.parametrize("push_status", [0, 7])
 def test_pr_recipe_pushes_before_reusing_existing_pr(
-    tmp_path: Path, generated_dir: Path, existing_pr: str, push_status: int
+    tmp_path: Path, generated_dir: Path, candidate_kind: str, push_status: int
 ) -> None:
     """Existing and new PR paths push first and never hide push failures."""
     text = (generated_dir / "pr" / "SKILL.md").read_text(encoding="utf-8")
@@ -25,18 +28,49 @@ def test_pr_recipe_pushes_before_reusing_existing_pr(
     for heading in ("## Step 1:", "## Step 3:", "## Step 4:"):
         match = re.search(r"```bash\n(.*?)```", text.split(heading, 1)[1], re.DOTALL)
         assert match is not None
-        blocks.append(match.group(1))
+        blocks.append(
+            match.group(1)
+            .replace("<push-owner>/<push-repo>", "contributor/fork")
+            .replace("<base-owner>/<base-repo>", "upstream/project")
+        )
     stubs = """
 git() {
   case "$1" in
     branch) echo feature/example ;;
-    push) echo push >> "$CALL_LOG"; return "$PUSH_STATUS" ;;
+    push)
+      test "$*" = "push --set-upstream origin feature/example" || return 99
+      echo push >> "$CALL_LOG"; return "$PUSH_STATUS" ;;
   esac
 }
 gh() {
-  if [ "$1 $2" = "pr list" ]; then printf '%s' "$EXISTING_URL"; fi
+  if [ "$1 $2" = "pr list" ]; then
+    test "$3 $4" = "--repo upstream/project" || return 99
+    printf '%s' "$PR_CANDIDATES_JSON"
+  fi
 }
 """
+    candidate = {
+        "url": "https://example.invalid/pull/1",
+        "headRepositoryOwner": {"login": "contributor"},
+        "headRepository": {"name": "fork"},
+        "headRefName": "feature/example",
+    }
+    if candidate_kind == "other-fork":
+        candidate["headRepositoryOwner"] = {"login": "unrelated"}
+    elif candidate_kind == "other-repo":
+        candidate["headRepository"] = {"name": "another"}
+    elif candidate_kind == "other-branch":
+        candidate["headRefName"] = "feature/different"
+    candidates = [] if candidate_kind == "none" else [candidate]
+    if candidate_kind == "matching":
+        candidates.insert(
+            0,
+            {
+                **candidate,
+                "url": "https://example.invalid/pull/unrelated",
+                "headRepositoryOwner": {"login": "unrelated"},
+            },
+        )
     log = tmp_path / "calls.txt"
     result = subprocess.run(
         ["bash", "-c", stubs + "\n".join(blocks) + '\necho create >> "$CALL_LOG"'],
@@ -45,15 +79,18 @@ gh() {
             **os.environ,
             "CALL_LOG": str(log),
             "PUSH_STATUS": str(push_status),
-            "EXISTING_URL": existing_pr,
+            "PR_CANDIDATES_JSON": json.dumps(candidates),
         },
         capture_output=True,
         text=True,
     )
     assert result.returncode == push_status, result.stdout + result.stderr
     assert log.read_text(encoding="utf-8").splitlines() == (
-        ["push", "create"] if not existing_pr and push_status == 0 else ["push"]
+        ["push", "create"] if candidate_kind != "matching" and push_status == 0 else ["push"]
     )
+    if candidate_kind == "matching" and push_status == 0:
+        assert "PR updated: https://example.invalid/pull/1" in result.stdout
+        assert "PR updated: https://example.invalid/pull/unrelated" not in result.stdout
     assert "git add -A\n" not in text
     assert 'git commit -m "chore: pre-release cleanup"' not in text
 

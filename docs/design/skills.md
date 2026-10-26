@@ -175,6 +175,9 @@ not replace operational checks.
 `pr` pushes approved task commits before reusing an existing PR. Authentication,
 lookup, or push failures stop the procedure. Commit explicit reviewed paths
 with an intent-specific Conventional Commit; never stage unrelated work.
+Resolve the actual push destination (not just the fetch remote); match both head
+repository and branch before reusing a PR. Fork PRs are looked up and created in
+the explicit base repository. Ambiguous push destinations require clarification.
 
 ______________________________________________________________________
 

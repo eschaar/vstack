@@ -388,7 +388,8 @@ adoption reliability remains a follow-up, not a claimed deterministic result.
 - Focused template/role/instruction/install regressions passed.
 - `make check` passed: formatting, Markdown lint, Ruff, mypy, and all tests on
   Python 3.14 with 100% code coverage. Python 3.11, 3.12, 3.13, and 3.15 were
-  **not run** because their interpreters are unavailable; tox reported skips.
+  **not run** in the initial check because tox could not discover their
+  interpreters; the final verification below supersedes this limitation.
 - `vstack validate`, regeneration with `vstack install`, and `vstack verify`
   passed using the local interpreter and `PYTHONPATH=src`.
 - Four affected golden fixtures were regenerated from source. Existing installed
@@ -405,6 +406,41 @@ Source words decreased 8.7%; rendered words decreased 9.3%. Byte counts also
 decreased. These are reproducible text-size proxies, not tokenizer measurements
 or guaranteed credit/session-cost savings. Regression limits retain the original
 aggregate ceilings rather than requiring every individual artifact to shrink.
+
+### Final verification and scope closure (2026-10-26)
+
+The agreed lightweight SDD change is **IMPLEMENTED**. The initial evidence above
+remains a historical snapshot; the following results cover the stabilized PR
+working tree based on `4882e8495f39` and the fork-safe PR fix originally reviewed
+as `e03d82f378f9` (this documentation-only amendment changes that commit ID).
+
+- **Passed:** `PATH="$HOME/.pyenv/shims:$PATH" make check`: 793 tests on each of
+  Python 3.11, 3.12, 3.13, 3.14, and 3.15, with 100% coverage per runtime.
+  Formatting, Markdown lint, Ruff, and mypy passed. The earlier skips were a
+  discovery/PATH issue, not missing pyenv installations.
+- **Passed:** source validation and installed artifact verification after
+  regenerating the affected skills and manifest.
+- **Passed:** wheel and sdist builds at the preceding stabilization revision
+  `a93986e31383` (later reworded as `541ee6489ae1` without tree changes), followed
+  by fresh wheel install, verify, reinstall, verify, and uninstall outside the
+  checkout under Python isolated mode. Subsequent component-path and PR-identity
+  fixes were verified by executable regressions and CI artifact install checks;
+  this package result is not a claim of a new wheel test after those fixes.
+- **Passed:** all applicable Actions on
+  [PR #121](https://github.com/eschaar/vstack/pull/121), including the Python
+  matrix, artifact checks, commit validation, quality checks, security scan,
+  and CodeQL. The Dependabot-only auto-merge job was correctly skipped.
+- Both Copilot findings were fixed in separate commits, with executable
+  regressions and regenerated skills:
+  [nested-component comparison](https://github.com/eschaar/vstack/pull/121#discussion_r4382529741)
+  and [fork-safe PR reuse](https://github.com/eschaar/vstack/pull/121#discussion_r4382529800).
+  Both review threads were resolved.
+- Actual credit-consumption measurement and live Copilot delivery scenarios
+  are explicitly **outside the user-approved scope**, not unfinished acceptance
+  work or claimed passes. Autonomous adherence remains unproven.
+
+This records implementation completion, not merge or release. The
+documentation-only amendment must pass its own PR checks before merging.
 
 ## Notes
 

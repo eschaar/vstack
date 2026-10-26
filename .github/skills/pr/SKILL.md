@@ -50,7 +50,19 @@ before CI/CD takes over.
 
 ## Step 1: Pre-flight
 
+Resolve the configured remote's **push** URL to its GitHub owner/repository
+(including SSH aliases), then set `PUSH_REPO` below. Set `BASE_REPO` to the target
+repository, which may differ for forks. Confirm both are on the same GitHub host.
+Stop on ambiguous or multiple push destinations; never infer push identity from
+the fetch URL or branch name alone. Requires `gh` and `jq`.
+
 ```bash
+PUSH_REMOTE="origin"
+PUSH_REPO="<push-owner>/<push-repo>"
+BASE_REPO="<base-owner>/<base-repo>"
+PUSH_OWNER=${PUSH_REPO%/*}
+git remote get-url --push --all "$PUSH_REMOTE" || exit $?
+
 # Confirm gh CLI is authenticated
 gh auth status || exit $?
 
@@ -63,8 +75,14 @@ fi
 echo "Branch: $BRANCH"
 
 # Check if a PR already exists for this branch
-EXISTING_PR=$(gh pr list --head "$BRANCH" --state open --json url \
-  --jq '.[0].url // empty') || exit $?
+PR_CANDIDATES=$(gh pr list --repo "$BASE_REPO" --head "$BRANCH" --state open \
+  --json url,headRepositoryOwner,headRepository,headRefName) || exit $?
+EXISTING_PR=$(printf '%s' "$PR_CANDIDATES" | jq -r \
+  --arg repo "$PUSH_REPO" --arg branch "$BRANCH" \
+  '[.[] | select(
+    (.headRepositoryOwner.login + "/" + .headRepository.name) == $repo
+    and .headRefName == $branch
+  )] | .[0].url // empty') || exit $?
 if [ -n "$EXISTING_PR" ]; then
   echo "Existing PR will be updated after push: $EXISTING_PR"
 fi
@@ -94,7 +112,7 @@ git diff --cached --stat
 ## Step 3: Push
 
 ```bash
-git push --set-upstream origin "$BRANCH" || exit $?
+git push --set-upstream "$PUSH_REMOTE" "$BRANCH" || exit $?
 ```
 
 ## Step 4: Reuse or Open PR
@@ -115,6 +133,7 @@ Use `--draft` when the work is not yet ready for review.
 ```bash
 # Short body (inline):
 gh pr create \
+  --repo "$BASE_REPO" --head "$PUSH_OWNER:$BRANCH" \
   --base main \
   --title "<title>" \
   --body "<body>"
@@ -124,12 +143,14 @@ cat > /tmp/pr-body.md <<'EOF'
 <body>
 EOF
 gh pr create \
+  --repo "$BASE_REPO" --head "$PUSH_OWNER:$BRANCH" \
   --base main \
   --title "<title>" \
   --body-file /tmp/pr-body.md
 
 # Draft PR (not ready for review):
 gh pr create \
+  --repo "$BASE_REPO" --head "$PUSH_OWNER:$BRANCH" \
   --base main \
   --title "<title>" \
   --body "<body>" \
@@ -159,4 +180,4 @@ Next steps depend on the repository CI/CD configuration:
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"pr","artifact_type":"skill","artifact_version":"20261026002","generator":"vstack","vstack_version":"4.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"pr","artifact_type":"skill","artifact_version":"20261026003","generator":"vstack","vstack_version":"4.0.0"} -->

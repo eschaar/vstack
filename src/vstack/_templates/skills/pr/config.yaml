@@ -1,5 +1,5 @@
 name: pr
-version: 20261026002
+version: 20261026003
 description: |
   Commit, push, and open a pull request from the current branch to main.
   Updates an existing PR after pushing; uses the repository PR template for new PRs.

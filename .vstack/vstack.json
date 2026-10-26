@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "4.0.0",
-  "installed_at": "2026-10-26T21:14:43.202748+00:00",
+  "installed_at": "2026-10-26T21:15:34.969954+00:00",
   "artifacts": {
     "agents": [
       {
@@ -455,8 +455,8 @@
       {
         "name": "pr",
         "file": "skills/pr/SKILL.md",
-        "version": "20261026002",
-        "checksum": "39fdf1f0df977b9dc71f47d637cea90febd312ebaa8a054687c5def7c7d653eb",
+        "version": "20261026003",
+        "checksum": "9265be80e0652dbce7a65233fbefceaeb405dae5ce8a7df93e99de6396df3cc1",
         "checksum_algorithm": "sha256"
       },
       {
