@@ -414,16 +414,45 @@ class TestReadWorkflowStages:
             },
         ]
 
-    def test_skips_items_without_role(self, tmp_path: Path) -> None:
-        """Items lacking a string 'role' key are silently skipped."""
+    def test_rejects_stage_without_role(self, tmp_path: Path) -> None:
+        """A stage without a role raises an actionable workflow validation error."""
         vstack_dir = tmp_path / ".vstack"
         vstack_dir.mkdir()
         (vstack_dir / "config.yaml").write_text(
             "workflow:\n  stages:\n    - gate: required\n    - role: engineer\n",
             encoding="utf-8",
         )
-        result = CommandLineInterface._read_workflow_stages(tmp_path / ".github")
-        assert result == [{"role": "engineer", "gate": "required", "handoffs": []}]
+        with pytest.raises(
+            ValueError,
+            match=r"Invalid workflow config: workflow\.stages\[0\]\.role must be a non-empty string",
+        ):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
+
+    @pytest.mark.parametrize(
+        ("stage", "error_path"),
+        [
+            ("not-a-mapping", r"workflow\.stages\[0\] must be a mapping"),
+            ("role: 12", r"workflow\.stages\[0\]\.role must be a non-empty string"),
+            ("role: ''", r"workflow\.stages\[0\]\.role must be a non-empty string"),
+            ("role: '   '", r"workflow\.stages\[0\]\.role must be a non-empty string"),
+        ],
+    )
+    def test_rejects_malformed_workflow_stages(
+        self,
+        tmp_path: Path,
+        stage: str,
+        error_path: str,
+    ) -> None:
+        """Non-mapping stages and invalid roles fail instead of being dropped."""
+        vstack_dir = tmp_path / ".vstack"
+        vstack_dir.mkdir()
+        (vstack_dir / "config.yaml").write_text(
+            f"workflow:\n  stages:\n    - {stage}\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValueError, match=f"Invalid workflow config: {error_path}"):
+            CommandLineInterface._read_workflow_stages(tmp_path / ".github")
 
     def test_returns_empty_when_stages_not_a_list(self, tmp_path: Path) -> None:
         """Returns empty list when workflow.stages is not a list."""
@@ -578,13 +607,13 @@ class TestReadWorkflowStages:
             CommandLineInterface._read_workflow_stages(tmp_path / ".github")
 
     def test_depends_on_error_reports_raw_yaml_stage_index(self, tmp_path: Path) -> None:
-        """depends_on shape errors use the YAML stage position even when earlier stages are skipped."""
+        """depends_on errors identify their position in workflow.stages."""
         vstack_dir = tmp_path / ".vstack"
         vstack_dir.mkdir()
         (vstack_dir / "config.yaml").write_text(
             "workflow:\n"
             "  stages:\n"
-            "    - role: 123\n"
+            "    - role: designer\n"
             "    - role: engineer\n"
             "      depends_on: product\n",
             encoding="utf-8",
