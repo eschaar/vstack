@@ -2,6 +2,15 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [4.1.1](https://github.com/eschaar/vstack/compare/4.1.0...4.1.1) (2026-10-26)
+
+
+### Maintenance
+
+* **deps:** bump filelock from 3.29.4 to 4.2.1 ([da8e050](https://github.com/eschaar/vstack/commit/da8e0502a0d0663049381ff49811dc2124fc0394))
+* **deps:** bump filelock from 3.29.4 to 4.2.1 ([#125](https://github.com/eschaar/vstack/issues/125)) ([34ed470](https://github.com/eschaar/vstack/commit/34ed470134a12155ad247c9990b3210589d2234d))
+* **deps:** consolidate pending Python and Actions updates ([9dfecb1](https://github.com/eschaar/vstack/commit/9dfecb1ab76970e91282c422cdd96cdf9b26b664))
+
 ## [4.1.0](https://github.com/eschaar/vstack/compare/4.0.0...4.1.0) (2026-10-26)
 
 
