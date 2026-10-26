@@ -19,7 +19,7 @@ before CI/CD takes over.
 
 ```bash
 # Confirm gh CLI is authenticated
-gh auth status 2>/dev/null || echo "WARNING: gh CLI not authenticated — Step 4 will fail"
+gh auth status || exit $?
 
 # Confirm not on the target base branch
 BRANCH=$(git branch --show-current)
@@ -30,10 +30,10 @@ fi
 echo "Branch: $BRANCH"
 
 # Check if a PR already exists for this branch
-EXISTING_PR=$(gh pr view --json url --jq '.url' 2>/dev/null)
+EXISTING_PR=$(gh pr list --head "$BRANCH" --state open --json url \
+  --jq '.[0].url // empty') || exit $?
 if [ -n "$EXISTING_PR" ]; then
-  echo "PR already open: $EXISTING_PR"
-  exit 0
+  echo "Existing PR will be updated after push: $EXISTING_PR"
 fi
 
 # Show what will be included
@@ -49,23 +49,31 @@ PR_TEMPLATE=$(cat .github/PULL_REQUEST_TEMPLATE.md \
 
 ## Step 2: Commit
 
-Stage and commit any uncommitted changes:
+Review changed and already-staged files. Commit only approved task changes using
+`@#conventional-commit` and an intent-specific message. Stage explicit paths;
+never use `git add -A` or a generic cleanup commit. Leave unrelated work untouched.
+If scope is unclear, ask before staging or committing.
 
 ```bash
-git add -A
 git diff --cached --stat
-
-# Only commit if there are staged changes
-git diff --cached --quiet || git commit -m "chore: pre-release cleanup"
 ```
 
 ## Step 3: Push
 
 ```bash
-git push --set-upstream origin "$BRANCH"
+git push --set-upstream origin "$BRANCH" || exit $?
 ```
 
-## Step 4: Open PR
+## Step 4: Reuse or Open PR
+
+Only after a successful push, reuse an existing PR:
+
+```bash
+if [ -n "$EXISTING_PR" ]; then
+  echo "PR updated: $EXISTING_PR"
+  exit 0
+fi
+```
 
 Use the PR title and body provided by the invoking agent or user.
 If no body is provided, write a short summary of the changes on this branch.

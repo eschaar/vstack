@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "4.0.0",
-  "installed_at": "2026-10-26T20:41:31.001237+00:00",
+  "installed_at": "2026-10-26T20:41:52.724939+00:00",
   "artifacts": {
     "hooks": [
       {
@@ -138,6 +138,57 @@
         "file": "instructions/typescript.instructions.md",
         "version": "20260502005",
         "checksum": "8eddbd79ac24b2419136b8549587efa3d3ba328505c61dd79f02a7463fad6b38",
+        "checksum_algorithm": "sha256"
+      }
+    ],
+    "agents": [
+      {
+        "name": "architect",
+        "file": "agents/architect.agent.md",
+        "version": "20261026001",
+        "checksum": "ae96b91c872b14f2484fff6cad2ce6190cddd5b5d2983af4b86fb924ac57e633",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "designer",
+        "file": "agents/designer.agent.md",
+        "version": "20261026001",
+        "checksum": "06cbf40147f6a00dcad027f304a67eb3c45c27a4639ddf2266f6f499ac2b93bf",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "engineer",
+        "file": "agents/engineer.agent.md",
+        "version": "20261026001",
+        "checksum": "6f29ff92fc7dd84c49e6ef292932087179908c98b2275259c3b4fd145e3f9c40",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "planner",
+        "file": "agents/planner.agent.md",
+        "version": "20261026001",
+        "checksum": "7871e51eda348cf46abfabfa8b3a1ea274b716bad30e4acdb5a94ee7d6b74bfa",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "product",
+        "file": "agents/product.agent.md",
+        "version": "20261026002",
+        "checksum": "2e5a8c6ae877e04a6053b606670854f221501aa91a86f5676729aad9f8be5e78",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "release",
+        "file": "agents/release.agent.md",
+        "version": "20261026001",
+        "checksum": "a728911476e729ba96886d3018003d2d65b70b30a2a9a453f6b2eff8606c872c",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "tester",
+        "file": "agents/tester.agent.md",
+        "version": "20261026002",
+        "checksum": "5df6ff1f6b8188e48f2cce6331a246b74925e35474eedb1fc45be74980927d5e",
         "checksum_algorithm": "sha256"
       }
     ],
@@ -404,8 +455,8 @@
       {
         "name": "pr",
         "file": "skills/pr/SKILL.md",
-        "version": "20260502013",
-        "checksum": "fe27680c661475334ca97bbb0ba46f7516a4a351bdd58c0f39af975817627c99",
+        "version": "20261026002",
+        "checksum": "39fdf1f0df977b9dc71f47d637cea90febd312ebaa8a054687c5def7c7d653eb",
         "checksum_algorithm": "sha256"
       },
       {
@@ -532,57 +583,6 @@
         "file": "skills/workflow-check/SKILL.md",
         "version": "20261017002",
         "checksum": "f8066d6f685418671992a75e103b96ce9b18bb0622c656c49ab93d3a382a69fb",
-        "checksum_algorithm": "sha256"
-      }
-    ],
-    "agents": [
-      {
-        "name": "architect",
-        "file": "agents/architect.agent.md",
-        "version": "20261026001",
-        "checksum": "ae96b91c872b14f2484fff6cad2ce6190cddd5b5d2983af4b86fb924ac57e633",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "designer",
-        "file": "agents/designer.agent.md",
-        "version": "20261026001",
-        "checksum": "06cbf40147f6a00dcad027f304a67eb3c45c27a4639ddf2266f6f499ac2b93bf",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "engineer",
-        "file": "agents/engineer.agent.md",
-        "version": "20261026001",
-        "checksum": "6f29ff92fc7dd84c49e6ef292932087179908c98b2275259c3b4fd145e3f9c40",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "planner",
-        "file": "agents/planner.agent.md",
-        "version": "20261026001",
-        "checksum": "7871e51eda348cf46abfabfa8b3a1ea274b716bad30e4acdb5a94ee7d6b74bfa",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "product",
-        "file": "agents/product.agent.md",
-        "version": "20261026002",
-        "checksum": "2e5a8c6ae877e04a6053b606670854f221501aa91a86f5676729aad9f8be5e78",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "release",
-        "file": "agents/release.agent.md",
-        "version": "20261026001",
-        "checksum": "a728911476e729ba96886d3018003d2d65b70b30a2a9a453f6b2eff8606c872c",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "tester",
-        "file": "agents/tester.agent.md",
-        "version": "20261026002",
-        "checksum": "5df6ff1f6b8188e48f2cce6331a246b74925e35474eedb1fc45be74980927d5e",
         "checksum_algorithm": "sha256"
       }
     ]

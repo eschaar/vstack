@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import os
 import re
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -10,6 +12,75 @@ import pytest
 from tests.conftest import ROOT, SKILLS_TEMPLATES_DIR
 from vstack.cli.constants import EXPECTED_CANONICAL_NAMES
 from vstack.frontmatter import FrontmatterParser
+
+
+@pytest.mark.parametrize("existing_pr", ["", "https://example.invalid/pull/1"])
+@pytest.mark.parametrize("push_status", [0, 7])
+def test_pr_recipe_pushes_before_reusing_existing_pr(
+    tmp_path: Path, generated_dir: Path, existing_pr: str, push_status: int
+) -> None:
+    """Existing and new PR paths push first and never hide push failures."""
+    text = (generated_dir / "pr" / "SKILL.md").read_text(encoding="utf-8")
+    blocks = []
+    for heading in ("## Step 1:", "## Step 3:", "## Step 4:"):
+        match = re.search(r"```bash\n(.*?)```", text.split(heading, 1)[1], re.DOTALL)
+        assert match is not None
+        blocks.append(match.group(1))
+    stubs = """
+git() {
+  case "$1" in
+    branch) echo feature/example ;;
+    push) echo push >> "$CALL_LOG"; return "$PUSH_STATUS" ;;
+  esac
+}
+gh() {
+  if [ "$1 $2" = "pr list" ]; then printf '%s' "$EXISTING_URL"; fi
+}
+"""
+    log = tmp_path / "calls.txt"
+    result = subprocess.run(
+        ["bash", "-c", stubs + "\n".join(blocks) + '\necho create >> "$CALL_LOG"'],
+        cwd=tmp_path,
+        env={
+            **os.environ,
+            "CALL_LOG": str(log),
+            "PUSH_STATUS": str(push_status),
+            "EXISTING_URL": existing_pr,
+        },
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == push_status, result.stdout + result.stderr
+    assert log.read_text(encoding="utf-8").splitlines() == (
+        ["push", "create"] if not existing_pr and push_status == 0 else ["push"]
+    )
+    assert "git add -A\n" not in text
+    assert 'git commit -m "chore: pre-release cleanup"' not in text
+
+
+@pytest.mark.parametrize("failed_command", ["auth status", "pr list"])
+def test_pr_preflight_stops_on_github_errors(
+    tmp_path: Path, generated_dir: Path, failed_command: str
+) -> None:
+    """Authentication and PR lookup failures do not become successful PR updates."""
+    text = (generated_dir / "pr" / "SKILL.md").read_text(encoding="utf-8")
+    match = re.search(r"```bash\n(.*?)```", text.split("## Step 1:", 1)[1], re.DOTALL)
+    assert match is not None
+    stubs = """
+git() { echo feature/example; }
+gh() {
+  if [ "$1 $2" = "$FAILED_COMMAND" ]; then return 8; fi
+}
+"""
+    result = subprocess.run(
+        ["bash", "-c", stubs + match.group(1) + "\necho unexpected-continuation"],
+        cwd=tmp_path,
+        env={**os.environ, "FAILED_COMMAND": failed_command},
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 8
+    assert "unexpected-continuation" not in result.stdout
 
 
 def _skill_templates() -> list[Path]:

@@ -167,6 +167,12 @@ Tester uses `inspect` or authorized `verify` for reliability and observability.
 `guardrails` only governs destructive-action safety and confirmation; it does
 not replace operational checks.
 
+### pull request updates
+
+`pr` pushes approved task commits before reusing an existing PR. Authentication,
+lookup, or push failures stop the procedure. Commit explicit reviewed paths
+with an intent-specific Conventional Commit; never stage unrelated work.
+
 ______________________________________________________________________
 
 ## file locations
