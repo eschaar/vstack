@@ -2,8 +2,196 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "4.0.0",
-  "installed_at": "2026-10-26T19:52:12.809254+00:00",
+  "installed_at": "2026-10-26T20:40:15.425216+00:00",
   "artifacts": {
+    "agents": [
+      {
+        "name": "architect",
+        "file": "agents/architect.agent.md",
+        "version": "20261026001",
+        "checksum": "ae96b91c872b14f2484fff6cad2ce6190cddd5b5d2983af4b86fb924ac57e633",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "designer",
+        "file": "agents/designer.agent.md",
+        "version": "20261026001",
+        "checksum": "06cbf40147f6a00dcad027f304a67eb3c45c27a4639ddf2266f6f499ac2b93bf",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "engineer",
+        "file": "agents/engineer.agent.md",
+        "version": "20261026001",
+        "checksum": "6f29ff92fc7dd84c49e6ef292932087179908c98b2275259c3b4fd145e3f9c40",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "planner",
+        "file": "agents/planner.agent.md",
+        "version": "20261026001",
+        "checksum": "7871e51eda348cf46abfabfa8b3a1ea274b716bad30e4acdb5a94ee7d6b74bfa",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "product",
+        "file": "agents/product.agent.md",
+        "version": "20261026001",
+        "checksum": "55b959b8f6d6b4f933776b27d3dbd453a635afca1944a3605df09ff47175d992",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "release",
+        "file": "agents/release.agent.md",
+        "version": "20261026001",
+        "checksum": "a728911476e729ba96886d3018003d2d65b70b30a2a9a453f6b2eff8606c872c",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "tester",
+        "file": "agents/tester.agent.md",
+        "version": "20261026001",
+        "checksum": "53d022b0253dfdfcbcf6c4e0f86ba6649e0b91d3635b9e9fd2b56a18fe34f945",
+        "checksum_algorithm": "sha256"
+      }
+    ],
+    "hooks": [
+      {
+        "name": "agent-call-audit",
+        "file": "hooks/agent-call-audit.json",
+        "version": "4.0.0",
+        "checksum": "a03cc5df031670dd4902599048a9fc955a852862b2cb73408f5889ee74baa636",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "log-retention-cleanup",
+        "file": "hooks/log-retention-cleanup.json",
+        "version": "4.0.0",
+        "checksum": "2c3048637dc0f85b7196934b0f6c5a2ee9a21739b45bc7a529e2f5531f2b2609",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "post-commit-security-scan",
+        "file": "hooks/post-commit-security-scan.json",
+        "version": "4.0.0",
+        "checksum": "154305889deb5676a6b7d686400b14b4237687be130438d19843341addbdff8e",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "post-edit-format",
+        "file": "hooks/post-edit-format.json",
+        "version": "4.0.0",
+        "checksum": "5911a2fc0211b268749e5200db8d43eec953f456294c8cbc5556cea9ab11f875",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "post-edit-markdown-quality",
+        "file": "hooks/post-edit-markdown-quality.json",
+        "version": "4.0.0",
+        "checksum": "b8ef6b1805492a580902675ccd16564c693ec2ccf30fdb81d6b1d8dce610ab22",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "pre-tool-safety-gate",
+        "file": "hooks/pre-tool-safety-gate.json",
+        "version": "4.0.0",
+        "checksum": "1d55d6c9cee6137472e37c9e16febb5a96419fc0813c4c474af5a50ee03ee5a0",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "session-audit",
+        "file": "hooks/session-audit.json",
+        "version": "4.0.0",
+        "checksum": "0190aa65dfea26b2129ad8a5304377b2d40febf03779f561194e788bb8b27bfa",
+        "checksum_algorithm": "sha256"
+      }
+    ],
+    "instructions": [
+      {
+        "name": "git",
+        "file": "instructions/git.instructions.md",
+        "version": "20260421001",
+        "checksum": "cdceba38ad301bb3e751a0ca4cfc3acb811ea170e0882a541816c0c121ca3503",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "helm",
+        "file": "instructions/helm.instructions.md",
+        "version": "20260502040",
+        "checksum": "a07a1ad6fd64d8f27e39397bb962c303b0c9d6b8e6a5e2e7c63d7334b8c4d0ad",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "java",
+        "file": "instructions/java.instructions.md",
+        "version": "20260502001",
+        "checksum": "7461e0098ba8f517c060378aeb39ba9720f2b5eda9b54cbb73dfe9fe5633d765",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "k8s",
+        "file": "instructions/k8s.instructions.md",
+        "version": "20260502039",
+        "checksum": "801a4ed9eae6492b92b887a092469b38c4f8c204ab73d42c2aebca5c8ac5131b",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "markdown",
+        "file": "instructions/markdown.instructions.md",
+        "version": "20260502002",
+        "checksum": "af3abd860c52d3ee761653e526b4113e8baef64b639471c1ec8fe09de0762729",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "python",
+        "file": "instructions/python.instructions.md",
+        "version": "20260421002",
+        "checksum": "e9b726d7d343379e5636c270e058a04028b67648fbf90468ac315df4b337c066",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "rancher",
+        "file": "instructions/rancher.instructions.md",
+        "version": "20260502041",
+        "checksum": "86551c7caf6bad401962de48ef5ff2bb2cc7260d5cda5971e1062c1eb384fbfe",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "security",
+        "file": "instructions/security.instructions.md",
+        "version": "20260502003",
+        "checksum": "baaaa6d49c38e7ca67cf1a3b0305d911731bd35de54608a5705c6c03f277c882",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "terraform",
+        "file": "instructions/terraform.instructions.md",
+        "version": "20260502034",
+        "checksum": "b698ccff280139a43fb527b5cfd3c5f885bfaf37282ff656c98c0f0682471109",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "terragrunt",
+        "file": "instructions/terragrunt.instructions.md",
+        "version": "20260502035",
+        "checksum": "695b2ecb23f940ad072f208cd78b9be44a58d55c6a348f25166706f735ba515e",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "testing",
+        "file": "instructions/testing.instructions.md",
+        "version": "20261026001",
+        "checksum": "f05a4c6f6a5d20eeb5165f408826553e24754e49f16a1aa058481e5cda620d84",
+        "checksum_algorithm": "sha256"
+      },
+      {
+        "name": "typescript",
+        "file": "instructions/typescript.instructions.md",
+        "version": "20260502005",
+        "checksum": "8eddbd79ac24b2419136b8549587efa3d3ba328505c61dd79f02a7463fad6b38",
+        "checksum_algorithm": "sha256"
+      }
+    ],
     "skills": [
       {
         "name": "adr",
@@ -253,8 +441,8 @@
       {
         "name": "performance",
         "file": "skills/performance/SKILL.md",
-        "version": "20260421022",
-        "checksum": "75a4460e5c53c7f4b55b8413ca9c1cccfaa82e550770f9c5d3bb4d712d89ac0d",
+        "version": "20261026002",
+        "checksum": "0b621c3158f9dabc6b9a57df37c71348bcc11ad9a833623ab4e89ed4a8feaaa7",
         "checksum_algorithm": "sha256"
       },
       {
@@ -395,194 +583,6 @@
         "file": "skills/workflow-check/SKILL.md",
         "version": "20261017002",
         "checksum": "f8066d6f685418671992a75e103b96ce9b18bb0622c656c49ab93d3a382a69fb",
-        "checksum_algorithm": "sha256"
-      }
-    ],
-    "agents": [
-      {
-        "name": "architect",
-        "file": "agents/architect.agent.md",
-        "version": "20261026001",
-        "checksum": "ae96b91c872b14f2484fff6cad2ce6190cddd5b5d2983af4b86fb924ac57e633",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "designer",
-        "file": "agents/designer.agent.md",
-        "version": "20261026001",
-        "checksum": "06cbf40147f6a00dcad027f304a67eb3c45c27a4639ddf2266f6f499ac2b93bf",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "engineer",
-        "file": "agents/engineer.agent.md",
-        "version": "20261026001",
-        "checksum": "6f29ff92fc7dd84c49e6ef292932087179908c98b2275259c3b4fd145e3f9c40",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "planner",
-        "file": "agents/planner.agent.md",
-        "version": "20261026001",
-        "checksum": "7871e51eda348cf46abfabfa8b3a1ea274b716bad30e4acdb5a94ee7d6b74bfa",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "product",
-        "file": "agents/product.agent.md",
-        "version": "20261026001",
-        "checksum": "55b959b8f6d6b4f933776b27d3dbd453a635afca1944a3605df09ff47175d992",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "release",
-        "file": "agents/release.agent.md",
-        "version": "20261026001",
-        "checksum": "a728911476e729ba96886d3018003d2d65b70b30a2a9a453f6b2eff8606c872c",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "tester",
-        "file": "agents/tester.agent.md",
-        "version": "20261026001",
-        "checksum": "53d022b0253dfdfcbcf6c4e0f86ba6649e0b91d3635b9e9fd2b56a18fe34f945",
-        "checksum_algorithm": "sha256"
-      }
-    ],
-    "hooks": [
-      {
-        "name": "agent-call-audit",
-        "file": "hooks/agent-call-audit.json",
-        "version": "4.0.0",
-        "checksum": "a03cc5df031670dd4902599048a9fc955a852862b2cb73408f5889ee74baa636",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "log-retention-cleanup",
-        "file": "hooks/log-retention-cleanup.json",
-        "version": "4.0.0",
-        "checksum": "2c3048637dc0f85b7196934b0f6c5a2ee9a21739b45bc7a529e2f5531f2b2609",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "post-commit-security-scan",
-        "file": "hooks/post-commit-security-scan.json",
-        "version": "4.0.0",
-        "checksum": "154305889deb5676a6b7d686400b14b4237687be130438d19843341addbdff8e",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "post-edit-format",
-        "file": "hooks/post-edit-format.json",
-        "version": "4.0.0",
-        "checksum": "5911a2fc0211b268749e5200db8d43eec953f456294c8cbc5556cea9ab11f875",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "post-edit-markdown-quality",
-        "file": "hooks/post-edit-markdown-quality.json",
-        "version": "4.0.0",
-        "checksum": "b8ef6b1805492a580902675ccd16564c693ec2ccf30fdb81d6b1d8dce610ab22",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "pre-tool-safety-gate",
-        "file": "hooks/pre-tool-safety-gate.json",
-        "version": "4.0.0",
-        "checksum": "1d55d6c9cee6137472e37c9e16febb5a96419fc0813c4c474af5a50ee03ee5a0",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "session-audit",
-        "file": "hooks/session-audit.json",
-        "version": "4.0.0",
-        "checksum": "0190aa65dfea26b2129ad8a5304377b2d40febf03779f561194e788bb8b27bfa",
-        "checksum_algorithm": "sha256"
-      }
-    ],
-    "instructions": [
-      {
-        "name": "git",
-        "file": "instructions/git.instructions.md",
-        "version": "20260421001",
-        "checksum": "cdceba38ad301bb3e751a0ca4cfc3acb811ea170e0882a541816c0c121ca3503",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "helm",
-        "file": "instructions/helm.instructions.md",
-        "version": "20260502040",
-        "checksum": "a07a1ad6fd64d8f27e39397bb962c303b0c9d6b8e6a5e2e7c63d7334b8c4d0ad",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "java",
-        "file": "instructions/java.instructions.md",
-        "version": "20260502001",
-        "checksum": "7461e0098ba8f517c060378aeb39ba9720f2b5eda9b54cbb73dfe9fe5633d765",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "k8s",
-        "file": "instructions/k8s.instructions.md",
-        "version": "20260502039",
-        "checksum": "801a4ed9eae6492b92b887a092469b38c4f8c204ab73d42c2aebca5c8ac5131b",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "markdown",
-        "file": "instructions/markdown.instructions.md",
-        "version": "20260502002",
-        "checksum": "af3abd860c52d3ee761653e526b4113e8baef64b639471c1ec8fe09de0762729",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "python",
-        "file": "instructions/python.instructions.md",
-        "version": "20260421002",
-        "checksum": "e9b726d7d343379e5636c270e058a04028b67648fbf90468ac315df4b337c066",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "rancher",
-        "file": "instructions/rancher.instructions.md",
-        "version": "20260502041",
-        "checksum": "86551c7caf6bad401962de48ef5ff2bb2cc7260d5cda5971e1062c1eb384fbfe",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "security",
-        "file": "instructions/security.instructions.md",
-        "version": "20260502003",
-        "checksum": "baaaa6d49c38e7ca67cf1a3b0305d911731bd35de54608a5705c6c03f277c882",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "terraform",
-        "file": "instructions/terraform.instructions.md",
-        "version": "20260502034",
-        "checksum": "b698ccff280139a43fb527b5cfd3c5f885bfaf37282ff656c98c0f0682471109",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "terragrunt",
-        "file": "instructions/terragrunt.instructions.md",
-        "version": "20260502035",
-        "checksum": "695b2ecb23f940ad072f208cd78b9be44a58d55c6a348f25166706f735ba515e",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "testing",
-        "file": "instructions/testing.instructions.md",
-        "version": "20261026001",
-        "checksum": "f05a4c6f6a5d20eeb5165f408826553e24754e49f16a1aa058481e5cda620d84",
-        "checksum_algorithm": "sha256"
-      },
-      {
-        "name": "typescript",
-        "file": "instructions/typescript.instructions.md",
-        "version": "20260502005",
-        "checksum": "8eddbd79ac24b2419136b8549587efa3d3ba328505c61dd79f02a7463fad6b38",
         "checksum_algorithm": "sha256"
       }
     ]

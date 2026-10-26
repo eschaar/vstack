@@ -122,17 +122,26 @@ fi
 ## Phase 2: Comparison vs Base Branch
 
 ```bash
-# Stash current changes and benchmark base
-git stash
-git checkout <base>
-
-echo "=== Benchmarks on <base> ==="
-# [run same benchmark commands as Phase 1]
-
-# Restore feature branch
-git checkout "$CURRENT"
-git stash pop
+BASE_REF="<base>"
+BASE_DIR=$(mktemp -d) || exit 1
+git worktree add --detach "$BASE_DIR/baseline" "$BASE_REF" || exit 1
+(
+  cd "$BASE_DIR/baseline" || exit 1
+  run_benchmark
+)
+BASE_STATUS=$?
+git worktree remove "$BASE_DIR/baseline" || exit 1
+rmdir "$BASE_DIR" || exit 1
+if [ "$BASE_STATUS" -ne 0 ]; then
+  echo "ERROR: baseline benchmark failed ($BASE_STATUS)"
+  exit "$BASE_STATUS"
+fi
 ```
+
+Use an isolated worktree; never stash or switch the user's working tree.
+Use `run_benchmark` for the same selected command as Phase 1.
+If benchmarks leave files behind, report the worktree path and inspect them
+before cleanup. Do not force-remove it or discard user files.
 
 Compare results:
 
@@ -242,4 +251,4 @@ For each bottleneck identified:
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"performance","artifact_type":"skill","artifact_version":"20260421022","generator":"vstack","vstack_version":"4.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"performance","artifact_type":"skill","artifact_version":"20261026002","generator":"vstack","vstack_version":"4.0.0"} -->

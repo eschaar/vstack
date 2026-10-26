@@ -148,6 +148,13 @@ Keep source and rendered guidance concrete and compact: replace repetition,
 reference existing evidence, and do not remove safety or contract obligations.
 See [ADR-033](../architecture/adr/033-lightweight-sdd.md).
 
+### performance comparison safety
+
+`performance` benchmarks the base revision in a detached temporary worktree.
+It preserves the user's branch, index, working files, and existing stashes.
+Failed benchmarks remain failures; leftover benchmark files require inspection
+before cleanup, never forced removal.
+
 ______________________________________________________________________
 
 ## file locations
