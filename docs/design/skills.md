@@ -154,6 +154,10 @@ See [ADR-033](../architecture/adr/033-lightweight-sdd.md).
 It preserves the user's branch, index, working files, and existing stashes.
 Failed benchmarks remain failures; leftover benchmark files require inspection
 before cleanup, never forced removal.
+Select an existing component-native benchmark runner before execution. Missing
+tools/configuration are `not run`; nonzero command results are `failed`, with
+visible error output. Never substitute another ecosystem or ordinary unit tests
+for benchmark evidence.
 
 ______________________________________________________________________
 

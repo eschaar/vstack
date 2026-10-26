@@ -84,3 +84,55 @@ def test_performance_baseline_preserves_user_git_state(
     assert _git(repo, "worktree", "list", "--porcelain").count("worktree ") == 1
     if state == "untracked":
         assert (repo / "user.txt").read_text(encoding="utf-8") == "keep me\n"
+
+
+@pytest.mark.parametrize(
+    ("marker", "runner"),
+    [
+        ("package.json", "npm"),
+        ("pyproject.toml", "python"),
+        ("go.mod", "go"),
+        ("Cargo.toml", "cargo"),
+    ],
+)
+@pytest.mark.parametrize("runner_status", [0, 6])
+def test_performance_runs_only_component_native_benchmarks(
+    tmp_path: Path, generated_dir: Path, marker: str, runner: str, runner_status: int
+) -> None:
+    """A failed native benchmark remains a failure without invoking fallback tools."""
+    (tmp_path / marker).touch()
+    log = tmp_path / "runners.txt"
+    text = (generated_dir / "performance" / "SKILL.md").read_text(encoding="utf-8")
+    script = _bash_block(text, "## Phase 1:")
+    stubs = """
+npm() { echo npm >> "$CALL_LOG"; return "$RUNNER_STATUS"; }
+python() { echo python >> "$CALL_LOG"; return "$RUNNER_STATUS"; }
+go() { echo go >> "$CALL_LOG"; return "$RUNNER_STATUS"; }
+cargo() { echo cargo >> "$CALL_LOG"; return "$RUNNER_STATUS"; }
+npx() { echo unexpected-npx >> "$CALL_LOG"; return 99; }
+"""
+    result = subprocess.run(
+        ["bash", "-c", stubs + script],
+        cwd=tmp_path,
+        env={**os.environ, "CALL_LOG": str(log), "RUNNER_STATUS": str(runner_status)},
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == runner_status, result.stdout + result.stderr
+    assert log.read_text(encoding="utf-8").splitlines() == [runner]
+    procedure = text.split("# performance ", 1)[1]
+    assert "|| true" not in procedure
+    assert "2>/dev/null" not in procedure
+
+
+def test_performance_reports_unconfigured_benchmarks(tmp_path: Path, generated_dir: Path) -> None:
+    """Unknown projects fail explicitly instead of reporting successful measurement."""
+    text = (generated_dir / "performance" / "SKILL.md").read_text(encoding="utf-8")
+    result = subprocess.run(
+        ["bash", "-c", _bash_block(text, "## Phase 1:")],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 2
+    assert "no benchmark runner configured" in result.stdout

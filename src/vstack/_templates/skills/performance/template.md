@@ -34,29 +34,32 @@ optimizations. Measure first; never optimize without evidence.
 
 If on a feature branch, record performance metrics before and after the change:
 
+Inspect repository scripts and installed tooling first. Adapt `run_benchmark` to
+one existing benchmark runner and the selected interpreter/package manager.
+For monorepos, select the component explicitly. Do not install tools or fall back
+to another ecosystem when a command fails. Ordinary tests are not benchmarks.
+
 ```bash
-# Record current branch metrics
-CURRENT=$(git branch --show-current)
-
-# Run benchmarks
-echo "=== Benchmarks on $CURRENT ==="
-{{RUN_TESTS}}
-
-# Language-specific benchmark runners:
-# Node/Bun
-[ -f package.json ] && npm run bench 2>/dev/null \
-  || npx vitest bench 2>/dev/null \
-  || npx jest --config jest.bench.config.js 2>/dev/null || true
-
-# Python
-[ -f pyproject.toml ] && python -m pytest --benchmark-only -v 2>/dev/null || true
-
-# Go
-[ -f go.mod ] && go test -bench=. -benchmem ./... 2>/dev/null || true
-
-# Rust
-[ -f Cargo.toml ] && cargo bench 2>/dev/null || true
+run_benchmark() {
+  if [ -f package.json ]; then
+    npm run bench
+  elif [ -f pyproject.toml ] || [ -f setup.py ]; then
+    python -m pytest --benchmark-only -v
+  elif [ -f go.mod ]; then
+    go test -bench=. -benchmem ./...
+  elif [ -f Cargo.toml ]; then
+    cargo bench
+  else
+    echo "ERROR: no benchmark runner configured for this component"
+    return 2
+  fi
+}
+run_benchmark || exit $?
 ```
+
+Record command, revision, workload, measurements, and exit status.
+Unavailable tools or missing benchmark configuration mean `not run`, not a pass;
+executed checks with nonzero exit status are `failed`. Keep error output visible.
 
 ## Phase 2: Comparison vs Base Branch
 
@@ -96,23 +99,26 @@ Compare results:
 
 ```bash
 # Check for load test tools
-which k6 2>/dev/null && echo "k6 available"
-which hey 2>/dev/null && echo "hey available"
-which wrk 2>/dev/null && echo "wrk available"
-which ab 2>/dev/null && echo "ab available"
+command -v k6
+command -v hey
+command -v wrk
+command -v ab
 
 # Example k6 run (adapt to your endpoint)
 # k6 run --vus 50 --duration 30s script.js
 ```
 
-For API endpoints, run a basic load test:
+For API endpoints, choose one installed load-test tool and an approved target.
+Do not generate load against production without explicit permission.
 
 ```bash
-# Using hey (install: go install github.com/rakyll/hey@latest)
-hey -n 1000 -c 50 "${SERVICE_URL}/health" 2>/dev/null || true
+hey -n 1000 -c 50 "${SERVICE_URL}/health"
+```
 
-# Using wrk (if available)
-wrk -t4 -c100 -d30s "${SERVICE_URL}/health" 2>/dev/null || true
+Or, when `wrk` is the selected installed tool:
+
+```bash
+wrk -t4 -c100 -d30s "${SERVICE_URL}/health"
 ```
 
 ## Phase 4: Profiling (if regression found)
@@ -186,5 +192,6 @@ For each bottleneck identified:
 1. [Change] — [Before: Xms → After: Xms] — [Commit SHA]
 
 ### Verdict
-[NO REGRESSION / REGRESSION FIXED / REGRESSION NEEDS ATTENTION]
+[NO REGRESSION / REGRESSION FIXED / REGRESSION NEEDS ATTENTION / NOT RUN / CHECK FAILED]
+Only measured, comparable results support a regression verdict.
 ```
