@@ -1,7 +1,7 @@
 # vstack — design
 
 > Maintained by: **designer** role\
-> Last updated: 2026-05-14
+> Last updated: 2026-10-26
 
 ## overview
 
@@ -22,6 +22,20 @@ or `.vstack/vstack.json`.
 ______________________________________________________________________
 
 ## 1. domain model
+
+### change-local specification
+
+The changedoc is the durable change-local intent source; clear low-risk work may
+use issue/chat context. Its additive sections cover requirements, optional tasks,
+and verification alongside existing scope, criteria, and scenarios. Metadata and
+stage-report schemas are unchanged. Guidance is advisory, not a semantic parser.
+
+Role artifact templates are seeded additively: existing customized local copies
+and historical changedocs remain valid. Supplement new documents through skill
+guidance; do not overwrite local templates or backfill history. Source templates
+are updated first, then installed artifacts regenerated. Keep guidance compact
+without dropping contracts or safety. See [workflow.md](workflow.md) and
+[ADR-033](../architecture/adr/033-lightweight-sdd.md).
 
 ### 1.1 artifact lifecycle states
 

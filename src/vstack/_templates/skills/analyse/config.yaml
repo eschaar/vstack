@@ -1,10 +1,9 @@
 name: analyse
-version: 20260421004
+version: 20261026001
 description: |
-  Cross-cutting technical analysis. Investigates impact, tradeoffs, root causes,
-  or feasibility without implementing changes. Use when asked to "analyse this",
-  "investigate the impact", "what are the tradeoffs", "root cause analysis",
-  "is this feasible?", or "compare these approaches". Produces an analysis report.
+  Analyse impact, tradeoffs, causes, feasibility, risks, or change consistency
+  without implementation or intent edits. Use for "analyse this", "compare
+  approaches", or "review consistency". Return scoped findings with evidence.
 allowed-tools: 'execute read search'
 argument-hint: '[topic, change, or question to analyse]'
 

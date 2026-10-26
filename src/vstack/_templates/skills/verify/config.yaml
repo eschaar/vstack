@@ -1,11 +1,9 @@
 name: verify
-version: 20260421026
+version: 20261026001
 description: |
-  Verification fix-loop skill. Routes by mode (quick/standard/exhaustive), runs
-  targeted checks, fixes findings by severity, and re-verifies impacted paths.
-  Routes report-only requests to inspect and escalates deep security/performance
-  concerns to specialized skills. Use when asked to "verify", "fix failing checks",
-  "run QA with fixes", or "re-verify before shipping".
+  Verify agreed behavior in quick/standard/exhaustive mode, fix authorized gaps,
+  and rerun affected checks. Use for "verify", "fix failing checks", or "run QA
+  with fixes". Route report-only work to inspect; stop on blockers or no progress.
 allowed-tools: 'execute read search edit'
 argument-hint: '[component or feature to verify]'
 

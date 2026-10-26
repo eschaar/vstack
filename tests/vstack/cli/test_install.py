@@ -8,6 +8,7 @@ from typing import Any, cast
 
 import pytest
 
+from tests.conftest import ROOT
 from vstack.cli.base import CommandContext
 from vstack.cli.install import InstallCommand
 from vstack.cli.service import CommandService
@@ -443,3 +444,33 @@ class TestInstallCommand:
         )
         InstallCommand(service=cast(CommandService, object())).run(context=context)
         assert written == []
+
+    def test_changedoc_seed_is_additive_and_preserves_local_history(self, tmp_path: Path) -> None:
+        """New installs get SDD sections; reseeding preserves customized content."""
+        templates_root = ROOT / "src" / "vstack" / "_templates"
+        project_root = tmp_path / "consumer"
+        colors = SimpleNamespace(YELLOW="", RESET="", BOLD="", DIM="", GREEN="")
+        InstallCommand._seed_project(
+            project_root=project_root,
+            templates_root=templates_root,
+            colors=colors,
+            dry_run=False,
+        )
+        local = project_root / ".vstack/templates/product/artifacts/changes/changedoc.md"
+        text = local.read_text(encoding="utf-8")
+        for section in ("Requirements", "Acceptance Criteria", "Execution Tasks", "Verification"):
+            assert f"## {section}" in text
+        assert "last_modified:" in text
+        assert "\nid:" not in text
+        local.write_text("# Customized old template\n", encoding="utf-8")
+        history = project_root / "docs/changes/old_fix_20260101.md"
+        history.parent.mkdir(parents=True, exist_ok=True)
+        history.write_text("status: IMPLEMENTED\nHistorical scope.\n", encoding="utf-8")
+        InstallCommand._seed_project(
+            project_root=project_root,
+            templates_root=templates_root,
+            colors=colors,
+            dry_run=False,
+        )
+        assert local.read_text(encoding="utf-8") == "# Customized old template\n"
+        assert history.read_text(encoding="utf-8") == "status: IMPLEMENTED\nHistorical scope.\n"

@@ -86,4 +86,4 @@ Always consider:
 **Related:** See `skill/reasoning` for the underlying reasoning framework.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"advise","artifact_type":"skill","artifact_version":"20261017001","generator":"vstack","vstack_version":"3.7.8"} -->
+<!-- VSTACK-META: {"artifact_name":"advise","artifact_type":"skill","artifact_version":"20261017001","generator":"vstack","vstack_version":"4.0.0"} -->

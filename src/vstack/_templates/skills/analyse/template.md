@@ -2,173 +2,53 @@
 
 {{BASE_BRANCH}}
 
-# analyse — Technical Analysis
+# analyse - Technical Analysis
 
-Investigate a technical question, impact, or tradeoff. Produce a structured
-analysis report. Do not implement changes — that is engineering role work.
+Investigate impact, tradeoffs, feasibility, causes, risks, or change consistency.
+Do not implement changes, rewrite acceptance, or run a verification fix loop.
+Use `debug` for fixes, `performance` for profiling, `architecture`/`adr` for
+decisions, and `verify` for implementation checks.
 
-## Out of scope
+## Scope and evidence
 
-- Fixing bugs (use `debug`)
-- Performance benchmarking with code changes (use `performance`)
-- Architecture decisions (use `architecture` + `adr`)
-- Implementation (engineering role)
-- Full test run (use `verify`)
+Establish the question, scope, and known decisions from context. Ask only for
+material missing information. Read relevant code, callers, contracts, baselines,
+and data; do not launch a whole-repository audit by default.
 
-## Step 0: Define the Question
+Support findings with file locations, measured data, or explicit assumptions.
+Inspect history and dependents when relevant; distinguish facts from hypotheses.
 
-Clarify exactly what is being analysed:
+## Select relevant dimensions
 
-> **Question:** What is the specific question or concern to investigate?
->
-> - Impact analysis: "What breaks if we change X?"
-> - Tradeoff analysis: "Compare approach A vs approach B"
-> - Feasibility analysis: "Can we do X given constraints Y?"
-> - Root cause analysis: "Why does X happen?"
-> - Risk analysis: "What are the risks of doing/not doing X?"
->   **Default:** Open-ended investigation based on user's context
+| Analysis    | Questions                                                            |
+| ----------- | -------------------------------------------------------------------- |
+| Impact      | Dependents, blast radius, compatibility, migration, rollback?        |
+| Tradeoff    | Complexity, performance, maintenance, cost, risk, effort per option? |
+| Feasibility | Stack capability, limits, dependencies, blockers?                    |
+| Cause       | Symptom, timeline, primary cause versus contributing factors?        |
+| Risk        | Likelihood, impact, mitigation?                                      |
+| Consistency | Do intent, acceptance, contracts, and useful tasks agree?            |
 
-Document:
+## Change-consistency review
 
-```text
-Analysis type: [impact | tradeoff | feasibility | root-cause | risk | other]
-Question:      [Precise question being answered]
-Scope:         [What's in and out of scope for this analysis]
-```
+Use before implementation when explicitly requested or justified by risk.
+Read only relevant requirements, criteria, constraints, contracts, and tasks.
+Identify:
 
-## Phase 1: Evidence Gathering
+- contradictions, including contracts conflicting with agreed behavior;
+- uncovered obligations or vague, untestable criteria;
+- proposed additions with no requirement or engineering rationale;
+- artificial prerequisites inferred from task order or role names.
 
-Gather all relevant context before drawing any conclusions:
+For each finding, give source, consequence, and proposed next action. Necessary
+implementation details need not each be a product requirement. An unexplained
+addition is a scope question, not permission to delete code. Do not silently
+change intent, tasks, or implementation.
 
-```bash
-# Understand the current state
-git log --oneline -20
-cat TODOS.md 2>/dev/null | head -30 || true
+## Output
 
-# Find relevant code
-# (adjust search terms to the specific question)
-grep -r -n "TODO\|FIXME\|DEPRECATED" \
-  --include='*.ts' --include='*.py' --include='*.go' \
-  --exclude-dir=node_modules . 2>/dev/null | head -20
-```
-
-For **impact analysis**, find all call sites / dependents:
-
-```bash
-# Find all usages of a symbol, function, or interface
-grep -r -n "SYMBOL_NAME" \
-  --include='*.ts' --include='*.py' --include='*.go' \
-  --exclude-dir=node_modules . 2>/dev/null
-```
-
-For **dependency analysis**:
-
-```bash
-# Dependency graph (if available)
-[ -f package.json ] && npx madge --circular --extensions ts ./src 2>/dev/null || true
-```
-
-## Phase 2: Dimension Analysis
-
-Structure the analysis around the relevant dimensions for the question type:
-
-### For impact analysis:
-
-- What systems/services/consumers are affected?
-- What is the blast radius? (local, service-wide, cross-service, user-facing)
-- Are breaking changes involved?
-- What is the rollback strategy?
-- Migration effort estimate
-
-### For tradeoff analysis:
-
-For each option:
-
-| Dimension         | Option A | Option B |
-| ----------------- | -------- | -------- |
-| Complexity        |          |          |
-| Performance       |          |          |
-| Maintainability   |          |          |
-| Cost              |          |          |
-| Risk              |          |          |
-| Time to implement |          |          |
-
-### For feasibility analysis:
-
-- Technical feasibility: can this be built with current stack/skills?
-- Constraints: what limits apply (time, budget, API limits, data size)?
-- Dependencies: what must be true for this to work?
-- Risks: what could prevent success?
-
-### For root cause analysis:
-
-- What is the observed symptom?
-- What are the contributing factors?
-- Primary cause vs contributing causes
-- Timeline: when did this start? What changed?
-
-### For risk analysis:
-
-| Risk | Likelihood      | Impact          | Mitigation |
-| ---- | --------------- | --------------- | ---------- |
-| ...  | High/Medium/Low | High/Medium/Low | ...        |
-
-## Phase 3: Data & Evidence
-
-Support findings with concrete evidence:
-
-```bash
-# Metrics, logs, or data that support the analysis
-# Error rates, latency percentiles, query counts, etc.
-```
-
-Reference specific:
-
-- Code locations (file:line)
-- Data points (error counts, latency numbers, test results)
-- Documentation (ADRs, design docs, API specs)
-
-## Phase 4: Findings & Conclusions
-
-Present findings clearly:
-
-```markdown
-## Findings
-
-### [Finding 1 — short title]
-[Evidence + explanation]
-
-### [Finding 2]
-[Evidence + explanation]
-```
-
-State conclusions with confidence level:
-
-- **Certain:** evidenced directly from code/data
-- **Probable:** well-supported by evidence but not confirmed
-- **Uncertain:** hypothesis that requires further investigation
-
-## Analysis Report
-
-```text
-## Analysis Report — [topic] — [date]
-
-### Question
-[The specific question answered]
-
-### TL;DR
-[2-3 sentence executive summary of the most important finding]
-
-### Findings
-[Structured findings with evidence]
-
-### Recommendation
-[If applicable: what to do based on the analysis]
-[NOT an implementation plan — just the recommended direction]
-
-### Open Questions
-[What remains unclear and needs further investigation]
-
-### Confidence
-[Overall confidence level: high / medium / low — and why]
-```
+Return a compact response: question/scope, findings with evidence and impact,
+recommendation, open questions, and confidence (`certain`, `probable`, `uncertain`).
+For consistency reviews, use the response or an existing document when authorized;
+no mandatory standalone report. A requested broader report may use the same
+structure. Requirement quality and consistency findings are not behavioral proof.

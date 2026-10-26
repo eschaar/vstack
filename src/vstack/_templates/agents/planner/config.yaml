@@ -1,9 +1,8 @@
 name: planner
-version: 20260514001
+version: 20261026001
 description: >
-  vstack orchestration coordinator. Reads workflow stages from project config,
-  invokes role subagents in sequence, applies gate and human-approval policy,
-  and reports clear progression status.
+  vstack coordinator. Routes focused work to its owner or orchestrates configured
+  stage dependencies, gates, and approvals. Reports progress without doing role work.
 argument-hint: "[run workflow | orchestrate stages | gate progression | coordinator mode]"
 tools:
   - read

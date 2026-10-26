@@ -1,11 +1,19 @@
 # vstack — roadmap
 
 > Maintained by: **product** role\
-> Last updated: 2026-06-18
+> Last updated: 2026-10-26
 
 ______________________________________________________________________
 
 ## feature status table
+
+Lightweight SDD is implemented through existing changedoc, skill, and role
+guidance: proportional routing, criterion-linked evidence, and bounded completion
+review, without new runtime enforcement. See
+[the change contract](../changes/lightweight-sdd_changedoc_evolution_20261017.md)
+and [ADR-033](../architecture/adr/033-lightweight-sdd.md).
+Option B may reuse these references; automatic consumer-spec compliance remains
+deferred until adoption provides evidence.
 
 | Feature                                       | Version    | Status      | Notes                                                                                                                                                               |
 | --------------------------------------------- | ---------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

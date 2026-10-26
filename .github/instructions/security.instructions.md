@@ -42,4 +42,4 @@ Use these security policies.
 1. Keep privileged logic minimal, auditable, and separate from business logic.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"security","artifact_type":"instruction","artifact_version":"20260502003","generator":"vstack","vstack_version":"3.7.8"} -->
+<!-- VSTACK-META: {"artifact_name":"security","artifact_type":"instruction","artifact_version":"20260502003","generator":"vstack","vstack_version":"4.0.0"} -->

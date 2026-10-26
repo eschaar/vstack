@@ -1,10 +1,9 @@
 name: product
-version: 20260514001
+version: 20261026001
 description: >
-  Senior product manager. Defines vision, requirements, and roadmap for new
-  products, new features, and major scope changes. Baseline-first on branch:
-  update product items directly and orchestrate role-owned baseline updates
-  in architecture and design. Baseline-first on branch.
+  Senior product manager. Owns vision, scope, requirements, and acceptance.
+  Keeps change-local intent proportional and shared baselines current;
+  coordinates relevant owners and required approvals.
 argument-hint: "[vision | requirements | scope review | acceptance review | release readiness check]"
 tools:
   - read

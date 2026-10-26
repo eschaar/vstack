@@ -2,7 +2,7 @@ Use these testing conventions.
 
 ## Scope and intent
 
-1. Write tests to verify observable behavior, not internal implementation details.
+1. Derive tests from observable acceptance, not internal implementation details.
 1. A test that passes when behavior is wrong, or fails when behavior is correct, has negative value.
 1. Tests should read like documentation.
 
@@ -16,7 +16,8 @@ Use these testing conventions.
 
 1. Cover success paths, expected failure paths, and boundary conditions for every behavioral change.
 1. Treat missing tests for changed behavior as a defect.
-1. Cover behaviors that matter rather than lines that exist.
+1. Cover relevant failure, compatibility, and data/operational boundaries; no universal test-type checklist.
+1. Code coverage and task checkboxes do not prove acceptance; required failed or unrun checks are not passes.
 
 ## Test quality
 

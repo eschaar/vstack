@@ -51,4 +51,4 @@ Use these Markdown conventions.
 1. Keep examples accurate and runnable.
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"markdown","artifact_type":"instruction","artifact_version":"20260502002","generator":"vstack","vstack_version":"3.7.8"} -->
+<!-- VSTACK-META: {"artifact_name":"markdown","artifact_type":"instruction","artifact_version":"20260502002","generator":"vstack","vstack_version":"4.0.0"} -->

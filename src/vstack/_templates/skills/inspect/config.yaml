@@ -1,10 +1,9 @@
 name: inspect
-version: 20260421018
+version: 20261026001
 description: |
-  Read-only verification audit. Runs baseline plus optional extended checks,
-  produces severity-ranked findings, and makes no code or commit changes.
-  Use when asked to "inspect", "assess", "check without fixing", or
-  "what's wrong with this" before deciding whether to run verify fix loops.
+  Read-only verification audit against agreed behavior, including missing work
+  and evidence gaps. Use for "inspect", "assess", or "check without fixing".
+  Report findings without code edits, commits, or mandatory duplicate reports.
 allowed-tools: 'execute read search'
 argument-hint: '[component or service to inspect]'
 

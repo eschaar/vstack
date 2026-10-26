@@ -1,7 +1,7 @@
 # requirements
 
 > Maintained by: **product** role\
-> Last updated: 2026-06-02
+> Last updated: 2026-10-26
 
 ______________________________________________________________________
 
@@ -118,6 +118,25 @@ ______________________________________________________________________
 - In `agentic`, the planner may schedule multiple ready stages in parallel when the DAG permits it.
 
 ______________________________________________________________________
+
+### FR-13 - proportional specification-driven delivery
+
+- Use one changedoc for durable change-local intent or explicit requests; clear,
+  low-risk work may use sufficient issue/chat context without a full role pipeline.
+- Keep requirements, observable criteria, scenarios, useful tasks, and evidence
+  together without duplicating shared baselines. Tasks have only real prerequisites.
+- Resolve material ambiguity before affected implementation. Preserve scope
+  ownership, local references, configured dependencies, gates, and approvals.
+- Assess actual agreed behavior, including missing work; report applicable
+  criterion evidence as passed, failed, not run, or no longer current. Required
+  failed/unrun checks block full verification; approved exceptions are not passes.
+- Reassess affected work after material revisions; bound remediation and stop on
+  blockers or repeated no progress. Keep policy-required reports authoritative,
+  otherwise use the existing changedoc or response.
+- Preserve historical documents and customized seeded templates. Add no CLI,
+  dependencies, configuration, automated gates, or mandatory report fields.
+- Keep source/rendered guidance consistent, concrete, and compact without
+  sacrificing required content. See [ADR-033](../architecture/adr/033-lightweight-sdd.md).
 
 ## non-functional requirements
 

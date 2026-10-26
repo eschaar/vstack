@@ -1,11 +1,9 @@
 name: requirements
-version: 20260421024
+version: 20261026001
 description: |
-  Collaborative requirements gathering and documentation. Clarifies what must be
-  built, defines success criteria, constraints, and non-functional requirements.
-  Produces a requirements.md document. Use when asked to "gather requirements",
-  "write the requirements", "define the spec", or "what are we building?".
-  Runs before architecture and design work begins.
+  Clarify requirements, constraints, and observable acceptance in the existing
+  intent source. Use for "gather requirements", "define the spec", or "what are
+  we building?". Keep change-local intent separate from shared system baselines.
 allowed-tools: 'execute read search edit'
 argument-hint: '[feature or system to document]'
 
