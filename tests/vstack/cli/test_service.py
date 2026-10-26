@@ -41,6 +41,7 @@ class TestCommandService:
         install_dir = tmp_path / ".github"
         mf = svc.manifest_for(install_dir)
         assert mf.path == tmp_path / ".vstack" / "vstack.json"
+        assert mf.legacy_path == install_dir / "vstack.json"
 
     def test_manifest_for_non_github_dir_uses_install_dir(self, tmp_path: Path) -> None:
         """manifest_for() places the manifest directly in install_dir for non-.github dirs."""
@@ -1155,6 +1156,121 @@ class TestCommandService:
         upgraded = json.loads((tmp_path / ".vstack" / "vstack.json").read_text(encoding="utf-8"))
         assert upgraded["manifest_version"] == 2
         assert upgraded["hash_algorithm"] == "sha256"
+
+    def test_manifest_upgrade_moves_legacy_location_without_overwriting(
+        self,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """manifest upgrade moves a legacy-location manifest into .vstack."""
+        install_dir = tmp_path / ".github"
+        install_dir.mkdir()
+        legacy_path = install_dir / "vstack.json"
+        legacy_path.write_text(
+            json.dumps(
+                {
+                    "manifest_version": 2,
+                    "hash_algorithm": "sha256",
+                    "vstack_version": "3.0.0",
+                    "installed_at": "2026-01-01T00:00:00Z",
+                    "artifacts": {},
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        service = CommandService(templates_root=TEMPLATES_ROOT)
+        assert service.manifest_upgrade(install_dir) == 0
+
+        current_path = tmp_path / ".vstack" / "vstack.json"
+        assert json.loads(current_path.read_text(encoding="utf-8"))["vstack_version"] == "3.0.0"
+        assert not legacy_path.exists()
+        assert "Migrated manifest location" in capsys.readouterr().out
+
+    def test_manifest_upgrade_refuses_conflicting_locations(
+        self,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """manifest upgrade preserves both files when both locations exist."""
+        install_dir = tmp_path / ".github"
+        install_dir.mkdir()
+        current_dir = tmp_path / ".vstack"
+        current_dir.mkdir()
+        legacy_path = install_dir / "vstack.json"
+        current_path = current_dir / "vstack.json"
+        legacy_content = '{"vstack_version":"legacy"}\n'
+        current_content = '{"vstack_version":"current"}\n'
+        legacy_path.write_text(legacy_content, encoding="utf-8")
+        current_path.write_text(current_content, encoding="utf-8")
+
+        service = CommandService(templates_root=TEMPLATES_ROOT)
+        assert service.manifest_upgrade(install_dir) == 1
+
+        assert legacy_path.read_text(encoding="utf-8") == legacy_content
+        assert current_path.read_text(encoding="utf-8") == current_content
+        assert "Conflicting manifests" in capsys.readouterr().err
+
+    def test_manifest_upgrade_preserves_legacy_source_when_destination_write_fails(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """A failed location migration leaves the legacy manifest available."""
+        install_dir = tmp_path / ".github"
+        install_dir.mkdir()
+        legacy_path = install_dir / "vstack.json"
+        legacy_content = json.dumps(
+            {
+                "manifest_version": 2,
+                "hash_algorithm": "sha256",
+                "vstack_version": "3.0.0",
+                "installed_at": "2026-01-01T00:00:00Z",
+                "artifacts": {},
+            }
+        )
+        legacy_path.write_text(legacy_content, encoding="utf-8")
+
+        def _fail_write_new(_manifest_file, _manifest) -> None:
+            raise OSError("destination unavailable")
+
+        monkeypatch.setattr("vstack.manifest.store.ManifestFile.write_new", _fail_write_new)
+        service = CommandService(templates_root=TEMPLATES_ROOT)
+        assert service.manifest_upgrade(install_dir) == 1
+
+        assert legacy_path.read_text(encoding="utf-8") == legacy_content
+        assert not (tmp_path / ".vstack" / "vstack.json").exists()
+        assert "Could not safely migrate" in capsys.readouterr().err
+
+    def test_install_fails_fast_for_legacy_manifest_location(
+        self,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Install directs users to manifest upgrade instead of losing tracking."""
+        install_dir = tmp_path / ".github"
+        install_dir.mkdir()
+        legacy_path = install_dir / "vstack.json"
+        legacy_path.write_text(
+            json.dumps(
+                {
+                    "manifest_version": 2,
+                    "hash_algorithm": "sha256",
+                    "vstack_version": "3.0.0",
+                    "installed_at": "2026-01-01T00:00:00Z",
+                    "artifacts": {},
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        service = CommandService(templates_root=TEMPLATES_ROOT)
+        assert service.install(install_dir, only=["skill"]) == 1
+
+        assert legacy_path.exists()
+        assert not (tmp_path / ".vstack" / "vstack.json").exists()
+        assert "vstack manifest upgrade" in capsys.readouterr().err
 
     def test_manifest_upgrade_backfill_adds_checksum_for_footer_tagged_legacy_entry(
         self,
