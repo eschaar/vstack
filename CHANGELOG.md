@@ -4,173 +4,150 @@
 
 ## [4.1.1](https://github.com/eschaar/vstack/compare/4.1.0...4.1.1) (2026-10-26)
 
-
 ### Maintenance
 
-* **deps:** bump filelock from 3.29.4 to 4.2.1 ([da8e050](https://github.com/eschaar/vstack/commit/da8e0502a0d0663049381ff49811dc2124fc0394))
-* **deps:** bump filelock from 3.29.4 to 4.2.1 ([#125](https://github.com/eschaar/vstack/issues/125)) ([34ed470](https://github.com/eschaar/vstack/commit/34ed470134a12155ad247c9990b3210589d2234d))
-* **deps:** consolidate pending Python and Actions updates ([9dfecb1](https://github.com/eschaar/vstack/commit/9dfecb1ab76970e91282c422cdd96cdf9b26b664))
+- **deps:** bump filelock from 3.29.4 to 4.2.1 ([#125](https://github.com/eschaar/vstack/issues/125)) ([34ed470](https://github.com/eschaar/vstack/commit/34ed470134a12155ad247c9990b3210589d2234d))
+- **deps:** consolidate pending Python and Actions updates ([9dfecb1](https://github.com/eschaar/vstack/commit/9dfecb1ab76970e91282c422cdd96cdf9b26b664))
 
 ## [4.1.0](https://github.com/eschaar/vstack/compare/4.0.0...4.1.0) (2026-10-26)
 
-
 ### Features
 
-* **workflow:** implement compact lightweight SDD guidance ([bf552b0](https://github.com/eschaar/vstack/commit/bf552b04778d8d09ddb414040cdb44845869d2d8))
-* **workflow:** implement lightweight SDD and stabilize delivery workflows ([#121](https://github.com/eschaar/vstack/issues/121)) ([946a166](https://github.com/eschaar/vstack/commit/946a16676aab40cc21963575b11b2b7d7eb94037))
-
+- **workflow:** implement compact lightweight SDD guidance ([bf552b0](https://github.com/eschaar/vstack/commit/bf552b04778d8d09ddb414040cdb44845869d2d8))
+- **workflow:** implement lightweight SDD and stabilize delivery workflows ([#121](https://github.com/eschaar/vstack/issues/121)) ([946a166](https://github.com/eschaar/vstack/commit/946a16676aab40cc21963575b11b2b7d7eb94037))
 
 ### Fixes
 
-* **changedoc:** align product ownership with the canonical change path ([65d98a7](https://github.com/eschaar/vstack/commit/65d98a78528dfae63cec7a6ec93207f837080626))
-* **manifest:** migrate legacy manifest location safely ([77c23a8](https://github.com/eschaar/vstack/commit/77c23a89274c76c0ec894bd42b9b88945f52087e))
-* **manifest:** preserve legacy MD5 digests on upgrade ([2362b62](https://github.com/eschaar/vstack/commit/2362b62e891b08d6727af7e82da154ae7b440ed2))
-* **manifest:** reject non-object JSON roots ([6dccbaa](https://github.com/eschaar/vstack/commit/6dccbaa1451e55bc7a3cb214bda3e9eeb764dc25))
-* **performance:** isolate baseline benchmarks from user Git state ([5f1f56e](https://github.com/eschaar/vstack/commit/5f1f56e62f7ad3a4ffa6978be41b64e563ed37ca))
-* **performance:** preserve component paths in baseline worktrees ([4882e84](https://github.com/eschaar/vstack/commit/4882e8495f39880c622dd2aad13c0a9179225a7c))
-* **performance:** select native runners and report benchmark failures ([2da88f3](https://github.com/eschaar/vstack/commit/2da88f3da7595a060445b2cfc6febdaff314556b))
-* **pr:** match push repository identity before reusing pull requests ([77386f4](https://github.com/eschaar/vstack/commit/77386f4e98ee003525e08ae30191a3596a428f81))
-* **pr:** push approved changes before reusing an existing pull request ([7badbfc](https://github.com/eschaar/vstack/commit/7badbfc485f8f8d0a70bc4fe0901aeedee7f9841))
-* **tester:** route operational reviews to verification skills ([89e8bca](https://github.com/eschaar/vstack/commit/89e8bcabfaef184e68f612ab423f8644caac172e))
-* **workflow:** reject malformed stage entries ([397b3cf](https://github.com/eschaar/vstack/commit/397b3cf33359c4ff08a24bd6a7d869b22e3ca697))
-
+- **changedoc:** align product ownership with the canonical change path ([65d98a7](https://github.com/eschaar/vstack/commit/65d98a78528dfae63cec7a6ec93207f837080626))
+- **manifest:** migrate legacy manifest location safely ([77c23a8](https://github.com/eschaar/vstack/commit/77c23a89274c76c0ec894bd42b9b88945f52087e))
+- **manifest:** preserve legacy MD5 digests on upgrade ([2362b62](https://github.com/eschaar/vstack/commit/2362b62e891b08d6727af7e82da154ae7b440ed2))
+- **manifest:** reject non-object JSON roots ([6dccbaa](https://github.com/eschaar/vstack/commit/6dccbaa1451e55bc7a3cb214bda3e9eeb764dc25))
+- **performance:** isolate baseline benchmarks from user Git state ([5f1f56e](https://github.com/eschaar/vstack/commit/5f1f56e62f7ad3a4ffa6978be41b64e563ed37ca))
+- **performance:** preserve component paths in baseline worktrees ([4882e84](https://github.com/eschaar/vstack/commit/4882e8495f39880c622dd2aad13c0a9179225a7c))
+- **performance:** select native runners and report benchmark failures ([2da88f3](https://github.com/eschaar/vstack/commit/2da88f3da7595a060445b2cfc6febdaff314556b))
+- **pr:** match push repository identity before reusing pull requests ([77386f4](https://github.com/eschaar/vstack/commit/77386f4e98ee003525e08ae30191a3596a428f81))
+- **pr:** push approved changes before reusing an existing pull request ([7badbfc](https://github.com/eschaar/vstack/commit/7badbfc485f8f8d0a70bc4fe0901aeedee7f9841))
+- **tester:** route operational reviews to verification skills ([89e8bca](https://github.com/eschaar/vstack/commit/89e8bcabfaef184e68f612ab423f8644caac172e))
+- **workflow:** reject malformed stage entries ([397b3cf](https://github.com/eschaar/vstack/commit/397b3cf33359c4ff08a24bd6a7d869b22e3ca697))
 
 ### Documentation
 
-* **workflow:** align baseline claims with the shipped delivery model ([a0c0093](https://github.com/eschaar/vstack/commit/a0c00939142b1062e2fd00dc66418f50da3331af))
-
+- **workflow:** align baseline claims with the shipped delivery model ([a0c0093](https://github.com/eschaar/vstack/commit/a0c00939142b1062e2fd00dc66418f50da3331af))
 
 ### Maintenance
 
-* **ci:** verify the built wheel install lifecycle before publication ([d7d37ff](https://github.com/eschaar/vstack/commit/d7d37ff26e55af81fdba754789ce4541af7ea3a4))
-
+- **ci:** verify the built wheel install lifecycle before publication ([d7d37ff](https://github.com/eschaar/vstack/commit/d7d37ff26e55af81fdba754789ce4541af7ea3a4))
 
 ### Tests
 
-* **workflow:** complete invalid-stage diagnostics coverage ([541ee64](https://github.com/eschaar/vstack/commit/541ee6489ae1b864d4597e3ffbdcd070c4147e30))
+- **workflow:** complete invalid-stage diagnostics coverage ([541ee64](https://github.com/eschaar/vstack/commit/541ee6489ae1b864d4597e3ffbdcd070c4147e30))
 
 ## [4.0.0](https://github.com/eschaar/vstack/compare/3.7.8...4.0.0) (2026-10-17)
 
-
 ### ⚠ BREAKING CHANGES
 
-* **artifacts:** Remove prompt artifact selectors, vstack.prompts, PromptGenerator, and PROMPT_SCHEMA. Use the documented replacement skills and run vstack init to migrate managed prompts.
+- **artifacts:** Remove prompt artifact selectors, vstack.prompts, PromptGenerator, and PROMPT_SCHEMA. Use the documented replacement skills and run vstack init to migrate managed prompts.
 
 ### Features
 
-* **artifacts:** replace prompts with skills and migrate managed installs ([6bda5ce](https://github.com/eschaar/vstack/commit/6bda5ce79cff2c4c6f721b85abfd939c938234fa))
-* **python:** support Python 3.15 and default to Python 3.14 ([47003f2](https://github.com/eschaar/vstack/commit/47003f279cb9965ec6bedc39f689d752d4664792))
-
+- **artifacts:** replace prompts with skills and migrate managed installs ([6bda5ce](https://github.com/eschaar/vstack/commit/6bda5ce79cff2c4c6f721b85abfd939c938234fa))
+- **python:** support Python 3.15 and default to Python 3.14 ([47003f2](https://github.com/eschaar/vstack/commit/47003f279cb9965ec6bedc39f689d752d4664792))
 
 ### Fixes
 
-* **migration:** preserve prompts until replacement skills fully resolve ([8837770](https://github.com/eschaar/vstack/commit/8837770c5761413bfd973c75f65f5a127d89c57e))
-* **skills:** audit consumer project artifacts in workflow-check ([ca87b1c](https://github.com/eschaar/vstack/commit/ca87b1cce7493444e810885cb8ef084b51da9eb3))
-* **skills:** keep vstack artifact audit repository-local ([878a4c7](https://github.com/eschaar/vstack/commit/878a4c788e9c78b9e45c16d2db5de74ca4168424))
-
+- **migration:** preserve prompts until replacement skills fully resolve ([8837770](https://github.com/eschaar/vstack/commit/8837770c5761413bfd973c75f65f5a127d89c57e))
+- **skills:** audit consumer project artifacts in workflow-check ([ca87b1c](https://github.com/eschaar/vstack/commit/ca87b1cce7493444e810885cb8ef084b51da9eb3))
+- **skills:** keep vstack artifact audit repository-local ([878a4c7](https://github.com/eschaar/vstack/commit/878a4c788e9c78b9e45c16d2db5de74ca4168424))
 
 ### Maintenance
 
-* **ci:** bump trufflehog to 3.97.4 ([555df84](https://github.com/eschaar/vstack/commit/555df8454b184adb3f67710d7b905971e50ddf52))
-* **deps:** bump ruff mypy and tox development tools ([72b12a7](https://github.com/eschaar/vstack/commit/72b12a7e580c4188842af2a7d04f3d7e8bc505b1))
-* **deps:** bump the pip-patch-minor group across 1 directory with 3 updates ([9eaffaf](https://github.com/eschaar/vstack/commit/9eaffaf900d8a7bfdf1193bd66fdf1076205c729))
-* **deps:** bump types-pyyaml to 6.0.12.20260906 ([94675e2](https://github.com/eschaar/vstack/commit/94675e2abe7503c59d3738084a3644a784284906))
-* **deps:** bump virtualenv to 21.7.13 ([8b8f158](https://github.com/eschaar/vstack/commit/8b8f158268cd2138c12ff8598d13607061a15a84))
+- **ci:** bump trufflehog to 3.97.4 ([555df84](https://github.com/eschaar/vstack/commit/555df8454b184adb3f67710d7b905971e50ddf52))
+- **deps:** bump ruff mypy and tox development tools ([72b12a7](https://github.com/eschaar/vstack/commit/72b12a7e580c4188842af2a7d04f3d7e8bc505b1))
+- **deps:** bump the pip-patch-minor group across 1 directory with 3 updates ([9eaffaf](https://github.com/eschaar/vstack/commit/9eaffaf900d8a7bfdf1193bd66fdf1076205c729))
+- **deps:** bump types-pyyaml to 6.0.12.20260906 ([94675e2](https://github.com/eschaar/vstack/commit/94675e2abe7503c59d3738084a3644a784284906))
+- **deps:** bump virtualenv to 21.7.13 ([8b8f158](https://github.com/eschaar/vstack/commit/8b8f158268cd2138c12ff8598d13607061a15a84))
 
 ## [3.7.8](https://github.com/eschaar/vstack/compare/3.7.7...3.7.8) (2026-09-10)
 
-
 ### Maintenance
 
-* **ci:** bump trufflesecurity/trufflehog in the gha-patch-minor group ([5b14058](https://github.com/eschaar/vstack/commit/5b140589cf547c262884bfe1ab73103d37650548))
-* **deps:** bump the pip-patch-minor group across 1 directory with 3 updates ([1df5724](https://github.com/eschaar/vstack/commit/1df572413a25b9015eae00fc0d7863425bb6c3d5))
-* **deps:** bump types-pyyaml from 6.0.12.20260724 to 6.0.12.20260815 ([832a46d](https://github.com/eschaar/vstack/commit/832a46de7b40b45221bc895c7c9fd448723943dd))
+- **ci:** bump trufflesecurity/trufflehog in the gha-patch-minor group ([5b14058](https://github.com/eschaar/vstack/commit/5b140589cf547c262884bfe1ab73103d37650548))
+- **deps:** bump the pip-patch-minor group across 1 directory with 3 updates ([1df5724](https://github.com/eschaar/vstack/commit/1df572413a25b9015eae00fc0d7863425bb6c3d5))
+- **deps:** bump types-pyyaml from 6.0.12.20260724 to 6.0.12.20260815 ([832a46d](https://github.com/eschaar/vstack/commit/832a46de7b40b45221bc895c7c9fd448723943dd))
 
 ## [3.7.7](https://github.com/eschaar/vstack/compare/3.7.6...3.7.7) (2026-08-16)
 
-
 ### Maintenance
 
-* **ci:** bump trufflesecurity/trufflehog in the gha-patch-minor group ([a59614e](https://github.com/eschaar/vstack/commit/a59614e2c3cc33832dac635947a03df7442852f6))
-* **deps:** bump the pip-patch-minor group across 1 directory with 3 updates ([e0b8b0e](https://github.com/eschaar/vstack/commit/e0b8b0e1ee157044246f8812fe213ec929324e21))
+- **ci:** bump trufflesecurity/trufflehog in the gha-patch-minor group ([a59614e](https://github.com/eschaar/vstack/commit/a59614e2c3cc33832dac635947a03df7442852f6))
+- **deps:** bump the pip-patch-minor group across 1 directory with 3 updates ([e0b8b0e](https://github.com/eschaar/vstack/commit/e0b8b0e1ee157044246f8812fe213ec929324e21))
 
 ## [3.7.6](https://github.com/eschaar/vstack/compare/3.7.5...3.7.6) (2026-08-02)
 
-
 ### Maintenance
 
-* **ci:** bump pypa/gh-action-pypi-publish in the gha-patch-minor group ([0278978](https://github.com/eschaar/vstack/commit/0278978a847ab6097af498a30a3398448fc1567a))
+- **ci:** bump pypa/gh-action-pypi-publish in the gha-patch-minor group ([0278978](https://github.com/eschaar/vstack/commit/0278978a847ab6097af498a30a3398448fc1567a))
 
 ## [3.7.5](https://github.com/eschaar/vstack/compare/3.7.4...3.7.5) (2026-07-31)
 
-
 ### Fixes
 
-* fix ruff format violations in refactor skill template Python code blocks ([745b0f9](https://github.com/eschaar/vstack/commit/745b0f96b167af7b9ce00925c3468f5f1e1dd77f))
-
+- fix ruff format violations in refactor skill template Python code blocks ([745b0f9](https://github.com/eschaar/vstack/commit/745b0f96b167af7b9ce00925c3468f5f1e1dd77f))
 
 ### Maintenance
 
-* **ci:** bump actions/setup-python from 6.3.0 to 7.0.0 ([55c518e](https://github.com/eschaar/vstack/commit/55c518efd489b8adba53392d318420b48ddf5ea1))
-* **ci:** bump the gha-patch-minor group with 2 updates ([3efa7b4](https://github.com/eschaar/vstack/commit/3efa7b459144fc8e4005c0825a9406b48ae5ad6d))
-* **deps:** bump the pip-patch-minor group across 1 directory with 3 updates ([9081f77](https://github.com/eschaar/vstack/commit/9081f77edf2c5dd03d2fc96ca23a9ebe5ab36921))
-* **deps:** bump types-pyyaml from 6.0.12.20260518 to 6.0.12.20260724 ([5dfd73f](https://github.com/eschaar/vstack/commit/5dfd73f4e3ec65d2e7d8f14b8212e0bda4538133))
+- **ci:** bump actions/setup-python from 6.3.0 to 7.0.0 ([55c518e](https://github.com/eschaar/vstack/commit/55c518efd489b8adba53392d318420b48ddf5ea1))
+- **ci:** bump the gha-patch-minor group with 2 updates ([3efa7b4](https://github.com/eschaar/vstack/commit/3efa7b459144fc8e4005c0825a9406b48ae5ad6d))
+- **deps:** bump the pip-patch-minor group across 1 directory with 3 updates ([9081f77](https://github.com/eschaar/vstack/commit/9081f77edf2c5dd03d2fc96ca23a9ebe5ab36921))
+- **deps:** bump types-pyyaml from 6.0.12.20260518 to 6.0.12.20260724 ([5dfd73f](https://github.com/eschaar/vstack/commit/5dfd73f4e3ec65d2e7d8f14b8212e0bda4538133))
 
 ## [3.7.4](https://github.com/eschaar/vstack/compare/3.7.3...3.7.4) (2026-07-19)
 
-
 ### Maintenance
 
-* **ci:** bump pypa/gh-action-pypi-publish in the gha-patch-minor group ([5d8b0ac](https://github.com/eschaar/vstack/commit/5d8b0ac456e1fd669d7e970753cf69efb2a9f37b))
-* **deps:** bump the pip-patch-minor group with 3 updates ([74e2eb6](https://github.com/eschaar/vstack/commit/74e2eb687f6969b58eb6992b53e671537951a5a7))
+- **ci:** bump pypa/gh-action-pypi-publish in the gha-patch-minor group ([5d8b0ac](https://github.com/eschaar/vstack/commit/5d8b0ac456e1fd669d7e970753cf69efb2a9f37b))
+- **deps:** bump the pip-patch-minor group with 3 updates ([74e2eb6](https://github.com/eschaar/vstack/commit/74e2eb687f6969b58eb6992b53e671537951a5a7))
 
 ## [3.7.3](https://github.com/eschaar/vstack/compare/3.7.2...3.7.3) (2026-07-13)
 
-
 ### Maintenance
 
-* **ci:** bump trufflesecurity/trufflehog in the gha-patch-minor group ([ba145a3](https://github.com/eschaar/vstack/commit/ba145a3602478923d186d4673e88646ad7919e33))
-* **deps:** bump the pip-patch-minor group with 3 updates ([5067fcb](https://github.com/eschaar/vstack/commit/5067fcb7cf7ba3422440c87397223b8e94a8cd95))
+- **ci:** bump trufflesecurity/trufflehog in the gha-patch-minor group ([ba145a3](https://github.com/eschaar/vstack/commit/ba145a3602478923d186d4673e88646ad7919e33))
+- **deps:** bump the pip-patch-minor group with 3 updates ([5067fcb](https://github.com/eschaar/vstack/commit/5067fcb7cf7ba3422440c87397223b8e94a8cd95))
 
 ## [3.7.2](https://github.com/eschaar/vstack/compare/3.7.1...3.7.2) (2026-07-05)
 
-
 ### Maintenance
 
-* **ci:** bump trufflesecurity/trufflehog in the gha-patch-minor group ([d1f7091](https://github.com/eschaar/vstack/commit/d1f70914d0254c33fa91f1eddb01ce9226e4c7c1))
+- **ci:** bump trufflesecurity/trufflehog in the gha-patch-minor group ([d1f7091](https://github.com/eschaar/vstack/commit/d1f70914d0254c33fa91f1eddb01ce9226e4c7c1))
 
 ## [3.7.1](https://github.com/eschaar/vstack/compare/3.7.0...3.7.1) (2026-06-29)
 
-
 ### Maintenance
 
-* **ci:** bump actions/setup-python in the gha-patch-minor group ([8d4fae2](https://github.com/eschaar/vstack/commit/8d4fae2ccc540e5a7e5039d98d95133221462d13))
+- **ci:** bump actions/setup-python in the gha-patch-minor group ([8d4fae2](https://github.com/eschaar/vstack/commit/8d4fae2ccc540e5a7e5039d98d95133221462d13))
 
 ## [3.7.0](https://github.com/eschaar/vstack/compare/3.6.0...3.7.0) (2026-06-27)
 
-
 ### Features
 
-* **agents:** add compact shared safety guardrails ([0d57aa0](https://github.com/eschaar/vstack/commit/0d57aa0417d3e9af08d2cacf1c378175ce4356e0))
-* **artifacts:** convert reasoning to prompt type, add advise skill ([120e99b](https://github.com/eschaar/vstack/commit/120e99b1a6bf15d2fdfd00d9eb16f6f125c68351))
-* **skills:** add changedoc, lazy, and simplify workflows ([a710d8e](https://github.com/eschaar/vstack/commit/a710d8e304bac16e85a3d8add68c22ab358d4a08))
-
+- **agents:** add compact shared safety guardrails ([0d57aa0](https://github.com/eschaar/vstack/commit/0d57aa0417d3e9af08d2cacf1c378175ce4356e0))
+- **artifacts:** convert reasoning to prompt type, add advise skill ([120e99b](https://github.com/eschaar/vstack/commit/120e99b1a6bf15d2fdfd00d9eb16f6f125c68351))
+- **skills:** add changedoc, lazy, and simplify workflows ([a710d8e](https://github.com/eschaar/vstack/commit/a710d8e304bac16e85a3d8add68c22ab358d4a08))
 
 ### Documentation
 
-* clarify vstack installation for downstream users ([5c238ad](https://github.com/eschaar/vstack/commit/5c238adb1fc7319aaee2f7179f86d29be4bc66e1))
-* **roadmap:** add configurable skill output paths candidate ([85b767c](https://github.com/eschaar/vstack/commit/85b767cc448dba57bcd2bc700bca223a647478b6))
-* **skills:** document changedoc ownership and usage ([9e87458](https://github.com/eschaar/vstack/commit/9e87458654688ae6d781e0ccddc8ad8751660885))
-
+- clarify vstack installation for downstream users ([5c238ad](https://github.com/eschaar/vstack/commit/5c238adb1fc7319aaee2f7179f86d29be4bc66e1))
+- **roadmap:** add configurable skill output paths candidate ([85b767c](https://github.com/eschaar/vstack/commit/85b767cc448dba57bcd2bc700bca223a647478b6))
+- **skills:** document changedoc ownership and usage ([9e87458](https://github.com/eschaar/vstack/commit/9e87458654688ae6d781e0ccddc8ad8751660885))
 
 ### Maintenance
 
-* **generate:** sync installed artifacts after template updates ([99da10e](https://github.com/eschaar/vstack/commit/99da10ed62b238fdc6196dbc85b79b3d388fa682))
-
+- **generate:** sync installed artifacts after template updates ([99da10e](https://github.com/eschaar/vstack/commit/99da10ed62b238fdc6196dbc85b79b3d388fa682))
 
 ### Tests
 
-* **artifacts:** sync planner and product golden fixtures ([8682a87](https://github.com/eschaar/vstack/commit/8682a878fc91fdcb0a62b7e2cb836151841d9a32))
+- **artifacts:** sync planner and product golden fixtures ([8682a87](https://github.com/eschaar/vstack/commit/8682a878fc91fdcb0a62b7e2cb836151841d9a32))
 
 ## [3.6.0](https://github.com/eschaar/vstack/compare/3.5.2...3.6.0) (2026-06-21)
 
