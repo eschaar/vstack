@@ -340,7 +340,7 @@ flowchart TD
 
 - Each role is scoped to its domain
 - Each role reads its inputs from disk (artifacts from upstream roles)
-- User approval is required after each stage output
+- User approval follows each stage's configured `hitl` policy; the diagram shows `always`
 - Handoffs are only for happy-path continuation
 
 ### flow principles

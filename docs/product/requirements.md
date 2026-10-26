@@ -100,7 +100,8 @@ ______________________________________________________________________
 
 - 6 delivery agent roles: `product`, `architect`, `designer`, `engineer`,
   `tester`, `release`, plus a `planner` coordinator agent.
-- 42 skills across the role set with canonical names enforced at source-verify time.
+- 56 distributed skills across the role set with canonical names enforced at source-verify time.
+  Repository-only skills are outside the installed catalog.
 
 ### FR-11 — workflow mode semantics
 
@@ -162,7 +163,7 @@ ______________________________________________________________________
 1. `vstack verify --target DIR` reports zero errors on a clean install.
 1. `vstack validate` exits 0 when all source templates resolve cleanly.
 1. Locally modified tracked files are preserved on re-install by default (FR-4).
-1. All 42 canonical skill names are present after a full install.
+1. All 56 canonical skill names are present after a full install.
 1. `vstack manifest upgrade` migrates a legacy manifest without data loss.
 1. `brew install eschaar/vstack/vstack` installs and runs `vstack --help` and
    `vstack --version` without errors on a supported macOS or Linux runner.
@@ -171,7 +172,7 @@ ______________________________________________________________________
 
 ## constraints
 
-1. No external runtime dependencies (stdlib-only at runtime).
+1. PyYAML is the only external runtime dependency; use the standard library otherwise.
 1. Generated output lives under `.github/` only; source templates are never modified
    at runtime.
 1. Manifest schema is versioned; old manifests require explicit upgrade before further
