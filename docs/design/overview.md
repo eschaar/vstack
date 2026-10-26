@@ -19,6 +19,11 @@ Coordinated runs may also use a disposable handoff cache under
 prompt context between delegated stages; it never replaces role-owned artifacts
 or `.vstack/vstack.json`.
 
+Release publishing smoke-tests the built wheel outside the source checkout with
+Python isolated mode (`-I`). It exercises install, source/output verification,
+reinstall, and tracked-artifact uninstall before publishing. This checks packaged
+templates and migrations, not just whether the CLI can display help.
+
 ______________________________________________________________________
 
 ## 1. domain model

@@ -12,6 +12,20 @@ WORKFLOW_PATH = Path(__file__).resolve().parents[2] / ".github/workflows/publish
 class TestPublishWorkflow:
     """Verify publish workflow contracts for PyPI and Homebrew distribution."""
 
+    def test_built_wheel_smoke_covers_isolated_install_lifecycle(self) -> None:
+        """Publish checks packaged resources, reinstall and removal outside the checkout."""
+        workflow = yaml.safe_load(WORKFLOW_PATH.read_text(encoding="utf-8"))
+        steps = workflow["jobs"]["publish"]["steps"]
+        smoke = next(step for step in steps if step["name"] == "Smoke test built wheel")["run"]
+        assert "python -m pip install dist/*.whl" in smoke
+        assert 'cd "$SMOKE_ROOT"' in smoke
+        assert "mkdir project" in smoke
+        assert smoke.count('python -I -m vstack install --target "$SMOKE_ROOT/project"') == 2
+        assert smoke.count('python -I -m vstack verify --target "$SMOKE_ROOT/project"') == 2
+        assert 'python -I -m vstack uninstall --target "$SMOKE_ROOT/project"' in smoke
+        assert 'test ! -e "$SMOKE_ROOT/project/.github/skills/changedoc/SKILL.md"' in smoke
+        assert "|| true" not in smoke
+
     def test_homebrew_job_is_gated_and_sequential(self) -> None:
         """Homebrew publish should run only after PyPI publish behind a feature flag."""
         workflow = yaml.safe_load(WORKFLOW_PATH.read_text(encoding="utf-8"))

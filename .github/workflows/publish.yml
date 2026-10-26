@@ -114,7 +114,16 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install dist/*.whl
-          vstack --help >/dev/null
+          SMOKE_ROOT=$(mktemp -d)
+          cd "$SMOKE_ROOT"
+          mkdir project
+          python -I -m vstack --help
+          python -I -m vstack install --target "$SMOKE_ROOT/project"
+          python -I -m vstack verify --target "$SMOKE_ROOT/project"
+          python -I -m vstack install --target "$SMOKE_ROOT/project"
+          python -I -m vstack verify --target "$SMOKE_ROOT/project"
+          python -I -m vstack uninstall --target "$SMOKE_ROOT/project"
+          test ! -e "$SMOKE_ROOT/project/.github/skills/changedoc/SKILL.md"
 
       - name: Validate built artifact version
         run: |
