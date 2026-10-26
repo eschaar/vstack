@@ -2,6 +2,44 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [4.1.0](https://github.com/eschaar/vstack/compare/4.0.0...4.1.0) (2026-10-26)
+
+
+### Features
+
+* **workflow:** implement compact lightweight SDD guidance ([bf552b0](https://github.com/eschaar/vstack/commit/bf552b04778d8d09ddb414040cdb44845869d2d8))
+* **workflow:** implement lightweight SDD and stabilize delivery workflows ([#121](https://github.com/eschaar/vstack/issues/121)) ([946a166](https://github.com/eschaar/vstack/commit/946a16676aab40cc21963575b11b2b7d7eb94037))
+
+
+### Fixes
+
+* **changedoc:** align product ownership with the canonical change path ([65d98a7](https://github.com/eschaar/vstack/commit/65d98a78528dfae63cec7a6ec93207f837080626))
+* **manifest:** migrate legacy manifest location safely ([77c23a8](https://github.com/eschaar/vstack/commit/77c23a89274c76c0ec894bd42b9b88945f52087e))
+* **manifest:** preserve legacy MD5 digests on upgrade ([2362b62](https://github.com/eschaar/vstack/commit/2362b62e891b08d6727af7e82da154ae7b440ed2))
+* **manifest:** reject non-object JSON roots ([6dccbaa](https://github.com/eschaar/vstack/commit/6dccbaa1451e55bc7a3cb214bda3e9eeb764dc25))
+* **performance:** isolate baseline benchmarks from user Git state ([5f1f56e](https://github.com/eschaar/vstack/commit/5f1f56e62f7ad3a4ffa6978be41b64e563ed37ca))
+* **performance:** preserve component paths in baseline worktrees ([4882e84](https://github.com/eschaar/vstack/commit/4882e8495f39880c622dd2aad13c0a9179225a7c))
+* **performance:** select native runners and report benchmark failures ([2da88f3](https://github.com/eschaar/vstack/commit/2da88f3da7595a060445b2cfc6febdaff314556b))
+* **pr:** match push repository identity before reusing pull requests ([77386f4](https://github.com/eschaar/vstack/commit/77386f4e98ee003525e08ae30191a3596a428f81))
+* **pr:** push approved changes before reusing an existing pull request ([7badbfc](https://github.com/eschaar/vstack/commit/7badbfc485f8f8d0a70bc4fe0901aeedee7f9841))
+* **tester:** route operational reviews to verification skills ([89e8bca](https://github.com/eschaar/vstack/commit/89e8bcabfaef184e68f612ab423f8644caac172e))
+* **workflow:** reject malformed stage entries ([397b3cf](https://github.com/eschaar/vstack/commit/397b3cf33359c4ff08a24bd6a7d869b22e3ca697))
+
+
+### Documentation
+
+* **workflow:** align baseline claims with the shipped delivery model ([a0c0093](https://github.com/eschaar/vstack/commit/a0c00939142b1062e2fd00dc66418f50da3331af))
+
+
+### Maintenance
+
+* **ci:** verify the built wheel install lifecycle before publication ([d7d37ff](https://github.com/eschaar/vstack/commit/d7d37ff26e55af81fdba754789ce4541af7ea3a4))
+
+
+### Tests
+
+* **workflow:** complete invalid-stage diagnostics coverage ([541ee64](https://github.com/eschaar/vstack/commit/541ee6489ae1b864d4597e3ffbdcd070c4147e30))
+
 ## [4.0.0](https://github.com/eschaar/vstack/compare/3.7.8...4.0.0) (2026-10-17)
 
 
