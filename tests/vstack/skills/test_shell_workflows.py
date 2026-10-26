@@ -26,8 +26,13 @@ def _bash_block(text: str, heading: str) -> str:
 
 @pytest.mark.parametrize("state", ["clean", "unstaged", "staged", "untracked"])
 @pytest.mark.parametrize("benchmark_status", [0, 9])
+@pytest.mark.parametrize("component_path", ["", "services/go service"])
 def test_performance_baseline_preserves_user_git_state(
-    tmp_path: Path, generated_dir: Path, state: str, benchmark_status: int
+    tmp_path: Path,
+    generated_dir: Path,
+    state: str,
+    benchmark_status: int,
+    component_path: str,
 ) -> None:
     """Baseline success and failure leave branches, index, files and stashes intact."""
     repo = tmp_path / "user project"
@@ -35,9 +40,14 @@ def test_performance_baseline_preserves_user_git_state(
     _git(repo, "init", "-b", "main")
     _git(repo, "config", "user.email", "fixture@example.invalid")
     _git(repo, "config", "user.name", "Fixture")
-    tracked = repo / "tracked.txt"
+    component = repo / component_path
+    component.mkdir(parents=True, exist_ok=True)
+    (repo / "package.json").write_text("{}", encoding="utf-8")
+    if component_path:
+        (component / "go.mod").write_text("module fixture\n", encoding="utf-8")
+    tracked = component / "tracked.txt"
     tracked.write_text("base\n", encoding="utf-8")
-    _git(repo, "add", "tracked.txt")
+    _git(repo, "add", ".")
     _git(repo, "commit", "-m", "base")
     tracked.write_text("older unrelated work\n", encoding="utf-8")
     _git(repo, "stash", "push", "-m", "unrelated stash")
@@ -47,7 +57,7 @@ def test_performance_baseline_preserves_user_git_state(
     if state in {"unstaged", "staged"}:
         tracked.write_text("user changes\n", encoding="utf-8")
     if state == "staged":
-        _git(repo, "add", "tracked.txt")
+        _git(repo, "add", str(tracked.relative_to(repo)))
     if state == "untracked":
         (repo / "user.txt").write_text("keep me\n", encoding="utf-8")
     before = (
@@ -66,7 +76,7 @@ def test_performance_baseline_preserves_user_git_state(
     )
     result = subprocess.run(
         ["bash", "-c", script],
-        cwd=repo,
+        cwd=component,
         env={**os.environ, "TMPDIR": str(tmp_path)},
         capture_output=True,
         text=True,
@@ -84,6 +94,37 @@ def test_performance_baseline_preserves_user_git_state(
     assert _git(repo, "worktree", "list", "--porcelain").count("worktree ") == 1
     if state == "untracked":
         assert (repo / "user.txt").read_text(encoding="utf-8") == "keep me\n"
+
+
+def test_performance_missing_base_component_does_not_benchmark_root(
+    tmp_path: Path, generated_dir: Path
+) -> None:
+    """A newly added component cannot produce a false root-level comparison."""
+    _git(tmp_path, "init", "-b", "main")
+    _git(tmp_path, "config", "user.email", "fixture@example.invalid")
+    _git(tmp_path, "config", "user.name", "Fixture")
+    (tmp_path / "package.json").write_text("{}", encoding="utf-8")
+    _git(tmp_path, "add", ".")
+    _git(tmp_path, "commit", "-m", "base")
+    _git(tmp_path, "switch", "-c", "feature/new-component")
+    component = tmp_path / "services" / "new"
+    component.mkdir(parents=True)
+    (component / "go.mod").write_text("module fixture\n", encoding="utf-8")
+    _git(tmp_path, "add", ".")
+    _git(tmp_path, "commit", "-m", "add component")
+    text = (generated_dir / "performance" / "SKILL.md").read_text(encoding="utf-8")
+    script = _bash_block(text, "## Phase 2:").replace('BASE_REF="<base>"', 'BASE_REF="main"')
+    result = subprocess.run(
+        ["bash", "-c", "run_benchmark() { echo WRONG_COMPONENT; }\n" + script],
+        cwd=component,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 1
+    assert "baseline benchmark failed" in result.stdout
+    assert "WRONG_COMPONENT" not in result.stdout
+    assert _git(tmp_path, "status", "--porcelain") == ""
+    assert _git(tmp_path, "worktree", "list", "--porcelain").count("worktree ") == 1
 
 
 @pytest.mark.parametrize(

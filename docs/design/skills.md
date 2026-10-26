@@ -154,6 +154,9 @@ See [ADR-033](../architecture/adr/033-lightweight-sdd.md).
 
 `performance` benchmarks the base revision in a detached temporary worktree.
 It preserves the user's branch, index, working files, and existing stashes.
+Run both revisions in the same repository-relative component directory. A
+component missing from the base revision makes comparison unavailable, not a
+reason to benchmark a different root-level project.
 Failed benchmarks remain failures; leftover benchmark files require inspection
 before cleanup, never forced removal.
 Select an existing component-native benchmark runner before execution. Missing

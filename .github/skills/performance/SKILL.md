@@ -105,10 +105,11 @@ executed checks with nonzero exit status are `failed`. Keep error output visible
 
 ```bash
 BASE_REF="<base>"
+COMPONENT_DIR=$(git rev-parse --show-prefix) || exit $?
 BASE_DIR=$(mktemp -d) || exit 1
 git worktree add --detach "$BASE_DIR/baseline" "$BASE_REF" || exit 1
 (
-  cd "$BASE_DIR/baseline" || exit 1
+  cd "$BASE_DIR/baseline/$COMPONENT_DIR" || exit 1
   run_benchmark
 )
 BASE_STATUS=$?
@@ -121,7 +122,10 @@ fi
 ```
 
 Use an isolated worktree; never stash or switch the user's working tree.
-Use `run_benchmark` for the same selected command as Phase 1.
+Start Phase 2 in the same component directory as Phase 1; preserve its
+repository-relative path and use the same `run_benchmark` command.
+If the component does not exist at the base revision, report comparison unavailable;
+never substitute a root-level benchmark.
 If benchmarks leave files behind, report the worktree path and inspect them
 before cleanup. Do not force-remove it or discard user files.
 
@@ -237,4 +241,4 @@ Only measured, comparable results support a regression verdict.
 ```
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"performance","artifact_type":"skill","artifact_version":"20261026003","generator":"vstack","vstack_version":"4.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"performance","artifact_type":"skill","artifact_version":"20261026004","generator":"vstack","vstack_version":"4.0.0"} -->
