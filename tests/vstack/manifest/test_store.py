@@ -503,6 +503,15 @@ class TestManifestFile:
         assert mf.read() is None
         assert mf.read_error is None
 
+    @pytest.mark.parametrize("root_value", [[], None, "manifest", 42])
+    def test_read_rejects_non_object_json_root(self, tmp_path, root_value) -> None:
+        """Non-object JSON roots are reported as invalid manifest data."""
+        mf = ManifestFile(parent_dir=tmp_path)
+        mf.path.write_text(json.dumps(root_value), encoding="utf-8")
+
+        assert mf.read() is None
+        assert mf.read_error == "Invalid manifest format in vstack.json"
+
     def test_write_and_read_manifest(self, tmp_path) -> None:
         """Test that write and read manifest."""
         mf = ManifestFile(parent_dir=tmp_path)

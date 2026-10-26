@@ -1028,6 +1028,21 @@ class TestCommandService:
         assert svc.manifest_upgrade(tmp_path) == 1
         assert "No manifest found to upgrade." in capsys.readouterr().out
 
+    def test_manifest_upgrade_reports_non_object_json_without_traceback(
+        self,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Malformed JSON root values become the standard manifest read error."""
+        (tmp_path / "vstack.json").write_text("null", encoding="utf-8")
+
+        service = CommandService(templates_root=tmp_path)
+        assert service.manifest_upgrade(tmp_path) == 1
+
+        captured = capsys.readouterr()
+        assert "ERROR: Invalid manifest format in vstack.json" in captured.err
+        assert "Traceback" not in captured.err
+
     def test_manifest_upgrade_noop_when_current_schema(
         self,
         monkeypatch: pytest.MonkeyPatch,

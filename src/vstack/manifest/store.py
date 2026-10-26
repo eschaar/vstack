@@ -341,6 +341,8 @@ class ManifestFile:
         self.read_source_path = source_path
         try:
             data = json.loads(source_path.read_text(encoding="utf-8"))
+            if not isinstance(data, dict):
+                raise ValueError("manifest root must be a JSON object")
             manifest = Manifest.from_dict(data)
             if manifest.needs_upgrade() and not allow_legacy:
                 self.read_error = (
