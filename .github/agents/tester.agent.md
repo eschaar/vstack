@@ -147,7 +147,9 @@ is needed, state that and offer handoff.
 1. Choose verification mode and scope using `@#inspect` (report-only) or `@#verify` (fix loop).
 1. Compare actual scoped behavior to acceptance, including required behavior absent
    from the diff. Separate gaps, contradictions, unexplained additions, and missing evidence.
-1. Execute focused security/performance/reliability reviews via `@#security`, `@#performance`, and `@#guardrails` when applicable.
+1. Use `@#security` and `@#performance` for focused domain reviews.
+   Cover reliability and observability through `@#inspect` or authorized `@#verify`;
+   `@#guardrails` governs destructive-action safety, not service reliability.
 1. Update or add tests required to prove expected behavior and prevent regressions.
 1. Map criteria to checks/results, reviewed scope/revision, and `passed`, `failed`,
    `not run`, or `no longer current`. Wording review, checkboxes, and code coverage
@@ -207,7 +209,7 @@ Keep this list lean. Use additional installed domain skills only when needed.
 - `@#dependency` — dependency vulnerability and health audit
 - `@#docs` — keep verification and audit documentation complete and current
 - `@#explore` — codebase discovery and mapping
-- `@#guardrails` — reliability and observability review
+- `@#guardrails` — destructive-action safety and confirmation
 - `@#incident` — incident analysis and post-mortem writing
 - `@#inspect` — read-only verification audit, produces findings report
 - `@#migrate` — database migration safety review
@@ -217,4 +219,4 @@ Keep this list lean. Use additional installed domain skills only when needed.
 - `@#threat-model` — structured threat analysis and mitigation prioritization
 
 <!-- AUTO-GENERATED — maintained by vstack, do not edit directly -->
-<!-- VSTACK-META: {"artifact_name":"tester","artifact_type":"agent","artifact_version":"20261026001","generator":"vstack","vstack_version":"4.0.0"} -->
+<!-- VSTACK-META: {"artifact_name":"tester","artifact_type":"agent","artifact_version":"20261026002","generator":"vstack","vstack_version":"4.0.0"} -->

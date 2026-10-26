@@ -161,6 +161,12 @@ tools/configuration are `not run`; nonzero command results are `failed`, with
 visible error output. Never substitute another ecosystem or ordinary unit tests
 for benchmark evidence.
 
+### tester operational verification
+
+Tester uses `inspect` or authorized `verify` for reliability and observability.
+`guardrails` only governs destructive-action safety and confirmation; it does
+not replace operational checks.
+
 ______________________________________________________________________
 
 ## file locations

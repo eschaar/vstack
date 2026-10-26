@@ -92,6 +92,16 @@ def test_rendered_contributors_preserve_scope_ownership(installed_target: Path) 
         assert "not product scope or acceptance" in text
 
 
+def test_tester_routes_operations_review_to_verification(installed_target: Path) -> None:
+    """Reliability review uses verification skills, not the destructive-action guard."""
+    text = " ".join(
+        (installed_target / ".github/agents/tester.agent.md").read_text(encoding="utf-8").split()
+    )
+    assert "reliability and observability through `@#inspect` or authorized `@#verify`" in text
+    assert "`@#guardrails` — destructive-action safety and confirmation" in text
+    assert "`@#guardrails` — reliability and observability review" not in text
+
+
 @pytest.mark.parametrize(
     ("role", "obligations"),
     [

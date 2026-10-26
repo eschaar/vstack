@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "hash_algorithm": "sha256",
   "vstack_version": "4.0.0",
-  "installed_at": "2026-10-26T20:41:17.186982+00:00",
+  "installed_at": "2026-10-26T20:41:31.001237+00:00",
   "artifacts": {
     "hooks": [
       {
@@ -581,8 +581,8 @@
       {
         "name": "tester",
         "file": "agents/tester.agent.md",
-        "version": "20261026001",
-        "checksum": "53d022b0253dfdfcbcf6c4e0f86ba6649e0b91d3635b9e9fd2b56a18fe34f945",
+        "version": "20261026002",
+        "checksum": "5df6ff1f6b8188e48f2cce6331a246b74925e35474eedb1fc45be74980927d5e",
         "checksum_algorithm": "sha256"
       }
     ]
