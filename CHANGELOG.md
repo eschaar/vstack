@@ -2,6 +2,13 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [4.1.2](https://github.com/eschaar/vstack/compare/4.1.1...4.1.2) (2026-11-01)
+
+
+### Maintenance
+
+* **deps:** bump the pip-patch-minor group with 4 updates ([d3c6795](https://github.com/eschaar/vstack/commit/d3c6795753b62bd6836a84ae2d876f82cafdc879))
+
 ## [4.1.1](https://github.com/eschaar/vstack/compare/4.1.0...4.1.1) (2026-10-26)
 
 ### Maintenance
