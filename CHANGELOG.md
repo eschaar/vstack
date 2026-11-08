@@ -2,6 +2,21 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [4.1.3](https://github.com/eschaar/vstack/compare/4.1.2...4.1.3) (2026-11-08)
+
+
+### Fixes
+
+* **ci:** align codeql-action versions and group dependabot updates ([5dcd852](https://github.com/eschaar/vstack/commit/5dcd852145e417867b997fc13320273339f823b5))
+
+
+### Maintenance
+
+* **ci:** bump github/codeql-action/autobuild ([657ee63](https://github.com/eschaar/vstack/commit/657ee63a8ea2df01e4096fffb088987936012c0f))
+* **ci:** bump trufflesecurity/trufflehog ([d9e89fd](https://github.com/eschaar/vstack/commit/d9e89fdd12fc45d5b407534a552cd5aff222e806))
+* **deps:** bump tox ([ddcd1d8](https://github.com/eschaar/vstack/commit/ddcd1d825f34e98291720b5c75cdab821d0ca220))
+* **deps:** bump types-pyyaml from 6.0.12.20260906 to 6.0.12.20261103 ([1c645d7](https://github.com/eschaar/vstack/commit/1c645d70096ebc1ed736dd120e85c11c441984eb))
+
 ## [4.1.2](https://github.com/eschaar/vstack/compare/4.1.1...4.1.2) (2026-11-01)
 
 
