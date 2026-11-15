@@ -2,6 +2,15 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [4.1.4](https://github.com/eschaar/vstack/compare/4.1.3...4.1.4) (2026-11-15)
+
+
+### Maintenance
+
+* **ci:** bump commit-check/commit-check-action ([384e4ea](https://github.com/eschaar/vstack/commit/384e4ea1dfc5f5ac3990693e8767bdd4644d4d01))
+* **ci:** bump the codeql-action group with 3 updates ([81aaad4](https://github.com/eschaar/vstack/commit/81aaad426980219371641ff202e9fe1c9ee81dc6))
+* **deps:** bump the pip-patch-minor group across 1 directory with 2 updates ([f609927](https://github.com/eschaar/vstack/commit/f609927ed0fde307c45ff6ab8fcd1422b5a79532))
+
 ## [4.1.3](https://github.com/eschaar/vstack/compare/4.1.2...4.1.3) (2026-11-08)
 
 
