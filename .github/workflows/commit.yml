@@ -44,7 +44,7 @@ jobs:
 
       - name: Validate commits with commit-check
         if: github.event_name == 'push'
-        uses: commit-check/commit-check-action@c5dada87aeb05ca77ded9618d51be580fdfb1023
+        uses: commit-check/commit-check-action@82856b070249ac36d5a0f88c47cacf0c70f82fa8
         with:
           # Commit and branch policy is read from cchk.toml in repo root.
           message: true
@@ -56,7 +56,7 @@ jobs:
 
       - name: Validate commit messages with commit-check
         if: github.event_name == 'pull_request'
-        uses: commit-check/commit-check-action@c5dada87aeb05ca77ded9618d51be580fdfb1023
+        uses: commit-check/commit-check-action@82856b070249ac36d5a0f88c47cacf0c70f82fa8
         with:
           # On PR events, validate commit messages only (branch refs are pull/*).
           message: true
