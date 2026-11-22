@@ -2,6 +2,16 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [4.1.5](https://github.com/eschaar/vstack/compare/4.1.4...4.1.5) (2026-11-22)
+
+
+### Maintenance
+
+* **ci:** bump the codeql-action group with 3 updates ([9272ae6](https://github.com/eschaar/vstack/commit/9272ae647353e88688b8af00aa4aa71322669c07))
+* **ci:** bump the gha-patch-minor group across 1 directory with 3 updates ([7b579d2](https://github.com/eschaar/vstack/commit/7b579d272dfc2b9c00d34a5e4f851c484dc4c45b))
+* **deps:** bump the pip-patch-minor group across 1 directory with 2 updates ([65beef1](https://github.com/eschaar/vstack/commit/65beef1003653aefa7f24c8b4f0f970ed105dd47))
+* **deps:** bump types-pyyaml from 6.0.12.20261103 to 6.0.12.20261113 ([6e964e6](https://github.com/eschaar/vstack/commit/6e964e68886f6f04ee858c743470f11ed1d0660c))
+
 ## [4.1.4](https://github.com/eschaar/vstack/compare/4.1.3...4.1.4) (2026-11-15)
 
 
